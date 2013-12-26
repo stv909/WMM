@@ -1,0 +1,85 @@
+<hrml>
+	<head>
+		<script src="utils.js"></script>
+		<script src="config.js"></script>
+		<script>
+			var base64 = new Base64();
+			
+			function onLoad()
+			{
+				var params = {};
+				if (location.search) 
+				{
+					var parts = location.search.substring(1).split('&');
+					for (var i = 0; i < parts.length; i++) 
+					{
+						var nv = parts[i].split('=');
+						if (!nv[0]) 
+							continue;
+						params[nv[0]] = nv[1] || true;
+					}
+				}
+				var content = document.getElementById('content');
+				
+				function onOpen(e)
+				{
+					console.info('wsock opened.');
+					wsock.send('scrape');
+					wsock.send(params.ids);
+				}
+				function onError(e)
+				{
+					console.error('wsock error:');
+					console.info(e);
+				}
+				function onClose(e)
+				{
+					console.info('wsock closed.');
+				}
+				function onMessage(e)
+				{
+					var response;
+					try
+					{
+						response = JSON.parse(e.data);
+					}
+					catch(ex)
+					{
+						console.error('Failed parse wsock output; Name: ' + ex.name + '; Desc: ' + ex.message);
+						return;
+					}
+					if (response.scrape)
+					{
+						for (var i = 0; i < response.scrape.length; ++i)
+						{
+							var element = document.createElement('div');
+							var value = response.scrape[i].value;
+							if (value && value.content)
+							{
+								element.innerHTML = base64.decode(value.content);
+								content.appendChild(element);
+							}
+							else
+							{
+								console.warn('record not found for id: ' + response.scrape[i].id);
+							}
+						}
+						content.style.pointerEvents = 'none'; // HINT: remove this line to make message interactive		
+					}
+				}
+				
+				if (params.ids)
+				{
+					var wsock = new WebSocket(wsockServerUrl);
+					wsock.onopen = onOpen;
+					wsock.onerror = onError;
+					wsock.onclose = onClose;
+					wsock.onmessage = onMessage;
+				}
+			}
+		</script>
+	</head>
+	<body onload="onLoad();">
+		<div id="content"></div>
+	</body>
+</hrml>

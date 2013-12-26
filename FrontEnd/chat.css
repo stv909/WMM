@@ -1,0 +1,52 @@
+.contactitem:hover
+{
+	background-color: yellow;
+}
+
+.modalDialog
+{
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0,0,0,0.5);
+	z-index: 99999;
+	opacity:0;
+	pointer-events: none;
+	display: none;
+}
+.modalDialog:target
+{
+	opacity:1;
+	pointer-events: auto;
+	display: block;
+}
+.modalDialog > div
+{
+	background: white;
+	width: 600px;
+	position: relative;
+	margin: 5% auto;
+	padding: 0;
+}
+.close
+{
+	background: rgb(187,200,214);
+	color: #FFFFFF;
+	line-height: 25px;
+	position: absolute;
+	right: -12px;
+	text-align: center;
+	top: -10px;
+	width: 24px;
+	text-decoration: none;
+	font-weight: bold;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	border-radius: 12px;
+}
+.close:hover
+{
+	background: rgb(84,118,154);
+}

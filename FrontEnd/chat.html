@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+	<head>
+		<title>Multi Messenger</title>
+		<meta charset="utf-8">
+		<link href="chat.css" rel="stylesheet" type="text/css">
+		<script src="utils.js"></script>
+		<script src="config.js"></script>
+		<script src="main.js"></script>
+	</head>
+	<body style="margin: 0;" onload="onLoad();">
+		<audio id="audioNewMessage" src="Resources/newMessageSpace.wav" preload="auto" style="controls: none"></audio>	
+		<div id="editProfile" class="modalDialog">
+			<div style="padding: 16px">
+				<a href="#" title="Close" class="close">X</a>
+				<p style="font-weight: bold;">My Profile</p>
+				<p>
+					<span>Avatar </span><input id="profileAvatarInput" type="text" placeholder="image url" onchange="onProfileChanged();" onclick="onProfileAvatarPreview();" title="click to refresh avatar preview"></input>
+					<img id="profileAvatarPreview" style="width: 50px; height: 50px;" onclick="onProfileAvatarPreview();" title="click to refresh avatar preview">
+				</p>
+				<p>
+					<span>Nickname </span><input id="profileNickInput" type="text" placeholder="my name is @#$%^" onchange="onProfileChanged();"></input>
+				</p>
+				<p>
+					<span>Sex </span>
+					<input type="radio" id="profileSexInputM" name="profileSexInput" value="male" onclick="onProfileChanged();">male
+					<input type="radio" id="profileSexInputF" name="profileSexInput" value="female" onclick="onProfileChanged();">female
+				</p>
+			</div>
+		</div>
+		<table>
+			<tr style="height: 60px;">
+				<td style="text-align: right;">
+					<span id="stateblockLoadingPage">
+						Loading page...
+					</span>
+					<span id="stateblockLogin" style="display: none;">
+					</span>
+					<span id="stateblockBeforeLogin" style="display: none;">
+						<input id="loginInput" type="text" size="12" placeholder="user login">
+						<button onclick="onLoginClick();">Login</button><span id="loginFailedReport"></span>
+					</span>
+					<span id="stateblockProcessConnect" style="display: none;">
+						Connecting...
+					</span>
+					<span id="stateblockProcessLogin" style="display: none;">
+						Logging in as <span id="userLoging"></span>...
+					</span>
+					<span id="stateblockAfterLogin" style="display: none;">
+						<span id="userProfile"><img id="userAvatar" style="width: 25px; height: 25px;"><span style="font-weight: bold;" id="userLogin"></span></span>
+						<button onclick="editProfile(); clearAutologin();">Edit profile</button>
+						<button onclick="doLogout(); clearAutologin();">Logout</button>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<b style="height: 60px;">
+						MultiMessenger 
+						<span id="totalCounter" style="font-weight: bold; color: green;"></span>
+						<button id="totalMarkShown" style="display: none;" onclick="onMarkAllShown();">mark all as shown</button>
+						<span id="friendName" style="margin-left: 8px;"></span>
+					</b>
+				</td>
+				<td style="text-align: center;">
+					Perls
+				</td>
+				<td style="text-align: center;">
+					Tools
+				</td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;">
+					<div id="contacts" style="width: 640px; height: 900px; border: 1px solid silver; overflow-x: hidden; overflow-y: auto;">
+					</div>
+				</td>
+				<td style="vertical-align: top;">
+					<div id="tape" style="width: 640px; height: 750px; border: 1px solid silver; overflow-x: hidden; overflow-y: scroll;">
+					</div>
+					<div style="width: 640px; height: 150px; overflow-x: auto; overflow-y: scroll;">
+						<table id="inputPanel" style="height: 100%; display: none;">
+							<tr>
+								<td>
+									<div id="inputBlock" style="width: 100%; height: 100%; border: 1px solid black;" contenteditable="true" onkeypress="onSendBlockKeypress(event);"></div>
+									<textarea id="inputCode" style="width: 100%; height: 100%; display: none;" contenteditable="true" onkeypress="onSendCodeKeypress(event);"></textarea>
+								</td>
+								<td style="width: 20%;">
+									<button id="send" style="width: 100%; height: 30%;" onclick="onSendBlock();">Send</button>
+									<div style="width: 100%; height: 40%;">
+										<input type="radio" name="inputType" onclick="onInputBlockSelect();" checked>Blocks
+										<input type="radio" name="inputType" onclick="onInputCodeSelect();">Code
+									</div>
+									<button id="clear" style="width: 100%; height: 30%;" onclick="onClear();">Clear</button>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+				<td style="vertical-align: top;">
+					<div id="perls" style="width: 640px; height: 900px; border: 1px solid silver; overflow-x: hidden; overflow-y: auto;">
+<!-- Legacy predefined part for static dev stage
+						<div>
+							<img style="width: 256px;" src="http://www.corporacia.ru/_data/pages/0002286/notbad.jpg">
+							<img style="width: 256px;" src="http://2.bp.blogspot.com/-zYrlp1MbQi0/UpLAaU10ClI/AAAAAAAACuE/BDrPaP5jG4Q/s1600/facepalm.png">
+						</div>
+						<div>
+							<img style="width: 256px;" src="http://yamobi.ru/i/posts/rec010882/0_large.jpg">
+							<img style="width: 256px;" src="http://cs320331.vk.me/v320331335/ea9/8OK8JAP3Udo.jpg">
+						</div>
+						<div>
+							<img style="width: 256px;" src="http://savepic.ru/4336266.jpg">
+							<img style="width: 256px;" src="http://th07.deviantart.net/fs71/PRE/f/2011/285/3/a/are_you_fucking_kidding_me_by_rober_raik-d4clstk.png">
+						</div>
+						<div>
+							<img style="width: 256px;" src="http://nibler.ru/uploads/users/4575/2012-09-25/memov-izvestnyh-istoriya-memy-memgenerator-bleat-kartinki-memy_808288515.jpg">
+							<img style="width: 256px;" src="http://trollface-fun.ru/wp-content/uploads/Okay-guy-face.jpg">
+						</div>
+						<div>
+							<img style="width: 256px;" src="http://trollface-fun.ru/wp-content/uploads/FFUUUUUU.jpg">
+							<img style="width: 256px;" src="http://cdn.alltheragefaces.com/img/faces/large/sad-crying-l.png">
+						</div>
+						<div>
+							<img src="http://img3.joyreactor.cc/pics/post/facepalm-anime-%D0%BF%D0%B5%D1%81%D0%BE%D1%87%D0%BD%D0%B8%D1%86%D0%B0-56053.jpeg">
+						</div>
+-->
+<!-- Legacy predefined part for animated and sounded dev stage
+						<div>
+							<img src="http://kolobok.us/smiles/light_skin/aggressive.gif">
+							<img src="http://kolobok.us/smiles/light_skin/dash3.gif">
+							<img src="http://kolobok.us/smiles/light_skin/crazy.gif">
+							<img src="http://kolobok.us/smiles/light_skin/curtsey.gif">
+							<img src="http://kolobok.us/smiles/light_skin/diablo.gif">
+							<img src="http://kolobok.us/smiles/light_skin/focus.gif">
+							<img src="http://kolobok.us/smiles/light_skin/girl_in_love.gif">
+							<img src="http://kolobok.us/smiles/light_skin/hunter.gif">
+							<img src="http://kolobok.us/smiles/light_skin/party.gif">
+							<img src="http://kolobok.us/smiles/light_skin/tease.gif">
+							<img src="http://kolobok.us/smiles/personal/russian.gif">
+							<img src="http://kolobok.us/smiles/madhouse/gamer2.gif">
+							<img src="http://kolobok.us/smiles/madhouse/gamer4.gif">
+							<img src="http://kolobok.us/smiles/madhouse/mail1.gif">
+						</div>
+						<div>
+							<img src="http://25.media.tumblr.com/197886e75c0728de800365d8b7fc7b37/tumblr_mtgcwlHeTP1qdlh1io1_400.gif">
+						</div>
+						<div>
+							<span>Incoming message: <audio controls="" preload="" src="Resources/newMessageSpace.wav"></audio>.</span>
+						</div>
+						<div>
+							<span>Попытка встроить музончик из ВКонтактов 
+							<audio controls="" src="https://psv4.vk.me/c4423/u6850336/audios/593b819cf707.mp3"></audio>.</span>
+						</div>
+						<div>
+							Попытка встроить COUB<br>
+							<iframe src="http://coub.com/embed/ottxmi?muted=false&amp;autostart=false&amp;originalSize=false&amp;hideTopBar=true&amp;noSiteButtons=false&amp;startWithHD=false" allowfullscreen="true" frameborder="0" width="640" height="480"></iframe>
+						</div>
+						<div>
+							Попытка встроить YouTube<br>
+							<iframe width="560" height="315" src="//www.youtube.com/embed/BArBKRTIMPk?rel=0" frameborder="0" allowfullscreen></iframe>
+						</div>
+-->
+					</div>
+				</td>
+				<td style="width: 640px; vertical-align: top;">
+					<div id="tools" style="width: 640px; height: 900px; border: 1px solid silver; overflow-x: hidden; overflow-y: auto;">
+					</div>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
