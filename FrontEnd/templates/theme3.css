@@ -1,0 +1,207 @@
+@font-face {
+  font-family: 'wf_segoe-ui_light';
+  src: url("http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff");
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #fefefe;
+  font-family: wf_segoe-ui_light, Segoe UI Light, Helvetica;
+  color: #444;
+}
+#main {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#main-layout {
+  background-color: #fff;
+  display: table;
+  table-layout: fixed;
+  margin: 0 auto;
+  width: 70em;
+  height: 100%;
+  box-shadow: 0 0 0.25em #ccc;
+}
+#menu-wrapper {
+  display: table-row;
+  height: 3em;
+}
+#menu {
+  line-height: 3em;
+  font-size: 1.25em;
+  background-color: #1570a6;
+  color: #fff;
+  vertical-align: middle;
+  padding-left: 1em;
+}
+#page-wrapper {
+  display: table-row;
+}
+#page {
+  display: table;
+  height: 100%;
+  width: 100%;
+}
+.page-row {
+  display: table-row;
+}
+#titles {
+  background-color: #eee;
+  color: #000;
+  height: 3em;
+}
+.column-wrapper {
+  display: table-cell;
+}
+.column-wrapper .label {
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+  width: 100%;
+  text-align: center;
+  font-size: 1.1em;
+  border-bottom: 1px solid #ddd;
+}
+#contacts {
+  width: 11em;
+}
+#contact-list {
+  display: table-cell;
+  border-right: 1px solid #ddd;
+  position: absolute;
+  overflow: auto;
+  width: 100%;
+  bottom: 0;
+  top: 0;
+}
+#contact-list .contact-item {
+  font-size: 0.8em;
+  padding-left: 2.5em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #eee;
+}
+#contact-list .contact-item:hover {
+  background-color: #5b5;
+  color: #fff;
+}
+#chat {
+  width: 43em;
+}
+#conversation {
+  z-index: 1;
+  display: table-cell;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  top: 0;
+  height: 2.25em;
+  background-color: #fffcf1;
+  text-align: center;
+}
+#conversation >div {
+  line-height: 2.5em;
+  font-size: 0.9em;
+  height: 100%;
+  vertical-align: middle;
+}
+#chat-list {
+  display: table-cell;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  position: absolute;
+  overflow: auto;
+  width: 100%;
+  bottom: 0;
+  top: 2.25em;
+}
+#chat-list .message-item {
+  width: 100%;
+  border-bottom: 1px solid #eee;
+}
+#chat-list .message-item .contact,
+#chat-list .message-item .message,
+#chat-list .message-item .tools {
+  display: table-cell;
+  vertical-align: top;
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+}
+#chat-list .message-item .contact {
+  width: 6em;
+}
+#chat-list .message-item .contact .avatar {
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+  box-shadow: 0 0 0.25em #aaa;
+  width: 4.5em;
+  height: 4.5em;
+  border: 2px solid #fff;
+}
+#chat-list .message-item .contact .avatar img {
+  width: 100%;
+}
+#chat-list .message-item .message {
+  width: 29em;
+  overflow: hidden;
+}
+#chat-list .message-item .message .message-wrap {
+  width: 29em;
+  overflow: hidden;
+  max-height: 30em;
+  margin-left: 0em;
+  margin-right: 0em;
+}
+#chat-list .message-item .tools {
+  margin-top: 0.5em !important;
+  width: 6.5em;
+  text-align: center;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+}
+#chat-list .message-item .tools .simple-button {
+  cursor: pointer;
+  font-size: 0.8em;
+  color: #888;
+  border: 1px solid #eee;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  margin-bottom: 0.35em;
+}
+#chat-list .message-item .tools .simple-button:hover {
+  border: 1px solid #bbb;
+  box-shadow: 0 0 0.2em #ddd;
+  color: #222;
+}
+#chat-list .message-item .tools .simple-button.negative {
+  margin-top: 1em;
+  border: 1px solid #fcc;
+}
+#chat-list .message-item .tools .time {
+  line-height: 1.5em;
+  margin-bottom: 0.5em;
+}
+#chat-list .message-item .tools .time .time-icon {
+  vertical-align: top;
+  width: 1em;
+  height: 1em;
+  margin-top: 0.43em;
+}
+#chat-list .message-item .tools .time .time-value {
+  vertical-align: top;
+  font-size: 1.25em;
+  padding: 0;
+}
+#message-composer {
+  display: table-row;
+  border-top: 1px solid #ddd;
+}
