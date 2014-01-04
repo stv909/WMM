@@ -1,0 +1,40 @@
+mixin message(editable)
+	.message
+		.avatar
+			.image
+		if editable == true
+			.content
+				.container.dynamic
+					.editor(contenteditable="true")
+						img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
+		else
+			.content
+				.container.static
+					.editor
+						img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
+		.tools "tools"
+
+doctype html
+html
+	head
+		title
+		link(rel="stylesheet", href="wysiwyg.css")
+	body
+		#page
+			.wrap
+				#chat
+					.row.messages
+						.wrap
+							+message
+							+message
+							+message
+							+message
+							+message
+							+message
+							+message
+							+message
+							+message
+							+message
+					.row.composer
+						.wrap
+							+message(true)
