@@ -12,6 +12,9 @@ body {
   font-family: wf_segoe-ui_light, Segoe UI Light, Helvetica;
   color: #444;
 }
+* {
+  outline: none;
+}
 #main {
   position: absolute;
   top: 0;
@@ -30,14 +33,13 @@ body {
 }
 #menu-wrapper {
   display: table-row;
-  height: 2.75em;
+  height: 2.5em;
 }
 #menu {
-  line-height: 2.75em;
+  line-height: 3em;
   font-size: 1.2em;
   background-color: #1570a6;
   color: #fff;
-  vertical-align: middle;
   padding-left: 1em;
 }
 #page-wrapper {
@@ -138,15 +140,28 @@ body {
   overflow: auto;
 }
 #chat-box >div #message-composer {
-  height: 7em;
+  background-color: #f2faff;
+  height: 6em;
+  max-height: 10em;
 }
 #chat-box >div #message-composer >div {
-  max-height: 10em;
   border-top: 1px solid #ddd;
-  overflow: auto;
+  border-left: 1px solid #ddd;
+  height: 100%;
+}
+#chat-box >div #message-composer >div .message-item {
+  height: 100%;
+}
+#chat-box >div #message-composer >div .message-wrap {
+  height: 100%;
+  max-height: 10em;
+  border: 1px solid #ddd;
+  overflow: auto !important;
 }
 #chat-box .message-item {
   width: 100%;
+}
+#chat-box .message-item:not(:last-child) {
   border-bottom: 1px solid #eee;
 }
 #chat-box .message-item .contact,
@@ -177,6 +192,7 @@ body {
   overflow: hidden;
 }
 #chat-box .message-item .message .message-wrap {
+  background-color: #fff;
   width: 29em;
   overflow: hidden;
   max-height: 30em;
@@ -191,6 +207,7 @@ body {
   padding-right: 0.75em;
 }
 #chat-box .message-item .tools .simple-button {
+  background-color: #fff;
   cursor: pointer;
   font-size: 0.8em;
   color: #888;
