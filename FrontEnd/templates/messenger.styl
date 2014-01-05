@@ -1,0 +1,213 @@
+scroll-width = 0.5em
+scroll-height = 0.5em
+real-scroll-width = scroll-width //- 0.05em
+real-scroll-height = scroll-height //- 0.05em
+
+page-width = 70em
+contacts-width = 11em
+chat-width = 45em
+tools-width = page-width - (contacts-width + chat-width)
+avatar-width = 6em
+content-width = 33em
+
+main-border-color = #ddd
+second-border-color = #eee
+main-menu-color = rgb(21, 112, 166)
+titles-color = rgb(238, 238, 238)
+
+@font-face
+  font-family 'Segoe UI'
+  src url('http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff')
+::-webkit-scrollbar
+  width real-scroll-width
+  height real-scroll-height
+  margin 0 auto
+::-webkit-scrollbar-thumb
+  background-color second-border-color
+
+*
+  outline none
+body, html
+  width 100%
+  height 100%
+  margin 0
+  padding 0
+  font-family "Segoe UI", Helvetica
+
+#page
+  position relative
+  width page-width
+  margin 0 auto
+  box-shadow 0 0 0.5em #aaa
+  height 100%
+  >.wrap
+    position absolute
+    top 0
+    bottom 0
+    right 0
+    left 0
+    overflow hidden
+#application
+  display table
+  width 100%
+  height 100%
+#menu, #workspace
+  display table-row
+#menu
+  color white
+  height 1%
+  background-color main-menu-color
+  >.content
+    font-size 1.2em
+    margin-top 0.5em
+    margin-bottom 0.5em
+    margin-left 1em
+#workspace
+  height 99%
+  >.content
+    display table
+    width 100%
+    height 100%
+    .row
+      display table-row
+    .cell
+      display table-cell
+    .titles
+      height 1%
+      background-color titles-color
+      .title
+        padding-top 0.5em
+        padding-bottom 0.5em
+        width 100%
+        text-align center
+        font-size 1em
+        border-bottom 1px solid #ddd
+#contacts, #chat, #tools
+  position relative
+  >.wrap
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+#contacts
+  width contacts-width
+  >.wrap
+    overflow-y scroll
+    &::-webkit-scrollbar-track
+      &:vertical
+        border-left 1px solid main-border-color
+        border-right 1px solid main-border-color
+    &::-webkit-scrollbar-thumb
+      &:vertical
+        border-left 1px solid main-border-color
+        border-right 1px solid main-border-color
+    >.list
+      width contacts-width //- scroll-width
+      .contact
+        font-size 0.8em
+        padding-left 2.5em
+        padding-top 1em
+        padding-bottom 1em
+        border-bottom 1px solid second-border-color
+        &:hover
+          background-color #55BB55
+          color white
+#chat
+  width chat-width
+  >.wrap
+    overflow hidden
+    border-right 1px solid main-border-color
+  #chatbox
+    position relative
+    height 100%
+    >.wrap
+      position absolute
+      top 0
+      bottom 0
+      right 0
+      left 0
+      overflow hidden
+    #board
+      display table
+      width 100%
+      height 100%
+      #conversation, #stream, #composer
+        display table-row
+      #conversation
+        text-align center
+        >.wrap
+          font-size 0.9em
+          padding-top 0.5em
+          padding-bottom 0.5em
+          background-color #fffcf1
+          border-bottom 1px solid main-border-color
+      #stream
+        height 95%
+        >.wrap
+          height 100%
+          overflow-y scroll
+          &::-webkit-scrollbar-track
+            &:vertical
+              border-left 1px solid main-border-color
+          &::-webkit-scrollbar-thumb
+            &:vertical
+              border-left 1px solid main-border-color
+      #composer
+        height 5%
+        >.wrap
+          border-top 1px solid main-border-color
+          overflow hidden
+          min-height 1em
+          max-height 22em
+  .message
+    padding-top 0.75em
+    padding-bottom 0.5em
+    width chat-width - scroll-width
+    &:not(:last-child)
+      border-bottom 1px solid second-border-color
+    .avatar, .content, .tools
+      display inline-block
+      vertical-align top
+    .avatar
+      width avatar-width
+      .image
+        background-color white
+        margin 0 auto
+        width 4em
+        height 4em
+        outline 2px solid #fff
+        box-shadow 0 0 0.5em #aaa
+        img
+          width 100%
+    .content
+      width content-width
+      .container
+        background-color white
+        position relative
+        display inline-block
+        min-height 4em
+        box-shadow 0 0 0.5em #aaa
+        &.static
+          width content-width - scroll-width
+          overflow hidden
+          max-height 20em
+          outline 2px solid #fff
+        &.dynamic
+          width content-width
+          outline 2px solid main-border-color
+          overflow scroll
+          max-height 20em + scroll-height
+          &::-webkit-scrollbar-track
+            &:vertical
+              border-left 1px solid main-border-color
+            &:horizontal
+              border-top 1px solid main-border-color
+          &::-webkit-scrollbar-thumb
+            &:vertical
+              border-left 1px solid main-border-color
+            &:horizontal
+              border-top 1px solid main-border-color
+        .editor
+          width content-width - scroll-width
+          min-height 3em

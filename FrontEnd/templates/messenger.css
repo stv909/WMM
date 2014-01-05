@@ -1,0 +1,253 @@
+@font-face {
+  font-family: 'Segoe UI';
+  src: url("http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff");
+}
+::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
+  margin: 0 auto;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #eee;
+}
+* {
+  outline: none;
+}
+body,
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Helvetica;
+}
+#page {
+  position: relative;
+  width: 70em;
+  margin: 0 auto;
+  box-shadow: 0 0 0.5em #aaa;
+  height: 100%;
+}
+#page >.wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  overflow: hidden;
+}
+#application {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#menu,
+#workspace {
+  display: table-row;
+}
+#menu {
+  color: #fff;
+  height: 1%;
+  background-color: #1570a6;
+}
+#menu >.content {
+  font-size: 1.2em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-left: 1em;
+}
+#workspace {
+  height: 99%;
+}
+#workspace >.content {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#workspace >.content .row {
+  display: table-row;
+}
+#workspace >.content .cell {
+  display: table-cell;
+}
+#workspace >.content .titles {
+  height: 1%;
+  background-color: #eee;
+}
+#workspace >.content .titles .title {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  width: 100%;
+  text-align: center;
+  font-size: 1em;
+  border-bottom: 1px solid #ddd;
+}
+#contacts,
+#chat,
+#tools {
+  position: relative;
+}
+#contacts >.wrap,
+#chat >.wrap,
+#tools >.wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#contacts {
+  width: 11em;
+}
+#contacts >.wrap {
+  overflow-y: scroll;
+}
+#contacts >.wrap::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+#contacts >.wrap::-webkit-scrollbar-thumb:vertical {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+#contacts >.wrap >.list {
+  width: 11em;
+}
+#contacts >.wrap >.list .contact {
+  font-size: 0.8em;
+  padding-left: 2.5em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #eee;
+}
+#contacts >.wrap >.list .contact:hover {
+  background-color: #5b5;
+  color: #fff;
+}
+#chat {
+  width: 45em;
+}
+#chat >.wrap {
+  overflow: hidden;
+  border-right: 1px solid #ddd;
+}
+#chat #chatbox {
+  position: relative;
+  height: 100%;
+}
+#chat #chatbox >.wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  overflow: hidden;
+}
+#chat #chatbox #board {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#chat #chatbox #board #conversation,
+#chat #chatbox #board #stream,
+#chat #chatbox #board #composer {
+  display: table-row;
+}
+#chat #chatbox #board #conversation {
+  text-align: center;
+}
+#chat #chatbox #board #conversation >.wrap {
+  font-size: 0.9em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  background-color: #fffcf1;
+  border-bottom: 1px solid #ddd;
+}
+#chat #chatbox #board #stream {
+  height: 95%;
+}
+#chat #chatbox #board #stream >.wrap {
+  height: 100%;
+  overflow-y: scroll;
+}
+#chat #chatbox #board #stream >.wrap::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat #chatbox #board #stream >.wrap::-webkit-scrollbar-thumb:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat #chatbox #board #composer {
+  height: 5%;
+}
+#chat #chatbox #board #composer >.wrap {
+  border-top: 1px solid #ddd;
+  overflow: hidden;
+  min-height: 1em;
+  max-height: 22em;
+}
+#chat .message {
+  padding-top: 0.75em;
+  padding-bottom: 0.5em;
+  width: 44.5em;
+}
+#chat .message:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+#chat .message .avatar,
+#chat .message .content,
+#chat .message .tools {
+  display: inline-block;
+  vertical-align: top;
+}
+#chat .message .avatar {
+  width: 6em;
+}
+#chat .message .avatar .image {
+  background-color: #fff;
+  margin: 0 auto;
+  width: 4em;
+  height: 4em;
+  outline: 2px solid #fff;
+  box-shadow: 0 0 0.5em #aaa;
+}
+#chat .message .avatar .image img {
+  width: 100%;
+}
+#chat .message .content {
+  width: 33em;
+}
+#chat .message .content .container {
+  background-color: #fff;
+  position: relative;
+  display: inline-block;
+  min-height: 4em;
+  box-shadow: 0 0 0.5em #aaa;
+}
+#chat .message .content .container.static {
+  width: 32.5em;
+  overflow: hidden;
+  max-height: 20em;
+  outline: 2px solid #fff;
+}
+#chat .message .content .container.dynamic {
+  width: 33em;
+  outline: 2px solid #ddd;
+  overflow: scroll;
+  max-height: 20.5em;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-track:horizontal {
+  border-top: 1px solid #ddd;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-thumb:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-thumb:horizontal {
+  border-top: 1px solid #ddd;
+}
+#chat .message .content .container .editor {
+  width: 32.5em;
+  min-height: 3em;
+}

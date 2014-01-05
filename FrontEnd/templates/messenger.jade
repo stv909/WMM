@@ -1,0 +1,104 @@
+mixin contact(name)
+	.contact= name
+
+mixin contact-list
+	.list
+		+contact("Taisha Southwood")
+		+contact("Charlott Kagawa")
+		+contact("Dawn Bromley")
+		+contact("Deshawn Grumbles")
+		+contact("Emmanuel Chaves")
+		+contact("Taisha Southwood")
+		+contact("Charlott Kagawa")
+		+contact("Taisha Southwood")
+		+contact("Charlott Kagawa")
+		+contact("Dawn Bromley")
+		+contact("Deshawn Grumbles")
+		+contact("Emmanuel Chaves")
+		+contact("Taisha Southwood")
+		+contact("Charlott Kagawa")
+		+contact("Taisha Southwood")
+		+contact("Charlott Kagawa")
+		+contact("Dawn Bromley")
+		+contact("Deshawn Grumbles")
+		+contact("Emmanuel Chaves")
+		+contact("Taisha Southwood")
+		+contact("Charlott Kagawa")
+		+contact("Taisha Southwood")
+		+contact("Charlott Kagawa")
+		+contact("Dawn Bromley")
+		+contact("Deshawn Grumbles")
+		+contact("Emmanuel Chaves")
+		+contact("Taisha Southwood")
+		+contact("Charlott Kagawa")
+
+mixin message(editable)
+	.message
+		.avatar
+			.image
+				img(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		.content
+			if editable
+				.container.dynamic
+					.editor(contenteditable="true")
+						//img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
+			else
+				.container.static
+					.editor(contenteditable="false")
+						img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
+		.tools
+
+mixin chatbox
+	#chatbox
+		.wrap
+			#board
+				#conversation
+					.wrap Deshawn Grumbles and Me
+				#stream
+					.wrap
+						+message
+						+message
+						+message
+						+message
+						+message
+						+message
+						+message
+						+message
+						+message
+						+message
+						+message
+						+message
+						+message
+				#composer
+					.wrap
+						+message(true)
+
+doctype html
+html
+	head
+		title Messenger
+		link(rel="stylesheet", href="messenger.css")
+		script(type="application/javascript", src="messenger.js")
+	body
+		#page
+			.wrap
+				#application
+					#menu
+						.content Messenger Prototype Layout
+					#workspace
+						.content
+							.row.titles
+								.cell
+									.title Contacts
+								.cell
+									.title Chat
+								.cell
+									.title Tools
+							.row
+								#contacts.cell
+									.wrap
+										+contact-list
+								#chat.cell
+									.wrap
+										+chatbox
+								#tools.cell
