@@ -101,6 +101,7 @@ html {
 }
 #contacts >.wrap {
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 #contacts >.wrap::-webkit-scrollbar-track:vertical {
   border-left: 1px solid #ddd;
