@@ -54,12 +54,17 @@ body, html
     padding-top 0.75em
     padding-bottom 0.75em
     border-bottom 1px solid #ddd
+    &.static
+      background-color white
+    &.dynamic
+      background-color #ebf5ff
     .avatar, .content, .tools
       display inline-block
       vertical-align top
     .avatar
       width 6em
       .image
+        background-color white
         margin 0 auto
         width 4em
         height 4em
@@ -68,6 +73,7 @@ body, html
     .content
       width 40em
       .container
+        background-color white
         position relative
         display inline-block
         min-height 5em
@@ -79,7 +85,7 @@ body, html
           outline 2px solid #fff
         &.dynamic
           width 40em
-          outline 2px solid #ccffcc
+          outline 2px solid #eee
           overflow scroll
           max-height 20em + scroll-height
           &::-webkit-scrollbar-track

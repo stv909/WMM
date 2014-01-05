@@ -61,6 +61,12 @@ html {
   padding-bottom: 0.75em;
   border-bottom: 1px solid #ddd;
 }
+#chat .message.static {
+  background-color: #fff;
+}
+#chat .message.dynamic {
+  background-color: #ebf5ff;
+}
 #chat .message .avatar,
 #chat .message .content,
 #chat .message .tools {
@@ -71,6 +77,7 @@ html {
   width: 6em;
 }
 #chat .message .avatar .image {
+  background-color: #fff;
   margin: 0 auto;
   width: 4em;
   height: 4em;
@@ -81,6 +88,7 @@ html {
   width: 40em;
 }
 #chat .message .content .container {
+  background-color: #fff;
   position: relative;
   display: inline-block;
   min-height: 5em;
@@ -94,7 +102,7 @@ html {
 }
 #chat .message .content .container.dynamic {
   width: 40em;
-  outline: 2px solid #cfc;
+  outline: 2px solid #eee;
   overflow: scroll;
   max-height: 20.5em;
 }
