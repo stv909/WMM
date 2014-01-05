@@ -1,7 +1,6 @@
 ::-webkit-scrollbar {
   width: 0.5em;
   height: 0.5em;
-  margin: 0 auto;
 }
 ::-webkit-scrollbar-thumb {
   border-radius: 0.25em;
@@ -55,11 +54,11 @@ html {
   border-top: 1px solid #aaa;
   overflow: hidden;
   min-height: 1em;
-  max-height: 21.5em;
+  max-height: 22em;
 }
 #chat .message {
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
   border-bottom: 1px solid #ddd;
 }
 #chat .message .avatar,
@@ -75,7 +74,8 @@ html {
   margin: 0 auto;
   width: 4em;
   height: 4em;
-  box-shadow: 0 0 0.25em #aaa;
+  outline: 2px solid #fff;
+  box-shadow: 0 0 0.5em #666;
 }
 #chat .message .content {
   width: 40em;
@@ -84,20 +84,37 @@ html {
   position: relative;
   display: inline-block;
   min-height: 5em;
+  box-shadow: 0 0 0.5em #666;
 }
 #chat .message .content .container.static {
   width: 39.5em;
   overflow: hidden;
   max-height: 20em;
-  outline: 1px solid #fff;
+  outline: 2px solid #fff;
 }
 #chat .message .content .container.dynamic {
   width: 40em;
-  outline: 1px solid #ddd;
-  overflow: auto;
+  outline: 2px solid #cfc;
+  overflow: scroll;
   max-height: 20.5em;
 }
+#chat .message .content .container.dynamic::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #eee;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-track:horizontal {
+  border-top: 1px solid #eee;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-thumb:vertical {
+  border-left: 1px solid #eee;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-thumb:horizontal {
+  border-top: 1px solid #eee;
+}
 #chat .message .content .container .editor {
+  width: 39.5em;
   min-height: 3em;
 }
 #chat .message .tools {

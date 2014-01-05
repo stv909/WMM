@@ -8,7 +8,6 @@ real-scroll-height = scroll-height - 0.05em
 ::-webkit-scrollbar
   width scroll-width
   height scroll-height
-  margin 0 auto
 ::-webkit-scrollbar-thumb
   border-radius scroll-width * 0.5
   background-color #aaa
@@ -50,10 +49,10 @@ body, html
       border-top 1px solid #aaa
       overflow hidden
       min-height 1em
-      max-height 21.5em
+      max-height 22em
   .message
-    padding-top 0.5em
-    padding-bottom 0.5em
+    padding-top 0.75em
+    padding-bottom 0.75em
     border-bottom 1px solid #ddd
     .avatar, .content, .tools
       display inline-block
@@ -64,24 +63,39 @@ body, html
         margin 0 auto
         width 4em
         height 4em
-        box-shadow 0 0 0.25em #aaa
+        outline 2px solid #fff
+        box-shadow 0 0 0.5em #666
     .content
       width 40em
       .container
         position relative
         display inline-block
         min-height 5em
+        box-shadow 0 0 0.5em #666
         &.static
           width 39.5em
           overflow hidden
           max-height 20em
-          outline 1px solid #fff
+          outline 2px solid #fff
         &.dynamic
           width 40em
-          outline 1px solid #ddd
-          overflow auto
+          outline 2px solid #ccffcc
+          overflow scroll
           max-height 20em + scroll-height
+          &::-webkit-scrollbar-track
+            &:vertical
+              border-left 1px solid #eee
+            &:horizontal
+              border-top 1px solid #eee
+          &::-webkit-scrollbar-thumb
+            //border-radius 0
+            background-color #ddd
+            &:vertical
+              border-left 1px solid #eee
+            &:horizontal
+              border-top 1px solid #eee
         .editor
+          width 39.5em
           min-height 3em
     .tools
       width 10em

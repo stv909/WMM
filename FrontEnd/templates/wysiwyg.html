@@ -3,6 +3,28 @@
   <head>
     <title></title>
     <link rel="stylesheet" href="wysiwyg.css">
+    <script type="text/javascript">
+      window.onload = function() {
+       var messages = document.getElementsByClassName("message");
+       for (var i = 0; i < messages.length; i++) {
+        var message = messages[i];
+        (function(message) {
+         var editButton = message.getElementsByClassName("edit")[0];
+         var container = message.getElementsByClassName("container")[0];
+         var editor = message.getElementsByClassName("editor")[0];
+         editButton.addEventListener("click", function(e) {
+          if (container.className == "container dynamic") {
+           editor.setAttribute("contenteditable", false);
+           container.className = "container static";
+          } else {
+           editor.setAttribute("contenteditable", true);
+           container.className = "container dynamic";
+          }
+         });
+        })(message);
+       }
+      };
+    </script>
   </head>
   <body>
     <div id="page">
@@ -19,7 +41,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
               <div class="message">
                 <div class="avatar">
@@ -30,7 +54,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
               <div class="message">
                 <div class="avatar">
@@ -41,7 +67,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
               <div class="message">
                 <div class="avatar">
@@ -52,7 +80,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
               <div class="message">
                 <div class="avatar">
@@ -63,7 +93,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
               <div class="message">
                 <div class="avatar">
@@ -74,7 +106,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
               <div class="message">
                 <div class="avatar">
@@ -85,7 +119,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
               <div class="message">
                 <div class="avatar">
@@ -96,7 +132,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
               <div class="message">
                 <div class="avatar">
@@ -107,7 +145,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
               <div class="message">
                 <div class="avatar">
@@ -118,7 +158,9 @@
                     <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
             </div>
           </div>
@@ -130,10 +172,14 @@
                 </div>
                 <div class="content">
                   <div class="container dynamic">
-                    <div contenteditable="true" class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                    <div contenteditable="true" class="editor">
+                      <!--img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")-->
+                    </div>
                   </div>
                 </div>
-                <div class="tools">"tools"</div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
               </div>
             </div>
           </div>
