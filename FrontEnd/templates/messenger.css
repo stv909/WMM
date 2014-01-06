@@ -198,8 +198,13 @@ html {
   border-left: 1px solid #ddd;
 }
 #chat #chatbox #board #composer {
-  background-color: #ebf5ff;
   height: 1%;
+}
+#chat #chatbox #board #composer.static {
+  background-color: #fff;
+}
+#chat #chatbox #board #composer.dynamic {
+  background-color: #ebf5ff;
 }
 #chat #chatbox #board #composer >.wrap {
   border-top: 1px solid #ddd;
@@ -262,16 +267,16 @@ html {
   overflow: scroll;
   max-height: 20.5em;
 }
-#chat .message .content .container.dynamic::-webkit-scrollbar-track:vertical {
+#chat .message .content .container::-webkit-scrollbar-track:vertical {
   border-left: 1px solid #ddd;
 }
-#chat .message .content .container.dynamic::-webkit-scrollbar-track:horizontal {
+#chat .message .content .container::-webkit-scrollbar-track:horizontal {
   border-top: 1px solid #ddd;
 }
-#chat .message .content .container.dynamic::-webkit-scrollbar-thumb:vertical {
+#chat .message .content .container::-webkit-scrollbar-thumb:vertical {
   border-left: 1px solid #ddd;
 }
-#chat .message .content .container.dynamic::-webkit-scrollbar-thumb:horizontal {
+#chat .message .content .container::-webkit-scrollbar-thumb:horizontal {
   border-top: 1px solid #ddd;
 }
 #chat .message .content .container .editor {

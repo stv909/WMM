@@ -172,8 +172,11 @@ body, html
             &:vertical
               border-left 1px solid main-border-color
       #composer
-        background-color #ebf5ff
         height 1%
+        &.static
+          background-color #fff
+        &.dynamic
+          background-color #ebf5ff
         >.wrap
           border-top 1px solid main-border-color
           overflow hidden
@@ -221,16 +224,16 @@ body, html
           outline 2px solid main-border-color
           overflow scroll
           max-height 20em + scroll-height
-          &::-webkit-scrollbar-track
-            &:vertical
-              border-left 1px solid main-border-color
-            &:horizontal
-              border-top 1px solid main-border-color
-          &::-webkit-scrollbar-thumb
-            &:vertical
-              border-left 1px solid main-border-color
-            &:horizontal
-              border-top 1px solid main-border-color
+        &::-webkit-scrollbar-track
+          &:vertical
+            border-left 1px solid main-border-color
+          &:horizontal
+            border-top 1px solid main-border-color
+        &::-webkit-scrollbar-thumb
+          &:vertical
+            border-left 1px solid main-border-color
+          &:horizontal
+            border-top 1px solid main-border-color
         .editor
           width content-width - scroll-width
           min-height 3em

@@ -44,7 +44,7 @@ window.onload = function() {
         var containerElem = messageElem.getElementsByClassName("container")[0];
         var isOverflow = checkElemOverflow(containerElem);
         if (isOverflow) {
-            containerElem.style["outline"] = "2px solid #fffa94";
+            containerElem.style["outline"] = "2px solid #fffc63";
         } else {
             containerElem.style["outline"] = "2px solid #fff";
         }
@@ -71,8 +71,8 @@ window.onload = function() {
 
         messageElem.className = "message dynamic";
         containerElem.className = "container dynamic";
-        containerElem.style["overflow"] = "auto";
-        containerElem.style["outline"] = "2px solid #eee";
+        containerElem.style["overflow"] = "scroll";
+        containerElem.style["outline"] = "2px solid #ddd";
         editorElem.setAttribute("contenteditable", "true");
     };
     var endEditingMessageElem = function(messageElem) {
@@ -101,12 +101,20 @@ window.onload = function() {
     };
     var disableMessageComposer = function() {
         var messageElem = composerElem.getElementsByClassName("message")[0];
+        var container = messageElem.getElementsByClassName("container")[0];
         var editorElem = messageElem.getElementsByClassName("editor")[0];
+        composerElem.className = "composer static";
+        messageElem.className = "message static";
+        container.className = "container static";
         editorElem.setAttribute("contenteditable", "false");
     };
     var enableMessageComposer = function() {
         var messageElem = composerElem.getElementsByClassName("message")[0];
+        var container = messageElem.getElementsByClassName("container")[0];
         var editorElem = messageElem.getElementsByClassName("editor")[0];
+        composerElem.className = "composer dynamic";
+        messageElem.className = "message dynamic";
+        container.className = "container dynamic";
         editorElem.setAttribute("contenteditable", "true");
     };
 
