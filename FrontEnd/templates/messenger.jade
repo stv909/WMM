@@ -34,7 +34,7 @@ mixin controls(composite)
 		else
 			.simple-button.edit edit
 			.simple-button.share share
-			.simple-button.fullscren fullscreen
+			.simple-button.fullscreen fullscreen
 			.simple-button.negative.delete delete
 
 mixin message(editable, composite)
@@ -58,7 +58,7 @@ mixin message(editable, composite)
 			.content
 				.container.static
 					.editor(contenteditable="false")
-						//img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
+						img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
 			if composite
 				+controls(true)
 			else

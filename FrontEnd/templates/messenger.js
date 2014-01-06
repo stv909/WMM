@@ -23,17 +23,36 @@ window.onload = function() {
     var appendMessageElem = function(messageElem) {
         streamWrapElem.appendChild(messageElem);
     };
+    var scrollToBottom = function(elem) {
+        elem.scrollTop = elem.scrollHeight;
+    };
 
     var imbueStreamMessageElem = function(messageElem) {
         var deleteElem = messageElem.getElementsByClassName("delete")[0];
         var editElem = messageElem.getElementsByClassName("edit")[0];
         var fullscreenElem = messageElem.getElementsByClassName("fullscreen")[0];
+        var shareElem = messageElem.getElementsByClassName("share")[0];
 
+        var editElemHandler = function() {
+            alert("Not implemented");
+        };
+        var fullscreenElemHandler = function() {
+            alert("Not implemented");
+        };
+        var shareElemHandler = function() {
+            alert("Not implemented");
+        };
         var deleteElemHandler = function() {
+            editElem.removeEventListener("click", editElemHandler);
+            fullscreenElem.removeEventListener("click", fullscreenElemHandler);
+            shareElem.removeEventListener("click", shareElemHandler);
             deleteElem.removeEventListener("click", deleteElemHandler);
             streamWrapElem.removeChild(messageElem);
         };
 
+        editElem.addEventListener("click", editElemHandler);
+        fullscreenElem.addEventListener("click", fullscreenElemHandler);
+        shareElem.addEventListener("click", shareElemHandler);
         deleteElem.addEventListener("click", deleteElemHandler);
     };
     var imbueComposerMessageElem = function(messageElem) {
@@ -46,6 +65,7 @@ window.onload = function() {
 
             imbueStreamMessageElem(newMessageElem);
             appendMessageElem(newMessageElem);
+            scrollToBottom(streamWrapElem);
             clearMessageElem(messageElem);
         });
         clearElem.addEventListener("click", function() {
