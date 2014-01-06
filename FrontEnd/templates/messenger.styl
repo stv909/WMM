@@ -13,6 +13,8 @@ controls-width = chat-width - (avatar-width + content-width + 4 * scroll-width)
 
 main-border-color = #ddd
 second-border-color = #eee
+thumb-color = #eee
+second-thumb-color = #999
 main-menu-color = rgb(21, 112, 166)
 titles-color = rgb(238, 238, 238)
 
@@ -24,7 +26,7 @@ titles-color = rgb(238, 238, 238)
   height real-scroll-height
   margin 0 auto
 ::-webkit-scrollbar-thumb
-  background-color second-border-color
+  background-color thumb-color
 
 *
   outline none
@@ -230,13 +232,14 @@ body, html
           &:horizontal
             border-top 1px solid main-border-color
         &::-webkit-scrollbar-thumb
+          background-color second-thumb-color
           &:vertical
             border-left 1px solid main-border-color
           &:horizontal
             border-top 1px solid main-border-color
         .editor
           width content-width - scroll-width
-          min-height 3em
+          min-height 4em
     .controls
       text-align center
       width controls-width

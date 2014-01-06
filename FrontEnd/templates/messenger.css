@@ -273,6 +273,9 @@ html {
 #chat .message .content .container::-webkit-scrollbar-track:horizontal {
   border-top: 1px solid #ddd;
 }
+#chat .message .content .container::-webkit-scrollbar-thumb {
+  background-color: #999;
+}
 #chat .message .content .container::-webkit-scrollbar-thumb:vertical {
   border-left: 1px solid #ddd;
 }
@@ -281,7 +284,7 @@ html {
 }
 #chat .message .content .container .editor {
   width: 32.5em;
-  min-height: 3em;
+  min-height: 4em;
 }
 #chat .message .controls {
   text-align: center;
