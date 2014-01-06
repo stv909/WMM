@@ -94,6 +94,8 @@ window.onload = function() {
         messageElem.className = "message static";
         containerElem.className = "container static";
         containerElem.style["overflow"] = "hidden";
+        containerElem.scrollTop = 0;
+        containerElem.scrollLeft = 0;
         editorElem.setAttribute("contenteditable", "false");
     };
     var scrollToBottom = function(elem) {
