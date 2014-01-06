@@ -99,6 +99,16 @@ window.onload = function() {
     var scrollToBottom = function(elem) {
         elem.scrollTop = elem.scrollHeight;
     };
+    var disableMessageComposer = function() {
+        var messageElem = composerElem.getElementsByClassName("message")[0];
+        var editorElem = messageElem.getElementsByClassName("editor")[0];
+        editorElem.setAttribute("contenteditable", "false");
+    };
+    var enableMessageComposer = function() {
+        var messageElem = composerElem.getElementsByClassName("message")[0];
+        var editorElem = messageElem.getElementsByClassName("editor")[0];
+        editorElem.setAttribute("contenteditable", "true");
+    };
 
     var imbueStreamMessageElem = function(messageElem) {
         var deleteElem = messageElem.getElementsByClassName("delete")[0];
@@ -111,8 +121,10 @@ window.onload = function() {
             if (isEditingMessageElem(messageElem)) {
                 endEditingMessageElem(messageElem);
                 checkMessageElemOverflow(messageElem);
+                enableMessageComposer();
             } else {
                 beginEditingMessageElem(messageElem);
+                disableMessageComposer();
             }
         };
         var clearElemHandler = function() {
