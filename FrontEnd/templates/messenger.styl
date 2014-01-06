@@ -9,6 +9,7 @@ chat-width = 45em
 tools-width = page-width - (contacts-width + chat-width)
 avatar-width = 6em
 content-width = 33em
+controls-width = chat-width - (avatar-width + content-width + 4 * scroll-width)
 
 main-border-color = #ddd
 second-border-color = #eee
@@ -80,7 +81,7 @@ body, html
         padding-bottom 0.5em
         width 100%
         text-align center
-        font-size 1em
+        font-size 0.95em
         border-bottom 1px solid #ddd
 #contacts, #chat, #tools
   position relative
@@ -107,13 +108,28 @@ body, html
       width contacts-width //- scroll-width
       .contact
         font-size 0.8em
-        padding-left 2.5em
-        padding-top 1em
-        padding-bottom 1em
+        padding-left 1em
+        padding-top 0.75em
+        padding-bottom 0.75em
         border-bottom 1px solid second-border-color
+        transition all 200ms ease
         &:hover
           background-color #55BB55
           color white
+        .avatar, .name
+          display inline-block
+          vertical-align top
+        .avatar
+          >div
+            width 2.5em;
+            height 2.5em;
+          img
+            outline 1px solid white
+            width 100%
+            box-shadow 0 0 0.5em #aaa
+        .name
+          margin-left 0.5em
+          margin-top 0.5em
 #chat
   width chat-width
   >.wrap
@@ -137,14 +153,15 @@ body, html
         display table-row
       #conversation
         text-align center
+        min-height 1%
         >.wrap
-          font-size 0.9em
+          font-size 0.8em
           padding-top 0.5em
           padding-bottom 0.5em
           background-color #fffcf1
           border-bottom 1px solid main-border-color
       #stream
-        height 95%
+        height 98%
         >.wrap
           height 100%
           overflow-y scroll
@@ -155,7 +172,8 @@ body, html
             &:vertical
               border-left 1px solid main-border-color
       #composer
-        height 5%
+        background-color #ebf5ff
+        height 1%
         >.wrap
           border-top 1px solid main-border-color
           overflow hidden
@@ -165,9 +183,13 @@ body, html
     padding-top 0.75em
     padding-bottom 0.5em
     width chat-width - scroll-width
-    &:not(:last-child)
-      border-bottom 1px solid second-border-color
-    .avatar, .content, .tools
+    /*&:not(:last-child)*/
+    border-bottom 1px solid second-border-color
+    &.static
+      background-color white
+    &.dynamic
+      background-color #ebf5ff
+    .avatar, .content, .controls
       display inline-block
       vertical-align top
     .avatar
@@ -187,7 +209,7 @@ body, html
         background-color white
         position relative
         display inline-block
-        min-height 4em
+        min-height 5em
         box-shadow 0 0 0.5em #aaa
         &.static
           width content-width - scroll-width
@@ -212,3 +234,33 @@ body, html
         .editor
           width content-width - scroll-width
           min-height 3em
+    .controls
+      text-align center
+      width controls-width
+      padding-left 0.25em
+      .simple-button
+        background-color white
+        cursor pointer
+        font-size 0.75em
+        color #888
+        border 1px solid #eee
+        padding-top 0.25em
+        padding-bottom 0.255em
+        margin-bottom 0.25em
+        transition all 200ms ease
+        &:hover
+          background-color #55BB55
+          border 1px solid #55BB55
+          box-shadow 0 0 0.5em #aaa
+          color #fff
+        &.negative
+          margin-top 1em
+          &:hover
+            background-color #dd2222
+            border 1px solid #dd2222
+
+#hide-composer
+  z-index 10
+  position fixed
+  right 1em
+  top 1em

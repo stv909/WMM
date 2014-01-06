@@ -79,7 +79,7 @@ html {
   padding-bottom: 0.5em;
   width: 100%;
   text-align: center;
-  font-size: 1em;
+  font-size: 0.95em;
   border-bottom: 1px solid #ddd;
 }
 #contacts,
@@ -116,14 +116,33 @@ html {
 }
 #contacts >.wrap >.list .contact {
   font-size: 0.8em;
-  padding-left: 2.5em;
-  padding-top: 1em;
-  padding-bottom: 1em;
+  padding-left: 1em;
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
   border-bottom: 1px solid #eee;
+  transition: all 200ms ease;
 }
 #contacts >.wrap >.list .contact:hover {
   background-color: #5b5;
   color: #fff;
+}
+#contacts >.wrap >.list .contact .avatar,
+#contacts >.wrap >.list .contact .name {
+  display: inline-block;
+  vertical-align: top;
+}
+#contacts >.wrap >.list .contact .avatar >div {
+  width: 2.5em;
+  height: 2.5em;
+}
+#contacts >.wrap >.list .contact .avatar img {
+  outline: 1px solid #fff;
+  width: 100%;
+  box-shadow: 0 0 0.5em #aaa;
+}
+#contacts >.wrap >.list .contact .name {
+  margin-left: 0.5em;
+  margin-top: 0.5em;
 }
 #chat {
   width: 45em;
@@ -156,16 +175,17 @@ html {
 }
 #chat #chatbox #board #conversation {
   text-align: center;
+  min-height: 1%;
 }
 #chat #chatbox #board #conversation >.wrap {
-  font-size: 0.9em;
+  font-size: 0.8em;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   background-color: #fffcf1;
   border-bottom: 1px solid #ddd;
 }
 #chat #chatbox #board #stream {
-  height: 95%;
+  height: 98%;
 }
 #chat #chatbox #board #stream >.wrap {
   height: 100%;
@@ -178,7 +198,8 @@ html {
   border-left: 1px solid #ddd;
 }
 #chat #chatbox #board #composer {
-  height: 5%;
+  background-color: #ebf5ff;
+  height: 1%;
 }
 #chat #chatbox #board #composer >.wrap {
   border-top: 1px solid #ddd;
@@ -190,13 +211,18 @@ html {
   padding-top: 0.75em;
   padding-bottom: 0.5em;
   width: 44.5em;
-}
-#chat .message:not(:last-child) {
+/*&:not(:last-child)*/
   border-bottom: 1px solid #eee;
+}
+#chat .message.static {
+  background-color: #fff;
+}
+#chat .message.dynamic {
+  background-color: #ebf5ff;
 }
 #chat .message .avatar,
 #chat .message .content,
-#chat .message .tools {
+#chat .message .controls {
   display: inline-block;
   vertical-align: top;
 }
@@ -221,7 +247,7 @@ html {
   background-color: #fff;
   position: relative;
   display: inline-block;
-  min-height: 4em;
+  min-height: 5em;
   box-shadow: 0 0 0.5em #aaa;
 }
 #chat .message .content .container.static {
@@ -251,4 +277,39 @@ html {
 #chat .message .content .container .editor {
   width: 32.5em;
   min-height: 3em;
+}
+#chat .message .controls {
+  text-align: center;
+  width: 4em;
+  padding-left: 0.25em;
+}
+#chat .message .controls .simple-button {
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 0.75em;
+  color: #888;
+  border: 1px solid #eee;
+  padding-top: 0.25em;
+  padding-bottom: 0.255em;
+  margin-bottom: 0.25em;
+  transition: all 200ms ease;
+}
+#chat .message .controls .simple-button:hover {
+  background-color: #5b5;
+  border: 1px solid #5b5;
+  box-shadow: 0 0 0.5em #aaa;
+  color: #fff;
+}
+#chat .message .controls .simple-button.negative {
+  margin-top: 1em;
+}
+#chat .message .controls .simple-button.negative:hover {
+  background-color: #d22;
+  border: 1px solid #d22;
+}
+#hide-composer {
+  z-index: 10;
+  position: fixed;
+  right: 1em;
+  top: 1em;
 }

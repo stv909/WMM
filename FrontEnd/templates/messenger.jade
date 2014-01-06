@@ -1,52 +1,68 @@
 mixin contact(name)
-	.contact= name
+	.contact
+		.avatar
+			div
+				img(src=attributes["src"])
+		.name
+			div= name
 
 mixin contact-list
 	.list
-		+contact("Taisha Southwood")
-		+contact("Charlott Kagawa")
-		+contact("Dawn Bromley")
-		+contact("Deshawn Grumbles")
-		+contact("Emmanuel Chaves")
-		+contact("Taisha Southwood")
-		+contact("Charlott Kagawa")
-		+contact("Taisha Southwood")
-		+contact("Charlott Kagawa")
-		+contact("Dawn Bromley")
-		+contact("Deshawn Grumbles")
-		+contact("Emmanuel Chaves")
-		+contact("Taisha Southwood")
-		+contact("Charlott Kagawa")
-		+contact("Taisha Southwood")
-		+contact("Charlott Kagawa")
-		+contact("Dawn Bromley")
-		+contact("Deshawn Grumbles")
-		+contact("Emmanuel Chaves")
-		+contact("Taisha Southwood")
-		+contact("Charlott Kagawa")
-		+contact("Taisha Southwood")
-		+contact("Charlott Kagawa")
-		+contact("Dawn Bromley")
-		+contact("Deshawn Grumbles")
-		+contact("Emmanuel Chaves")
-		+contact("Taisha Southwood")
-		+contact("Charlott Kagawa")
+		+contact("Taisha Southwood")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Charlott Kagawa")(src="http://audiotool.s3.amazonaws.com/users/amaury_aguirre/avatar1/1f866b56-5805-418e-8406-c35ad2827fd1.jpg")
+		+contact("Dawn Bromley")(src="http://images.wikia.com/half-life/en/images/archive/7/7c/20120621204410!Signcombine002b.png")
+		+contact("Deshawn Grumbles")(src="http://lh4.googleusercontent.com/-GWO1SPUrt-M/AAAAAAAAAAI/AAAAAAAAAB0/2pNfvHYUYRM/s512-c/photo.jpg")
+		+contact("Emmanuel Chaves")(src="https://lh4.googleusercontent.com/-MpAjaJtaeao/UoeppuNeqJI/AAAAAAAAAKg/pua5nqZxsgY/Dishonored-Game-HD-Wallpapers.jpg")
+		+contact("Charlott Kagawa")(src="http://audiotool.s3.amazonaws.com/users/amaury_aguirre/avatar1/1f866b56-5805-418e-8406-c35ad2827fd1.jpg")
+		+contact("Dawn Bromley")(src="https://lh4.googleusercontent.com/-kGEEJhJX8SA/AAAAAAAAAAI/AAAAAAAAAic/RRx0YDA-1Bc/photo.jpg")
+		+contact("Deshawn Grumbles")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Emmanuel Chaves")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Charlott Kagawa")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Dawn Bromley")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Deshawn Grumbles")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Emmanuel Chaves")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Charlott Kagawa")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Dawn Bromley")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Deshawn Grumbles")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+		+contact("Emmanuel Chaves")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
 
-mixin message(editable)
-	.message
-		.avatar
-			.image
-				img(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		.content
-			if editable
+mixin controls(composite)
+	.controls
+		if composite
+			.simple-button.send send
+			.simple-button.negative.clear clear
+		else
+			.simple-button.edit edit
+			.simple-button.share share
+			.simple-button.fullscren fullscreen
+			.simple-button.negative.delete delete
+
+mixin message(editable, composite)
+	if editable
+		.message.dynamic
+			.avatar
+				.image
+					img(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+			.content
 				.container.dynamic
 					.editor(contenteditable="true")
-						//img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
+			if composite
+				+controls(true)
 			else
+				+controls(false)
+	else
+		.message.static
+			.avatar
+				.image
+					img(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+			.content
 				.container.static
 					.editor(contenteditable="false")
-						img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
-		.tools
+						//img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
+			if composite
+				+controls(true)
+			else
+				+controls(false)
 
 mixin chatbox
 	#chatbox
@@ -57,21 +73,21 @@ mixin chatbox
 				#stream
 					.wrap
 						+message
-						+message
-						+message
-						+message
-						+message
-						+message
-						+message
-						+message
-						+message
-						+message
-						+message
-						+message
-						+message
+						//+message
+						//+message
+						//+message
+						//+message
+						//+message
+						//+message
+						//+message
+						//+message
+						//+message
+						//+message
+						//+message
+						//+message
 				#composer
 					.wrap
-						+message(true)
+						+message(true, true)
 
 doctype html
 html
@@ -80,6 +96,9 @@ html
 		link(rel="stylesheet", href="messenger.css")
 		script(type="application/javascript", src="messenger.js")
 	body
+		#template(style="display:none")
+			+message
+		button#hide-composer Hide composer
 		#page
 			.wrap
 				#application
