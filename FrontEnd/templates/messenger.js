@@ -1,7 +1,86 @@
 window.onload = function() {
 
+    var contactInfoCollection = [
+        {
+            nick: "@taisha",
+            name: "Taisha Southwood",
+            image: "http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg"
+        },
+        {
+            nick: "@kagawa",
+            name: "Charlott Kagawa",
+            image: "http://audiotool.s3.amazonaws.com/users/amaury_aguirre/avatar1/1f866b56-5805-418e-8406-c35ad2827fd1.jpg"
+        },
+        {
+            nick: "@bromley",
+            name: "Dawn Bromley",
+            image: "http://images.wikia.com/half-life/en/images/archive/7/7c/20120621204410!Signcombine002b.png"
+        },
+        {
+            nick: "@dgrumbles",
+            name: "Deshawn Grumbles",
+            image: "http://lh4.googleusercontent.com/-GWO1SPUrt-M/AAAAAAAAAAI/AAAAAAAAAB0/2pNfvHYUYRM/s512-c/photo.jpg"
+        },
+        {
+            nick: "@chaves",
+            name: "Emmanuel Chaves",
+            image: "https://lh4.googleusercontent.com/-MpAjaJtaeao/UoeppuNeqJI/AAAAAAAAAKg/pua5nqZxsgY/Dishonored-Game-HD-Wallpapers.jpg"
+        },
+        {
+            nick: "@van",
+            name: "Van Hamilton",
+            image: "http://lh4.googleusercontent.com/-51hVeEEUgKY/AAAAAAAAAAI/AAAAAAAAAQ4/HaG-is0NR9A/s512-c/photo.jpg"
+        },
+        {
+            nick: "@patp",
+            name: "Pat Parsons",
+            image: "http://cs410130.vk.me/v410130260/a0ae/2ArkavZk_Cg.jpg"
+        },
+        {
+            nick: "@guerrero",
+            name: "Paula Guerrero",
+            image: "https://lh3.googleusercontent.com/-KkOROFdN_oY/AAAAAAAAAAI/AAAAAAAAAKA/7vJLNjlNwtA/photo.jpg"
+        },
+        {
+            nick: "@tbrady",
+            name: "Taylor Brady",
+            image: "http://dontnukethesenate.com/images/Share-image-512x512.jpg"
+        },
+        {
+            nick: "@nashm",
+            name: "Mack Nash",
+            image: "https://lh3.googleusercontent.com/-acRyPjeitnQ/UoZCWKpcJDI/AAAAAAAAAFE/QRbrQ7UxG7g/darth-vader-in-the-dark.jpg"
+        },
+        {
+            nick: "emanuel",
+            name: "Emanuel Henderson",
+            image: "https://lh4.googleusercontent.com/-9sd0z-vrgrY/UsAG22N0rtI/AAAAAAAAABw/fJddeEiF-Z4/feat-co-op-diablo-iii-ps3-gameplay.jpg"
+        },
+        {
+            nick: "@vmann",
+            name: "Vera Mann",
+            image: "https://lh6.ggpht.com/PKbl7fkmfHE43C3wSXhmpbIaCP56NDCZfEjGVxPq_Jaop4CnUlWXf_AJtW_LI4RKex0"
+        },
+        {
+            nick: "@mendoza",
+            name: "Olive Mendoza",
+            image: "http://static1.wikia.nocookie.net/__cb20120606144948/bioshock/ru/images/e/ed/Hop-Up_Cola_1.jpg"
+        },
+        {
+            nick: "@pswanson",
+            name: "Perry Swanson",
+            image: "https://lh5.googleusercontent.com/-h5wokt1GCyE/AAAAAAAAAAI/AAAAAAAAABE/CSRW9LsxP-8/photo.jpg"
+        },
+        {
+            nick: "@mcastillo",
+            name: "Merle Castillo",
+            image: "https://lh4.googleusercontent.com/-7M-nFqrW_7s/USEcu-ynEyI/AAAAAAAAADs/-q58nGryJ6U/17292_fallout.jpg"
+        }
+    ];
+
     var pageElem = document.getElementById("page");
     var dialogElem = document.getElementById("dialog");
+    var contactsElem = document.getElementById("contacts");
     var streamElem = document.getElementById("stream");
     var streamWrapElem = streamElem.getElementsByClassName("wrap")[0];
     var composerElem = document.getElementById("composer");
@@ -175,6 +254,27 @@ window.onload = function() {
         contentElem.scrollTop = 0;
     };
 
+    var createContactElem = function(contactInfo) {
+        var templateElem = document.getElementById("template");
+        var contactElem = templateElem.getElementsByClassName("contact")[0];
+
+        var newContactElem = contactElem.cloneNode(true);
+        var avatarImageElem = newContactElem.getElementsByClassName("avatar-image")[0];
+        var nameTextElem = newContactElem.getElementsByClassName("name-text")[0];
+
+        newContactElem.setAttribute("title", contactInfo.nick);
+        avatarImageElem.setAttribute("src", contactInfo.image);
+        nameTextElem.innerText = contactInfo.name;
+
+        return newContactElem;
+    };
+    var appendContactElem = function(contactElem) {
+        var wrapElem = contactsElem.getElementsByClassName("wrap")[0];
+        var listElem = wrapElem.getElementsByClassName("list")[0];
+
+        listElem.appendChild(contactElem);
+    };
+
     var imbueStreamMessageElem = function(messageElem) {
         var deleteElem = messageElem.getElementsByClassName("delete")[0];
         var clearElem = messageElem.getElementsByClassName("clear")[0];
@@ -198,6 +298,7 @@ window.onload = function() {
         };
         var cancelElemHandler = function() {
             cancelEditingMessageElem(messageElem);
+            checkMessageElemOverflow(messageElem);
             endEditingMessageElem(messageElem);
             enableMessageComposer();
         };
@@ -262,10 +363,18 @@ window.onload = function() {
         var closeElem = dialogElem.getElementsByClassName("close")[0];
         closeElem.addEventListener("click", hideDialogElem);
     };
+    var initializeContactsElem = function() {
+        for (var i = 0; i < contactInfoCollection.length; i++) {
+            var contactInfo = contactInfoCollection[i];
+            var contactElem = createContactElem(contactInfo);
+            appendContactElem(contactElem);
+        }
+    };
 
     initializeStreamMessageElems();
     initializeComposerMessageElem();
     initializeDialogElem();
+    initializeContactsElem();
 
     // AddHoc
     var hideComposerElem = document.getElementById("hide-composer");

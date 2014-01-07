@@ -1,30 +1,10 @@
-mixin contact(name)
+mixin contact
 	.contact
 		.avatar
 			div
-				img(src=attributes["src"])
+				img.avatar-image
 		.name
-			div= name
-
-mixin contact-list
-	.list
-		+contact("Taisha Southwood")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Charlott Kagawa")(src="http://audiotool.s3.amazonaws.com/users/amaury_aguirre/avatar1/1f866b56-5805-418e-8406-c35ad2827fd1.jpg")
-		+contact("Dawn Bromley")(src="http://images.wikia.com/half-life/en/images/archive/7/7c/20120621204410!Signcombine002b.png")
-		+contact("Deshawn Grumbles")(src="http://lh4.googleusercontent.com/-GWO1SPUrt-M/AAAAAAAAAAI/AAAAAAAAAB0/2pNfvHYUYRM/s512-c/photo.jpg")
-		+contact("Emmanuel Chaves")(src="https://lh4.googleusercontent.com/-MpAjaJtaeao/UoeppuNeqJI/AAAAAAAAAKg/pua5nqZxsgY/Dishonored-Game-HD-Wallpapers.jpg")
-		+contact("Charlott Kagawa")(src="http://audiotool.s3.amazonaws.com/users/amaury_aguirre/avatar1/1f866b56-5805-418e-8406-c35ad2827fd1.jpg")
-		+contact("Dawn Bromley")(src="https://lh4.googleusercontent.com/-kGEEJhJX8SA/AAAAAAAAAAI/AAAAAAAAAic/RRx0YDA-1Bc/photo.jpg")
-		+contact("Deshawn Grumbles")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Emmanuel Chaves")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Charlott Kagawa")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Dawn Bromley")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Deshawn Grumbles")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Emmanuel Chaves")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Charlott Kagawa")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Dawn Bromley")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Deshawn Grumbles")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
-		+contact("Emmanuel Chaves")(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+			div.name-text
 
 mixin controls(composite)
 	.controls
@@ -61,7 +41,7 @@ mixin message(editable, composite)
 				.container.static
 					.editor(contenteditable="false")
 						img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
-						//iframe(width="100%", height="315px" ,src="//www.youtube.com/embed/h5EofwRzit0", frameborder="0", allowfullscreen)
+						//iframe(width="100%", height="100%" ,src="//www.youtube.com/embed/h5EofwRzit0", frameborder="0", allowfullscreen)
 			if composite
 				+controls(true)
 			else
@@ -76,18 +56,6 @@ mixin chatbox
 				#stream
 					.wrap
 						+message
-						//+message
-						//+message
-						//+message
-						//+message
-						//+message
-						//+message
-						//+message
-						//+message
-						//+message
-						//+message
-						//+message
-						//+message
 				#composer.dynamic
 					.wrap
 						+message(true, true)
@@ -101,6 +69,7 @@ html
 	body
 		#template(style="display:none")
 			+message
+			+contact
 		button#hide-composer Hide composer
 		#page
 			.wrap
@@ -119,7 +88,7 @@ html
 							.row
 								#contacts.cell
 									.wrap
-										+contact-list
+										.list
 								#chat.cell
 									.wrap
 										+chatbox
