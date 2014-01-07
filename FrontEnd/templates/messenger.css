@@ -351,6 +351,9 @@ html {
   height: 100%;
   overflow: auto;
 }
+#dialog .container .content::-webkit-scrollbar-thumb {
+  background-color: #999;
+}
 #dialog .close {
   margin-right: 1em;
   float: right;
