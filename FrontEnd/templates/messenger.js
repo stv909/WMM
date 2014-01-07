@@ -31,6 +31,10 @@ window.onload = function() {
         var editor = messageElem.getElementsByClassName("editor")[0];
         return editor.innerHTML;
     };
+    var setMessageElemContent = function(messageElem, content) {
+        var editorElem = messageElem.getElementsByClassName("editor")[0];
+        editorElem.innerHTML = content;
+    };
     var createMessageElem = function(content) {
         var templateElem = document.getElementById("template");
         var messageElem = templateElem.getElementsByClassName("message")[0];
@@ -56,6 +60,7 @@ window.onload = function() {
         return containerElems.length !== 0;
     };
     var currentMessageElem = null;
+    var currentMessageContent = null;
     var messageElemHandler = function(e) {
         e.stopPropagation();
     };
@@ -75,6 +80,7 @@ window.onload = function() {
 
         var editElem = messageElem.getElementsByClassName("edit")[0];
         var clearElem = messageElem.getElementsByClassName("clear")[0];
+        var cancelElem = messageElem.getElementsByClassName("cancel")[0];
         var shareElem = messageElem.getElementsByClassName("share")[0];
         var fullscreenElem = messageElem.getElementsByClassName("fullscreen")[0];
         var deleteElem = messageElem.getElementsByClassName("delete")[0];
@@ -84,6 +90,7 @@ window.onload = function() {
 
         editElem.innerText = "finish";
         clearElem.style["display"] = "block";
+        cancelElem.style["display"] = "block";
         shareElem.style["display"] = "none";
         fullscreenElem.style["display"] = "none";
         deleteElem.style["display"] = "none";
@@ -95,11 +102,13 @@ window.onload = function() {
         editorElem.setAttribute("contenteditable", "true");
 
         currentMessageElem = messageElem;
+        currentMessageContent = getMessageElemContent(currentMessageElem);
         messageElem.addEventListener("click", messageElemHandler);
     };
     var endEditingMessageElem = function(messageElem) {
         var editElem = messageElem.getElementsByClassName("edit")[0];
         var clearElem = messageElem.getElementsByClassName("clear")[0];
+        var cancelElem = messageElem.getElementsByClassName("cancel")[0];
         var shareElem = messageElem.getElementsByClassName("share")[0];
         var fullscreenElem = messageElem.getElementsByClassName("fullscreen")[0];
         var deleteElem = messageElem.getElementsByClassName("delete")[0];
@@ -109,6 +118,7 @@ window.onload = function() {
 
         editElem.innerText = "edit";
         clearElem.style["display"] = "none";
+        cancelElem.style["display"] = "none";
         shareElem.style["display"] = "block";
         fullscreenElem.style["display"] = "block";
         deleteElem.style["display"] = "block";
@@ -122,6 +132,10 @@ window.onload = function() {
 
         messageElem.removeEventListener("click", messageElemHandler);
         currentMessageElem = null;
+        currentMessageContent = null;
+    };
+    var cancelEditingMessageElem = function(messageElem) {
+        setMessageElemContent(messageElem, currentMessageContent);
     };
     var scrollToBottom = function(elem) {
         elem.scrollTop = elem.scrollHeight;
@@ -164,6 +178,7 @@ window.onload = function() {
     var imbueStreamMessageElem = function(messageElem) {
         var deleteElem = messageElem.getElementsByClassName("delete")[0];
         var clearElem = messageElem.getElementsByClassName("clear")[0];
+        var cancelElem = messageElem.getElementsByClassName("cancel")[0];
         var editElem = messageElem.getElementsByClassName("edit")[0];
         var fullscreenElem = messageElem.getElementsByClassName("fullscreen")[0];
         var shareElem = messageElem.getElementsByClassName("share")[0];
@@ -181,6 +196,11 @@ window.onload = function() {
         var clearElemHandler = function() {
             clearMessageElem(messageElem);
         };
+        var cancelElemHandler = function() {
+            cancelEditingMessageElem(messageElem);
+            endEditingMessageElem(messageElem);
+            enableMessageComposer();
+        };
         var fullscreenElemHandler = function() {
             var messageContent = getMessageElemContent(messageElem);
             showDialogElem(messageContent);
@@ -191,6 +211,7 @@ window.onload = function() {
         var deleteElemHandler = function() {
             editElem.removeEventListener("click", editElemHandler);
             clearElem.removeEventListener("click", clearElemHandler);
+            cancelElem.removeEventListener("click", cancelElemHandler);
             fullscreenElem.removeEventListener("click", fullscreenElemHandler);
             shareElem.removeEventListener("click", shareElemHandler);
             deleteElem.removeEventListener("click", deleteElemHandler);
@@ -199,6 +220,7 @@ window.onload = function() {
 
         editElem.addEventListener("click", editElemHandler);
         clearElem.addEventListener("click", clearElemHandler);
+        cancelElem.addEventListener("click", cancelElemHandler);
         fullscreenElem.addEventListener("click", fullscreenElemHandler);
         shareElem.addEventListener("click", shareElemHandler);
         deleteElem.addEventListener("click", deleteElemHandler);
