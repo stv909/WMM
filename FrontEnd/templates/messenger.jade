@@ -55,7 +55,7 @@ mixin chatbox
 					.wrap Deshawn Grumbles and Me
 				#stream
 					.wrap
-						+message
+						//+message
 				#composer.dynamic
 					.wrap
 						+message(true, true)
@@ -71,6 +71,7 @@ html
 			+message
 			+contact
 		button#hide-composer Hide composer
+		button#add-message Add message
 		#page
 			.wrap
 				#application

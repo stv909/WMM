@@ -366,3 +366,9 @@ html {
   right: 1em;
   top: 1em;
 }
+#add-message {
+  z-index: 10;
+  position: fixed;
+  right: 1em;
+  top: 3em;
+}

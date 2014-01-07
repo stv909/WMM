@@ -254,6 +254,38 @@ window.onload = function() {
         contentElem.scrollTop = 0;
     };
 
+    var chats = {};
+    var currentContactName = null;
+
+    var changeChat = function(contactInfo) {
+        if (currentContactName !== contactInfo.name) {
+            currentContactName = contactInfo.name;
+            chats[currentContactName] = chats[currentContactName] || [];
+            var contents = chats[currentContactName];
+
+            var conversationTitleElem = document
+                .getElementById("conversation")
+                .getElementsByClassName("wrap")[0];
+            var streamMessagesElem = document
+                .getElementById("stream")
+                .getElementsByClassName("wrap")[0];
+
+            streamMessagesElem.innerHTML = "";
+            conversationTitleElem.innerText = contactInfo.name + " and Me";
+
+            for (var i = 0; i < contents.length; i++) {
+                var content = contents[i];
+                var messageElem = createMessageElem(content);
+                imbueStreamMessageElem(messageElem);
+                appendMessageElem(messageElem);
+            }
+
+            scrollToBottom(streamMessagesElem);
+        }
+    };
+    var contactElemHandler = function(contactInfo) {
+        changeChat(contactInfo);
+    };
     var createContactElem = function(contactInfo) {
         var templateElem = document.getElementById("template");
         var contactElem = templateElem.getElementsByClassName("contact")[0];
@@ -265,6 +297,10 @@ window.onload = function() {
         newContactElem.setAttribute("title", contactInfo.nick);
         avatarImageElem.setAttribute("src", contactInfo.image);
         nameTextElem.innerText = contactInfo.name;
+
+        newContactElem.addEventListener("click", function() {
+           contactElemHandler(contactInfo);
+        });
 
         return newContactElem;
     };
@@ -341,6 +377,9 @@ window.onload = function() {
             scrollToBottom(streamWrapElem);
             checkMessageElemOverflow(newMessageElem);
             clearMessageElem(messageElem);
+
+            chats[currentContactName] = chats[currentContactName] || [];
+            chats[currentContactName].push(content);
         });
         clearElem.addEventListener("click", function() {
             clearMessageElem(messageElem);
@@ -369,6 +408,7 @@ window.onload = function() {
             var contactElem = createContactElem(contactInfo);
             appendContactElem(contactElem);
         }
+        changeChat(contactInfoCollection[0]);
     };
 
     initializeStreamMessageElems();
@@ -385,5 +425,19 @@ window.onload = function() {
         } else {
             composerElem.style["display"] = "table-row";
         }
+    });
+
+    var addMessageElem = document.getElementById("add-message");
+    addMessageElem.addEventListener("click", function() {
+        var content = '<img src="http://larryfire.files.wordpress.com/2008/11/ny.png" />';
+        var newMessageElem = createMessageElem(content);
+
+        imbueStreamMessageElem(newMessageElem);
+        appendMessageElem(newMessageElem);
+        scrollToBottom(streamWrapElem);
+        checkMessageElemOverflow(newMessageElem);
+
+        chats[currentContactName] = chats[currentContactName] || [];
+        chats[currentContactName].push(content);
     });
 };
