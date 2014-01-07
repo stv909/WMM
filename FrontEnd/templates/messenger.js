@@ -1,5 +1,7 @@
 window.onload = function() {
 
+    var pageElem = document.getElementById("page");
+    var dialogElem = document.getElementById("dialog");
     var streamElem = document.getElementById("stream");
     var streamWrapElem = streamElem.getElementsByClassName("wrap")[0];
     var composerElem = document.getElementById("composer");
@@ -142,6 +144,22 @@ window.onload = function() {
         container.className = "container dynamic";
         editorElem.setAttribute("contenteditable", "true");
     };
+    var showDialogElem = function(content) {
+        pageElem.className = "passive";
+        dialogElem.className = "active";
+
+        var contentElem = dialogElem.getElementsByClassName("content")[0];
+        contentElem.innerHTML = content;
+    };
+    var hideDialogElem = function() {
+        pageElem.className = "active";
+        dialogElem.className = "passive";
+
+        var contentElem = dialogElem.getElementsByClassName("content")[0];
+        contentElem.innerHTML = "";
+        contentElem.scrollLeft = 0;
+        contentElem.scrollTop = 0;
+    };
 
     var imbueStreamMessageElem = function(messageElem) {
         var deleteElem = messageElem.getElementsByClassName("delete")[0];
@@ -164,7 +182,8 @@ window.onload = function() {
             clearMessageElem(messageElem);
         };
         var fullscreenElemHandler = function() {
-            alert("Not implemented");
+            var messageContent = getMessageElemContent(messageElem);
+            showDialogElem(messageContent);
         };
         var shareElemHandler = function() {
             alert("Not implemented");
@@ -217,9 +236,14 @@ window.onload = function() {
         var messageElem = composerElem.getElementsByClassName("message")[0];
         imbueComposerMessageElem(messageElem);
     };
+    var initializeDialogElem = function() {
+        var closeElem = dialogElem.getElementsByClassName("close")[0];
+        closeElem.addEventListener("click", hideDialogElem);
+    };
 
     initializeStreamMessageElems();
     initializeComposerMessageElem();
+    initializeDialogElem();
 
     // AddHoc
     var hideComposerElem = document.getElementById("hide-composer");
