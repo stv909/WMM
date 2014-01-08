@@ -1,0 +1,197 @@
+@font-face
+  font-family 'wf_segoe-ui_light'
+  src url('http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff')
+html, body
+  width 100%
+  height 100%
+  margin 0
+  padding 0
+  background-color #fefefe
+  font-family wf_segoe-ui_light, Segoe UI Light, Helvetica
+  color #444;
+*
+  outline none
+#main
+  position absolute
+  top 0
+  bottom 0
+  left 0
+  right 0
+#main-layout
+  background-color white
+  display table
+  table-layout fixed
+  margin 0 auto
+  width 70em
+  height 100%
+  box-shadow 0 0 0.25em #ccc
+#menu-wrapper
+  display table-row
+  height 2.5em
+#menu
+  line-height 2.5em * 1.2
+  font-size 1.2em
+  background-color rgb(21, 112, 166)
+  color white
+  padding-left 1em
+#page-wrapper
+  display table-row
+#page
+  display table
+  height 100%
+  width 100%
+.page-row
+  display table-row
+#titles
+  background-color rgb(238, 238, 238)
+  color black
+  height 2em
+.column-wrapper
+  display table-cell
+  .label
+    padding-top 0.5em
+    padding-bottom 0.5em
+    width 100%
+    text-align center
+    font-size 1em
+    border-bottom 1px solid #ddd
+#contacts
+  width 11em
+#contact-list
+  display table-cell
+  border-right 1px solid #ddd
+  position absolute
+  overflow auto
+  width 100%
+  bottom 0
+  top 0
+  .contact-item
+    font-size 0.8em
+    padding-left 2.5em
+    padding-top 1em
+    padding-bottom 1em
+    border-bottom 1px solid #eee
+    &:hover
+      background-color #55BB55
+      color white
+#chat
+  width 43em
+
+#message-composer
+  display table-row
+  border-top 1px solid #ddd
+
+#chat-box
+  display block
+  position relative
+  width 100%
+  height 100%
+  min-height 100%
+  border-right 1px solid #ddd
+  >div
+    display table
+    position relative
+    width 100%
+    height 100%
+    #chat-title, #message-list, #message-composer
+      width 100%
+      display table-row
+    #chat-title
+      font-size 0.9em
+      height 2.25em
+      max-height 4.5em
+      background-color #fffcf1
+      >div
+        border-left 1px solid #ddd
+        max-height 4.5em
+        text-align center
+        padding-top 0.5em
+        padding-bottom 0.5em
+        border-bottom 1px solid #ddd
+        overflow auto
+    #message-list
+      >div
+        width 100%
+        height 100%
+        overflow auto
+    #message-composer
+      background-color #f2faff
+      height 6em
+      max-height 10em
+      >div
+        border-top 1px solid #ddd
+        border-left  1px solid #ddd
+        height 100%
+        .message-item
+          height 100%
+        .message-wrap
+          height 100%
+          max-height 10em
+          border 1px solid #ddd
+          overflow auto !important
+  .message-item
+    width 100%
+    &:not(:last-child)
+      border-bottom 1px solid #eee
+    .contact, .message, .tools
+      display table-cell
+      vertical-align top
+      padding-top 0.75em
+      padding-bottom 0.75em
+    .contact
+      width 6em
+      .avatar
+        margin 0 auto
+        display block
+        text-align center
+        box-shadow 0 0 0.25em #aaa
+        width 4.5em
+        height 4.5em
+        border 2px solid white
+        img
+          width 100%
+    .message
+      .message-wrap
+        background-color white
+        width 29em
+        overflow hidden
+        max-height 30em
+        margin-left 0em
+        margin-right 0em
+      width 29em
+      overflow hidden
+    .tools
+      margin-top 0.5em !important
+      .simple-button
+        background-color white
+        cursor pointer
+        font-size 0.8em
+        color #888
+        border 1px solid #eee
+        padding-top 0.5em
+        padding-bottom 0.5em
+        margin-bottom 0.35em
+        &:hover
+          border 1px solid #bbb
+          box-shadow 0 0 0.2em #ddd
+          color #222
+        &.negative
+          margin-top 1em
+          border 1px solid #ffcccc
+      width 6.5em
+      text-align center
+      padding-left 0.75em
+      padding-right 0.75em
+      .time
+        line-height 1.5em
+        margin-bottom 0.5em
+        .time-icon
+          vertical-align top
+          width 1em
+          height 1em
+          margin-top 0.43em
+        .time-value
+          vertical-align top
+          font-size 1.25em
+          padding 0
+

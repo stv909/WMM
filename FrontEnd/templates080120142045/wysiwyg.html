@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="wysiwyg.css">
+    <script type="text/javascript">
+      window.onload = function() {
+       var messages = document.getElementsByClassName("messages")[0].getElementsByClassName("message");
+       var messagesWrap = document.getElementsByClassName("messages")[0].getElementsByClassName("wrap")[0];
+       var preventScroll = function(e) {
+        e.preventDefault();
+       };
+       var currentMessage = null;
+       for (var i = 0; i < messages.length; i++) {
+        var message = messages[i];
+        
+        (function(message) {
+         var editButton = message.getElementsByClassName("edit")[0];
+         var container = message.getElementsByClassName("container")[0];
+         var editor = message.getElementsByClassName("editor")[0];
+         messagesWrap.removeEventListener("mousewheel", preventScroll);
+         
+         editButton.addEventListener("click", function(e) {
+         
+          if (currentMessage !== null && currentMessage !== message) {
+           var currentContainer = currentMessage.getElementsByClassName("container")[0];
+           var currentEditor = currentMessage.getElementsByClassName("editor")[0];
+           currentEditor.setAttribute("contenteditable", false);
+           currentContainer.className = "container static";
+           currentMessage.className = "message static";
+           currentMessage = null;
+          }
+          
+          if (container.className == "container dynamic") {
+           editor.setAttribute("contenteditable", false);
+           container.className = "container static";
+           message.className = "message static";
+           messagesWrap.removeEventListener("mousewheel", preventScroll);
+           currentMessage = null;
+          } else {
+           editor.setAttribute("contenteditable", true);
+           container.className = "container dynamic";
+           message.className = "message dynamic";
+           messagesWrap.addEventListener("mousewheel", preventScroll);
+           currentMessage = message;
+          }
+         });
+        })(message);
+       }
+      };
+    </script>
+  </head>
+  <body>
+    <div id="page">
+      <div class="wrap">
+        <div id="chat">
+          <div class="row messages">
+            <div class="wrap">
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+              <div class="message static">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container static">
+                    <div class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/></div>
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row composer">
+            <div class="wrap">
+              <div class="message dynamic">
+                <div class="avatar">
+                  <div class="image"></div>
+                </div>
+                <div class="content">
+                  <div class="container dynamic">
+                    <div contenteditable="true" class="editor"></div>
+                    <!--img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")-->
+                  </div>
+                </div>
+                <div class="tools">"tools"
+                  <button class="edit">edit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,107 @@
+page-width = 60em
+
+scroll-width = 0.5em
+scroll-height = 0.5em
+real-scroll-width = scroll-width - 0.05em
+real-scroll-height = scroll-height - 0.05em
+
+::-webkit-scrollbar
+  width scroll-width
+  height scroll-height
+::-webkit-scrollbar-thumb
+  border-radius scroll-width * 0.5
+  background-color #aaa
+*
+  outline none
+body, html
+  width 100%
+  height 100%
+  margin 0
+  padding 0
+#page
+  position relative
+  height 100%
+  width page-width
+  margin 0 auto
+  box-shadow 0 0 0.25em #ddd
+  >.wrap
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    overflow hidden
+#chat
+  display table
+  width 100%
+  height 100%
+  .row
+    display table-row
+  .messages
+    height 95%
+    >.wrap
+      height 100%
+      overflow auto
+  .composer
+    height 5%
+    overflow hidden
+    >.wrap
+      border-top 1px solid #aaa
+      overflow hidden
+      min-height 1em
+      max-height 22em
+  .message
+    padding-top 0.75em
+    padding-bottom 0.75em
+    border-bottom 1px solid #ddd
+    &.static
+      background-color white
+    &.dynamic
+      background-color #ebf5ff
+    .avatar, .content, .tools
+      display inline-block
+      vertical-align top
+    .avatar
+      width 6em
+      .image
+        background-color white
+        margin 0 auto
+        width 4em
+        height 4em
+        outline 2px solid #fff
+        box-shadow 0 0 0.5em #666
+    .content
+      width 40em
+      .container
+        background-color white
+        position relative
+        display inline-block
+        min-height 5em
+        box-shadow 0 0 0.5em #666
+        &.static
+          width 39.5em
+          overflow hidden
+          max-height 20em
+          outline 2px solid #fff
+        &.dynamic
+          width 40em
+          outline 2px solid #eee
+          overflow scroll
+          max-height 20em + scroll-height
+          &::-webkit-scrollbar-track
+            &:vertical
+              border-left 1px solid #eee
+            &:horizontal
+              border-top 1px solid #eee
+          &::-webkit-scrollbar-thumb
+            //border-radius 0
+            background-color #ddd
+            &:vertical
+              border-left 1px solid #eee
+            &:horizontal
+              border-top 1px solid #eee
+        .editor
+          width 39.5em
+          min-height 3em
+    .tools
+      width 10em

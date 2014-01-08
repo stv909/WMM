@@ -1,0 +1,165 @@
+body, html
+{
+    margin: 0;
+    padding: 0;
+    font-family: Segoe UI Light, Helvetica;
+    background-color: #444;
+    width: 100%;
+}
+
+body
+{
+    margin: 0 auto;
+}
+
+#main
+{
+    width: 1280px;
+    display: table;
+    height: 100%;
+    border-spacing: 0.75em;
+    margin: 0 auto;
+}
+
+#main-menu
+{
+    display: table-row;
+    width: 100%;
+    height: 3em;
+}
+#main-menu .content
+{
+    color: #FFF;
+    padding-top: 0.3em;
+    text-shadow:
+        0px 1px 0px #999,
+        0px 2px 0px #888,
+        0px 3px 0px #777,
+        0px 4px 0px #666,
+        0px 5px 0px #555,
+        0px 6px 0px #444,
+        0px 7px 0px #333,
+        0px 8px 7px #001135;
+    font-weight: normal;
+    font-size: 1.5em;
+    width: 100%;
+    height: 100%;
+    background-color: #555;
+    box-shadow: 0 0 1em #000;
+}
+
+#main-view
+{
+    display: table-row;
+    height: 100%;
+}
+
+#main-view .content
+{
+    display: table;
+    table-layout: fixed;
+    border-spacing: 0;
+    width: 100%;
+    height: 100%;
+    background: White;
+    box-shadow: 0 0 1em #000;
+}
+
+#contacts, #chat, #templates
+{
+    display: table-cell;
+    height: 100%;
+    overflow-y: hidden;
+}
+
+#contacts
+{
+    position: relative;
+    width: 16em;
+    border-right: 1px solid #555;
+}
+
+#contacts .content
+{
+    width: 100%;
+    height: 100%;
+}
+
+
+#chat
+{
+    border-right: 1px solid #555;
+}
+
+#templates
+{
+    position: relative;
+    width: 20em;
+}
+
+#contacts .title
+{
+}
+
+#templates .title
+{
+}
+
+.title
+{
+    font-weight: lighter;
+    font-size: 1.25em;
+    background-color: #555;
+    color: White;
+    text-align: center;
+    padding-top: 0.45em;
+    padding-bottom: 0.55em;
+}
+
+#contact-list
+{
+    position: absolute;
+    bottom: 0;
+    top: 3em;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.contact-item
+{
+    padding-left: 2.5em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid #eee;
+    pointer: arrow;
+}
+
+.contact-item:hover
+{
+    background-color: #66BB66;
+    color: White;
+}
+
+#template-list
+{
+    position: absolute;
+    bottom: 0;
+    top: 3em;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.template-item
+{
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid #eee;
+    pointer: arrow;
+}
+
+.template-item img
+{
+    width: 100%;
+}
