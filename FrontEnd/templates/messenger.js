@@ -83,6 +83,8 @@ window.onload = function() {
     var contactsElem = document.getElementById("contacts");
     var streamElem = document.getElementById("stream");
     var streamWrapElem = streamElem.getElementsByClassName("wrap")[0];
+    var toolsElem = document.getElementById("tools");
+    var toolsWrapElem = toolsElem.getElementsByClassName("wrap")[0];
     var composerElem = document.getElementById("composer");
 
     var checkElemOverflow = function(elem) {
@@ -311,6 +313,23 @@ window.onload = function() {
         listElem.appendChild(contactElem);
     };
 
+    var createToolElem = function(title, controls) {
+        var templateElem = document.getElementById("template");
+        var toolElem = templateElem.getElementsByClassName("tool")[0];
+
+        var newToolElem = toolElem.cloneNode(true);
+        var titleElem = newToolElem.getElementsByClassName("title")[0];
+        var controlsElem = newToolElem.getElementsByClassName("controls")[0];
+
+        titleElem.innerText = title;
+        controlsElem.innerHTML = controls;
+
+        return newToolElem;
+    };
+    var appendToolElem = function(toolElem) {
+        toolsWrapElem.appendChild(toolElem);
+    };
+
     var imbueStreamMessageElem = function(messageElem) {
         var deleteElem = messageElem.getElementsByClassName("delete")[0];
         var clearElem = messageElem.getElementsByClassName("clear")[0];
@@ -396,6 +415,7 @@ window.onload = function() {
             }
             if (e.keyCode == enterCode && !ctrlPressed) {
                 sendElem.click();
+                editorElem.focus();
                 e.stopPropagation();
             }
         });
@@ -433,11 +453,16 @@ window.onload = function() {
         }
         changeChat(contactInfoCollection[0]);
     };
+    var initializeToolsElem = function() {
+        var emoticonsTool = createToolElem("Emoticons", "");
+        appendToolElem(emoticonsTool);
+    };
 
     initializeStreamMessageElems();
     initializeComposerMessageElem();
     initializeDialogElem();
     initializeContactsElem();
+    initializeToolsElem();
 
     // AddHoc
     var hideComposerElem = document.getElementById("hide-composer");

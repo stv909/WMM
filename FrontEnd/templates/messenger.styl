@@ -279,6 +279,10 @@ body, html
       text-align center
       width controls-width
       padding-left 0.25em
+      .time
+        margin-bottom 0.5em
+        /*outline 2px solid #fff*/
+        /*box-shadow 0 0 0.5em #aaa*/
       .simple-button
         background-color white
         cursor pointer
@@ -299,6 +303,18 @@ body, html
           &:hover
             background-color #dd2222
             border 1px solid #dd2222
+#tools
+  .tool
+    .title
+      text-align center
+      padding-top 0.5em
+      padding-bottom 0.5em
+      font-size 0.8em
+      background-color #ebf5ff
+      border-bottom 1px solid main-border-color
+    .controls
+      border-bottom 1px solid main-border-color
+      padding  0.5em
 #dialog
   .title
     font-size 1.2em
@@ -341,8 +357,8 @@ body, html
   right 1em
   top 1em
 #add-message
-  display none
+  display block
   z-index 10
   position fixed
   right 1em
-  top 3em
+  bottom 3em

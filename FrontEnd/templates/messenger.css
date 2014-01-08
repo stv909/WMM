@@ -340,6 +340,11 @@ html {
   width: 4em;
   padding-left: 0.25em;
 }
+#chat .message .controls .time {
+  margin-bottom: 0.5em;
+/*outline 2px solid #fff*/
+/*box-shadow 0 0 0.5em #aaa*/
+}
 #chat .message .controls .simple-button {
   background-color: #fff;
   cursor: pointer;
@@ -363,6 +368,18 @@ html {
 #chat .message .controls .simple-button.negative:hover {
   background-color: #d22;
   border: 1px solid #d22;
+}
+#tools .tool .title {
+  text-align: center;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  font-size: 0.8em;
+  background-color: #ebf5ff;
+  border-bottom: 1px solid #ddd;
+}
+#tools .tool .controls {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5em;
 }
 #dialog .title {
   font-size: 1.2em;
@@ -410,9 +427,9 @@ html {
   top: 1em;
 }
 #add-message {
-  display: none;
+  display: block;
   z-index: 10;
   position: fixed;
   right: 1em;
-  top: 3em;
+  bottom: 3em;
 }
