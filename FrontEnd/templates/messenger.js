@@ -367,6 +367,7 @@ window.onload = function() {
     var imbueComposerMessageElem = function(messageElem) {
         var sendElem = messageElem.getElementsByClassName("send")[0];
         var clearElem = messageElem.getElementsByClassName("clear")[0];
+        var editorElem = messageElem.getElementsByClassName("editor")[0];
 
         sendElem.addEventListener("click", function() {
             var content = getMessageElemContent(messageElem);
@@ -381,8 +382,30 @@ window.onload = function() {
             chats[currentContactName] = chats[currentContactName] || [];
             chats[currentContactName].push(content);
         });
+
+        var ctrlCode = 17;
+        var enterCode = 13;
+        var ctrlPressed = false;
+
         clearElem.addEventListener("click", function() {
             clearMessageElem(messageElem);
+        });
+        editorElem.addEventListener("keydown", function(e) {
+            if (e.keyCode == 17) {
+                ctrlPressed = true;
+            }
+            if (e.keyCode == enterCode && !ctrlPressed) {
+                sendElem.click();
+                e.stopPropagation();
+            }
+        });
+        editorElem.addEventListener("keyup", function(e) {
+            if (e.keyCode == ctrlCode) {
+                ctrlPressed = false;
+            }
+        });
+        editorElem.addEventListener("blur", function() {
+            ctrlPressed = false;
         });
     };
 
