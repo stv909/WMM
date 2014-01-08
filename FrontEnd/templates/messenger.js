@@ -456,7 +456,7 @@ window.onload = function() {
             clearMessageElem(messageElem);
         });
         editorElem.addEventListener("keydown", function(e) {
-            if (e.keyCode === ctrlCode) {
+            if (e.ctrlKey) {
                 ctrlPressed = true;
             }
             if (e.keyCode === enterCode && !ctrlPressed) {
@@ -466,7 +466,7 @@ window.onload = function() {
             }
         });
         editorElem.addEventListener("keyup", function(e) {
-            if (e.keyCode === ctrlCode) {
+            if (e.ctrlKey) {
                 ctrlPressed = false;
             }
         });

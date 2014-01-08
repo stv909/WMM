@@ -12,9 +12,14 @@ window.onload = function() {
     var bindElem = function(elem, data) {
         do {
             var dataSet = elem.dataset;
-            if (isNullOrUndefined(dataSet)) break;
+            if (isNullOrUndefined(dataSet))
+                break;
+            var breakValue = dataSet["break"];
+            if (!isNullOrUndefined(breakValue) && breakValue === "true")
+                return;
             var valueName = dataSet["value"];
-            if (isNullOrUndefined(valueName)) break;
+            if (isNullOrUndefined(valueName))
+                break;
             elem.innerText = data[valueName];
         } while(false);
 
@@ -36,13 +41,10 @@ window.onload = function() {
     };
 
     //Tests
-    var contact1 = createTemplate("contact");
-    var contact2 = createTemplate("contact");
-
-    bindTemplate(contact1, { firstName: "Jonh", lastName: "Snow" });
-    bindTemplate(contact2, { firstName: "Enzo", lastName: "Ferezzo"});
-
     var page = document.getElementById("page");
-    page.appendChild(contact1);
-    page.appendChild(contact2);
+    for (var i = 0; i < 2000; i++) {
+        var contact = createTemplate("contact");
+        bindTemplate(contact, { firstName: "John", lastName: "Snow" });
+        page.appendChild(contact);
+    }
 };
