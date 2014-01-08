@@ -456,17 +456,17 @@ window.onload = function() {
             clearMessageElem(messageElem);
         });
         editorElem.addEventListener("keydown", function(e) {
-            if (e.keyCode == 17) {
+            if (e.keyCode === ctrlCode) {
                 ctrlPressed = true;
             }
-            if (e.keyCode == enterCode && !ctrlPressed) {
+            if (e.keyCode === enterCode && !ctrlPressed) {
                 sendElem.click();
                 editorElem.focus();
                 e.stopPropagation();
             }
         });
         editorElem.addEventListener("keyup", function(e) {
-            if (e.keyCode == ctrlCode) {
+            if (e.keyCode === ctrlCode) {
                 ctrlPressed = false;
             }
         });
