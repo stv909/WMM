@@ -66,10 +66,40 @@ body, html
   height 1%
   background-color main-menu-color
   >.content
-    font-size 1.2em
-    margin-top 0.5em
-    margin-bottom 0.5em
+    display inline-block
+    font-size 1.1em
+    margin-top 0.75em
+    margin-bottom 0.75em
     margin-left 1em
+  >.account
+    color main-border-color
+    margin-top 0.9em
+    float right
+    font-size 0.9em
+    margin-right 0.5em
+    .name, .settings, .logout
+      display inline-block
+      padding-right 0.75em
+      padding-left 0.75em
+      height 100%
+      vertical-align middle
+    .name
+      padding-left 0.25em
+    .name, .settings
+      border-right 1px dotted main-border-color
+    .settings, .logout
+      text-decoration underline
+      cursor pointer
+      &:hover
+        color white
+    .avatar
+      display inline-block
+      width 1.5em
+      height 1.5em
+      vertical-align middle
+      >img
+        outline 1px solid main-border-color
+        width 100%
 #workspace
   height 99%
   >.content
@@ -128,8 +158,8 @@ body, html
           vertical-align top
         .avatar
           >div
-            width 2.5em;
-            height 2.5em;
+            width 2.5em
+            height 2.5em
           img
             outline 1px solid white
             width 100%

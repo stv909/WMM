@@ -57,10 +57,53 @@ html {
   background-color: #1570a6;
 }
 #menu >.content {
-  font-size: 1.2em;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
+  display: inline-block;
+  font-size: 1.1em;
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
   margin-left: 1em;
+}
+#menu >.account {
+  color: #ddd;
+  margin-top: 0.9em;
+  float: right;
+  font-size: 0.9em;
+  margin-right: 0.5em;
+}
+#menu >.account .name,
+#menu >.account .settings,
+#menu >.account .logout {
+  display: inline-block;
+  padding-right: 0.75em;
+  padding-left: 0.75em;
+  height: 100%;
+  vertical-align: middle;
+}
+#menu >.account .name {
+  padding-left: 0.25em;
+}
+#menu >.account .name,
+#menu >.account .settings {
+  border-right: 1px dotted #ddd;
+}
+#menu >.account .settings,
+#menu >.account .logout {
+  text-decoration: underline;
+  cursor: pointer;
+}
+#menu >.account .settings:hover,
+#menu >.account .logout:hover {
+  color: #fff;
+}
+#menu >.account .avatar {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+}
+#menu >.account .avatar >img {
+  outline: 1px solid #ddd;
+  width: 100%;
 }
 #workspace {
   height: 99%;
