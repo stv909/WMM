@@ -35,6 +35,7 @@ window.onload = function() {
         bindElem(template, data)
     };
 
+    //Tests
     var contact1 = createTemplate("contact");
     var contact2 = createTemplate("contact");
 
