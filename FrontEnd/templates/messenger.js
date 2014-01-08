@@ -1,5 +1,51 @@
 window.onload = function() {
 
+    var pasteSnippetToInputBlock = function(htmlSnippet) {
+        pasteHtmlAtCaret(document.getElementById('inputBlock'), htmlSnippet);
+    }
+
+    function pasteHtmlAtCaret(messageElement, html) {
+        if (messageElement.contentEditable === 'false')
+            return;
+        messageElement.focus();
+        var sel = window.getSelection();
+        if (
+            sel.baseNode.id !== messageElement.id &&
+                (
+                    !sel.baseNode.parentElement ||
+                        sel.baseNode.parentElement.id !== messageElement.id
+                    )
+            )
+            return;
+        if (sel.getRangeAt && sel.rangeCount)
+        {
+            var range = sel.getRangeAt(0);
+            range.deleteContents();
+
+            // Range.createContextualFragment() would be useful here but is
+            // non-standard and not supported in all browsers (IE9, for one)
+            var el = document.createElement('div');
+            el.innerHTML = html;
+            var frag = document.createDocumentFragment();
+            var node, lastNode;
+            while ( (node = el.firstChild) )
+            {
+                lastNode = frag.appendChild(node);
+            }
+            range.insertNode(frag);
+
+            // Preserve the selection
+            if (lastNode)
+            {
+                range = range.cloneRange();
+                range.setStartAfter(lastNode);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+    }
+
     var contactInfoCollection = [
         {
             nick: "@taisha",
@@ -313,7 +359,7 @@ window.onload = function() {
         listElem.appendChild(contactElem);
     };
 
-    var createToolElem = function(title, controls) {
+    var createToolElem = function(title, toolControlsElem) {
         var templateElem = document.getElementById("template");
         var toolElem = templateElem.getElementsByClassName("tool")[0];
 
@@ -322,7 +368,7 @@ window.onload = function() {
         var controlsElem = newToolElem.getElementsByClassName("controls")[0];
 
         titleElem.innerText = title;
-        controlsElem.innerHTML = controls;
+        controlsElem.appendChild(toolControlsElem);
 
         return newToolElem;
     };
@@ -454,7 +500,36 @@ window.onload = function() {
         changeChat(contactInfoCollection[0]);
     };
     var initializeToolsElem = function() {
-        var emoticonsTool = createToolElem("Emoticons", "");
+        var emotIcons = [
+            "http://kolobok.us/smiles/light_skin/aggressive.gif",
+            "http://kolobok.us/smiles/light_skin/dash3.gif",
+            "http://kolobok.us/smiles/light_skin/curtsey.gif",
+            "http://kolobok.us/smiles/light_skin/crazy.gif"
+        ];
+        var emotControlsElem = document.createElement("div");
+        emotControlsElem.style.textAlign = "center";
+        for (var i = 0; i < emotIcons.length; i++) {
+            (function(i) {
+                var spanElem = document.createElement("span");
+                var imgElem = document.createElement("img");
+
+                imgElem.setAttribute("src", emotIcons[i]);
+                spanElem.style.cursor = "pointer";
+                spanElem.style.marginLeft = "0.725em";
+                spanElem.style.marginRight = "0.25em";
+                spanElem.appendChild(imgElem);
+                spanElem.addEventListener("click", function(e) {
+                    var html = spanElem.innerHTML;
+                    var messageElem = currentMessageElem || composerElem;
+                    var editorElem = messageElem.getElementsByClassName("editor")[0];
+                    pasteHtmlAtCaret(editorElem, html);
+                    e.stopPropagation();
+                });
+                emotControlsElem.appendChild(spanElem);
+            })(i);
+        }
+
+        var emoticonsTool = createToolElem("Emoticons", emotControlsElem);
         appendToolElem(emoticonsTool);
     };
 
