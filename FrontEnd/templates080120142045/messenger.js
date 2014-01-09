@@ -284,6 +284,7 @@ window.onload = function() {
         messageElem.className = "message dynamic";
         container.className = "container dynamic";
         editorElem.setAttribute("contenteditable", "true");
+        editorElem.focus();
     };
     var showDialogElem = function(content) {
         pageElem.className = "passive";
@@ -381,6 +382,7 @@ window.onload = function() {
         var clearElem = messageElem.getElementsByClassName("clear")[0];
         var cancelElem = messageElem.getElementsByClassName("cancel")[0];
         var editElem = messageElem.getElementsByClassName("edit")[0];
+        var editorElem = messageElem.getElementsByClassName("editor")[0];
         var fullscreenElem = messageElem.getElementsByClassName("fullscreen")[0];
         var shareElem = messageElem.getElementsByClassName("share")[0];
 
@@ -392,6 +394,7 @@ window.onload = function() {
             } else {
                 beginEditingMessageElem(messageElem);
                 disableMessageComposer();
+                editorElem.focus();
             }
         };
         var clearElemHandler = function() {
@@ -420,6 +423,37 @@ window.onload = function() {
             streamWrapElem.removeChild(messageElem);
         };
 
+        var enterCode = 13;
+        var ctrlPressed = false;
+        var shiftPressed = false;
+        editorElem.addEventListener("keydown", function(e) {
+            if (e.shiftKey) {
+                shiftPressed = true;
+            }
+            if (e.ctrlKey) {
+                ctrlPressed = true;
+            }
+            if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
+                checkMessageElemOverflow(messageElem);
+                endEditingMessageElem(messageElem);
+                enableMessageComposer();
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+        editorElem.addEventListener("keyup", function(e) {
+            if (e.shiftKey) {
+                shiftPressed = false;
+            }
+            if (e.ctrlKey) {
+                ctrlPressed = false;
+            }
+        });
+        editorElem.addEventListener("blur", function() {
+            shiftPressed = false;
+            ctrlPressed = false;
+        });
+
         editElem.addEventListener("click", editElemHandler);
         clearElem.addEventListener("click", clearElemHandler);
         cancelElem.addEventListener("click", cancelElemHandler);
@@ -436,6 +470,8 @@ window.onload = function() {
 
         sendElem.addEventListener("click", function() {
             var content = getMessageElemContent(messageElem);
+            if (content === '')
+                return;
             var newMessageElem = createMessageElem(content);
 
             imbueStreamMessageElem(newMessageElem);
@@ -448,19 +484,24 @@ window.onload = function() {
             chats[currentContactName].push(content);
         });
 
-        var enterCode = 13;
-        var shiftPressed = false;
-
         clearElem.addEventListener("click", function() {
             clearMessageElem(messageElem);
         });
+        
+        var enterCode = 13;
+        var ctrlPressed = false;
+        var shiftPressed = false;
         editorElem.addEventListener("keydown", function(e) {
             if (e.shiftKey) {
                 shiftPressed = true;
             }
-            if (e.keyCode === enterCode && !shiftPressed) {
+            if (e.ctrlKey) {
+                ctrlPressed = true;
+            }
+            if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
                 sendElem.click();
                 editorElem.focus();
+                e.preventDefault();
                 e.stopPropagation();
             }
         });
@@ -468,9 +509,13 @@ window.onload = function() {
             if (e.shiftKey) {
                 shiftPressed = false;
             }
+            if (e.ctrlKey) {
+                ctrlPressed = false;
+            }
         });
         editorElem.addEventListener("blur", function() {
             shiftPressed = false;
+            ctrlPressed = false;
         });
     };
 
