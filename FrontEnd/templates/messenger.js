@@ -448,18 +448,17 @@ window.onload = function() {
             chats[currentContactName].push(content);
         });
 
-        var ctrlCode = 17;
         var enterCode = 13;
-        var ctrlPressed = false;
+        var shiftPressed = false;
 
         clearElem.addEventListener("click", function() {
             clearMessageElem(messageElem);
         });
         editorElem.addEventListener("keydown", function(e) {
             if (e.shiftKey) {
-                ctrlPressed = true;
+                shiftPressed = true;
             }
-            if (e.keyCode === enterCode && !ctrlPressed) {
+            if (e.keyCode === enterCode && !shiftPressed) {
                 sendElem.click();
                 editorElem.focus();
                 e.stopPropagation();
@@ -467,11 +466,11 @@ window.onload = function() {
         });
         editorElem.addEventListener("keyup", function(e) {
             if (e.shiftKey) {
-                ctrlPressed = false;
+                shiftPressed = false;
             }
         });
         editorElem.addEventListener("blur", function() {
-            ctrlPressed = false;
+            shiftPressed = false;
         });
     };
 
