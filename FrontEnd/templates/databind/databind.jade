@@ -1,28 +1,28 @@
 mixin contact
-	.contact
-		.div(data-break="true")
-			.div
-				.div
-					.div
-				.div
-					.div
-						.div
-							.div
-				.div
-					.div
-			.div
-			.div
-			.div
-		.div
-			.first-mame(data-value="firstName")
-			.last-name(data-value="lastName")
+  .contact
+    .div(data-break="true")
+      .div
+        .div
+          .div
+        .div
+          .div
+            .div
+              .div
+        .div
+          .div
+      .div
+      .div
+      .div
+    .div
+      .first-mame(data-value="firstName")
+      .last-name(data-value="lastName")
 
 doctype html
 html
-	head
-		title Data Bind
-		script(type="application/javascript", src="databind.js")
-	body
-		#page
-		#templates(style="display: none")
-			+contact
+  head
+    title Data Bind
+    script(type="application/javascript", src="databind.js")
+  body
+    #page
+    #templates(style="display: none")
+      +contact
