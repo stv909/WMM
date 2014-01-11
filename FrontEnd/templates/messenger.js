@@ -124,49 +124,62 @@ window.onload = function() {
         }
     ];
 
-    var pageElem = document.getElementById("page");
-    var dialogElem = document.getElementById("dialog");
-    var contactsElem = document.getElementById("contacts");
-    var streamElem = document.getElementById("stream");
-    var streamWrapElem = streamElem.getElementsByClassName("wrap")[0];
-    var toolsElem = document.getElementById("tools");
-    var toolsWrapElem = toolsElem.getElementsByClassName("wrap")[0];
-    var composerElem = document.getElementById("composer");
+    var pageElem = document.getElementById('page');
+    var dialogElem = document.getElementById('dialog');
+    var contactsElem = document.getElementById('contacts');
+    var streamElem = document.getElementById('stream');
+    var streamWrapElem = streamElem.getElementsByClassName('wrap')[0];
+    var toolsElem = document.getElementById('tools');
+    var toolsWrapElem = toolsElem.getElementsByClassName('wrap')[0];
+    var composerElem = document.getElementById('composer');
 
-    var checkElemOverflow = function(elem) {
-        elem.style.overflow = "auto";
-
-        var scrollHeight = elem.scrollHeight;
+    var checkElemOverflowX = function(elem) {
+        var currentOverflowX = elem.style.overflowX;
+        
+        elem.style.overflowX = 'auto';
+        
         var scrollWidth = elem.scrollWidth;
-
-        var clientHeight = elem.clientHeight;
         var clientWidth = elem.clientWidth;
-
-        var isOverflowX = scrollWidth > clientWidth;
-        var isOverflowY = scrollHeight > clientHeight;
-        var isOverflow = isOverflowX || isOverflowY;
-
-        elem.style.overflow = "hidden";
-
-        return isOverflow;
+        var overflowX = scrollWidth > clientWidth;
+        
+        elem.style.overflowX = currentOverflowX;
+        
+        return overflowX;
     };
+    var checkElemOverflowY = function(elem) {
+        var currentOverflowY = elem.style.overflowY;
+        
+        elem.style.overflowY = 'auto';
+        
+        var scrollHeight = elem.scrollHeight;
+        var clientHeight = elem.clientHeight;
+        var overflowY = scrollHeight > clientHeight;
+        
+        elem.style.overflowY = currentOverflowY;
+        
+        return overflowY;
+    };
+    var checkElemOverflow = function(elem) {
+        return checkElemOverflowX(elem) || checkElemOverflowY(elem);
+    };
+    
     var clearMessageElem = function(messageElem) {
-        var editorElem = messageElem.getElementsByClassName("editor")[0];
-        editorElem.innerHTML = "";
+        var editorElem = messageElem.getElementsByClassName('editor')[0];
+        editorElem.innerHTML = '';
     };
     var getMessageElemContent = function(messageElem) {
-        var editor = messageElem.getElementsByClassName("editor")[0];
+        var editor = messageElem.getElementsByClassName('editor')[0];
         return editor.innerHTML;
     };
     var setMessageElemContent = function(messageElem, content) {
-        var editorElem = messageElem.getElementsByClassName("editor")[0];
+        var editorElem = messageElem.getElementsByClassName('editor')[0];
         editorElem.innerHTML = content;
     };
     var createMessageElem = function(content) {
-        var templateElem = document.getElementById("template");
-        var messageElem = templateElem.getElementsByClassName("message")[0];
+        var templateElem = document.getElementById('template');
+        var messageElem = templateElem.getElementsByClassName('message')[0];
         var newMessageElem = messageElem.cloneNode(true);
-        var editorElem = newMessageElem.getElementsByClassName("editor")[0];
+        var editorElem = newMessageElem.getElementsByClassName('editor')[0];
         editorElem.innerHTML = content;
         return newMessageElem;
     };
@@ -174,16 +187,16 @@ window.onload = function() {
         streamWrapElem.appendChild(messageElem);
     };
     var checkMessageElemOverflow = function(messageElem) {
-        var containerElem = messageElem.getElementsByClassName("container")[0];
+        var containerElem = messageElem.getElementsByClassName('container')[0];
         var isOverflow = checkElemOverflow(containerElem);
         if (isOverflow) {
-            containerElem.style["outline"] = "2px solid #fffc63";
+            containerElem.style.outline = '2px solid #fffc63';
         } else {
-            containerElem.style["outline"] = "2px solid #fff";
+            containerElem.style.outline = '2px solid #fff';
         }
     };
     var isEditingMessageElem = function(messageElem) {
-        var containerElems = messageElem.getElementsByClassName("container dynamic");
+        var containerElems = messageElem.getElementsByClassName('container dynamic');
         return containerElems.length !== 0;
     };
     var currentMessageElem = null;
