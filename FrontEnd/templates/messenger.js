@@ -218,59 +218,59 @@ window.onload = function() {
             endEditingMessageElem(currentMessageElem);
         }
 
-        var editElem = messageElem.getElementsByClassName("edit")[0];
-        var clearElem = messageElem.getElementsByClassName("clear")[0];
-        var cancelElem = messageElem.getElementsByClassName("cancel")[0];
-        var shareElem = messageElem.getElementsByClassName("share")[0];
-        var fullscreenElem = messageElem.getElementsByClassName("fullscreen")[0];
-        var deleteElem = messageElem.getElementsByClassName("delete")[0];
+        var editElem = messageElem.getElementsByClassName('edit')[0];
+        var clearElem = messageElem.getElementsByClassName('clear')[0];
+        var cancelElem = messageElem.getElementsByClassName('cancel')[0];
+        var shareElem = messageElem.getElementsByClassName('share')[0];
+        var fullscreenElem = messageElem.getElementsByClassName('fullscreen')[0];
+        var deleteElem = messageElem.getElementsByClassName('delete')[0];
 
-        var containerElem = messageElem.getElementsByClassName("container")[0];
-        var editorElem = messageElem.getElementsByClassName("editor")[0];
+        var containerElem = messageElem.getElementsByClassName('container')[0];
+        var editorElem = messageElem.getElementsByClassName('editor')[0];
 
-        editElem.innerText = "finish";
-        clearElem.style["display"] = "block";
-        cancelElem.style["display"] = "block";
-        shareElem.style["display"] = "none";
-        fullscreenElem.style["display"] = "none";
-        deleteElem.style["display"] = "none";
+        editElem.innerText = 'finish';
+        clearElem.style.display = 'block';
+        cancelElem.style.display = 'block';
+        shareElem.style.display = 'none';
+        fullscreenElem.style.display = 'none';
+        deleteElem.style.display = 'none';
 
-        messageElem.className = "message dynamic";
-        containerElem.className = "container dynamic";
-        containerElem.style["overflow"] = "scroll";
-        containerElem.style["outline"] = "2px solid #ddd";
-        editorElem.setAttribute("contenteditable", "true");
+        messageElem.className = 'message dynamic';
+        containerElem.className = 'container dynamic';
+        containerElem.style.overflow = 'scroll';
+        containerElem.style.outline = '2px solid #ddd';
+        editorElem.contentEditable = 'true';
 
         currentMessageElem = messageElem;
         currentMessageContent = getMessageElemContent(currentMessageElem);
-        messageElem.addEventListener("click", messageElemHandler);
+        messageElem.addEventListener('click', messageElemHandler);
     };
     var endEditingMessageElem = function(messageElem) {
-        var editElem = messageElem.getElementsByClassName("edit")[0];
-        var clearElem = messageElem.getElementsByClassName("clear")[0];
-        var cancelElem = messageElem.getElementsByClassName("cancel")[0];
-        var shareElem = messageElem.getElementsByClassName("share")[0];
-        var fullscreenElem = messageElem.getElementsByClassName("fullscreen")[0];
-        var deleteElem = messageElem.getElementsByClassName("delete")[0];
+        var editElem = messageElem.getElementsByClassName('edit')[0];
+        var clearElem = messageElem.getElementsByClassName('clear')[0];
+        var cancelElem = messageElem.getElementsByClassName('cancel')[0];
+        var shareElem = messageElem.getElementsByClassName('share')[0];
+        var fullscreenElem = messageElem.getElementsByClassName('fullscreen')[0];
+        var deleteElem = messageElem.getElementsByClassName('delete')[0];
 
-        var containerElem = messageElem.getElementsByClassName("container")[0];
-        var editorElem = messageElem.getElementsByClassName("editor")[0];
+        var containerElem = messageElem.getElementsByClassName('container')[0];
+        var editorElem = messageElem.getElementsByClassName('editor')[0];
 
-        editElem.innerText = "edit";
-        clearElem.style["display"] = "none";
-        cancelElem.style["display"] = "none";
-        shareElem.style["display"] = "block";
-        fullscreenElem.style["display"] = "block";
-        deleteElem.style["display"] = "block";
+        editElem.innerText = 'edit';
+        clearElem.style.display = 'none';
+        cancelElem.style.display = 'none';
+        shareElem.style.display = 'block';
+        fullscreenElem.style.display = 'block';
+        deleteElem.style.display = 'block';
 
-        messageElem.className = "message static";
-        containerElem.className = "container static";
-        containerElem.style["overflow"] = "hidden";
+        messageElem.className = 'message static';
+        containerElem.className = 'container static';
+        containerElem.style.overflow = 'hidden';
         containerElem.scrollTop = 0;
         containerElem.scrollLeft = 0;
-        editorElem.setAttribute("contenteditable", "false");
+        editorElem.contentEditable = 'false';
 
-        messageElem.removeEventListener("click", messageElemHandler);
+        messageElem.removeEventListener('click', messageElemHandler);
         currentMessageElem = null;
         currentMessageContent = null;
     };
@@ -281,36 +281,36 @@ window.onload = function() {
         elem.scrollTop = elem.scrollHeight;
     };
     var disableMessageComposer = function() {
-        var messageElem = composerElem.getElementsByClassName("message")[0];
-        var container = messageElem.getElementsByClassName("container")[0];
-        var editorElem = messageElem.getElementsByClassName("editor")[0];
-        composerElem.className = "composer static";
-        messageElem.className = "message static";
-        container.className = "container static";
-        editorElem.setAttribute("contenteditable", "false");
+        var messageElem = composerElem.getElementsByClassName('message')[0];
+        var container = messageElem.getElementsByClassName('container')[0];
+        var editorElem = messageElem.getElementsByClassName('editor')[0];
+        composerElem.className = 'composer static';
+        messageElem.className = 'message static';
+        container.className = 'container static';
+        editorElem.contentEditable = 'false';
     };
     var enableMessageComposer = function() {
-        var messageElem = composerElem.getElementsByClassName("message")[0];
-        var container = messageElem.getElementsByClassName("container")[0];
-        var editorElem = messageElem.getElementsByClassName("editor")[0];
-        composerElem.className = "composer dynamic";
-        messageElem.className = "message dynamic";
-        container.className = "container dynamic";
-        editorElem.setAttribute("contenteditable", "true");
+        var messageElem = composerElem.getElementsByClassName('message')[0];
+        var container = messageElem.getElementsByClassName('container')[0];
+        var editorElem = messageElem.getElementsByClassName('editor')[0];
+        composerElem.className = 'composer dynamic';
+        messageElem.className = 'message dynamic';
+        container.className = 'container dynamic';
+        editorElem.contentEditable = 'true';
     };
     var showDialogElem = function(content) {
-        pageElem.className = "passive";
-        dialogElem.className = "active";
+        pageElem.className = 'passive';
+        dialogElem.className = 'active';
 
-        var contentElem = dialogElem.getElementsByClassName("content")[0];
+        var contentElem = dialogElem.getElementsByClassName('content')[0];
         contentElem.innerHTML = content;
     };
     var hideDialogElem = function() {
-        pageElem.className = "active";
-        dialogElem.className = "passive";
+        pageElem.className = 'active';
+        dialogElem.className = 'passive';
 
-        var contentElem = dialogElem.getElementsByClassName("content")[0];
-        contentElem.innerHTML = "";
+        var contentElem = dialogElem.getElementsByClassName('content')[0];
+        contentElem.innerHTML = '';
         contentElem.scrollLeft = 0;
         contentElem.scrollTop = 0;
     };
@@ -325,14 +325,14 @@ window.onload = function() {
             var contents = chats[currentContactName];
 
             var conversationTitleElem = document
-                .getElementById("conversation")
-                .getElementsByClassName("wrap")[0];
+                .getElementById('conversation')
+                .getElementsByClassName('wrap')[0];
             var streamMessagesElem = document
-                .getElementById("stream")
-                .getElementsByClassName("wrap")[0];
+                .getElementById('stream')
+                .getElementsByClassName('wrap')[0];
 
-            streamMessagesElem.innerHTML = "";
-            conversationTitleElem.innerText = contactInfo.name + " and Me";
+            streamMessagesElem.innerHTML = '';
+            conversationTitleElem.innerText = contactInfo.name + ' and Me';
 
             for (var i = 0; i < contents.length; i++) {
                 var content = contents[i];
@@ -348,37 +348,37 @@ window.onload = function() {
         changeChat(contactInfo);
     };
     var createContactElem = function(contactInfo) {
-        var templateElem = document.getElementById("template");
-        var contactElem = templateElem.getElementsByClassName("contact")[0];
+        var templateElem = document.getElementById('template');
+        var contactElem = templateElem.getElementsByClassName('contact')[0];
 
         var newContactElem = contactElem.cloneNode(true);
-        var avatarImageElem = newContactElem.getElementsByClassName("avatar-image")[0];
-        var nameTextElem = newContactElem.getElementsByClassName("name-text")[0];
+        var avatarImageElem = newContactElem.getElementsByClassName('avatar-image')[0];
+        var nameTextElem = newContactElem.getElementsByClassName('name-text')[0];
 
-        newContactElem.setAttribute("title", contactInfo.nick);
-        avatarImageElem.setAttribute("src", contactInfo.image);
+        newContactElem.title = contactInfo.nick;
+        avatarImageElem.src = contactInfo.image;
         nameTextElem.innerText = contactInfo.name;
 
-        newContactElem.addEventListener("click", function() {
+        newContactElem.addEventListener('click', function() {
            contactElemHandler(contactInfo);
         });
 
         return newContactElem;
     };
     var appendContactElem = function(contactElem) {
-        var wrapElem = contactsElem.getElementsByClassName("wrap")[0];
-        var listElem = wrapElem.getElementsByClassName("list")[0];
+        var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+        var listElem = wrapElem.getElementsByClassName('list')[0];
 
         listElem.appendChild(contactElem);
     };
 
     var createToolElem = function(title, toolControlsElem) {
-        var templateElem = document.getElementById("template");
-        var toolElem = templateElem.getElementsByClassName("tool")[0];
+        var templateElem = document.getElementById('template');
+        var toolElem = templateElem.getElementsByClassName('tool')[0];
 
         var newToolElem = toolElem.cloneNode(true);
-        var titleElem = newToolElem.getElementsByClassName("title")[0];
-        var controlsElem = newToolElem.getElementsByClassName("controls")[0];
+        var titleElem = newToolElem.getElementsByClassName('title')[0];
+        var controlsElem = newToolElem.getElementsByClassName('controls')[0];
 
         titleElem.innerText = title;
         controlsElem.appendChild(toolControlsElem);
@@ -390,12 +390,13 @@ window.onload = function() {
     };
 
     var imbueStreamMessageElem = function(messageElem) {
-        var deleteElem = messageElem.getElementsByClassName("delete")[0];
-        var clearElem = messageElem.getElementsByClassName("clear")[0];
-        var cancelElem = messageElem.getElementsByClassName("cancel")[0];
-        var editElem = messageElem.getElementsByClassName("edit")[0];
-        var fullscreenElem = messageElem.getElementsByClassName("fullscreen")[0];
-        var shareElem = messageElem.getElementsByClassName("share")[0];
+        var deleteElem = messageElem.getElementsByClassName('delete')[0];
+        var clearElem = messageElem.getElementsByClassName('clear')[0];
+        var cancelElem = messageElem.getElementsByClassName('cancel')[0];
+        var editElem = messageElem.getElementsByClassName('edit')[0];
+        var fullscreenElem = messageElem.getElementsByClassName('fullscreen')[0];
+        var shareElem = messageElem.getElementsByClassName('share')[0];
+        var editorElem = messageElem.getElementsByClassName('editor')[0];
 
         var editElemHandler = function(e) {
             if (isEditingMessageElem(messageElem)) {
@@ -421,33 +422,71 @@ window.onload = function() {
             showDialogElem(messageContent);
         };
         var shareElemHandler = function() {
-            alert("Not implemented");
+            alert('Not implemented');
         };
         var deleteElemHandler = function() {
-            editElem.removeEventListener("click", editElemHandler);
-            clearElem.removeEventListener("click", clearElemHandler);
-            cancelElem.removeEventListener("click", cancelElemHandler);
-            fullscreenElem.removeEventListener("click", fullscreenElemHandler);
-            shareElem.removeEventListener("click", shareElemHandler);
-            deleteElem.removeEventListener("click", deleteElemHandler);
+            editElem.removeEventListener('click', editElemHandler);
+            clearElem.removeEventListener('click', clearElemHandler);
+            cancelElem.removeEventListener('click', cancelElemHandler);
+            fullscreenElem.removeEventListener('click', fullscreenElemHandler);
+            shareElem.removeEventListener('click', shareElemHandler);
+            editorElem.removeEventListener('keydown', editorElemKeydownHandler);
+            editorElem.removeEventListener('keyup', editorElemKeyupHandler);
+            editorElem.removeEventListener('blur', editorElemBlurHandler);
+            deleteElem.removeEventListener('click', deleteElemHandler);
             streamWrapElem.removeChild(messageElem);
         };
+        
+        var enterCode = 13;
+        var ctrlPressed = false;
+        var shiftPressed = false;
+        
+        var editorElemKeydownHandler = function(e) {
+            if (e.ctrlKey) {
+                ctrlPressed = true;
+            }
+            if (e.shiftKey) {
+                shiftPressed = true;
+            }
+            if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
+                endEditingMessageElem(messageElem);
+                checkMessageElemOverflow(messageElem);
+                enableMessageComposer();
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        };
+        var editorElemKeyupHandler = function(e) {
+            if (e.ctrlKey) {
+                ctrlPressed = false;
+            }
+            if (e.shiftKey) {
+                shiftPressed = false;
+            }
+        };
+        var editorElemBlurHandler = function(e) {
+            ctrlPressed = false;
+            shiftPressed = false;
+        };
 
-        editElem.addEventListener("click", editElemHandler);
-        clearElem.addEventListener("click", clearElemHandler);
-        cancelElem.addEventListener("click", cancelElemHandler);
-        fullscreenElem.addEventListener("click", fullscreenElemHandler);
-        shareElem.addEventListener("click", shareElemHandler);
-        deleteElem.addEventListener("click", deleteElemHandler);
+        editElem.addEventListener('click', editElemHandler);
+        clearElem.addEventListener('click', clearElemHandler);
+        cancelElem.addEventListener('click', cancelElemHandler);
+        fullscreenElem.addEventListener('click', fullscreenElemHandler);
+        shareElem.addEventListener('click', shareElemHandler);
+        editorElem.addEventListener('keydown', editorElemKeydownHandler);
+        editorElem.addEventListener('keyup', editorElemKeyupHandler);
+        editorElem.addEventListener('blur', editorElemBlurHandler);
+        deleteElem.addEventListener('click', deleteElemHandler);
 
         checkMessageElemOverflow(messageElem);
     };
     var imbueComposerMessageElem = function(messageElem) {
-        var sendElem = messageElem.getElementsByClassName("send")[0];
-        var clearElem = messageElem.getElementsByClassName("clear")[0];
-        var editorElem = messageElem.getElementsByClassName("editor")[0];
+        var sendElem = messageElem.getElementsByClassName('send')[0];
+        var clearElem = messageElem.getElementsByClassName('clear')[0];
+        var editorElem = messageElem.getElementsByClassName('editor')[0];
 
-        sendElem.addEventListener("click", function() {
+        sendElem.addEventListener('click', function() {
             var content = getMessageElemContent(messageElem);
             var newMessageElem = createMessageElem(content);
 
@@ -463,45 +502,47 @@ window.onload = function() {
 
         var enterCode = 13;
         var shiftPressed = false;
+        var ctrlPressed = false;
 
-        clearElem.addEventListener("click", function() {
+        clearElem.addEventListener('click', function() {
             clearMessageElem(messageElem);
         });
-        editorElem.addEventListener("keydown", function(e) {
+        editorElem.addEventListener('keydown', function(e) {
             if (e.shiftKey) {
                 shiftPressed = true;
             }
-            if (e.keyCode === enterCode && !shiftPressed) {
+            if (e.ctrlKey) {
+                ctrlPressed = true;
+            }
+            if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
                 sendElem.click();
                 editorElem.focus();
+                e.preventDefault();
                 e.stopPropagation();
             }
         });
-        editorElem.addEventListener("keyup", function(e) {
+        editorElem.addEventListener('keyup', function(e) {
             if (e.shiftKey) {
                 shiftPressed = false;
             }
+            if (e.ctrlKey) {
+                ctrlPressed = false;
+            }
         });
-        editorElem.addEventListener("blur", function() {
+        editorElem.addEventListener('blur', function() {
             shiftPressed = false;
+            ctrlPressed = false;
         });
     };
 
-    var initializeStreamMessageElems = function() {
-        var streamMessageElems = streamWrapElem.getElementsByClassName("message");
-        for (var i = 0; i < streamMessageElems.length; i++) {
-            var messageElem = streamMessageElems[i];
-            imbueStreamMessageElem(messageElem);
-        }
+    var initializeComposerMessageElem = function() {
+        var messageElem = composerElem.getElementsByClassName('message')[0];
+        imbueComposerMessageElem(messageElem);
         document.addEventListener("click", documentElemHandler);
     };
-    var initializeComposerMessageElem = function() {
-        var messageElem = composerElem.getElementsByClassName("message")[0];
-        imbueComposerMessageElem(messageElem);
-    };
     var initializeDialogElem = function() {
-        var closeElem = dialogElem.getElementsByClassName("close")[0];
-        closeElem.addEventListener("click", hideDialogElem);
+        var closeElem = dialogElem.getElementsByClassName('close')[0];
+        closeElem.addEventListener('click', hideDialogElem);
     };
     var initializeContactsElem = function() {
         for (var i = 0; i < contactInfoCollection.length; i++) {
@@ -513,27 +554,27 @@ window.onload = function() {
     };
     var initializeToolsElem = function() {
         var emotIcons = [
-            "http://kolobok.us/smiles/light_skin/aggressive.gif",
-            "http://kolobok.us/smiles/light_skin/dash3.gif",
-            "http://kolobok.us/smiles/light_skin/curtsey.gif",
-            "http://kolobok.us/smiles/light_skin/crazy.gif"
+            'http://kolobok.us/smiles/light_skin/aggressive.gif',
+            'http://kolobok.us/smiles/light_skin/dash3.gif',
+            'http://kolobok.us/smiles/light_skin/curtsey.gif',
+            'http://kolobok.us/smiles/light_skin/crazy.gif'
         ];
-        var emotControlsElem = document.createElement("div");
-        emotControlsElem.style.textAlign = "center";
+        var emotControlsElem = document.createElement('div');
+        emotControlsElem.style.textAlign = 'center';
         for (var i = 0; i < emotIcons.length; i++) {
             (function(i) {
-                var spanElem = document.createElement("span");
-                var imgElem = document.createElement("img");
+                var spanElem = document.createElement('span');
+                var imgElem = document.createElement('img');
 
-                imgElem.setAttribute("src", emotIcons[i]);
-                spanElem.style.cursor = "pointer";
-                spanElem.style.marginLeft = "0.725em";
-                spanElem.style.marginRight = "0.25em";
+                imgElem.src = emotIcons[i];
+                spanElem.style.cursor = 'pointer';
+                spanElem.style.marginLeft = '0.725em';
+                spanElem.style.marginRight = '0.25em';
                 spanElem.appendChild(imgElem);
-                spanElem.addEventListener("click", function(e) {
+                spanElem.addEventListener('click', function(e) {
                     var html = spanElem.innerHTML;
                     var messageElem = currentMessageElem || composerElem;
-                    var editorElem = messageElem.getElementsByClassName("editor")[0];
+                    var editorElem = messageElem.getElementsByClassName('editor')[0];
                     pasteHtmlAtCaret(editorElem, html);
                     e.stopPropagation();
                 });
@@ -541,29 +582,28 @@ window.onload = function() {
             })(i);
         }
 
-        var emoticonsTool = createToolElem("Emoticons", emotControlsElem);
+        var emoticonsTool = createToolElem('Emoticons', emotControlsElem);
         appendToolElem(emoticonsTool);
     };
 
-    initializeStreamMessageElems();
     initializeComposerMessageElem();
     initializeDialogElem();
     initializeContactsElem();
     initializeToolsElem();
 
     // AddHoc
-    var hideComposerElem = document.getElementById("hide-composer");
-    hideComposerElem.addEventListener("click", function() {
+    var hideComposerElem = document.getElementById('hide-composer');
+    hideComposerElem.addEventListener('click', function() {
         var computedStyle = window.getComputedStyle(composerElem, null);
-        if (computedStyle["display"] === "table-row") {
-            composerElem.style["display"] = "none";
+        if (computedStyle.display === 'table-row') {
+            composerElem.style.display = 'none';
         } else {
-            composerElem.style["display"] = "table-row";
+            composerElem.style.display = 'table-row';
         }
     });
 
-    var addMessageElem = document.getElementById("add-message");
-    addMessageElem.addEventListener("click", function() {
+    var addMessageElem = document.getElementById('add-message');
+    addMessageElem.addEventListener('click', function() {
         var content = '<img src="http://larryfire.files.wordpress.com/2008/11/ny.png" />';
         var newMessageElem = createMessageElem(content);
 
