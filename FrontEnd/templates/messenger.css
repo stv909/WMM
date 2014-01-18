@@ -136,9 +136,16 @@ html {
 #tools {
   position: relative;
 }
-#contacts >.wrap,
-#chat >.wrap,
-#tools >.wrap {
+#contacts >.prewrap,
+#chat >.prewrap,
+#tools >.prewrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+#contacts >.prewrap >.wrap,
+#chat >.prewrap >.wrap,
+#tools >.prewrap >.wrap {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -148,55 +155,55 @@ html {
 #contacts {
   width: 11em;
 }
-#contacts >.wrap {
+#contacts >.prewrap >.wrap {
   overflow-y: scroll;
   overflow-x: hidden;
 }
-#contacts >.wrap::-webkit-scrollbar-track:vertical {
+#contacts >.prewrap >.wrap::-webkit-scrollbar-track:vertical {
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
 }
-#contacts >.wrap::-webkit-scrollbar-thumb:vertical {
+#contacts >.prewrap >.wrap::-webkit-scrollbar-thumb:vertical {
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
 }
-#contacts >.wrap >.list {
+#contacts >.prewrap >.wrap >.list {
   width: 11em;
 }
-#contacts >.wrap >.list .contact {
+#contacts >.prewrap >.wrap >.list .contact {
   font-size: 0.8em;
-  padding-left: 1em;
+  padding-left: 0.75em;
   padding-top: 0.75em;
   padding-bottom: 0.75em;
   border-bottom: 1px solid #eee;
   transition: all 200ms ease;
 }
-#contacts >.wrap >.list .contact:hover {
+#contacts >.prewrap >.wrap >.list .contact:hover {
   background-color: #5b5;
   color: #fff;
 }
-#contacts >.wrap >.list .contact .avatar,
-#contacts >.wrap >.list .contact .name {
+#contacts >.prewrap >.wrap >.list .contact .avatar,
+#contacts >.prewrap >.wrap >.list .contact .name {
   display: inline-block;
   vertical-align: top;
 }
-#contacts >.wrap >.list .contact .avatar >div {
+#contacts >.prewrap >.wrap >.list .contact .avatar >div {
   width: 2.5em;
   height: 2.5em;
 }
-#contacts >.wrap >.list .contact .avatar img {
-  outline: 1px solid #fff;
+#contacts >.prewrap >.wrap >.list .contact .avatar img {
+  border: 1px solid #fff;
   width: 100%;
   box-shadow: 0 0 0.5em #aaa;
 }
-#contacts >.wrap >.list .contact .name {
+#contacts >.prewrap >.wrap >.list .contact .name {
   margin-left: 0.5em;
   margin-top: 0.5em;
 }
 #chat {
   width: 45em;
 }
-#chat >.wrap {
+#chat >.prewrap >.wrap {
   overflow: hidden;
   border-right: 1px solid #ddd;
 }
@@ -288,7 +295,7 @@ html {
   margin: 0 auto;
   width: 4em;
   height: 4em;
-  outline: 2px solid #fff;
+  border: 2px solid #fff;
   box-shadow: 0 0 0.5em #aaa;
 }
 #chat .message .avatar .image img {
@@ -302,17 +309,17 @@ html {
   position: relative;
   display: inline-block;
   min-height: 5em;
-  box-shadow: 0 0 0.5em #aaa;
+  box-shadow: 0 0 0.4em #aaa;
 }
 #chat .message .content .container.static {
   width: 32.5em;
   overflow: hidden;
   max-height: 20em;
-  outline: 2px solid #fff;
+  border: 2px solid #fff;
 }
 #chat .message .content .container.dynamic {
   width: 33em;
-  outline: 2px solid #ddd;
+  border: 2px solid #ddd;
   overflow: scroll;
   max-height: 20.5em;
 }
@@ -338,7 +345,7 @@ html {
 #chat .message .controls {
   text-align: center;
   width: 4em;
-  padding-left: 0.25em;
+  padding-left: 0.5em;
 }
 #chat .message .controls .time {
   margin-bottom: 0.5em;

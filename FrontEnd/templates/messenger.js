@@ -9,7 +9,7 @@ window.onload = function() {
             return;
         messageElement.focus();
         var sel = window.getSelection();
-        if (
+        if (sel.baseNode &&
             sel.baseNode.id !== messageElement.id &&
                 (
                     !sel.baseNode.parentElement ||
@@ -98,7 +98,7 @@ window.onload = function() {
             image: "https://lh3.googleusercontent.com/-acRyPjeitnQ/UoZCWKpcJDI/AAAAAAAAAFE/QRbrQ7UxG7g/darth-vader-in-the-dark.jpg"
         },
         {
-            nick: "emanuel",
+            nick: "@emanuel",
             name: "Emanuel Henderson",
             image: "https://lh4.googleusercontent.com/-9sd0z-vrgrY/UsAG22N0rtI/AAAAAAAAABw/fJddeEiF-Z4/feat-co-op-diablo-iii-ps3-gameplay.jpg"
         },
@@ -190,9 +190,9 @@ window.onload = function() {
         var containerElem = messageElem.getElementsByClassName('container')[0];
         var isOverflow = checkElemOverflow(containerElem);
         if (isOverflow) {
-            containerElem.style.outline = '2px solid #fffc63';
+            containerElem.style.border = '2px solid #fffc63';
         } else {
-            containerElem.style.outline = '2px solid #fff';
+            containerElem.style.border = '2px solid #fff';
         }
     };
     var isEditingMessageElem = function(messageElem) {
@@ -228,7 +228,7 @@ window.onload = function() {
         var containerElem = messageElem.getElementsByClassName('container')[0];
         var editorElem = messageElem.getElementsByClassName('editor')[0];
 
-        editElem.innerText = 'finish';
+        editElem.textContent = 'finish';
         clearElem.style.display = 'block';
         cancelElem.style.display = 'block';
         shareElem.style.display = 'none';
@@ -238,7 +238,7 @@ window.onload = function() {
         messageElem.className = 'message dynamic';
         containerElem.className = 'container dynamic';
         containerElem.style.overflow = 'scroll';
-        containerElem.style.outline = '2px solid #ddd';
+        containerElem.style.border = '2px solid #ddd';
         editorElem.contentEditable = 'true';
 
         currentMessageElem = messageElem;
@@ -256,7 +256,7 @@ window.onload = function() {
         var containerElem = messageElem.getElementsByClassName('container')[0];
         var editorElem = messageElem.getElementsByClassName('editor')[0];
 
-        editElem.innerText = 'edit';
+        editElem.textContent = 'edit';
         clearElem.style.display = 'none';
         cancelElem.style.display = 'none';
         shareElem.style.display = 'block';
@@ -357,7 +357,7 @@ window.onload = function() {
 
         newContactElem.title = contactInfo.nick;
         avatarImageElem.src = contactInfo.image;
-        nameTextElem.innerText = contactInfo.name;
+        nameTextElem.textContent = contactInfo.name;
 
         newContactElem.addEventListener('click', function() {
            contactElemHandler(contactInfo);
