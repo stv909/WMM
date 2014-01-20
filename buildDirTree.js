@@ -42,3 +42,6 @@ var excludedDirs = ['node_modules', '.git'];
 buildDirTree(dir, excludedDirs).then(function(dirTree) {
     console.log(JSON.stringify(dirTree, 0, 4));
 });
+
+//Will be printed before the tree will be complete.
+console.log('yo there');

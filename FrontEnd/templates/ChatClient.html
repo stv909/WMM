@@ -1,0 +1,114 @@
+<html>
+	<head>
+		<title>Connection</title>	
+		<script src="ClientSocket.js" type="application/javascript"></script>
+		<script src="Empty.js" type="application/javascript"></script>
+		<script>
+			window.onload = function() {
+				
+				// REMARKS:
+				// 1. All functions with the Callback suffix can be added to callbacks directly
+				// 2. All functions with the Func suffix produces callback functions and
+				//    must be called before appending to calbacks collection.
+				
+				var serverUrl = 'ws://www.bazelevscontent.net:9009/';
+				var clientSocket = ClientSocket.create(serverUrl);
+				
+				//socket logger callbacks
+				var logSocketOpenCallback = function(event) {
+					console.log('socket is open');
+				};
+				var logSocketMessageCallback = function(event) {
+					console.log('socket received a message');
+					console.log(event.data);
+				};
+				var logSocketErrorCallback = function(event) {
+					console.log('socket error occurred');
+					console.log(event);
+				};
+				var logSocketCloseCallback = function(event) {
+					console.log('socket is closed');
+				};
+				
+				//append loggers
+				clientSocket.openCallbacks.push(logSocketOpenCallback);
+				clientSocket.messageCallbacks.push(logSocketMessageCallback);
+				clientSocket.errorCallbacks.push(logSocketErrorCallback);
+				clientSocket.closeCallbacks.push(logSocketCloseCallback);
+				
+				//socket bussiness functions
+				var loginUserFunc = function() {
+					var loginUserCallback = function(event) {
+						var socket = event.srcElement;
+										
+						var loginElem = document.getElementById('login');
+						var userIdElem = document.getElementById('userId');
+						
+						loginElem.addEventListener('click', function() {
+							console.log('login');
+							var userId = userIdElem.value;
+							socket.send('login');
+							socket.send(userId);
+						});
+					};
+					return loginUserCallback;
+				};
+				
+				var parseMessageFunc = function(processResponseCallback) {
+					var parseMessageCallback = function(event) {
+						processResponseCallback = processResponseCallback || Empty.Function;
+						try {
+							var data = event.data;
+							var response = JSON.parse(data);
+							processResponseCallback(response);
+						} catch (e) {
+							console.log('failed parse a received message');
+							console.log(e);
+						}
+					};
+					return parseMessageCallback;
+				};
+				
+				var processResponseFunc = function(responseHandlers) {
+					responseHandlers = responseHandlers || Empty.Object;
+					var processResponseCallback = function(response) {
+						var responseHandler = Empty.Function;
+						if (response.login) {
+							responseHandler = responseHandlers.login || Empty.Function;
+						} else if (response.users) {
+							responseHandler = responseHandlers.users || Empty.Function;
+						}
+						responseHandler(response);
+					};
+					return processResponseCallback;
+				};
+				
+				//append bussiness functions.
+				clientSocket.openCallbacks.push(loginUserFunc());
+				
+				var responseHandlers = {
+					login: function(response) {
+						console.log('login message');
+					},
+					users: function(response) {
+						console.log('users message');
+					},
+					tape: function(response) {
+						console.log('tape message');
+					},
+					online: function(response) {
+						console.log('online message');
+					}
+				};
+				var processResponseCallback = processResponseFunc(responseHandlers);
+				var parseMessageCallback = parseMessageFunc(processResponseCallback);
+				clientSocket.messageCallbacks.push(parseMessageCallback);
+
+			};
+		</script>
+	</head>
+	<body>
+		<input id="userId" type="text"/>
+		<button id="login">Login</button>
+	</body>
+</html>
