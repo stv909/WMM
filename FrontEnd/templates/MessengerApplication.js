@@ -7,41 +7,75 @@ window.onload = function() {
 	chatClient.on('connect', function(event) {
 		console.log('connect');
 		chatClient.login(userId);
+		
+		//TODO: It seems not to be working.
+		//chatClient.scrape();
 	});
 	
 	chatClient.on('message:login', function(event) {
 		console.log('login');
 		console.log(event.response.login);
 		
-		//test basic operations
-		chatClient.users();
-		chatClient.status(userId);
-		chatClient.online();
-		chatClient.tape();
-		chatClient.now();
-
-		chatClient.unsubscribe('public.361fcfe8-6ef9-468c-9409-eef4858994ec', 'fallboy');
-		chatClient.subscribelist();
-		chatClient.subscribe('public.361fcfe8-6ef9-468c-9409-eef4858994ec', 'fallboy');
-		chatClient.subscribelist();
-
-		//test complex operations
 		var createTestMessage = function() {
 			var id = '5751465d-7d86-465a-bc02-9ae727ef2ac5';
-			var content = 'test message with html <h1>Lenta12</h1>';
+			var content = 'test spam message';
 			var fromId = 'fallboy';
 			var toId = 'test';
 			var timestamp = Date.now();
 			return chat.MessageFactory.create(id, content, fromId, toId, timestamp);
 		};
 		var testMessage = createTestMessage();
+		
+		var createTestTool = function() {
+			var id = '5751465d-7d86-465b-bc02-9ae727ef2ac5';
+			var content = '<h1>Test</h1>';
+			var label = 'My Test Tool';
+			return chat.ToolFactory.create(id, label, content);
+		};
+		var testTool = createTestTool();
+		
+		chatClient.users();
+		chatClient.status(userId);
+		chatClient.online();
+		chatClient.tape();
+		chatClient.now();
+		chatClient.retrieve(['profile', 'stv909'].join('.'));
+
+		chatClient.unsubscribe('public.361fcfe8-6ef9-468c-9409-eef4858994ec', 'fallboy');
+		chatClient.subscribelist();
+		chatClient.subscribe('public.361fcfe8-6ef9-468c-9409-eef4858994ec', 'fallboy');
+		chatClient.subscribelist();
+		
+		chatClient.toolrepo();
+		
+		chatClient.publiclist();
+		chatClient.groupuserlist('public.1562868b-a446-4a00-84c0-a39809574a2f');
 
 		chatClient.sendMessage(testMessage);
+		chatClient.broadcast(['msg', testMessage.id].join('.'));
+		
+		chatClient.toolrepo();
+		chatClient.saveTool(testTool);
+		chatClient.toolrepo();
+		chatClient.deleteTool(testTool.id);
+		chatClient.toolrepo();
 	});
 	
+	chatClient.on('message:scrape', function(event) {
+		console.log('scrape');
+		console.log(event.response.scrape);
+	});
+	chatClient.on('message:retrieve', function(event) {
+		console.log('retrieve');
+		console.log(event.response.retrieve);
+	});
 	chatClient.on('message:users', function(event) {
 		console.log('users');
 		console.log(event.response.users);
+	});
+	chatClient.on('message:broadcast', function(event) {
+		console.log('broadcast');
+		console.log(event.response.broadcast);
 	});
 	chatClient.on('message:status', function(event) {
 		console.log('status');
@@ -70,6 +104,18 @@ window.onload = function() {
 	chatClient.on('message:subscribelist', function(event) {
 		console.log('subscribelist');
 		console.log(event.response.subscribelist);
+	});
+	chatClient.on('message:toolrepo', function(event) {
+		console.log('toolrepo');
+		console.log(event.response.toolrepo);
+	});
+	chatClient.on('message:publiclist', function(event) {
+		console.log('publiclist');
+		console.log(event.response.publiclist);
+	});
+	chatClient.on('message:groupuserlist', function(event) {
+		console.log('groupuserlist');
+		console.log(event.response.groupuserlist);
 	});
 	chatClient.on('message:unknown', function(event) {
 		console.log('unkonown');

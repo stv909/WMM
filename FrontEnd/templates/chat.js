@@ -96,6 +96,24 @@ var chat = chat || {};
 			this._socket.send('login');
 			this._socket.send(userId);
 		};
+		this.scrape = function() {
+			this._socket.send('scrape');	
+		};
+		this.store = function(tag, id, data) {
+			var tagId = [tag, id].join('.');
+			
+			this._socket.send('store');
+			this._socket.send(tagId);
+			this._socket.send(data);
+		};
+		this.retrieve = function(idsString) {
+			this._socket.send('retrieve');
+			this._socket.send(idsString);
+		};
+		this.broadcast = function(fullDocumentId) {
+			this._socket.send('broadcast');
+			this._socket.send(fullDocumentId);
+		};
 		this.users = function() {
 			this._socket.send('users');	
 		};
@@ -124,13 +142,6 @@ var chat = chat || {};
 			this._socket.send(tagId);
 			this._socket.send(contactModeId);
 		};
-		this.store = function(tag, id, data) {
-			var tagId = [tag, id].join('.');
-			
-			this._socket.send('store');
-			this._socket.send(tagId);
-			this._socket.send(data);
-		};
 		this.now = function() {
 			this._socket.send('now');	
 		};
@@ -147,6 +158,24 @@ var chat = chat || {};
 			this._socket.send(groupId);
 			this._socket.send(userId);
 		};
+		this.toolrepo = function() {
+			this._socket.send('toolrepo');	
+		};
+		this.addtool = function(toolId) {
+			this._socket.send('addtool');
+			this._socket.send(['tool', toolId].join('.'));
+		};
+		this.removetool = function(toolId) {
+			this._socket.send('removetool');
+			this._socket.send(['tool', toolId].join('.'));
+		};
+		this.groupuserlist = function(groupId) {
+			this._socket.send('groupuserlist');	
+			this._socket.send(groupId);
+		};
+		this.publiclist = function() {
+			this._socket.send('publiclist');	
+		};
 		
 		//complex protocol operations
 		this.sendMessage = function(message, contactMode) {
@@ -155,6 +184,14 @@ var chat = chat || {};
 			
 			this.store(tag, message.id, data);
 			this.send(tag, message.id, data, message.to, contactMode);	
+		};
+		this.saveTool = function(tool) {
+			var data = JSON.stringify(tool);
+			this.store('tool', tool.id, data);
+			this.addtool(tool.id);
+		};
+		this.deleteTool = function(toolId) {
+			this.removetool(toolId);
 		};
 		
 		this._parseSocketMessage = function(socketEvent) {
@@ -179,6 +216,12 @@ var chat = chat || {};
 					
 			if (response.login) {
 				type = 'message:login';
+			} else if(response.scrape) {
+				type = 'message:scrape';
+			} else if(response.retrieve) {
+				type = 'message:retrieve';
+			} else if (response.broadcast) {
+				type = 'message:broadcast';
 			} else if (response.users) {
 				type = 'message:users';
 			} else if (response.send) {
@@ -199,6 +242,12 @@ var chat = chat || {};
 				type = 'message:now';
 			} else if (response.subscribelist) {
 				type = 'message:subscribelist';
+			} else if (response.toolrepo) {
+				type = 'message:toolrepo';
+			} else if (response.groupuserlist) {
+				type = 'message:groupuserlist';
+			} else if (response.publiclist) {
+				type = 'message:publiclist';
 			}
 			
 			return type;
@@ -211,7 +260,6 @@ var chat = chat || {};
 	};
 	
 	var MessageFactory = function() { };
-	
 	MessageFactory.create = function(id, content , fromUserId, toUserId, timestamp) {
 		return {
 			id: id,
@@ -222,14 +270,18 @@ var chat = chat || {};
 		};
 	};
 	
+	var ToolFactory = function() { };
+	ToolFactory.create = function(id, label, content) {
+		return {
+			id: id,
+			label: label,
+			content: base64.encode(content)
+		};
+	};
+	
 	chat.EventEmitter = EventEmitter;
 	chat.ChatClient = ChatClient;
 	chat.MessageFactory = MessageFactory;
+	chat.ToolFactory = ToolFactory;
 	
 })(chat, base64);
-
-
-
-
-
-
