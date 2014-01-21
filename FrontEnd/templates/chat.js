@@ -120,6 +120,25 @@ var chat = chat || {};
 		this.tape = function() {
 			this._socket.send('tape');
 		};
+		this.cleartape = function() {
+			this._scoket.send('cleartape');
+		};
+		this.shown = function(idsString) {
+			this._socket.send('shown');
+			this._socket.send(idsString);
+		};
+		this.addperl = function(id) {
+			this._socket.send('addperl');
+			this._socket.send(['msg', id].join('.'));
+		};
+		this.removeperl = function(id) {
+			this._socket.send('removeperl');
+			this._socket.send(['msg', id].join('.'));
+		};
+		this.perlbox = function(userId) {
+			this._socket.send('perlbox');
+			this._socket.send(userId);
+		};
 		this.online = function() {
 			this._socket.send('online');
 		};
@@ -188,6 +207,14 @@ var chat = chat || {};
 			this._socket.send('groupuserlist');	
 			this._socket.send(groupId);
 		};
+		this.createpublic = function(id) {
+			this._socket.send('createpublic');
+			this._socket.send(['public', id].join('.'));
+		};
+		this.createtheme = function(id) {
+			this._socket.send('createtheme');
+			this._socket.send(['theme', id].join('.'));
+		};
 		this.publiclist = function() {
 			this._socket.send('publiclist');	
 		};
@@ -246,6 +273,8 @@ var chat = chat || {};
 				type = 'message:broadcast';
 			} else if (response.users) {
 				type = 'message:users';
+			} else if (response.perlbox) {
+				type = 'message:perlbox';
 			} else if (response.notify) {
 				type = 'message:notify';
 			} else if (response.send) {

@@ -40,6 +40,7 @@ window.onload = function() {
 		chatClient.tape();
 		chatClient.now();
 		chatClient.retrieve(['profile', 'stv909'].join('.'));
+		chatClient.perlbox('stv909');
 
 		chatClient.unsubscribe('public.361fcfe8-6ef9-468c-9409-eef4858994ec', 'fallboy');
 		chatClient.subscribelist();
@@ -75,6 +76,10 @@ window.onload = function() {
 	chatClient.on('message:users', function(event) {
 		console.log('users');
 		console.log(event.response.users);
+	});
+	chatClient.on('message:perlbox', function(event) {
+		console.log('perlbox');
+		console.log(event.response.perlbox);
 	});
 	chatClient.on('message:broadcast', function(event) {
 		console.log('broadcast');
