@@ -54,6 +54,9 @@ window.onload = function() {
 		chatClient.sendMessage(testMessage);
 		chatClient.broadcast(['msg', testMessage.id].join('.'));
 		
+		testMessage.to = 'fallboy';
+		chatClient.notifyMessage(testMessage);
+		
 		chatClient.toolrepo();
 		chatClient.saveTool(testTool);
 		chatClient.toolrepo();
@@ -88,6 +91,10 @@ window.onload = function() {
 	chatClient.on('message:tape', function(event) {
 		console.log('tape');
 		console.log(event.response.tape);
+	});
+	chatClient.on('message:notify', function(event) {
+		console.log('notify');
+		console.log(event.response.notify);
 	});
 	chatClient.on('message:send', function(event) {
 		console.log('send');

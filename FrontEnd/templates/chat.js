@@ -127,6 +127,21 @@ var chat = chat || {};
 			this._socket.send('status');
 			this._socket.send(contactId);
 		};
+		this.notify = function(tag, id, data, toUserId, contactMode) {
+			var tagIdArray = [tag, id];
+			var contactModeIdArray = [toUserId];
+			
+			if (contactMode) {
+				contactModeIdArray.splice(0, 0, contactMode);
+			}
+			
+			var tagId = tagIdArray.join('.');
+			var contactModeId = contactModeIdArray.join('.');
+			
+			this._socket.send('notify');
+			this._socket.send(tagId);
+			this._socket.send(contactModeId);
+		};
 		this.send = function(tag, id, data, toUserId, contactMode) {
 			var tagIdArray = [tag, id];
 			var contactModeIdArray = [toUserId];
@@ -185,6 +200,13 @@ var chat = chat || {};
 			this.store(tag, message.id, data);
 			this.send(tag, message.id, data, message.to, contactMode);	
 		};
+		this.notifyMessage = function(message, contactMode) {
+			var tag = 'msg';
+			var data = JSON.stringify(message);
+			
+			this.store(tag, message.id, data);
+			this.notify(tag, message.id, data, message.to, contactMode);	
+		};
 		this.saveTool = function(tool) {
 			var data = JSON.stringify(tool);
 			this.store('tool', tool.id, data);
@@ -224,6 +246,8 @@ var chat = chat || {};
 				type = 'message:broadcast';
 			} else if (response.users) {
 				type = 'message:users';
+			} else if (response.notify) {
+				type = 'message:notify';
 			} else if (response.send) {
 				type = 'message:send';
 			} else if (response.sent) {
