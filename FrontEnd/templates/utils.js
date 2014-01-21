@@ -3,6 +3,10 @@ var utils = utils || {};
 (function(utils) {
 	
 	var Event = function() {
+		if (!(this instanceof Event)) {
+			console.log('test');
+			return new Event();
+		}
 		this.listeners = {};
 	};
 	

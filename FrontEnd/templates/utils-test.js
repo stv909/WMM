@@ -30,3 +30,18 @@ foo.on('bar', function() {
 	console.log(arguments);
 });
 foo.bar();
+
+var Shape = function() {
+	this.color = 'red';
+	this.info = function() {
+		console.log(this.color);	
+	};
+};
+
+var Box = function() {
+	Shape.call(this);	
+};
+
+var box = new Box();
+console.log(box);
+box.info();
