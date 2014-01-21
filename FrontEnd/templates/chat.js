@@ -1,9 +1,8 @@
 var chat = chat || {};
 
-(function(chat) {
+(function(chat, base64) {
 	
 	var EventEmitter = function() {
-
 		this.listeners = {};
 		
 		this.on = this.addEventListener = function(type, listener) {
@@ -36,13 +35,7 @@ var chat = chat || {};
 	};
 	
 	var ChatClient = function(serverUrl) {
-
-		EventEmitter.call(this);
-		
-		this._serverUrl = serverUrl;
-		this._socket = null;
-		
-		this.connect = function(userId) {
+		this.connect = function() {
 			this._socket = new WebSocket(this._serverUrl);
 			
 			var self = this;
@@ -98,6 +91,7 @@ var chat = chat || {};
 			this._socket.addEventListener('error', errorSocketListener);
 		};
 		
+		//basic protocol operations
 		this.login = function(userId) {
 			this._socket.send('login');
 			this._socket.send(userId);
@@ -114,8 +108,7 @@ var chat = chat || {};
 		this.status = function(contactId) {
 			this._socket.send('status');
 			this._socket.send(contactId);
-		}
-		
+		};
 		this.send = function(tag, id, data, toUserId, contactMode) {
 			var tagIdArray = [tag, id];
 			var contactModeIdArray = [toUserId];
@@ -126,12 +119,9 @@ var chat = chat || {};
 			
 			var tagId = tagIdArray.join('.');
 			var contactModeId = contactModeIdArray.join('.');
-			console.log(tagId);
-			console.log(contactModeId);
 			
-			this.store(tag, id, data);
 			this._socket.send('send');
-			this._socket.send(tagId);;
+			this._socket.send(tagId);
 			this._socket.send(contactModeId);
 		};
 		this.store = function(tag, id, data) {
@@ -141,8 +131,30 @@ var chat = chat || {};
 			this._socket.send(tagId);
 			this._socket.send(data);
 		};
-		this.sendMessage = function(messageId, messageString, toUserId, contactMode) {
-			this.send('msg', messageId, messageString, toUserId, contactMode);	
+		this.now = function() {
+			this._socket.send('now');	
+		};
+		this.subscribelist = function() {
+			this._socket.send('subscribelist');	
+		};
+		this.subscribe = function(groupId, userId) {
+			this._socket.send('subscribe');
+			this._socket.send(groupId);
+			this._socket.send(userId);
+		};
+		this.unsubscribe = function(groupId, userId) {
+			this._socket.send('unsubscribe');
+			this._socket.send(groupId);
+			this._socket.send(userId);
+		};
+		
+		//complex protocol operations
+		this.sendMessage = function(message, contactMode) {
+			var tag = 'msg';
+			var data = JSON.stringify(message);
+			
+			this.store(tag, message.id, data);
+			this.send(tag, message.id, data, message.to, contactMode);	
 		};
 		
 		this._parseSocketMessage = function(socketEvent) {
@@ -179,16 +191,42 @@ var chat = chat || {};
 				type = 'message:online';
 			} else if (response.status) {
 				type = 'message:status';
+			} else if (response.broadcast) {
+				type = 'message:broadcast';
+			} else if (response.notify) {
+				type ='message:notify';
+			} else if (response.now) {
+				type = 'message:now';
+			} else if (response.subscribelist) {
+				type = 'message:subscribelist';
 			}
 			
 			return type;
+		};
+		
+		this._serverUrl = serverUrl;
+		this._socket = null;
+		
+		EventEmitter.call(this);
+	};
+	
+	var MessageFactory = function() { };
+	
+	MessageFactory.create = function(id, content , fromUserId, toUserId, timestamp) {
+		return {
+			id: id,
+			content: base64.encode(content),
+			from: fromUserId,
+			to: toUserId,
+			timestamp: timestamp
 		};
 	};
 	
 	chat.EventEmitter = EventEmitter;
 	chat.ChatClient = ChatClient;
+	chat.MessageFactory = MessageFactory;
 	
-})(chat);
+})(chat, base64);
 
 
 

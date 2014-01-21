@@ -13,19 +13,30 @@ window.onload = function() {
 		console.log('login');
 		console.log(event.response.login);
 		
+		//test basic operations
 		chatClient.users();
 		chatClient.status(userId);
 		chatClient.online();
 		chatClient.tape();
-		
-		var msg = {
-			id: '5751465d-7d86-465a-bc02-9ae727ef2ac5',
-			from: 'fallboy', 
-			to: 'test', 
-			timestamp: 1390299905717,
-			content: 'messageContent'
+		chatClient.now();
+
+		chatClient.unsubscribe('public.361fcfe8-6ef9-468c-9409-eef4858994ec', 'fallboy');
+		chatClient.subscribelist();
+		chatClient.subscribe('public.361fcfe8-6ef9-468c-9409-eef4858994ec', 'fallboy');
+		chatClient.subscribelist();
+
+		//test complex operations
+		var createTestMessage = function() {
+			var id = '5751465d-7d86-465a-bc02-9ae727ef2ac5';
+			var content = 'test message with html <h1>Lenta12</h1>';
+			var fromId = 'fallboy';
+			var toId = 'test';
+			var timestamp = Date.now();
+			return chat.MessageFactory.create(id, content, fromId, toId, timestamp);
 		};
-		chatClient.sendMessage('5751465d-7d86-465a-bc02-9ae727ef2ac5', JSON.stringify(msg), 'test');
+		var testMessage = createTestMessage();
+
+		chatClient.sendMessage(testMessage);
 	});
 	
 	chatClient.on('message:users', function(event) {
@@ -51,6 +62,14 @@ window.onload = function() {
 	chatClient.on('message:sent', function(event) {
 		console.log('sent');
 		console.log(event.response.sent);
+	});
+	chatClient.on('message:now', function(event) {
+		console.log('now');
+		console.log(event.response.now);
+	});
+	chatClient.on('message:subscribelist', function(event) {
+		console.log('subscribelist');
+		console.log(event.response.subscribelist);
 	});
 	chatClient.on('message:unknown', function(event) {
 		console.log('unkonown');
