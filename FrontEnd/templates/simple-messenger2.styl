@@ -1,0 +1,389 @@
+scroll-width = 0.5em
+scroll-height = 0.5em
+real-scroll-width = scroll-width //- 0.05em
+real-scroll-height = scroll-height //- 0.05em
+
+page-width = 70em
+contacts-width = 11em
+chat-width = 45em
+tools-width = page-width - (contacts-width + chat-width)
+avatar-width = 6em
+content-width = 33em
+controls-width = chat-width - (avatar-width + content-width + 4 * scroll-width)
+
+main-border-color = #ddd
+second-border-color = #eee
+thumb-color = #eee
+second-thumb-color = #999
+main-menu-color = rgb(21, 112, 166)
+titles-color = rgb(238, 238, 238)
+
+@font-face
+	font-family 'Segoe UI'
+	src url('http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff')
+::-webkit-scrollbar
+	width real-scroll-width
+	height real-scroll-height
+	margin 0 auto
+::-webkit-scrollbar-thumb
+	background-color thumb-color
+
+*
+	outline none
+body, html
+	width 100%
+	height 100%
+	margin 0
+	padding 0
+	font-family "Segoe UI", Helvetica
+
+.active
+	display block
+.passive
+	display none
+.hidden
+	display none !important
+	
+input[type="text"]
+	background-color white
+	border 1px solid main-border-color
+	color black
+	padding 0.2em
+	font-family 'Segoe UI'
+	font-size 1em
+	
+#page
+	position relative
+	width page-width
+	margin 0 auto
+	box-shadow 0 0 0.5em #aaa
+	height 100%
+	>.wrap
+		position absolute
+		top 0
+		bottom 0
+		right 0
+		left 0
+		overflow hidden
+#application
+	display table
+	width 100%
+	height 100%
+#menu, #workspace
+	display table-row
+#menu
+	color white
+	height 1%
+	background-color main-menu-color
+	>.content
+		display inline-block
+		font-size 1.1em
+		margin-top 0.75em
+		margin-bottom 0.75em
+		margin-left 1em
+	>.account
+		color main-border-color
+		margin-top 0.9em
+		float right
+		font-size 0.9em
+		margin-right 0.5em
+		.login-controls, .logout-controls
+			display inline-block
+		.name, .settings, .logout-button, .login-button, .cancel-login-button, .status, .login-input
+			display inline-block
+			padding-right 0.75em
+			padding-left 0.75em
+			height 100%
+			vertical-align middle
+		.name
+			padding-left 0.25em
+		.name, .settings, .status
+			border-right 1px dotted main-border-color
+		.login-button
+			border-left 1px dotted main-border-color
+		.settings, .logout-button, .login-button, .cancel-login-button
+			text-decoration underline
+			cursor pointer
+			&:hover
+				color white
+		.login-input 
+			padding 0.2em
+			margin-right 0.75em
+		.avatar
+			display inline-block
+			width 1.5em
+			height 1.5em
+			vertical-align middle
+			>img
+				outline 1px solid main-border-color
+				width 100%
+#workspace
+	height 99%
+	>.content
+		display table
+		width 100%
+		height 100%
+		.row
+			display table-row
+		.cell
+			display table-cell
+		.titles
+			height 1%
+			background-color titles-color
+			.title
+				padding-top 0.5em
+				padding-bottom 0.5em
+				width 100%
+				text-align center
+				font-size 0.95em
+				border-bottom 1px solid #ddd
+#contacts, #chat, #tools
+	position relative
+	>.prewrap
+		position relative
+		width 100%
+		height 100%
+		>.wrap
+			position absolute
+			//width 100%
+			//height 100%
+			top 0
+			bottom 0
+			left 0
+			right 0
+#contacts
+	width contacts-width
+	>.prewrap
+		>.wrap
+			overflow-y scroll
+			overflow-x hidden
+			&::-webkit-scrollbar-track
+				&:vertical
+					border-left 1px solid main-border-color
+					border-right 1px solid main-border-color
+			&::-webkit-scrollbar-thumb
+				&:vertical
+					border-left 1px solid main-border-color
+					border-right 1px solid main-border-color
+			>.list
+				width contacts-width //- scroll-width
+				.contact
+					font-size 0.8em
+					padding-left 0.75em
+					padding-top 0.75em
+					padding-bottom 0.75em
+					border-bottom 1px solid second-border-color
+					transition all 200ms ease
+					&:hover
+						background-color #55BB55
+						color white
+					.avatar, .name
+						display inline-block
+						vertical-align top
+					.avatar
+						>div
+							width 2.5em
+							height 2.5em
+						img
+							border 1px solid white
+							width 100%
+							box-shadow 0 0 0.5em #aaa
+					.name
+						margin-left 0.5em
+						margin-top 0.5em
+#chat
+	width chat-width
+	>.prewrap
+		>.wrap
+			overflow hidden
+			border-right 1px solid main-border-color
+	#chatbox
+		position relative
+		height 100%
+		>.wrap
+			position absolute
+			top 0
+			bottom 0
+			right 0
+			left 0
+			overflow hidden
+		#board
+			display table
+			width 100%
+			height 100%
+			#conversation, #stream, #composer
+				display table-row
+			#conversation
+				text-align center
+				min-height 1%
+				>.wrap
+					font-size 0.8em
+					padding-top 0.5em
+					padding-bottom 0.5em
+					background-color #fffcf1
+					border-bottom 1px solid main-border-color
+			#stream
+				height 98%
+				>.wrap
+					height 100%
+					overflow-y scroll
+					&::-webkit-scrollbar-track
+						&:vertical
+							border-left 1px solid main-border-color
+					&::-webkit-scrollbar-thumb
+						&:vertical
+							border-left 1px solid main-border-color
+			#composer
+				height 1%
+				&.static
+					background-color #fff
+				&.dynamic
+					background-color #ebf5ff
+				>.wrap
+					border-top 1px solid main-border-color
+					overflow hidden
+					min-height 1em
+					max-height 22em
+	.message
+		padding-top 0.75em
+		padding-bottom 0.5em
+		width chat-width - scroll-width
+		/*&:not(:last-child)*/
+		border-bottom 1px solid second-border-color
+		&.static
+			background-color white
+		&.dynamic
+			background-color #ebf5ff
+		.avatar, .content, .controls
+			display inline-block
+			vertical-align top
+		.avatar
+			width avatar-width
+			.image
+				background-color white
+				margin 0 auto
+				width 4em
+				height 4em
+				border 2px solid #fff
+				box-shadow 0 0 0.5em #aaa
+				img
+					width 100%
+		.content
+			width content-width
+			.container
+				background-color white
+				position relative
+				display inline-block
+				min-height 5em
+				box-shadow 0 0 0.4em #aaa
+				&.static
+					width content-width - scroll-width
+					overflow hidden
+					max-height 20em
+					border 2px solid #fff
+				&.dynamic
+					width content-width
+					border 2px solid main-border-color
+					overflow scroll
+					max-height 20em + scroll-height
+				&::-webkit-scrollbar-track
+					&:vertical
+						border-left 1px solid main-border-color
+					&:horizontal
+						border-top 1px solid main-border-color
+				&::-webkit-scrollbar-thumb
+					background-color second-thumb-color
+					&:vertical
+						border-left 1px solid main-border-color
+					&:horizontal
+						border-top 1px solid main-border-color
+				.editor
+					width content-width - scroll-width
+					min-height 4em
+		.controls
+			text-align center
+			width controls-width
+			padding-left 0.5em
+			.time
+				margin-bottom 0.5em
+			/*outline 2px solid #fff*/
+			/*box-shadow 0 0 0.5em #aaa*/
+			.simple-button
+				background-color white
+				cursor pointer
+				font-size 0.75em
+				color #888
+				border 1px solid #eee
+				padding-top 0.25em
+				padding-bottom 0.255em
+				margin-bottom 0.25em
+				transition all 200ms ease
+				&:hover
+					background-color #55BB55
+					border 1px solid #55BB55
+					box-shadow 0 0 0.5em #aaa
+					color #fff
+				&.negative
+					margin-top 1em
+					&:hover
+						background-color #dd2222
+						border 1px solid #dd2222
+#tools
+	.tool
+		.title
+			text-align center
+			padding-top 0.5em
+			padding-bottom 0.5em
+			font-size 0.8em
+			background-color #ebf5ff
+			border-bottom 1px solid main-border-color
+		.controls
+			border-bottom 1px solid main-border-color
+			padding  0.5em
+#dialog
+	.title
+		font-size 1.2em
+		z-index 100
+		box-shadow 0 0 0.5em #aaa
+		position abosolute
+		top 0
+		left 0
+		right 0
+		height 2em
+		line-height 2em
+		background-color #55BB55
+		color white
+	.container
+		z-index 0
+		position absolute
+		background-color white
+		top 3.5em
+		left 2em
+		right 2em
+		bottom 1em
+		overflow auto
+		box-shadow 0 0 0.5em #aaa
+		outline 2px solid white
+		.content
+			width 100%
+			height 100%
+			overflow auto
+			&::-webkit-scrollbar-thumb
+				background-color second-thumb-color
+	.close
+		margin-right 1em
+		float right
+		cursor pointer
+
+#hide-composer
+	display none
+	z-index 10
+	position fixed
+	right 1em
+	top 1em
+#add-message
+	display block
+	z-index 10
+	position fixed
+	right 1em
+	bottom 3em

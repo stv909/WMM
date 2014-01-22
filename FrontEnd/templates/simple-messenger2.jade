@@ -1,0 +1,126 @@
+mixin contact
+	.contact
+		.avatar
+			div
+				img.avatar-image
+		.name
+			div.name-text
+mixin controls(composite)
+	.controls
+		if composite
+			.simple-button.send send
+			.simple-button.negative.clear clear
+		else
+			.time
+				.time-value 19:30
+			.simple-button.edit edit
+			.simple-button.negative.clear(style="display: none") clear
+			.simple-button.negative.cancel(style="display: none") cancel
+			.simple-button.share share
+			.simple-button.fullscreen fullscreen
+			.simple-button.negative.delete delete
+mixin account
+	.account
+		.login-controls
+			input.login-input(type="text", size=16)
+			.login-button Login
+			.status
+			.cancel-login-button Cancel
+		.logout-controls
+			.avatar
+				img(src="http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg")
+			.name
+			.settings Settings
+			.logout-button Logout
+mixin message(editable, composite)
+	if editable
+		.message.dynamic
+			.avatar
+				.image
+					img(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+			.content
+				.container.dynamic
+					.editor(contenteditable="true")
+			if composite
+				+controls(true)
+			else
+				+controls(false)
+	else
+		.message.static
+			.avatar
+				.image
+					img(src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg")
+			.content
+				.container.static
+					.editor(contenteditable="false")
+						img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
+						//iframe(width="100%", height="100%" ,src="//www.youtube.com/embed/h5EofwRzit0", frameborder="0", allowfullscreen)
+			if composite
+				+controls(true)
+			else
+				+controls(false)
+mixin chatbox
+	#chatbox
+		.wrap
+			#board
+				#conversation
+					.wrap Deshawn Grumbles and Me
+				#stream
+					.wrap
+						//+message
+				#composer.dynamic
+					.wrap
+						+message(true, true)
+mixin tool
+	.tool
+		.title
+		.controls
+doctype html
+html
+	head
+		title Messenger
+		link(rel="stylesheet", href="simple-messenger2.css")
+		script(type="application/javascript", src="uuid.js")
+		script(type="application/javascript", src="base64.js")
+		script(type="application/javascript", src="chat.js")
+		script(type="application/javascript", src="simple-messenger2.js")
+	body
+		#template(style="display:none")
+			+message
+			+contact
+			+tool
+			+account
+		button#hide-composer Hide composer
+		button#add-message Add message
+		#page
+			.wrap
+				#application
+					#menu
+						.content Messenger Prototype
+					#workspace
+						.content
+							.row.titles
+								.cell
+									.title Contacts
+								.cell
+									.title Chat
+								.cell
+									.title Tools
+							.row
+								#contacts.cell
+									.prewrap
+										.wrap
+											.list
+								#chat.cell
+									.prewrap
+										.wrap
+											+chatbox
+								#tools.cell
+									.prewrap
+										.wrap
+		#dialog.passive
+			.container
+				.content
+			.title
+				span(style="margin-left: 1em") Message
+				.close Close

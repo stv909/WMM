@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Messenger</title>
+    <link rel="stylesheet" href="simple-messenger2.css">
+    <script type="application/javascript" src="uuid.js"></script>
+    <script type="application/javascript" src="base64.js"></script>
+    <script type="application/javascript" src="chat.js"></script>
+    <script type="application/javascript" src="simple-messenger2.js"></script>
+  </head>
+  <body>
+    <div id="template" style="display:none">
+      <div class="message static">
+        <div class="avatar">
+          <div class="image"><img src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg"/></div>
+        </div>
+        <div class="content">
+          <div class="container static">
+            <div contenteditable="false" class="editor"><img src="http://larryfire.files.wordpress.com/2008/11/ny.png"/>
+              <!--iframe(width="100%", height="100%" ,src="//www.youtube.com/embed/h5EofwRzit0", frameborder="0", allowfullscreen)-->
+            </div>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="time">
+            <div class="time-value">19:30</div>
+          </div>
+          <div class="simple-button edit">edit</div>
+          <div style="display: none" class="simple-button negative clear">clear</div>
+          <div style="display: none" class="simple-button negative cancel">cancel</div>
+          <div class="simple-button share">share</div>
+          <div class="simple-button fullscreen">fullscreen</div>
+          <div class="simple-button negative delete">delete</div>
+        </div>
+      </div>
+      <div class="contact">
+        <div class="avatar">
+          <div><img class="avatar-image"/></div>
+        </div>
+        <div class="name">
+          <div class="name-text"></div>
+        </div>
+      </div>
+      <div class="tool">
+        <div class="title"></div>
+        <div class="controls"></div>
+      </div>
+      <div class="account">
+        <div class="login-controls">
+          <input type="text" size="16" class="login-input"/>
+          <div class="login-button">Login</div>
+          <div class="status"></div>
+          <div class="cancel-login-button">Cancel</div>
+        </div>
+        <div class="logout-controls">
+          <div class="avatar"><img src="http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg"/></div>
+          <div class="name"></div>
+          <div class="settings">Settings</div>
+          <div class="logout-button">Logout</div>
+        </div>
+      </div>
+    </div>
+    <button id="hide-composer">Hide composer</button>
+    <button id="add-message">Add message</button>
+    <div id="page">
+      <div class="wrap">
+        <div id="application">
+          <div id="menu">
+            <div class="content">Messenger Prototype</div>
+          </div>
+          <div id="workspace">
+            <div class="content">
+              <div class="row titles">
+                <div class="cell">
+                  <div class="title">Contacts</div>
+                </div>
+                <div class="cell">
+                  <div class="title">Chat</div>
+                </div>
+                <div class="cell">
+                  <div class="title">Tools</div>
+                </div>
+              </div>
+              <div class="row">
+                <div id="contacts" class="cell">
+                  <div class="prewrap">
+                    <div class="wrap">
+                      <div class="list"></div>
+                    </div>
+                  </div>
+                </div>
+                <div id="chat" class="cell">
+                  <div class="prewrap">
+                    <div class="wrap">
+                      <div id="chatbox">
+                        <div class="wrap">
+                          <div id="board">
+                            <div id="conversation">
+                              <div class="wrap">Deshawn Grumbles and Me</div>
+                            </div>
+                            <div id="stream">
+                              <div class="wrap">
+                                <!--+message-->
+                              </div>
+                            </div>
+                            <div id="composer" class="dynamic">
+                              <div class="wrap">
+                                <div class="message dynamic">
+                                  <div class="avatar">
+                                    <div class="image"><img src="http://lh6.googleusercontent.com/-DC1JTtJ1xDI/AAAAAAAAAAI/AAAAAAAAF6I/SBSyjz8mcTA/s512-c/photo.jpg"/></div>
+                                  </div>
+                                  <div class="content">
+                                    <div class="container dynamic">
+                                      <div contenteditable="true" class="editor"></div>
+                                    </div>
+                                  </div>
+                                  <div class="controls">
+                                    <div class="simple-button send">send</div>
+                                    <div class="simple-button negative clear">clear</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div id="tools" class="cell">
+                  <div class="prewrap">
+                    <div class="wrap"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="dialog" class="passive">
+      <div class="container">
+        <div class="content"></div>
+      </div>
+      <div class="title"><span style="margin-left: 1em">Message</span>
+        <div class="close">Close</div>
+      </div>
+    </div>
+  </body>
+</html>

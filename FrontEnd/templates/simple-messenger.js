@@ -52,7 +52,9 @@ window.onload = function() {
 
 				chatClient.off('message:login', loginChatClientListener);
 				chatClient.on('message:retrieve', retrieveChatClientListener);
+				chatClient.on('message:users', usersChatClientListener);
 				chatClient.retrieve(['profile', login].join('.'));
+				chatClient.users();
 				
 				loginButtonElem.style.display = 'none';
 				userLoginElem.style.display = 'none';
@@ -63,6 +65,10 @@ window.onload = function() {
 			var retrieveChatClientListener = function(event) {
 				console.log(event.response.retrieve);
 				chatClient.off('message:retrieve', retrieveChatClientListener);
+			};
+			var usersChatClientListener = function(event) {
+				console.log(event.response.users);
+				chatClient.off('message:users', usersChatClientListener);
 			};
 			var disconnectChatClient = function(event) {
 				updateStatusElem('offline');
