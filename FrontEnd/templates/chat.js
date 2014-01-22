@@ -43,7 +43,7 @@ var chat = chat || {};
 	
 	var ChatClient = function(serverUrl) {
 		this.connect = function() {
-			this._socket = new WebSocket(this._serverUrl);
+			_socket = new WebSocket(_serverUrl);
 			
 			var self = this;
 			var openSocketListener = function(socketEvent) {
@@ -66,10 +66,10 @@ var chat = chat || {};
 				socket.removeEventListener('error', errorSocketListener);
 			};
 			var messageSocketListener = function(socketEvent) {
-				var result = self._parseSocketMessage(socketEvent);
+				var result = _parseSocketMessage(socketEvent);
 				if (result.isValid) {
 					var response = result.response;
-					var type = self._getResponseType(response);
+					var type = _getResponseType(response);
 					self.trigger({
 						type: type,
 						target: self,
@@ -93,70 +93,70 @@ var chat = chat || {};
 				});
 			};
 			
-			this._socket.addEventListener('open', openSocketListener);
-			this._socket.addEventListener('close', closeSocketListener);
-			this._socket.addEventListener('message', messageSocketListener);
-			this._socket.addEventListener('error', errorSocketListener);
+			_socket.addEventListener('open', openSocketListener);
+			_socket.addEventListener('close', closeSocketListener);
+			_socket.addEventListener('message', messageSocketListener);
+			_socket.addEventListener('error', errorSocketListener);
 		};
 		this.disconnect = function() {
-			this._socket.close();
-			this._socket = null;
+			_socket.close();
+			_socket = null;
 		};
 		
 		//basic protocol operations
 		this.login = function(userId) {
-			this._socket.send('login');
-			this._socket.send(userId);
+			_socket.send('login');
+			_socket.send(userId);
 		};
 		this.scrape = function() {
-			this._socket.send('scrape');	
+			_socket.send('scrape');	
 		};
 		this.store = function(tag, id, data) {
 			var tagId = [tag, id].join('.');
 			
-			this._socket.send('store');
-			this._socket.send(tagId);
-			this._socket.send(data);
+			_socket.send('store');
+			_socket.send(tagId);
+			_socket.send(data);
 		};
 		this.retrieve = function(idsString) {
-			this._socket.send('retrieve');
-			this._socket.send(idsString);
+			_socket.send('retrieve');
+			_socket.send(idsString);
 		};
 		this.broadcast = function(fullDocumentId) {
-			this._socket.send('broadcast');
-			this._socket.send(fullDocumentId);
+			_socket.send('broadcast');
+			_socket.send(fullDocumentId);
 		};
 		this.users = function() {
-			this._socket.send('users');	
+			_socket.send('users');	
 		};
 		this.tape = function() {
-			this._socket.send('tape');
+			_socket.send('tape');
 		};
 		this.cleartape = function() {
 			this._scoket.send('cleartape');
 		};
 		this.shown = function(idsString) {
-			this._socket.send('shown');
-			this._socket.send(idsString);
+			_socket.send('shown');
+			_socket.send(idsString);
 		};
 		this.addperl = function(id) {
-			this._socket.send('addperl');
-			this._socket.send(['msg', id].join('.'));
+			_socket.send('addperl');
+			_socket.send(['msg', id].join('.'));
 		};
 		this.removeperl = function(id) {
-			this._socket.send('removeperl');
-			this._socket.send(['msg', id].join('.'));
+			_socket.send('removeperl');
+			_socket.send(['msg', id].join('.'));
 		};
 		this.perlbox = function(userId) {
-			this._socket.send('perlbox');
-			this._socket.send(userId);
+			_socket.send('perlbox');
+			_socket.send(userId);
 		};
 		this.online = function() {
-			this._socket.send('online');
+			_socket.send('online');
 		};
 		this.status = function(contactId) {
-			this._socket.send('status');
-			this._socket.send(contactId);
+			_socket.send('status');
+			_socket.send(contactId);
 		};
 		this.notify = function(tag, id, data, toUserId, contactMode) {
 			var tagIdArray = [tag, id];
@@ -169,9 +169,9 @@ var chat = chat || {};
 			var tagId = tagIdArray.join('.');
 			var contactModeId = contactModeIdArray.join('.');
 			
-			this._socket.send('notify');
-			this._socket.send(tagId);
-			this._socket.send(contactModeId);
+			_socket.send('notify');
+			_socket.send(tagId);
+			_socket.send(contactModeId);
 		};
 		this.send = function(tag, id, data, toUserId, contactMode) {
 			var tagIdArray = [tag, id];
@@ -184,51 +184,51 @@ var chat = chat || {};
 			var tagId = tagIdArray.join('.');
 			var contactModeId = contactModeIdArray.join('.');
 			
-			this._socket.send('send');
-			this._socket.send(tagId);
-			this._socket.send(contactModeId);
+			_socket.send('send');
+			_socket.send(tagId);
+			_socket.send(contactModeId);
 		};
 		this.now = function() {
-			this._socket.send('now');	
+			_socket.send('now');	
 		};
 		this.subscribelist = function() {
-			this._socket.send('subscribelist');	
+			_socket.send('subscribelist');	
 		};
 		this.subscribe = function(groupId, userId) {
-			this._socket.send('subscribe');
-			this._socket.send(groupId);
-			this._socket.send(userId);
+			_socket.send('subscribe');
+			_socket.send(groupId);
+			_socket.send(userId);
 		};
 		this.unsubscribe = function(groupId, userId) {
-			this._socket.send('unsubscribe');
-			this._socket.send(groupId);
-			this._socket.send(userId);
+			_socket.send('unsubscribe');
+			_socket.send(groupId);
+			_socket.send(userId);
 		};
 		this.toolrepo = function() {
-			this._socket.send('toolrepo');	
+			_socket.send('toolrepo');	
 		};
 		this.addtool = function(toolId) {
-			this._socket.send('addtool');
-			this._socket.send(['tool', toolId].join('.'));
+			_socket.send('addtool');
+			_socket.send(['tool', toolId].join('.'));
 		};
 		this.removetool = function(toolId) {
-			this._socket.send('removetool');
-			this._socket.send(['tool', toolId].join('.'));
+			_socket.send('removetool');
+			_socket.send(['tool', toolId].join('.'));
 		};
 		this.groupuserlist = function(groupId) {
-			this._socket.send('groupuserlist');	
-			this._socket.send(groupId);
+			_socket.send('groupuserlist');	
+			_socket.send(groupId);
 		};
 		this.createpublic = function(id) {
-			this._socket.send('createpublic');
-			this._socket.send(['public', id].join('.'));
+			_socket.send('createpublic');
+			_socket.send(['public', id].join('.'));
 		};
 		this.createtheme = function(id) {
-			this._socket.send('createtheme');
-			this._socket.send(['theme', id].join('.'));
+			_socket.send('createtheme');
+			_socket.send(['theme', id].join('.'));
 		};
 		this.publiclist = function() {
-			this._socket.send('publiclist');	
+			_socket.send('publiclist');	
 		};
 		
 		//complex protocol operations
@@ -255,7 +255,7 @@ var chat = chat || {};
 			this.removetool(toolId);
 		};
 		
-		this._parseSocketMessage = function(socketEvent) {
+		var _parseSocketMessage = function(socketEvent) {
 			var result = {
 				isValid: false,
 				response: null,
@@ -272,7 +272,7 @@ var chat = chat || {};
 			
 			return result;
 		};
-		this._getResponseType = function(response) {
+		var _getResponseType = function(response) {
 			var type = 'message:unknown';
 					
 			if (response.login) {
@@ -318,8 +318,8 @@ var chat = chat || {};
 			return type;
 		};
 		
-		this._serverUrl = serverUrl;
-		this._socket = null;
+		var _serverUrl = serverUrl;
+		var _socket = null;
 		
 		EventEmitter.call(this);
 	};

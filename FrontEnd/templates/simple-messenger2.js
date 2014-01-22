@@ -98,7 +98,6 @@ window.onload = function() {
 				chatClient.disconnect();
 			});
 
-			
 			menuElem.appendChild(accountElem);
 		};
 		
