@@ -10,10 +10,17 @@ var chat = chat || {};
 			this.listeners[type].push(listener);
 		};
 		this.off = this.removeEventListener = function(type, listener) {
-			if (this.listeners[type] instanceof Array) {
-				var index = this.listener[type].indexOf(listener);
-				if (index !== -1) {
+			if (!type) {
+				this.listeners = {};
+			}
+			else if (this.listeners[type] instanceof Array) {
+				if (listener) {
+					var index = this.listeners[type].indexOf(listener);
+					if (index !== -1) {
 					this.listeners[type].splice(index, 1);
+				}
+				} else {
+					this.listeners[type] = [];
 				}
 			}
 		};
