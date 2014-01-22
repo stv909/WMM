@@ -52,10 +52,11 @@ var chat = chat || {};
 					target: self,
 					socketEvent: socketEvent
 				});
-				self._socket.removeEventListener('open', openSocketListener);
-				self._socket.removeEventListener('close', closeSocketListener);
-				self._socket.removeEventListener('message', messageSocketListener);
-				self._socket.removeEventListener('error', errorSocketListener);
+				var socket = socketEvent.srcElement;
+				socket.removeEventListener('open', openSocketListener);
+				socket.removeEventListener('close', closeSocketListener);
+				socket.removeEventListener('message', messageSocketListener);
+				socket.removeEventListener('error', errorSocketListener);
 			};
 			var messageSocketListener = function(socketEvent) {
 				var result = self._parseSocketMessage(socketEvent);
@@ -89,6 +90,10 @@ var chat = chat || {};
 			this._socket.addEventListener('close', closeSocketListener);
 			this._socket.addEventListener('message', messageSocketListener);
 			this._socket.addEventListener('error', errorSocketListener);
+		};
+		this.disconnect = function() {
+			this._socket.close();
+			this._socket = null;
 		};
 		
 		//basic protocol operations

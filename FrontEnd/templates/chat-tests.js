@@ -11,9 +11,8 @@ window.onload = function() {
 		//TODO: It seems not to be working.
 		//chatClient.scrape();
 	});
-	
 	chatClient.on('message:login', function(event) {
-		console.log('login');
+		console.log('message:login');
 		console.log(event.response.login);
 		
 		var createTestMessage = function() {
@@ -64,74 +63,76 @@ window.onload = function() {
 		chatClient.deleteTool(testTool.id);
 		chatClient.toolrepo();
 	});
-	
 	chatClient.on('message:scrape', function(event) {
-		console.log('scrape');
+		console.log('message:scrape');
 		console.log(event.response.scrape);
 	});
 	chatClient.on('message:retrieve', function(event) {
-		console.log('retrieve');
+		console.log('message:retrieve');
 		console.log(event.response.retrieve);
 	});
 	chatClient.on('message:users', function(event) {
-		console.log('users');
+		console.log('message:users');
 		console.log(event.response.users);
 	});
 	chatClient.on('message:perlbox', function(event) {
-		console.log('perlbox');
+		console.log('message:perlbox');
 		console.log(event.response.perlbox);
 	});
 	chatClient.on('message:broadcast', function(event) {
-		console.log('broadcast');
+		console.log('message:broadcast');
 		console.log(event.response.broadcast);
 	});
 	chatClient.on('message:status', function(event) {
-		console.log('status');
+		console.log('message:status');
 		console.log(event.response.status);
 	});
 	chatClient.on('message:online', function(event) {
-		console.log('online');
+		console.log('message:online');
 		console.log(event.response.online);
 	});
 	chatClient.on('message:tape', function(event) {
-		console.log('tape');
+		console.log('message:tape');
 		console.log(event.response.tape);
 	});
 	chatClient.on('message:notify', function(event) {
-		console.log('notify');
+		console.log('message:notify');
 		console.log(event.response.notify);
 	});
 	chatClient.on('message:send', function(event) {
-		console.log('send');
+		console.log('message:send');
 		console.log(event.response.send);
 	});
 	chatClient.on('message:sent', function(event) {
-		console.log('sent');
+		console.log('message:sent');
 		console.log(event.response.sent);
 	});
 	chatClient.on('message:now', function(event) {
-		console.log('now');
+		console.log('message:now');
 		console.log(event.response.now);
 	});
 	chatClient.on('message:subscribelist', function(event) {
-		console.log('subscribelist');
+		console.log('message:subscribelist');
 		console.log(event.response.subscribelist);
 	});
 	chatClient.on('message:toolrepo', function(event) {
-		console.log('toolrepo');
+		console.log('message:toolrepo');
 		console.log(event.response.toolrepo);
 	});
 	chatClient.on('message:publiclist', function(event) {
-		console.log('publiclist');
+		console.log('message:publiclist');
 		console.log(event.response.publiclist);
 	});
 	chatClient.on('message:groupuserlist', function(event) {
-		console.log('groupuserlist');
+		console.log('message:groupuserlist');
 		console.log(event.response.groupuserlist);
 	});
 	chatClient.on('message:unknown', function(event) {
-		console.log('unkonown');
+		console.log('message:unkonown');
 		console.log(event.response);
+	});
+	chatClient.on('disconnect', function(event) {
+		console.log('disconnect');	
 	});
 	
 	chatClient.connect();

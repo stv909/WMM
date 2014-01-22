@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Simple messenger</title>
+		<script src="uuid.js"></script>
+		<script src="base64.js"></script>
+		<script src="chat.js"></script>
+		<script src="simple-messenger.js"></script>
+	</head>
+	<body>
+		<div id="templates" style="display:none">
+			<div class="login-controls">
+				<input type="text" class="user-login-input" />
+				<button class="login-button">login</button>
+				<button class="logout-button" style="display:none">logout</button>
+			</div>
+			<div class="logout-controls"></div>
+		</div>
+		<div id="page">
+			<div id="account-holder"></div>
+			<div id="status"></div>
+		</div>
+	</body>
+</html>
