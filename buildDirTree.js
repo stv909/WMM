@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var q = require('q');
+var jade = require('jade');
 
 var buildDirTree = function(dir, excludedDirs) {
     excludedDirs = excludedDirs || [];
@@ -36,12 +37,53 @@ var buildDirTree = function(dir, excludedDirs) {
     return buildDirTreeRec("", dir, {});
 };
 
+var traceDirTree = function(dirTree, callback) {
+	var traceDirTreeRec = function(baseDir, dirNode) {
+		var keys = Object.keys(dirNode);
+		keys.forEach(function(key) {
+			var dirPath = path.join(baseDir, key);
+			var subDirTree = dirNode[key];
+			callback(dirPath);
+			traceDirTreeRec(dirPath, subDirTree);
+		});
+	};
+	traceDirTreeRec('', dirTree);
+};
+
 var dir = process.argv[2] || '.';
 var excludedDirs = ['node_modules', '.git'];
 
 buildDirTree(dir, excludedDirs).then(function(dirTree) {
-    console.log(JSON.stringify(dirTree, 0, 4));
+	var fsWatchers = [];
+	var createFsWatcher = function(baseDir) {
+		var fsWatcher = fs.watch(baseDir, { persistent: true });
+		fsWatcher.on('change', function(event, filename) {
+			var extName = path.extname(filename);
+			if (extName === ".jade") {
+				var filePath = path.join(baseDir, filename);
+				jade.renderFile(filePath, {
+					pretty: true
+				}, function(error, html) {
+					if (error) {
+						console.log("Can't render a jade file");
+						console.log(error);
+					}
+					else {
+						var renderedFilePath = path.join(baseDir, path.basename(filename, ".jade")) + ".html";
+						fs.writeFile(renderedFilePath, html, null, function(err) {
+							if (error) {
+								console.log("Can't save a rendered jade file at " + renderedFilePath);
+								console.log(err);
+							}
+							else {
+								console.log("Html file saved " + renderedFilePath);
+							}
+						});
+					}
+				});
+			}
+		});
+		fsWatchers.push(fsWatcher);
+	};
+	traceDirTree(dirTree, createFsWatcher);
 });
-
-//Will be printed before the tree will be complete.
-console.log('yo there');
