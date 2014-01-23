@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var q = require('q');
 var jade = require('jade');
+var stylus = require('stylus');
 
 var buildDirTree = function(dir, excludedDirs) {
     excludedDirs = excludedDirs || [];
@@ -80,6 +81,27 @@ buildDirTree(dir, excludedDirs).then(function(dirTree) {
 							}
 						});
 					}
+				});
+			} else if (extName === '.styl') {
+				var filePath = path.join(baseDir, filename);
+				fs.readFile(filePath, { encoding: 'utf-8' }, function(err, str) {
+					stylus.render(str, function(error, css) {
+						if (error) {
+							console.log("Can't render a stylus file");
+							console.log(error);
+						}
+						else {
+							var renderedFilePath = path.join(baseDir, path.basename(filename, ".styl")) + ".css";
+							fs.writeFile(renderedFilePath, css, null, function(err) {
+								if (error) {
+									console.log("Can't save a rendered stylus file at " + renderedFilePath);
+									console.log(err);
+								} else {
+									console.log("Css file saved " + renderedFilePath);
+								}
+							});
+						}
+					});
 				});
 			}
 		});
