@@ -11,7 +11,6 @@ window.onload = function() {
 	};
 	
 	var ChatApplication = function() {
-		
 		var self = this;
 		
 		var serverUrl = 'ws://www.bazelevscontent.net:9009/';
@@ -22,6 +21,7 @@ window.onload = function() {
 		
 		var userId = null;
 		var contactsMap = {};
+		var publicMap = {};
 
 		var initializeAccountElem = function() {
 			var accountElem = createTemplateElem('account');
@@ -86,7 +86,7 @@ window.onload = function() {
 
 					if (userId === profileId) {
 						var profileValue = profile.value || {};
-						avatarImg.src = profileValue.avatar || 'http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg';
+						avatarImg.src = profileValue.avatar || 'http://simpleicon.com/wp-content/uploads/business-man-1.png';
 						nameElem.textContent = profileValue.nickname || userId;
 					}
 					
@@ -108,6 +108,7 @@ window.onload = function() {
 					loginButtonElem.classList.remove('hidden');
 					
 					avatarImg.src = 'http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg';
+					nameElem.textContent = "";
 					
 					self.trigger({
 						type: 'disconnect'	
@@ -131,17 +132,14 @@ window.onload = function() {
 			var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
 			var listElem = wrapElem.getElementsByClassName('list')[0];
 			
-			var templateElem = document.getElementById('template');
-			var contactElem = templateElem.getElementsByClassName('contact')[0];
-
-			var newContactElem = contactElem.cloneNode(true);
+			var newContactElem = createTemplateElem('contact');
 			var avatarImageElem = newContactElem.getElementsByClassName('avatar-image')[0];
 			var nameTextElem = newContactElem.getElementsByClassName('name-text')[0];
 
 			var id = profile.id.replace('profile.', '');
 			var profileValue = profile.value || {};
 			var nickname = profileValue.nickname || id;
-			var avatarSrc = profileValue.avatar || "http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg";
+			var avatarSrc = profileValue.avatar || 'http://simpleicon.com/wp-content/uploads/business-man-1.png';
 			
 			newContactElem.title = id;
 			avatarImageElem.src = avatarSrc;
@@ -149,10 +147,11 @@ window.onload = function() {
 
 			newContactElem.addEventListener('click', function() {
 				self.trigger({
-					type: 'contact:select',
+					type: 'select:contact',
 					contactId: id
 				});
 			});
+			
 			contactsMap[profile.id] = newContactElem;
 			listElem.appendChild(newContactElem);
 		};
@@ -172,21 +171,68 @@ window.onload = function() {
 			profileIds.forEach(deleteContact);
 		};
 		
+		var createPublic = function(publicDetail) {
+			var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+			var listElem = wrapElem.getElementsByClassName('list')[0];
+			
+			var newPublicElem = createTemplateElem('public');
+			var avatarImageElem = newPublicElem.getElementsByClassName('avatar-image')[0];
+			var nameTextElem = newPublicElem.getElementsByClassName('name-text')[0];
+			
+			var publicValue = publicDetail.value;
+			
+			if (publicValue) {
+				newPublicElem.title = publicValue.id;
+				nameTextElem.textContent = '[' + publicValue.label + ']';
+				avatarImageElem.src = 'https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/world-512.png';
+				//"http://simpleicon.com/wp-content/uploads/group-1.png";
+				
+				newPublicElem.addEventListener('click', function() {
+					self.trigger({
+						type: 'select:public',
+						publicId: publicValue.id
+					});
+				});
+				
+				publicMap[publicDetail.id] = newPublicElem;
+				listElem.appendChild(newPublicElem);
+			}
+		};
+		var createPublicList = function(publicDetails) {
+			publicDetails.forEach(function(publicDetail) {
+				createPublic(publicDetail);
+			});
+		};
+		var deletePublic = function(publicId) {
+			var publicElem = publicMap[publicId];
+			var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+			var listElem = wrapElem.getElementsByClassName('list')[0];
+			
+			delete contactsMap[publicId];
+			listElem.removeChild(publicElem);
+		};
+		var deleteAllPublics = function() {
+			var publicIds = Object.keys(publicMap);
+			publicIds.forEach(deletePublic);
+		};
+		
 		self.initialize = function() {
 			initializeAccountElem();
 			
 			var authorizeListener = function(event) {
 				userId = event.userId;
 				
-				chatClient.on('message:users', usersClientChatListener);
 				chatClient.on('message:publiclist', publiclistClientChatListener);
-				chatClient.users();
+				chatClient.on('message:users', usersClientChatListener);
+				
 				chatClient.publiclist();
+				chatClient.users();
 			};
 			var disconnectListener = function(event) {
 				chatClient.off('message:users');
 				chatClient.off('message:retrieve');
 				chatClient.off('message:publiclist');
+				deleteAllPublics();
 				deleteAllContacts();
 			};
 			
@@ -222,14 +268,17 @@ window.onload = function() {
 			};
 			var retrievePublicsClientChatListener = function(event) {
 				var publicDetails = event.response.retrieve;
-				console.log(JSON.stringify(publicDetails, null, 4));
 				chatClient.off('message:retrieve', retrievePublicsClientChatListener);
+				createPublicList(publicDetails);
 			};
 			
 			self.on('authorize', authorizeListener);
 			self.on('disconnect', disconnectListener);
-			self.on('contact:select', function(event) {
+			self.on('select:contact', function(event) {
 				alert(event.contactId);
+			});
+			self.on('select:public', function(event) {
+				alert(event.publicId);	
 			});
 		};
 		

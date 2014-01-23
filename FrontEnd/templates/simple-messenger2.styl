@@ -96,6 +96,7 @@ input[type="text"]
 			height 100%
 			vertical-align middle
 		.name
+			color white
 			padding-left 0.25em
 		.name, .settings, .status
 			border-right 1px dotted main-border-color
@@ -115,6 +116,7 @@ input[type="text"]
 			height 1.5em
 			vertical-align middle
 			>img
+				background-color white
 				outline 1px solid main-border-color
 				width 100%
 #workspace
@@ -167,16 +169,13 @@ input[type="text"]
 					border-right 1px solid main-border-color
 			>.list
 				width contacts-width //- scroll-width
-				.contact
+				.contact, .public
 					font-size 0.8em
 					padding-left 0.75em
 					padding-top 0.75em
 					padding-bottom 0.75em
 					border-bottom 1px solid second-border-color
 					transition all 200ms ease
-					&:hover
-						background-color #55BB55
-						color white
 					.avatar, .name
 						display inline-block
 						vertical-align top
@@ -185,6 +184,7 @@ input[type="text"]
 							width 2.5em
 							height 2.5em
 						img
+							background-color white
 							border 1px solid white
 							width 100%
 							height 100%
@@ -192,6 +192,13 @@ input[type="text"]
 					.name
 						margin-left 0.5em
 						margin-top 0.5em
+				.contact:hover
+					background-color #55BB55
+					color white
+				.public
+					&:hover
+						background-color #5555BB
+						color white
 #chat
 	width chat-width
 	>.prewrap

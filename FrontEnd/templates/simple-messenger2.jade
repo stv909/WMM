@@ -5,6 +5,13 @@ mixin contact
 				img.avatar-image
 		.name
 			div.name-text
+mixin public
+	.public
+		.avatar
+			div
+				img.avatar-image
+		.name
+			div.name-text
 mixin controls(composite)
 	.controls
 		if composite
@@ -30,7 +37,7 @@ mixin account
 				.cancel-login-button Cancel
 		.logout-controls
 			.avatar
-				img(src="http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg")
+				img
 			.name
 			.settings Settings
 			.logout-button Logout
@@ -90,6 +97,7 @@ html
 		#template(style="display:none")
 			+message
 			+contact
+			+public
 			+tool
 			+account
 		button#hide-composer Hide composer

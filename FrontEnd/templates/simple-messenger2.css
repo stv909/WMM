@@ -99,6 +99,7 @@ input[type="text"] {
   vertical-align: middle;
 }
 #menu >.account .name {
+  color: #fff;
   padding-left: 0.25em;
 }
 #menu >.account .name,
@@ -133,6 +134,7 @@ input[type="text"] {
   vertical-align: middle;
 }
 #menu >.account .avatar >img {
+  background-color: #fff;
   outline: 1px solid #ddd;
   width: 100%;
 }
@@ -201,7 +203,8 @@ input[type="text"] {
 #contacts >.prewrap >.wrap >.list {
   width: 11em;
 }
-#contacts >.prewrap >.wrap >.list .contact {
+#contacts >.prewrap >.wrap >.list .contact,
+#contacts >.prewrap >.wrap >.list .public {
   font-size: 0.8em;
   padding-left: 0.75em;
   padding-top: 0.75em;
@@ -209,28 +212,38 @@ input[type="text"] {
   border-bottom: 1px solid #eee;
   transition: all 200ms ease;
 }
-#contacts >.prewrap >.wrap >.list .contact:hover {
-  background-color: #5b5;
-  color: #fff;
-}
 #contacts >.prewrap >.wrap >.list .contact .avatar,
-#contacts >.prewrap >.wrap >.list .contact .name {
+#contacts >.prewrap >.wrap >.list .public .avatar,
+#contacts >.prewrap >.wrap >.list .contact .name,
+#contacts >.prewrap >.wrap >.list .public .name {
   display: inline-block;
   vertical-align: top;
 }
-#contacts >.prewrap >.wrap >.list .contact .avatar >div {
+#contacts >.prewrap >.wrap >.list .contact .avatar >div,
+#contacts >.prewrap >.wrap >.list .public .avatar >div {
   width: 2.5em;
   height: 2.5em;
 }
-#contacts >.prewrap >.wrap >.list .contact .avatar img {
+#contacts >.prewrap >.wrap >.list .contact .avatar img,
+#contacts >.prewrap >.wrap >.list .public .avatar img {
+  background-color: #fff;
   border: 1px solid #fff;
   width: 100%;
   height: 100%;
   box-shadow: 0 0 0.5em #aaa;
 }
-#contacts >.prewrap >.wrap >.list .contact .name {
+#contacts >.prewrap >.wrap >.list .contact .name,
+#contacts >.prewrap >.wrap >.list .public .name {
   margin-left: 0.5em;
   margin-top: 0.5em;
+}
+#contacts >.prewrap >.wrap >.list .contact:hover {
+  background-color: #5b5;
+  color: #fff;
+}
+#contacts >.prewrap >.wrap >.list .public:hover {
+  background-color: #55b;
+  color: #fff;
 }
 #chat {
   width: 45em;
