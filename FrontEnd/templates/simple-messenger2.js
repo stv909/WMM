@@ -10,6 +10,27 @@ window.onload = function() {
 		return newTemplateElem;
 	};
 	
+	var Counter = function(size) {
+		var self = this;
+		var _size = size || 0;
+		
+		self.reset = function(size) {
+			_size = size;
+		};
+		self.release = function() {
+			_size--;
+			_size = _size <= 0 ? 0 : _size;
+			if (_size === 0) {
+				self.trigger('empty');
+			}
+		};
+		self.add = function() {
+			_size++;	
+		};
+		
+		EventEmitter.call(self);
+	};
+	
 	var ChatApplication = function() {
 		var self = this;
 		
@@ -19,6 +40,7 @@ window.onload = function() {
 		var menuElem = document.getElementById('menu');
 		var contactsElem = document.getElementById('contacts');
 		
+		var loadOperationCounter = new Counter();
 		var userId = null;
 		var contactsMap = {};
 		var publicMap = {};
@@ -156,7 +178,7 @@ window.onload = function() {
 			listElem.appendChild(newContactElem);
 		};
 		var createContactList = function(profiles) {
-			profiles.forEach(createContact);	
+			profiles.forEach(createContact);
 		};
 		var deleteContact = function(profileId) {
 			var contactElem = contactsMap[profileId];
@@ -221,6 +243,8 @@ window.onload = function() {
 			
 			var authorizeListener = function(event) {
 				userId = event.userId;
+				loadOperationCounter.reset(2);
+				loadOperationCounter.on('empty', emptyLoadOperationCounterListener);
 				
 				chatClient.on('message:publiclist', publiclistClientChatListener);
 				chatClient.on('message:users', usersClientChatListener);
@@ -232,6 +256,8 @@ window.onload = function() {
 				chatClient.off('message:users');
 				chatClient.off('message:retrieve');
 				chatClient.off('message:publiclist');
+				chatClient.off('message:send');
+				loadOperationCounter.off('empty', emptyLoadOperationCounterListener);
 				deleteAllPublics();
 				deleteAllContacts();
 			};
@@ -253,6 +279,7 @@ window.onload = function() {
 				var profiles = event.response.retrieve;
 				chatClient.off('message:retrieve', retrieveProfilesClientChatListener);
 				createContactList(profiles);
+				loadOperationCounter.release();
 			};
 			
 			//loading publiclist
@@ -270,6 +297,17 @@ window.onload = function() {
 				var publicDetails = event.response.retrieve;
 				chatClient.off('message:retrieve', retrievePublicsClientChatListener);
 				createPublicList(publicDetails);
+				loadOperationCounter.release();	
+			};
+			
+			//all startup infor loaded
+			var emptyLoadOperationCounterListener = function() {
+				console.log('all loaded');
+				loadOperationCounter.off('empty', loadOperationCounter);
+				chatClient.on('message:send', sendChatClientListener);
+			};
+			var sendChatClientListener = function(event) {
+				alert(JSON.stringify(event.response.send, null, 4));
 			};
 			
 			self.on('authorize', authorizeListener);
