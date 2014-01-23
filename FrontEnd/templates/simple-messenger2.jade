@@ -22,10 +22,12 @@ mixin controls(composite)
 mixin account
 	.account
 		.login-controls
-			input.login-input(type="text", size=16)
-			.login-button Login
-			.status
-			.cancel-login-button Cancel
+			form#login-form
+				input.login-input(type="text", size=16)
+				input(type="text", style="display: none")
+				.login-button Login
+				.status
+				.cancel-login-button Cancel
 		.logout-controls
 			.avatar
 				img(src="http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg")

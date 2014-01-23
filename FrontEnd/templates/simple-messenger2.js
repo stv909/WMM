@@ -45,6 +45,12 @@ window.onload = function() {
 			statusElem.classList.add('hidden');
 			cancelLoginButtonElem.classList.add('hidden');
 			
+			loginInputElem.addEventListener('keydown', function() {
+				if (event.keyCode === 13) {
+					loginButtonElem.click();
+					loginInputElem.blur();
+				}
+			});
 			loginButtonElem.addEventListener('click', function() {
 				var userId = loginInputElem.value;
 				chatClient.connect();
