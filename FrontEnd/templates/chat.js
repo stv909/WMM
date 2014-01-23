@@ -3,37 +3,37 @@ var chat = chat || {};
 (function(chat, base64) {
 	
 	var EventEmitter = function() {
-		this.listeners = {};
+		var self = this;
+		self.listeners = {};
 		
-		this.on = this.addEventListener = function(type, listener) {
-			this.listeners[type] = this.listeners[type] || [];
-			this.listeners[type].push(listener);
+		self.on = this.addEventListener = function(type, listener) {
+			self.listeners[type] = self.listeners[type] || [];
+			self.listeners[type].push(listener);
 		};
-		this.off = this.removeEventListener = function(type, listener) {
+		self.off = this.removeEventListener = function(type, listener) {
 			if (!type) {
-				this.listeners = {};
+				self.listeners = {};
 			}
-			else if (this.listeners[type] instanceof Array) {
+			else if (self.listeners[type] instanceof Array) {
 				if (listener) {
-					var index = this.listeners[type].indexOf(listener);
+					var index = self.listeners[type].indexOf(listener);
 					if (index !== -1) {
-					this.listeners[type].splice(index, 1);
+					self.listeners[type].splice(index, 1);
 				}
 				} else {
-					this.listeners[type] = [];
+					self.listeners[type] = [];
 				}
 			}
 		};
-		this.trigger = this.fire = function(event) {
+		self.trigger = this.fire = function(event) {
 			if (typeof(event) === typeof('')) {
 				event = { type: event };
 			}
 			if (!event.target) {
-				event.target = this;
+				event.target = self;
 			}
-			if (this.listeners[event.type] instanceof Array) {
-				var self = this;
-				var typeListeners = this.listeners[event.type];
+			if (self.listeners[event.type] instanceof Array) {
+				var typeListeners = self.listeners[event.type];
 				typeListeners.forEach(function(listener) {
 					listener.call(self, event);	
 				});

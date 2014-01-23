@@ -79,7 +79,6 @@ window.onload = function() {
 					var profileId = profile.id.replace('profile.', '');
 
 					if (userId === profileId) {
-						console.log(profile);
 						var profileValue = profile.value || {};
 						avatarImg.src = profileValue.avatar || 'http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg';
 						nameElem.textContent = profileValue.nickname || userId;
@@ -174,14 +173,18 @@ window.onload = function() {
 				userId = event.userId;
 				
 				chatClient.on('message:users', usersClientChatListener);
+				chatClient.on('message:publiclist', publiclistClientChatListener);
 				chatClient.users();
+				chatClient.publiclist();
 			};
 			var disconnectListener = function(event) {
 				chatClient.off('message:users');
 				chatClient.off('message:retrieve');
+				chatClient.off('message:publiclist');
 				deleteAllContacts();
 			};
 			
+			//loading user profiles.
 			var usersClientChatListener = function(event) {
 				var users = event.response.users;
 				var profileIds = users.filter(function(user) {
@@ -191,13 +194,30 @@ window.onload = function() {
 				});
 
 				chatClient.off('message:users', usersClientChatListener);
-				chatClient.on('message:retrieve', retrieveClientChatListener);
+				chatClient.on('message:retrieve', retrieveProfilesClientChatListener);
 				chatClient.retrieve(profileIds.join());
 			};
-			var retrieveClientChatListener = function(event) {
+			var retrieveProfilesClientChatListener = function(event) {
 				var profiles = event.response.retrieve;
-				chatClient.off('retrieve');
+				chatClient.off('message:retrieve', retrieveProfilesClientChatListener);
 				createContactList(profiles);
+			};
+			
+			//loading publiclist
+			var publiclistClientChatListener = function(event) {
+				var publiclist = event.response.publiclist;
+				var publicIds = publiclist.map(function(public) {
+					return public.id;
+				});
+				
+				chatClient.off('message:publiclist', publiclistClientChatListener);
+				chatClient.on('message:retrieve', retrievePublicsClientChatListener);
+				chatClient.retrieve(publicIds.join(','));
+			};
+			var retrievePublicsClientChatListener = function(event) {
+				var publicDetails = event.response.retrieve;
+				console.log(JSON.stringify(publicDetails, null, 4));
+				chatClient.off('message:retrieve', retrievePublicsClientChatListener);
 			};
 			
 			self.on('authorize', authorizeListener);
@@ -207,7 +227,7 @@ window.onload = function() {
 			});
 		};
 		
-		EventEmitter.call(this);
+		EventEmitter.call(self);
 	};
 	
 	var chatApplication = new ChatApplication();
