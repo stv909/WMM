@@ -30,6 +30,12 @@ html {
 .hidden {
   display: none !important;
 }
+.offline {
+  opacity: 0.5;
+}
+.online {
+  opacity: 1;
+}
 input[type="text"] {
   background-color: #fff;
   border: 1px solid #ddd;
