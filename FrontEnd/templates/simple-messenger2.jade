@@ -12,6 +12,13 @@ mixin public
 				img.avatar-image
 		.name
 			div.name-text
+mixin theme
+	.theme
+		.avatar
+			div
+				img.avatar-image
+		.name
+			div.name-text
 mixin controls(composite)
 	.controls
 		if composite
@@ -97,6 +104,7 @@ html
 			+message
 			+contact
 			+public
+			+theme
 			+tool
 			+account
 		button#hide-composer Hide composer

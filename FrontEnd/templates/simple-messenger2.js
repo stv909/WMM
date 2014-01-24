@@ -42,9 +42,15 @@ window.onload = function() {
 		
 		var loadOperationCounter = new Counter();
 		var userId = null;
+		
 		var contactsMap = {};
 		var profiles = {};
+		
 		var publicMap = {};
+		var publicDetails = {};
+		
+		var themeMap = {};
+		var themes = {};
 
 		var createContact = function(profile) {
 			var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
@@ -88,12 +94,16 @@ window.onload = function() {
 		var deleteAllContacts = function() {
 			var profileIds = Object.keys(contactsMap);
 			profileIds.forEach(deleteContact);
+			contactsMap = {};
 			profiles = {};
 		};
 		
 		var updateOnlineContact = function(userId, isOnline) {
 			var profileId = ['profile', userId].join('.');
 			var contactElem = contactsMap[profileId];
+			if (!contactElem) {
+				return;
+			}
 			if (isOnline) {
 				contactElem.classList.remove('offline');
 				contactElem.classList.add('online');
@@ -132,6 +142,7 @@ window.onload = function() {
 				});
 				
 				publicMap[publicDetail.id] = newPublicElem;
+				publicDetails[publicDetail.id] = publicDetail;
 				listElem.appendChild(newPublicElem);
 			}
 		};
@@ -145,12 +156,59 @@ window.onload = function() {
 			var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
 			var listElem = wrapElem.getElementsByClassName('list')[0];
 			
-			delete contactsMap[publicId];
+			delete publicMap[publicId];
 			listElem.removeChild(publicElem);
 		};
 		var deleteAllPublics = function() {
 			var publicIds = Object.keys(publicMap);
 			publicIds.forEach(deletePublic);
+			publicMap = {};
+			publicDetails = {};
+		};
+		
+		var createTheme = function(theme) {
+			var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+			var listElem = wrapElem.getElementsByClassName('list')[0];
+			
+			var newThemeElem = createTemplateElem('theme');
+			var avatarImageElem = newThemeElem.getElementsByClassName('avatar-image')[0];
+			var nameTextElem = newThemeElem.getElementsByClassName('name-text')[0];
+			
+			var themeValue = theme.value;
+			
+			if (themeValue) {
+				newThemeElem.title = themeValue.id;
+				nameTextElem.textContent = '[' + themeValue.label + ']';
+				avatarImageElem.src = 'http://simpleicon.com/wp-content/uploads/group-1.png';
+				
+				newThemeElem.addEventListener('click', function() {
+					self.trigger({
+						type: 'select:theme',
+						themeId: themeValue.id
+					});
+				});
+				
+				themeMap[theme.id] = newThemeElem;
+				publicDetails[theme.id] = theme;
+				listElem.appendChild(newThemeElem);
+			}
+		};
+		var createThemeList = function(themeList) {
+			themeList.forEach(createTheme);
+		};
+		var deleteTheme = function(themeId) {
+			var themeElem = themeMap[themeId];
+			var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+			var listElem = wrapElem.getElementsByClassName('list')[0];
+
+			delete themeMap[themeId];
+			listElem.removeChild(themeElem);
+		};
+		var deleteAllThemes = function() {
+			var themeIds = Object.keys(themeMap);
+			themeIds.forEach(deleteTheme);
+			themeMap = {};
+			themes = {};
 		};
 		
 		var updateConverstationTitle = function(title) {
@@ -278,20 +336,28 @@ window.onload = function() {
 		};
 		
 		self.initialize = function() {
+			var groupLoadCounter = new Counter(2);
+			groupLoadCounter.on('empty', function() {
+				chatClient.users();
+			});
+						
 			showConversationTitle(false);
 			updateConverstationTitle('');
 			initializeAccountElem();
 			
 			var authorizeListener = function(event) {
 				userId = event.userId;
-				loadOperationCounter.reset(2);
+				loadOperationCounter.reset(3);
+				groupLoadCounter.reset(2);
 				loadOperationCounter.on('empty', emptyLoadOperationCounterListener);
 				
 				chatClient.on('message:publiclist', publiclistClientChatListener);
+				chatClient.on('message:subscribelist', subscribelistClienChatListener);
 				chatClient.on('message:users', usersClientChatListener);
 				
 				chatClient.publiclist();
-				chatClient.users();
+				chatClient.subscribelist();
+
 			};
 			var disconnectListener = function(event) {
 				chatClient.off('message:users');
@@ -299,10 +365,12 @@ window.onload = function() {
 				chatClient.off('message:publiclist');
 				chatClient.off('message:send');
 				chatClient.off('message:online');
+				chatClient.off('message:subscribelist');
 				loadOperationCounter.off('empty', emptyLoadOperationCounterListener);
 				
 				deleteAllPublics();
 				deleteAllContacts();
+				deleteAllThemes();
 				
 				updateConverstationTitle('');
 				showConversationTitle(false);
@@ -351,6 +419,28 @@ window.onload = function() {
 				chatClient.off('message:retrieve', retrievePublicsClientChatListener);
 				createPublicList(publicDetails);
 				loadOperationCounter.release();	
+				groupLoadCounter.release();
+			};
+			
+			//loading themes
+			var subscribelistClienChatListener = function(event) {
+				var subscribelist = event.response.subscribelist;
+				var themeIds = subscribelist.filter(function(item) {
+					return item.type !== 'public';	
+				}).map(function(item) {
+					return item.id;
+				});
+
+				chatClient.off('message:subscribelist', subscribelistClienChatListener);
+				chatClient.on('message:retrieve', retrieveThemesClientChatListener);
+				chatClient.retrieve(themeIds.join(','));
+			};
+			var retrieveThemesClientChatListener = function(event) {
+				var themes = event.response.retrieve;
+				chatClient.off('message:retrieve', retrieveThemesClientChatListener);
+				createThemeList(themes);
+				loadOperationCounter.release();
+				groupLoadCounter.release();
 			};
 			
 			//all startup info loaded
@@ -364,6 +454,7 @@ window.onload = function() {
 			
 			self.on('authorize', authorizeListener);
 			self.on('disconnect', disconnectListener);
+			
 			self.on('select:contact', function(event) {
 				var contactId = event.contactId;
 				var profileId = ['profile', contactId].join('.');
@@ -379,6 +470,9 @@ window.onload = function() {
 				alert(event.publicId);
 				showConversationTitle(true);
 			});
+			self.on('select:theme', function(event) {
+				alert(event.themeId);
+			})
 		};
 		
 		EventEmitter.call(self);

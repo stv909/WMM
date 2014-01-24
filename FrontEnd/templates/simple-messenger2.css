@@ -210,7 +210,8 @@ input[type="text"] {
   width: 11em;
 }
 #contacts >.prewrap >.wrap >.list .contact,
-#contacts >.prewrap >.wrap >.list .public {
+#contacts >.prewrap >.wrap >.list .public,
+#contacts >.prewrap >.wrap >.list .theme {
   font-size: 0.8em;
   padding-left: 0.75em;
   padding-top: 0.75em;
@@ -220,18 +221,22 @@ input[type="text"] {
 }
 #contacts >.prewrap >.wrap >.list .contact .avatar,
 #contacts >.prewrap >.wrap >.list .public .avatar,
+#contacts >.prewrap >.wrap >.list .theme .avatar,
 #contacts >.prewrap >.wrap >.list .contact .name,
-#contacts >.prewrap >.wrap >.list .public .name {
+#contacts >.prewrap >.wrap >.list .public .name,
+#contacts >.prewrap >.wrap >.list .theme .name {
   display: inline-block;
   vertical-align: top;
 }
 #contacts >.prewrap >.wrap >.list .contact .avatar >div,
-#contacts >.prewrap >.wrap >.list .public .avatar >div {
+#contacts >.prewrap >.wrap >.list .public .avatar >div,
+#contacts >.prewrap >.wrap >.list .theme .avatar >div {
   width: 2.5em;
   height: 2.5em;
 }
 #contacts >.prewrap >.wrap >.list .contact .avatar img,
-#contacts >.prewrap >.wrap >.list .public .avatar img {
+#contacts >.prewrap >.wrap >.list .public .avatar img,
+#contacts >.prewrap >.wrap >.list .theme .avatar img {
   background-color: #fff;
   border: 1px solid #fff;
   width: 100%;
@@ -239,7 +244,8 @@ input[type="text"] {
   box-shadow: 0 0 0.5em #aaa;
 }
 #contacts >.prewrap >.wrap >.list .contact .name,
-#contacts >.prewrap >.wrap >.list .public .name {
+#contacts >.prewrap >.wrap >.list .public .name,
+#contacts >.prewrap >.wrap >.list .theme .name {
   margin-left: 0.5em;
   margin-top: 0.5em;
 }
@@ -249,6 +255,10 @@ input[type="text"] {
 }
 #contacts >.prewrap >.wrap >.list .public:hover {
   background-color: #55b;
+  color: #fff;
+}
+#contacts >.prewrap >.wrap >.list .theme:hover {
+  background-color: #b5b;
   color: #fff;
 }
 #chat {
