@@ -183,7 +183,7 @@ window.onload = function() {
 			
 			if (themeValue) {
 				newThemeElem.title = themeValue.id;
-				nameTextElem.textContent = '[' + themeValue.label + ']';
+				nameTextElem.textContent = '{' + themeValue.label + '}';
 				avatarImageElem.src = 'http://simpleicon.com/wp-content/uploads/group-1.png';
 				
 				newThemeElem.addEventListener('click', function() {
@@ -290,6 +290,7 @@ window.onload = function() {
 			var public = publicDetails[fullPublicId];
 			var value = public.value;
 			var author = [value.auther];
+			var label = ['[', value.label, ']: '];
 			var moderators = Object.keys(value.moderators);
 
 			var allUsers = moderators.concat(author).filter(function(user) {
@@ -298,7 +299,9 @@ window.onload = function() {
 				return getUserNickname(user);
 			});
 			
-			updateConverstationTitle(allUsers.join(', '));
+			var title = label.concat([allUsers.join(', ')]).join('');
+			
+			updateConverstationTitle(title);
 			showConversationTitle(true);
 		};
 		var setThemeChat = function(themeId) {
@@ -314,22 +317,25 @@ window.onload = function() {
 			var theme = themes[fullThemeId];
 			var value = theme.value;
 			var author = [value.auther];
+			var label = ['{', value.label, '}: '];
 			
-			var createGroupuserlistListener = function(fullThemeId) {
+			var createGroupuserlistListener = function() {
 				var groupuserlistListener = function(event) {
 					var groupuserlist = event.response.groupuserlist;
 					var currentgroup = groupuserlist[0];
 					var users = currentgroup.users || [];
-					updateConverstationTitle(users.join(', '));
+					var title = label.concat(users.join(', ')).join('');
+					updateConverstationTitle(title);
 					chatClient.off("groupuserlist", groupuserlistListener);
 				};
 				return groupuserlistListener;
 			};
 			chatClient.off('message:groupuserlist');
-			chatClient.on('message:groupuserlist', createGroupuserlistListener(fullThemeId));
+			chatClient.on('message:groupuserlist', createGroupuserlistListener());
 			chatClient.groupuserlist(fullThemeId);
 			
-			updateConverstationTitle([author, ' and ...'].join(', '));
+			var title = label.concat([author, ' and ...'].join(', ')).join('');
+			updateConverstationTitle(title);
 			showConversationTitle(true);
 		};
 		
