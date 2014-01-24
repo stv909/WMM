@@ -192,6 +192,22 @@ window.onload = function() {
 			var profileIds = Object.keys(contactsMap);
 			profileIds.forEach(deleteContact);
 		};
+		var updateOnlineContact = function(userId, isOnline) {
+			var profileId = ['profile', userId].join('.');
+			var contactElem = contactsMap[profileId];
+			if (isOnline) {
+				contactElem.classList.remove('offline');
+				contactElem.classList.add('online');
+			} else {
+				contactElem.classList.remove('online');
+				contactElem.classList.add('offline');
+			}
+		};
+		var updateOnlineContacts = function(onlineUsers) {
+			onlineUsers.forEach(function(userId) {
+				updateOnlineContact(userId, true);	
+			});	
+		};
 		
 		var createPublic = function(publicDetail) {
 			var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
@@ -257,6 +273,7 @@ window.onload = function() {
 				chatClient.off('message:retrieve');
 				chatClient.off('message:publiclist');
 				chatClient.off('message:send');
+				chatClient.off('message:online');
 				loadOperationCounter.off('empty', emptyLoadOperationCounterListener);
 				deleteAllPublics();
 				deleteAllContacts();
@@ -278,8 +295,15 @@ window.onload = function() {
 			var retrieveProfilesClientChatListener = function(event) {
 				var profiles = event.response.retrieve;
 				chatClient.off('message:retrieve', retrieveProfilesClientChatListener);
+				chatClient.on('message:online', onlineClientChatListener);
+				chatClient.online();
 				createContactList(profiles);
 				loadOperationCounter.release();
+			};
+			var onlineClientChatListener = function(event) {
+				var online = event.response.online;
+				chatClient.off('message:online', onlineClientChatListener);
+				updateOnlineContacts(online);
 			};
 			
 			//loading publiclist
@@ -300,9 +324,8 @@ window.onload = function() {
 				loadOperationCounter.release();	
 			};
 			
-			//all startup infor loaded
+			//all startup info loaded
 			var emptyLoadOperationCounterListener = function() {
-				console.log('all loaded');
 				loadOperationCounter.off('empty', loadOperationCounter);
 				chatClient.on('message:send', sendChatClientListener);
 			};
