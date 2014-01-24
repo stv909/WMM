@@ -2,9 +2,9 @@ window.onload = function() {
 
     var pasteSnippetToInputBlock = function(htmlSnippet) {
         pasteHtmlAtCaret(document.getElementById('inputBlock'), htmlSnippet);
-    }
+    };
 
-    function pasteHtmlAtCaret(messageElement, html) {
+    var pasteHtmlAtCaret = function(messageElement, html) {
         if (messageElement.contentEditable === 'false')
             return;
         messageElement.focus();
@@ -44,7 +44,7 @@ window.onload = function() {
                 sel.addRange(range);
             }
         }
-    }
+    };
 
     var contactInfoCollection = [
         {

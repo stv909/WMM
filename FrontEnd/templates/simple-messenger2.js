@@ -44,6 +44,8 @@ window.onload = function() {
 			.getElementsByClassName('avatar')[0]
 			.getElementsByClassName('image')[0]
 			.getElementsByTagName('img')[0];
+		var streamElem = document.getElementById('stream');
+		var streamWrapElem = streamElem.getElementsByClassName('wrap')[0];
 		
 		var loadOperationCounter = new Counter();
 		var userId = null;
@@ -339,8 +341,191 @@ window.onload = function() {
 			showConversationTitle(true);
 		};
 		
-		var initializeComposer = function() {
+		var clearMessageElem = function(messageElem) {
+			var editorElem = messageElem.getElementsByClassName('editor')[0];
+			editorElem.innerHTML = '';
+		};
+		var getMessageElemContent = function(messageElem) {
+			var editor = messageElem.getElementsByClassName('editor')[0];
+			return editor.innerHTML;
+		};
+		var setMessageElemContent = function(messageElem, content) {
+			var editorElem = messageElem.getElementsByClassName('editor')[0];
+			editorElem.innerHTML = content;
+		};
+		var checkMessageElemOverflow = function(messageElem) {
+			var containerElem = messageElem.getElementsByClassName('container')[0];
+			var isOverflow = html.checkElemOverflow(containerElem);
+			if (isOverflow) {
+				containerElem.style.border = '2px solid #fffc63';
+			}
+			else {
+				containerElem.style.border = '2px solid #fff';
+			}
+		};
+		var isEditingMessageElem = function(messageElem) {
+			var containerElems = messageElem.getElementsByClassName('container dynamic');
+			return containerElems.length !== 0;
+		};
+		var createMessageElem = function(content) {
+			var messageElem = createTemplateElem('message');
+			var editorElem = messageElem.getElementsByClassName('editor')[0];
+			editorElem.innerHTML = content;
+			return messageElem;
+		};
+		
+		var currentMessageElem = null;
+		var currentMessageContent = null;
+		var messageElemHandler = function(e) {
+			e.stopPropagation();
+		};
+		var documentElemHandler = function() {
+			if (currentMessageElem) {
+				checkMessageElemOverflow(currentMessageElem);
+				endEditingMessageElem(currentMessageElem);
+				enableMessageComposer();
+				currentMessageElem = null;
+			}
+		};
+		var beginEditingMessageElem = function(messageElem) {
+			if (currentMessageElem !== null && currentMessageElem !== messageElem) {
+				checkMessageElemOverflow(currentMessageElem);
+				endEditingMessageElem(currentMessageElem);
+			}
+
+			var editElem = messageElem.getElementsByClassName('edit')[0];
+			var clearElem = messageElem.getElementsByClassName('clear')[0];
+			var cancelElem = messageElem.getElementsByClassName('cancel')[0];
+			var shareElem = messageElem.getElementsByClassName('share')[0];
+			var fullscreenElem = messageElem.getElementsByClassName('fullscreen')[0];
+			var deleteElem = messageElem.getElementsByClassName('delete')[0];
+
+			var containerElem = messageElem.getElementsByClassName('container')[0];
+			var editorElem = messageElem.getElementsByClassName('editor')[0];
+
+			editElem.textContent = 'finish';
+			clearElem.style.display = 'block';
+			cancelElem.style.display = 'block';
+			shareElem.style.display = 'none';
+			fullscreenElem.style.display = 'none';
+			deleteElem.style.display = 'none';
+
+			messageElem.className = 'message dynamic';
+			containerElem.className = 'container dynamic';
+			containerElem.style.overflow = 'scroll';
+			containerElem.style.border = '2px solid #ddd';
+			editorElem.contentEditable = 'true';
+
+			currentMessageElem = messageElem;
+			currentMessageContent = getMessageElemContent(currentMessageElem);
+			messageElem.addEventListener('click', messageElemHandler);
+		};
+		var endEditingMessageElem = function(messageElem) {
+			var editElem = messageElem.getElementsByClassName('edit')[0];
+			var clearElem = messageElem.getElementsByClassName('clear')[0];
+			var cancelElem = messageElem.getElementsByClassName('cancel')[0];
+			var shareElem = messageElem.getElementsByClassName('share')[0];
+			var fullscreenElem = messageElem.getElementsByClassName('fullscreen')[0];
+			var deleteElem = messageElem.getElementsByClassName('delete')[0];
+
+			var containerElem = messageElem.getElementsByClassName('container')[0];
+			var editorElem = messageElem.getElementsByClassName('editor')[0];
+
+			editElem.textContent = 'edit';
+			clearElem.style.display = 'none';
+			cancelElem.style.display = 'none';
+			shareElem.style.display = 'block';
+			fullscreenElem.style.display = 'block';
+			deleteElem.style.display = 'block';
+
+			messageElem.className = 'message static';
+			containerElem.className = 'container static';
+			containerElem.style.overflow = 'hidden';
+			containerElem.scrollTop = 0;
+			containerElem.scrollLeft = 0;
+			editorElem.contentEditable = 'false';
+
+			messageElem.removeEventListener('click', messageElemHandler);
+			currentMessageElem = null;
+			currentMessageContent = null;
+		};
+		var cancelEditingMessageElem = function(messageElem) {
+			setMessageElemContent(messageElem, currentMessageContent);
+		};
+		var disableMessageComposer = function() {
+			var messageElem = composerElem.getElementsByClassName('message')[0];
+			var container = messageElem.getElementsByClassName('container')[0];
+			var editorElem = messageElem.getElementsByClassName('editor')[0];
+			composerElem.className = 'composer static';
+			messageElem.className = 'message static';
+			container.className = 'container static';
+			editorElem.contentEditable = 'false';
+		};
+		var enableMessageComposer = function() {
+			var messageElem = composerElem.getElementsByClassName('message')[0];
+			var container = messageElem.getElementsByClassName('container')[0];
+			var editorElem = messageElem.getElementsByClassName('editor')[0];
+			composerElem.className = 'composer dynamic';
+			messageElem.className = 'message dynamic';
+			container.className = 'container dynamic';
+			editorElem.contentEditable = 'true';
+		};
+		
+		var imbueComposerMessageElem = function(messageElem) {
+			var sendElem = messageElem.getElementsByClassName('send')[0];
+			var clearElem = messageElem.getElementsByClassName('clear')[0];
+			var editorElem = messageElem.getElementsByClassName('editor')[0];
+
+			sendElem.addEventListener('click', function() {
+				var content = getMessageElemContent(messageElem);
+				var newMessageElem = createMessageElem(content);
+
+				imbueStreamMessageElem(newMessageElem);
+				appendMessageElem(newMessageElem);
+				html.scrollToBottom(streamWrapElem);
+				checkMessageElemOverflow(newMessageElem);
+				clearMessageElem(messageElem);
+			});
+
+			var enterCode = 13;
+			var shiftPressed = false;
+			var ctrlPressed = false;
+
+			clearElem.addEventListener('click', function() {
+				clearMessageElem(messageElem);
+			});
+			editorElem.addEventListener('keydown', function(e) {
+				if (e.shiftKey) {
+					shiftPressed = true;
+				}
+				if (e.ctrlKey) {
+					ctrlPressed = true;
+				}
+				if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
+					sendElem.click();
+					editorElem.focus();
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			});
+			editorElem.addEventListener('keyup', function(e) {
+				if (e.shiftKey) {
+					shiftPressed = false;
+				}
+				if (e.ctrlKey) {
+					ctrlPressed = false;
+				}
+			});
+			editorElem.addEventListener('blur', function() {
+				shiftPressed = false;
+				ctrlPressed = false;
+			});
+		};
 			
+		var initializeComposerMessageElem = function() {
+			var messageElem = composerElem.getElementsByClassName('message')[0];
+			imbueComposerMessageElem(messageElem);
+			document.addEventListener('click', documentElemHandler);
 		};
 		
 		var initializeAccountElem = function() {
@@ -459,6 +644,7 @@ window.onload = function() {
 			updateConverstationTitle('');
 			showComposer(false);
 			initializeAccountElem();
+			initializeComposerMessageElem();
 			
 			var authorizeListener = function(event) {
 				userId = event.userId;
