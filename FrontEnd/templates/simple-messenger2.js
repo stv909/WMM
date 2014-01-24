@@ -194,7 +194,7 @@ window.onload = function() {
 				});
 				
 				themeMap[theme.id] = newThemeElem;
-				publicDetails[theme.id] = theme;
+				themes[theme.id] = theme;
 				listElem.appendChild(newThemeElem);
 			}
 		};
@@ -238,6 +238,103 @@ window.onload = function() {
 				composerElem.classList.add('passive');
 				composerAvatarImgElem.src = 'http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg';
 			}
+		};
+		
+		var _chatMode = null;
+		var _companionId = null;
+		var changeChat = function(mode, companionId) {
+			if (_chatMode !== mode || _companionId !== companionId) {
+				_chatMode = mode;
+				_companionId = companionId;
+				
+				chatClient.off('message:groupuserlist');
+				switch (mode) {
+					case 'public':
+						setPublicChat(_companionId);
+						break;
+					case 'theme':
+						setThemeChat(_companionId);
+						break;
+					case 'contact':
+						setContactChat(_companionId);
+						break;
+					default:
+						break;
+				}
+			}
+		};
+		var resetChat = function() {
+			_chatMode = null;	
+			_companionId = null;
+		};
+		var setContactChat = function(contactId) {
+			var profileId = ['profile', contactId].join('.');
+			var profile = profiles[profileId];
+			var value = profile.value || {};
+			var nickname = value.nickname || contactId;
+			//var title = [nickname, 'and', 'Me'].join(' ');
+
+			updateConverstationTitle(nickname);
+			showConversationTitle(true);	
+		};
+		var setPublicChat = function(publicId) {
+			var getUserNickname = function(id) {
+				var profileId = ['profile', id].join('.');
+				var profile = profiles[profileId];
+				var value = profile.value || {};
+				var nickname = value.nickname || id;
+				return nickname;
+			};
+			
+			var fullPublicId = ['public', publicId].join('.');
+			var public = publicDetails[fullPublicId];
+			var value = public.value;
+			var author = [value.auther];
+			var moderators = Object.keys(value.moderators);
+
+			var allUsers = moderators.concat(author).filter(function(user) {
+				return user !== userId;
+			}).map(function(user) {
+				return getUserNickname(user);
+			});
+			
+			updateConverstationTitle(allUsers.join(', '));
+			showConversationTitle(true);
+		};
+		var setThemeChat = function(themeId) {
+			var getUserNickname = function(id) {
+				var profileId = ['profile', id].join('.');
+				var profile = profiles[profileId];
+				var value = profile.value || {};
+				var nickname = value.nickname || id;
+				return nickname;
+			};
+
+			var fullThemeId = ['theme', themeId].join('.');
+			var theme = themes[fullThemeId];
+			var value = theme.value;
+			var author = [value.auther];
+			
+			var createGroupuserlistListener = function(fullThemeId) {
+				var groupuserlistListener = function(event) {
+					var groupuserlist = event.response.groupuserlist;
+					var currentgroup = groupuserlist[0];
+					var users = currentgroup.users || [];
+					updateConverstationTitle(users.join(', '));
+					chatClient.off("groupuserlist", groupuserlistListener);
+				};
+				return groupuserlistListener;
+			};
+			chatClient.off('message:groupuserlist');
+			chatClient.on('message:groupuserlist', createGroupuserlistListener(fullThemeId));
+			chatClient.groupuserlist(fullThemeId);
+			
+			updateConverstationTitle([author, ' and ...'].join(', '));
+			showConversationTitle(true);
+		};
+		
+		var initializeComposer = function() {
+			
 		};
 		
 		var initializeAccountElem = function() {
@@ -378,6 +475,7 @@ window.onload = function() {
 				chatClient.off('message:send');
 				chatClient.off('message:online');
 				chatClient.off('message:subscribelist');
+				chatClient.off('message:groupuserlist');
 				loadOperationCounter.off('empty', emptyLoadOperationCounterListener);
 				
 				deleteAllPublics();
@@ -387,6 +485,7 @@ window.onload = function() {
 				updateConverstationTitle('');
 				showConversationTitle(false);
 				showComposer(false);
+				resetChat();
 			};
 			
 			//loading user profiles.
@@ -470,22 +569,15 @@ window.onload = function() {
 			self.on('disconnect', disconnectListener);
 			
 			self.on('select:contact', function(event) {
-				var contactId = event.contactId;
-				var profileId = ['profile', contactId].join('.');
-				var profile = profiles[profileId];
-				var value = profile.value || {};
-				var nickname = value.nickname || contactId;
-				var title = [nickname, 'and', 'Me'].join(' ');
-
-				updateConverstationTitle(title);
-				showConversationTitle(true);
+				changeChat('contact', event.contactId);
 			});
 			self.on('select:public', function(event) {
-				alert(event.publicId);
 				showConversationTitle(true);
+				changeChat('public', event.publicId);
 			});
 			self.on('select:theme', function(event) {
-				alert(event.themeId);
+				showConversationTitle(true);
+				changeChat('theme', event.themeId);
 			});
 		};
 		
