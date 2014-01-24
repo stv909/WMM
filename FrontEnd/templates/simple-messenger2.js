@@ -39,6 +39,11 @@ window.onload = function() {
 		
 		var menuElem = document.getElementById('menu');
 		var contactsElem = document.getElementById('contacts');
+		var composerElem = document.getElementById('composer');
+		var composerAvatarImgElem = composerElem
+			.getElementsByClassName('avatar')[0]
+			.getElementsByClassName('image')[0]
+			.getElementsByTagName('img')[0];
 		
 		var loadOperationCounter = new Counter();
 		var userId = null;
@@ -219,14 +224,19 @@ window.onload = function() {
 		};
 		var showConversationTitle = function(isVisible) {
 			var conversationElem = document.getElementById('conversation');
-			var wrapElem = conversationElem.getElementsByClassName('wrap')[0];
-			
 			if (isVisible) {
-				wrapElem.classList.add('active');
-				wrapElem.classList.remove('passive');
+				conversationElem.classList.remove('passive');
 			} else {
-				wrapElem.classList.add('passive');
-				wrapElem.classList.add('active');
+				conversationElem.classList.add('passive');
+			}
+		};
+		
+		var showComposer = function(isVisible) {
+			if (isVisible) {
+				composerElem.classList.remove('passive');
+			} else {
+				composerElem.classList.add('passive');
+				composerAvatarImgElem.src = 'http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg';
 			}
 		};
 		
@@ -294,6 +304,7 @@ window.onload = function() {
 					if (userId === profileId) {
 						var profileValue = profile.value || {};
 						avatarImg.src = profileValue.avatar || 'http://simpleicon.com/wp-content/uploads/business-man-1.png';
+						composerAvatarImgElem.src = avatarImg.src;
 						nameElem.textContent = profileValue.nickname || userId;
 					}
 					
@@ -343,6 +354,7 @@ window.onload = function() {
 						
 			showConversationTitle(false);
 			updateConverstationTitle('');
+			showComposer(false);
 			initializeAccountElem();
 			
 			var authorizeListener = function(event) {
@@ -374,6 +386,7 @@ window.onload = function() {
 				
 				updateConverstationTitle('');
 				showConversationTitle(false);
+				showComposer(false);
 			};
 			
 			//loading user profiles.
@@ -447,6 +460,7 @@ window.onload = function() {
 			var emptyLoadOperationCounterListener = function() {
 				loadOperationCounter.off('empty', loadOperationCounter);
 				chatClient.on('message:send', sendChatClientListener);
+				showComposer(true);
 			};
 			var sendChatClientListener = function(event) {
 				alert(JSON.stringify(event.response.send, null, 4));
@@ -472,7 +486,7 @@ window.onload = function() {
 			});
 			self.on('select:theme', function(event) {
 				alert(event.themeId);
-			})
+			});
 		};
 		
 		EventEmitter.call(self);
