@@ -36,7 +36,9 @@ window.onload = function() {
 		
 		var serverUrl = 'ws://www.bazelevscontent.net:9009/';
 		var chatClient = new ChatClient(serverUrl);
-		
+
+		var pageElem = document.getElementById('page');
+		var dialogElem = document.getElementById('dialog');
 		var menuElem = document.getElementById('menu');
 		var contactsElem = document.getElementById('contacts');
 		var composerElem = document.getElementById('composer');
@@ -139,7 +141,6 @@ window.onload = function() {
 				newPublicElem.title = publicValue.id;
 				nameTextElem.textContent = '[' + publicValue.label + ']';
 				avatarImageElem.src = 'https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/world-512.png';
-				//"http://simpleicon.com/wp-content/uploads/group-1.png";
 				
 				newPublicElem.addEventListener('click', function() {
 					self.trigger({
@@ -218,7 +219,7 @@ window.onload = function() {
 			themes = {};
 		};
 		
-		var updateConverstationTitle = function(title) {
+		var updateConversationTitle = function(title) {
 			var conversationElem = document.getElementById('conversation');
 			var wrapElem = conversationElem.getElementsByClassName('wrap')[0];
 			
@@ -250,7 +251,8 @@ window.onload = function() {
 				_companionId = companionId;
 				
 				chatClient.off('message:groupuserlist');
-				switch (mode) {
+				showComposer(true);
+				switch (_chatMode) {
 					case 'public':
 						setPublicChat(_companionId);
 						break;
@@ -276,7 +278,7 @@ window.onload = function() {
 			var nickname = value.nickname || contactId;
 			//var title = [nickname, 'and', 'Me'].join(' ');
 
-			updateConverstationTitle(nickname);
+			updateConversationTitle(nickname);
 			showConversationTitle(true);	
 		};
 		var setPublicChat = function(publicId) {
@@ -303,7 +305,7 @@ window.onload = function() {
 			
 			var title = label.concat([allUsers.join(', ')]).join('');
 			
-			updateConverstationTitle(title);
+			updateConversationTitle(title);
 			showConversationTitle(true);
 		};
 		var setThemeChat = function(themeId) {
@@ -327,7 +329,7 @@ window.onload = function() {
 					var currentgroup = groupuserlist[0];
 					var users = currentgroup.users || [];
 					var title = label.concat(users.join(', ')).join('');
-					updateConverstationTitle(title);
+					updateConversationTitle(title);
 					chatClient.off("groupuserlist", groupuserlistListener);
 				};
 				return groupuserlistListener;
@@ -337,7 +339,7 @@ window.onload = function() {
 			chatClient.groupuserlist(fullThemeId);
 			
 			var title = label.concat([author, ' and ...'].join(', ')).join('');
-			updateConverstationTitle(title);
+			updateConversationTitle(title);
 			showConversationTitle(true);
 		};
 		
@@ -470,6 +472,29 @@ window.onload = function() {
 			container.className = 'container dynamic';
 			editorElem.contentEditable = 'true';
 		};
+		var appendMessageElem = function(messageElem) {
+			streamWrapElem.appendChild(messageElem);
+		};
+		var showDialogElem = function(content) {
+			pageElem.className = 'passive';
+			dialogElem.className = 'active';
+
+			var contentElem = dialogElem.getElementsByClassName('content')[0];
+			contentElem.innerHTML = content;
+		};
+		var hideDialogElem = function() {
+			pageElem.className = 'active';
+			dialogElem.className = 'passive';
+
+			var contentElem = dialogElem.getElementsByClassName('content')[0];
+			contentElem.innerHTML = '';
+			contentElem.scrollLeft = 0;
+			contentElem.scrollTop = 0;
+		};
+		var initializeDialogElem = function() {
+			var closeElem = dialogElem.getElementsByClassName('close')[0];
+			closeElem.addEventListener('click', hideDialogElem);
+		};
 		
 		var imbueComposerMessageElem = function(messageElem) {
 			var sendElem = messageElem.getElementsByClassName('send')[0];
@@ -480,6 +505,7 @@ window.onload = function() {
 				var content = getMessageElemContent(messageElem);
 				var newMessageElem = createMessageElem(content);
 
+				sendMessage(content);
 				imbueStreamMessageElem(newMessageElem);
 				appendMessageElem(newMessageElem);
 				html.scrollToBottom(streamWrapElem);
@@ -521,11 +547,122 @@ window.onload = function() {
 				ctrlPressed = false;
 			});
 		};
-			
+		var imbueStreamMessageElem = function(messageElem) {
+			var deleteElem = messageElem.getElementsByClassName('delete')[0];
+			var clearElem = messageElem.getElementsByClassName('clear')[0];
+			var cancelElem = messageElem.getElementsByClassName('cancel')[0];
+			var editElem = messageElem.getElementsByClassName('edit')[0];
+			var fullscreenElem = messageElem.getElementsByClassName('fullscreen')[0];
+			var shareElem = messageElem.getElementsByClassName('share')[0];
+			var editorElem = messageElem.getElementsByClassName('editor')[0];
+
+			var editElemHandler = function(e) {
+				if (isEditingMessageElem(messageElem)) {
+					checkMessageElemOverflow(messageElem);
+					endEditingMessageElem(messageElem);
+					enableMessageComposer();
+				} else {
+					beginEditingMessageElem(messageElem);
+					disableMessageComposer();
+				}
+			};
+			var clearElemHandler = function() {
+				clearMessageElem(messageElem);
+			};
+			var cancelElemHandler = function() {
+				cancelEditingMessageElem(messageElem);
+				checkMessageElemOverflow(messageElem);
+				endEditingMessageElem(messageElem);
+				enableMessageComposer();
+			};
+			var fullscreenElemHandler = function() {
+				var messageContent = getMessageElemContent(messageElem);
+				showDialogElem(messageContent);
+			};
+			var shareElemHandler = function() {
+				alert('Not implemented');
+			};
+			var deleteElemHandler = function() {
+				editElem.removeEventListener('click', editElemHandler);
+				clearElem.removeEventListener('click', clearElemHandler);
+				cancelElem.removeEventListener('click', cancelElemHandler);
+				fullscreenElem.removeEventListener('click', fullscreenElemHandler);
+				shareElem.removeEventListener('click', shareElemHandler);
+				editorElem.removeEventListener('keydown', editorElemKeydownHandler);
+				editorElem.removeEventListener('keyup', editorElemKeyupHandler);
+				editorElem.removeEventListener('blur', editorElemBlurHandler);
+				deleteElem.removeEventListener('click', deleteElemHandler);
+				streamWrapElem.removeChild(messageElem);
+			};
+
+			var enterCode = 13;
+			var ctrlPressed = false;
+			var shiftPressed = false;
+
+			var editorElemKeydownHandler = function(e) {
+				if (e.ctrlKey) {
+					ctrlPressed = true;
+				}
+				if (e.shiftKey) {
+					shiftPressed = true;
+				}
+				if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
+					endEditingMessageElem(messageElem);
+					checkMessageElemOverflow(messageElem);
+					enableMessageComposer();
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			};
+			var editorElemKeyupHandler = function(e) {
+				if (e.ctrlKey) {
+					ctrlPressed = false;
+				}
+				if (e.shiftKey) {
+					shiftPressed = false;
+				}
+			};
+			var editorElemBlurHandler = function(e) {
+				ctrlPressed = false;
+				shiftPressed = false;
+			};
+
+			editElem.addEventListener('click', editElemHandler);
+			clearElem.addEventListener('click', clearElemHandler);
+			cancelElem.addEventListener('click', cancelElemHandler);
+			fullscreenElem.addEventListener('click', fullscreenElemHandler);
+			shareElem.addEventListener('click', shareElemHandler);
+			editorElem.addEventListener('keydown', editorElemKeydownHandler);
+			editorElem.addEventListener('keyup', editorElemKeyupHandler);
+			editorElem.addEventListener('blur', editorElemBlurHandler);
+			deleteElem.addEventListener('click', deleteElemHandler);
+
+			checkMessageElemOverflow(messageElem);
+		};
+
 		var initializeComposerMessageElem = function() {
 			var messageElem = composerElem.getElementsByClassName('message')[0];
 			imbueComposerMessageElem(messageElem);
 			document.addEventListener('click', documentElemHandler);
+		};
+
+		var sendMessage = function(content) {
+			var message = chat.MessageFactory.create(
+				uuid.v4(),
+				content,
+				userId,
+				_companionId,
+				Date.now()
+			);
+			switch(_chatMode) {
+				case 'contact':
+					chatClient.sendMessage(message);
+					break;
+				case 'public':
+					break;
+				case 'theme':
+					break;
+			}
 		};
 		
 		var initializeAccountElem = function() {
@@ -641,10 +778,11 @@ window.onload = function() {
 			});
 						
 			showConversationTitle(false);
-			updateConverstationTitle('');
+			updateConversationTitle('');
 			showComposer(false);
 			initializeAccountElem();
 			initializeComposerMessageElem();
+			initializeDialogElem();
 			
 			var authorizeListener = function(event) {
 				userId = event.userId;
@@ -658,7 +796,6 @@ window.onload = function() {
 				
 				chatClient.publiclist();
 				chatClient.subscribelist();
-
 			};
 			var disconnectListener = function(event) {
 				chatClient.off('message:users');
@@ -674,7 +811,7 @@ window.onload = function() {
 				deleteAllContacts();
 				deleteAllThemes();
 				
-				updateConverstationTitle('');
+				updateConversationTitle('');
 				showConversationTitle(false);
 				showComposer(false);
 				resetChat();
@@ -751,7 +888,10 @@ window.onload = function() {
 			var emptyLoadOperationCounterListener = function() {
 				loadOperationCounter.off('empty', loadOperationCounter);
 				chatClient.on('message:send', sendChatClientListener);
-				showComposer(true);
+				chatClient.tape();
+				chatClient.on('message:tape', function(event) {
+					console.log(event.response.tape);
+				});
 			};
 			var sendChatClientListener = function(event) {
 				alert(JSON.stringify(event.response.send, null, 4));
