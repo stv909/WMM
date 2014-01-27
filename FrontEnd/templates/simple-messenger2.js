@@ -1028,6 +1028,7 @@ window.onload = function() {
 					setMessageElemAvatar(messageElem, avatar);
 					setMessageElemTime(messageElem, time);
 					appendMessageElem(messageElem);
+					html.scrollToBottom(streamWrapElem);
 				}
 			};
 			var sentChatClientListener = function(event) {
