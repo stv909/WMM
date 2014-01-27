@@ -290,9 +290,6 @@ window.onload = function() {
 				deleteAllMessageElems();
 				showComposer(true);
 				
-				console.log(userId);
-				console.log(_companionId);
-				
 				switch (_chatMode) {
 					case 'public':
 						setPublicChat(_companionId);
@@ -934,7 +931,6 @@ window.onload = function() {
 				var retrieve = event.response.retrieve;
 				loadOperationCounter.release();
 				_messages = retrieve;
-				console.log(_messages);
 			};
 			
 			//loading user profiles
@@ -1019,7 +1015,6 @@ window.onload = function() {
 				_messages.push(send);
 				newMessageSoundElem.play();
 				if (_companionId === send.from && _chatMode === 'contact') {
-					console.log(send);
 					var timestamp = send.body.timestamp;
 					var now = new Date(timestamp);
 					var time = formatDate(now);

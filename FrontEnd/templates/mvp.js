@@ -58,7 +58,7 @@ var mvp = mvp || {};
 				value: value
 			});
 			this.trigger({
-				type: ['change', attribute].jon(':'),
+				type: ['change', attribute].join(':'),
 				value: value
 			});
 		}
@@ -71,7 +71,7 @@ var mvp = mvp || {};
 				attribute: attribute
 			});
 			this.trigger({
-				type: ['remove', attribute].jon(':')	
+				type: ['remove', attribute].join(':')
 			});
 		}
 	};
@@ -84,5 +84,9 @@ var mvp = mvp || {};
 	
 	mvp.Model = Model;
 	mvp.EventTrigger = EventTrigger;
+	
+	if (typeof(module) !== typeof(undefined)) {
+		module.exports = mvp;
+	}
 	
 })(mvp);
