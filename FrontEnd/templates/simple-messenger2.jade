@@ -58,10 +58,10 @@ mixin message(editable, composite)
 			.block
 				.avatar
 					.image
-						img(src="http://simpleicon.com/wp-content/uploads/business-man-1.png")
+						img
 				.content
 					.container.dynamic
-						.editor(contenteditable="true")
+						.editor(contenteditable="true", spellcheck="false")
 				if composite
 					+controls(true)
 				else
@@ -78,8 +78,7 @@ mixin message(editable, composite)
 						img
 				.content
 					.container.static
-						.editor(contenteditable="false")
-							img(src="http://larryfire.files.wordpress.com/2008/11/ny.png")
+						.editor(contenteditable="false", spellcheck="false")
 				if composite
 					+controls(true)
 				else

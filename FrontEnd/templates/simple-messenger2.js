@@ -101,8 +101,14 @@ window.onload = function() {
 			profiles[profile.id] = profile;
 			listElem.appendChild(newContactElem);
 		};
-		var createContactList = function(profiles) {
-			profiles.forEach(createContact);
+		var createContactList = function(profileCollection) {
+			profileCollection.forEach(function(profile) {
+				if (profile.id !== ['profile', userId].join('.')) {
+					createContact(profile);
+				} else {
+					profiles[profile.id] = profile;
+				}
+			});
 		};
 		var deleteContact = function(profileId) {
 			var contactElem = contactsMap[profileId];
@@ -117,6 +123,18 @@ window.onload = function() {
 			profileIds.forEach(deleteContact);
 			contactsMap = {};
 			profiles = {};
+		};
+		var getContactName = function(profileId) {
+			var profile = profiles[profileId];
+			var profileValue = profile.value || {};
+			var nickname = profileValue.nickname || profileId.replace('profile.', '');	
+			return nickname;
+		};
+		var getContactAvatarUrl = function(profileId) {
+			var profile = profiles[profileId];
+			var profileValue = profile.value || {};
+			var avatar = profileValue.avatar || 'http://simpleicon.com/wp-content/uploads/business-man-1.png';
+			return avatar;
 		};
 		
 		var updateOnlineContact = function(userId, isOnline) {
@@ -263,6 +281,7 @@ window.onload = function() {
 				_companionId = companionId;
 				
 				chatClient.off('message:groupuserlist');
+				deleteAllMessageElem();
 				showComposer(true);
 				switch (_chatMode) {
 					case 'public':
@@ -367,6 +386,19 @@ window.onload = function() {
 			var editorElem = messageElem.getElementsByClassName('editor')[0];
 			editorElem.innerHTML = content;
 		};
+		var setMessageElemAuthor = function(messageElem, author) {
+			var nameElem = messageElem.getElementsByClassName('name')[0];
+			nameElem.textContent = author;
+		};
+		var setMessageElemAvatar = function(messageElem, avatar) {
+			var avatarElem = messageElem.getElementsByClassName('avatar')[0];
+			var avatarImgElem = avatarElem.getElementsByTagName('img')[0];
+			avatarImgElem.src = avatar;
+		};
+		var setMessageElemTime = function(messageElem, time) {
+			var timeElem = messageElem.getElementsByClassName('time')[0];
+			timeElem.textContent = time;
+		};
 		var checkMessageElemOverflow = function(messageElem) {
 			var containerElem = messageElem.getElementsByClassName('container')[0];
 			var isOverflow = html.checkElemOverflow(containerElem);
@@ -386,6 +418,9 @@ window.onload = function() {
 			var editorElem = messageElem.getElementsByClassName('editor')[0];
 			editorElem.innerHTML = content;
 			return messageElem;
+		};
+		var deleteAllMessageElem = function() {
+			streamWrapElem.innerHTML = '';
 		};
 		
 		var currentMessageElem = null;
@@ -516,8 +551,14 @@ window.onload = function() {
 			sendElem.addEventListener('click', function() {
 				var content = getMessageElemContent(messageElem);
 				var newMessageElem = createMessageElem(content);
+				var profileId = ['profile', userId].join('.');
+				var author = getContactName(profileId);
+				var avatar = getContactAvatarUrl(profileId);
 
 				sendMessage(content);
+				setMessageElemAuthor(newMessageElem, author);
+				setMessageElemAvatar(newMessageElem, avatar);
+				setMessageElemTime(newMessageElem, "17:15");
 				imbueStreamMessageElem(newMessageElem);
 				appendMessageElem(newMessageElem);
 				html.scrollToBottom(streamWrapElem);
@@ -822,6 +863,7 @@ window.onload = function() {
 				deleteAllPublics();
 				deleteAllContacts();
 				deleteAllThemes();
+				deleteAllMessageElem();
 				
 				updateConversationTitle('');
 				showConversationTitle(false);
@@ -832,9 +874,7 @@ window.onload = function() {
 			//loading user profiles.
 			var usersClientChatListener = function(event) {
 				var users = event.response.users;
-				var profileIds = users.filter(function(user) {
-					return user !== userId;
-				}).map(function(user) {
+				var profileIds = users.map(function(user) {
 					return ['profile', user].join('.');
 				});
 

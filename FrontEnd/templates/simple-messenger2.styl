@@ -259,7 +259,7 @@ input[type="text"]
 					min-height 1em
 					max-height 22em
 	.message
-		padding-top 0.75em
+		padding-top 0.5em
 		padding-bottom 0.5em
 		width chat-width - scroll-width
 		/*&:not(:last-child)*/
@@ -268,6 +268,19 @@ input[type="text"]
 			background-color white
 		&.dynamic
 			background-color #ebf5ff
+		.block
+			.name, .time
+				display inline-block
+				color #888
+				font-size 1em
+				&:hover
+					color black
+			.name
+				margin-left (1 / 0.85) * 0.85em
+				margin-bottom (1 / 0.85) * 0.5em
+			.time
+				float right
+				padding-right (1 / 0.85) * 1.25em
 		.avatar, .content, .controls
 			display inline-block
 			vertical-align top

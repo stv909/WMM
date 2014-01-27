@@ -327,7 +327,7 @@ input[type="text"] {
   max-height: 22em;
 }
 #chat .message {
-  padding-top: 0.75em;
+  padding-top: 0.5em;
   padding-bottom: 0.5em;
   width: 44.5em;
 /*&:not(:last-child)*/
@@ -338,6 +338,24 @@ input[type="text"] {
 }
 #chat .message.dynamic {
   background-color: #ebf5ff;
+}
+#chat .message .block .name,
+#chat .message .block .time {
+  display: inline-block;
+  color: #888;
+  font-size: 1em;
+}
+#chat .message .block .name:hover,
+#chat .message .block .time:hover {
+  color: #000;
+}
+#chat .message .block .name {
+  margin-left: 1em;
+  margin-bottom: 0.5882352941176471em;
+}
+#chat .message .block .time {
+  float: right;
+  padding-right: 1.4705882352941178em;
 }
 #chat .message .avatar,
 #chat .message .content,
