@@ -1,0 +1,19 @@
+@import "../styles/reset"
+@import "../styles/fonts"
+
+user-contact-color = #55bb55
+public-contact-color = #bb5555
+theme-contact-color = #5555bb
+
+.contact
+	color black
+	background-color white
+	&:hover
+		color white
+	&.user:hover
+		background-color user-contact-color
+	&.public:hover
+		background-color public-contact-color
+	&.theme:hover
+		background-color theme-contact-color
+
