@@ -287,8 +287,12 @@ window.onload = function() {
 				_companionId = companionId;
 				
 				chatClient.off('message:groupuserlist');
-				deleteAllMessageElem();
+				deleteAllMessageElems();
 				showComposer(true);
+				
+				console.log(userId);
+				console.log(_companionId);
+				
 				switch (_chatMode) {
 					case 'public':
 						setPublicChat(_companionId);
@@ -302,6 +306,8 @@ window.onload = function() {
 					default:
 						break;
 				}
+				
+				html.scrollToBottom(streamWrapElem);
 			}
 		};
 		var resetChat = function() {
@@ -316,7 +322,28 @@ window.onload = function() {
 			//var title = [nickname, 'and', 'Me'].join(' ');
 
 			updateConversationTitle(nickname);
-			showConversationTitle(true);	
+			showConversationTitle(true);
+			
+			var chatMessages = _messages.filter(function(message) {
+				return (message.value.from === userId && message.value.to === _companionId) ||
+					(message.value.from === _companionId && message.value.to === userId);
+			});
+			
+			chatMessages.forEach(function(message) {
+				var timestamp = message.value.timestamp;
+				var now = new Date(timestamp);
+				var time = formatDate(now);
+				var profileId = ['profile', message.value.from].join('.');
+				var content = base64.decode(message.value.content);
+				var author = getContactName(profileId);
+				var avatar = getContactAvatarUrl(profileId);
+				var messageElem = createMessageElem(content);
+				imbueStreamMessageElem(messageElem);
+				setMessageElemAuthor(messageElem, author);
+				setMessageElemAvatar(messageElem, avatar);
+				setMessageElemTime(messageElem, time);
+				appendMessageElem(messageElem);
+			});
 		};
 		var setPublicChat = function(publicId) {
 			var getUserNickname = function(id) {
@@ -425,9 +452,11 @@ window.onload = function() {
 			editorElem.innerHTML = content;
 			return messageElem;
 		};
-		var deleteAllMessageElem = function() {
+		var deleteAllMessageElems = function() {
 			streamWrapElem.innerHTML = '';
-			_messages = [];
+		};
+		var deleteAllMessages = function() {
+			_messages = [];	
 		};
 		
 		var currentMessageElem = null;
@@ -720,7 +749,6 @@ window.onload = function() {
 				_companionId,
 				Date.now()
 			);
-			_messages.push(message);
 			switch(_chatMode) {
 				case 'contact':
 					chatClient.sendMessage(message);
@@ -870,6 +898,7 @@ window.onload = function() {
 				chatClient.off('message:retrieve');
 				chatClient.off('message:publiclist');
 				chatClient.off('message:send');
+				chatClient.off('message:sent');
 				chatClient.off('message:online');
 				chatClient.off('message:subscribelist');
 				chatClient.off('message:groupuserlist');
@@ -879,7 +908,8 @@ window.onload = function() {
 				deleteAllPublics();
 				deleteAllContacts();
 				deleteAllThemes();
-				deleteAllMessageElem();
+				deleteAllMessageElems();
+				deleteAllMessages();
 				
 				updateConversationTitle('');
 				showConversationTitle(false);
@@ -904,6 +934,7 @@ window.onload = function() {
 				var retrieve = event.response.retrieve;
 				loadOperationCounter.release();
 				_messages = retrieve;
+				console.log(_messages);
 			};
 			
 			//loading user profiles
@@ -980,9 +1011,11 @@ window.onload = function() {
 			var emptyLoadOperationCounterListener = function() {
 				loadOperationCounter.off('empty', loadOperationCounter);
 				chatClient.on('message:send', sendChatClientListener);
+				chatClient.on('message:sent', sentChatClientListener);
 			};
 			var sendChatClientListener = function(event) {
 				var send = event.response.send;
+				send.value = send.body;
 				_messages.push(send);
 				newMessageSoundElem.play();
 				if (_companionId === send.from && _chatMode === 'contact') {
@@ -1001,6 +1034,11 @@ window.onload = function() {
 					setMessageElemTime(messageElem, time);
 					appendMessageElem(messageElem);
 				}
+			};
+			var sentChatClientListener = function(event) {
+				var sent = event.response.sent;
+				sent.value = sent.body;
+				_messages.push(sent);
 			};
 			
 			self.on('authorize', authorizeListener);
