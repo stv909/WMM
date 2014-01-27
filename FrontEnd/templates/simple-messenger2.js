@@ -31,6 +31,17 @@ window.onload = function() {
 		EventEmitter.call(self);
 	};
 	
+	var MessageControl = function(model) {
+		this.model = model;
+		
+		this.messageElem = createTemplateElem('message');
+		this.userElem = this.messageElem.getElementsByClassName('user')[0];
+		this.timeElem = this.messageElem.getElementsByClassName('time')[0];
+		
+		this.userElem.textContent = this.model.getAuthor();
+		this.timeElem.textContent = this.model.getTimestamp();
+	};
+	
 	var ChatApplication = function() {
 		var self = this;
 		
@@ -48,6 +59,7 @@ window.onload = function() {
 			.getElementsByTagName('img')[0];
 		var streamElem = document.getElementById('stream');
 		var streamWrapElem = streamElem.getElementsByClassName('wrap')[0];
+		var newMessageSoundElem = document.getElementById('new-message-sound');
 		
 		var loadOperationCounter = new Counter();
 		var userId = null;
@@ -888,13 +900,16 @@ window.onload = function() {
 			var emptyLoadOperationCounterListener = function() {
 				loadOperationCounter.off('empty', loadOperationCounter);
 				chatClient.on('message:send', sendChatClientListener);
-				chatClient.tape();
-				chatClient.on('message:tape', function(event) {
-					console.log(event.response.tape);
-				});
 			};
 			var sendChatClientListener = function(event) {
-				alert(JSON.stringify(event.response.send, null, 4));
+				var send = event.response.send;
+				newMessageSoundElem.play();
+				if (_companionId === send.from) {
+					var content = base64.decode(send.body.content);
+					var messageElem = createMessageElem(content);
+					imbueStreamMessageElem(messageElem);
+					appendMessageElem(messageElem);
+				}
 			};
 			
 			self.on('authorize', authorizeListener);
