@@ -278,6 +278,7 @@ window.onload = function() {
 			}
 		};
 		
+		var _messages = [];
 		var _chatMode = null;
 		var _companionId = null;
 		var changeChat = function(mode, companionId) {
@@ -426,6 +427,7 @@ window.onload = function() {
 		};
 		var deleteAllMessageElem = function() {
 			streamWrapElem.innerHTML = '';
+			_messages = [];
 		};
 		
 		var currentMessageElem = null;
@@ -718,6 +720,7 @@ window.onload = function() {
 				_companionId,
 				Date.now()
 			);
+			_messages.push(message);
 			switch(_chatMode) {
 				case 'contact':
 					chatClient.sendMessage(message);
@@ -850,13 +853,14 @@ window.onload = function() {
 			
 			var authorizeListener = function(event) {
 				userId = event.userId;
-				loadOperationCounter.reset(3);
+				loadOperationCounter.reset(4);
 				groupLoadCounter.reset(2);
 				loadOperationCounter.on('empty', emptyLoadOperationCounterListener);
 				
 				chatClient.on('message:publiclist', publiclistClientChatListener);
 				chatClient.on('message:subscribelist', subscribelistClienChatListener);
 				chatClient.on('message:users', usersClientChatListener);
+				chatClient.on('message:tape', tapeClientChatListener);
 				
 				chatClient.publiclist();
 				chatClient.subscribelist();
@@ -869,6 +873,7 @@ window.onload = function() {
 				chatClient.off('message:online');
 				chatClient.off('message:subscribelist');
 				chatClient.off('message:groupuserlist');
+				chatClient.off('message:tape');
 				loadOperationCounter.off('empty', emptyLoadOperationCounterListener);
 				
 				deleteAllPublics();
@@ -882,24 +887,45 @@ window.onload = function() {
 				resetChat();
 			};
 			
-			//loading user profiles.
+			//loading tape
+			var tapeClientChatListener = function(event) {
+				chatClient.off('message:tape', tapeClientChatListener);
+				chatClient.on('message:retrieve', retrieveMessagesChatClientListener);
+				
+				var tape = event.response.tape;
+				var messageIds = tape.map(function(message) {
+					return message.id;	
+				});
+				chatClient.retrieve(messageIds.join(','));
+			};
+			var retrieveMessagesChatClientListener = function(event) {
+				chatClient.off('message:retrieve', retrieveMessagesChatClientListener);
+				
+				var retrieve = event.response.retrieve;
+				loadOperationCounter.release();
+				_messages = retrieve;
+			};
+			
+			//loading user profiles
 			var usersClientChatListener = function(event) {
+				chatClient.off('message:users', usersClientChatListener);
+				chatClient.on('message:retrieve', retrieveProfilesClientChatListener);
+				
 				var users = event.response.users;
 				var profileIds = users.map(function(user) {
 					return ['profile', user].join('.');
 				});
-
-				chatClient.off('message:users', usersClientChatListener);
-				chatClient.on('message:retrieve', retrieveProfilesClientChatListener);
 				chatClient.retrieve(profileIds.join());
 			};
 			var retrieveProfilesClientChatListener = function(event) {
-				var profiles = event.response.retrieve;
 				chatClient.off('message:retrieve', retrieveProfilesClientChatListener);
 				chatClient.on('message:online', onlineClientChatListener);
+				
 				chatClient.online();
+				var profiles = event.response.retrieve;
 				createContactList(profiles);
 				loadOperationCounter.release();
+				chatClient.tape();
 			};
 			var onlineClientChatListener = function(event) {
 				var online = event.response.online;
@@ -909,18 +935,19 @@ window.onload = function() {
 			
 			//loading publiclist
 			var publiclistClientChatListener = function(event) {
+				chatClient.off('message:publiclist', publiclistClientChatListener);
+				chatClient.on('message:retrieve', retrievePublicsClientChatListener);
+				
 				var publiclist = event.response.publiclist;
 				var publicIds = publiclist.map(function(public) {
 					return public.id;
 				});
-				
-				chatClient.off('message:publiclist', publiclistClientChatListener);
-				chatClient.on('message:retrieve', retrievePublicsClientChatListener);
 				chatClient.retrieve(publicIds.join(','));
 			};
 			var retrievePublicsClientChatListener = function(event) {
-				var publicDetails = event.response.retrieve;
 				chatClient.off('message:retrieve', retrievePublicsClientChatListener);
+				
+				var publicDetails = event.response.retrieve;
 				createPublicList(publicDetails);
 				loadOperationCounter.release();	
 				groupLoadCounter.release();
@@ -928,6 +955,9 @@ window.onload = function() {
 			
 			//loading themes
 			var subscribelistClienChatListener = function(event) {
+				chatClient.off('message:subscribelist', subscribelistClienChatListener);
+				chatClient.on('message:retrieve', retrieveThemesClientChatListener);
+				
 				var subscribelist = event.response.subscribelist;
 				var themeIds = subscribelist.filter(function(item) {
 					return item.type !== 'public';	
@@ -935,13 +965,12 @@ window.onload = function() {
 					return item.id;
 				});
 
-				chatClient.off('message:subscribelist', subscribelistClienChatListener);
-				chatClient.on('message:retrieve', retrieveThemesClientChatListener);
 				chatClient.retrieve(themeIds.join(','));
 			};
 			var retrieveThemesClientChatListener = function(event) {
-				var themes = event.response.retrieve;
 				chatClient.off('message:retrieve', retrieveThemesClientChatListener);
+	
+				var themes = event.response.retrieve;
 				createThemeList(themes);
 				loadOperationCounter.release();
 				groupLoadCounter.release();
@@ -954,6 +983,7 @@ window.onload = function() {
 			};
 			var sendChatClientListener = function(event) {
 				var send = event.response.send;
+				_messages.push(send);
 				newMessageSoundElem.play();
 				if (_companionId === send.from && _chatMode === 'contact') {
 					console.log(send);

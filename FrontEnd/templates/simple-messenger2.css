@@ -343,19 +343,19 @@ input[type="text"] {
 #chat .message .block .time {
   display: inline-block;
   color: #888;
-  font-size: 1em;
+  font-size: 0.9em;
 }
 #chat .message .block .name:hover,
 #chat .message .block .time:hover {
   color: #000;
 }
 #chat .message .block .name {
-  margin-left: 1em;
-  margin-bottom: 0.5882352941176471em;
+  margin-left: 0.9444444444444444em;
+  margin-bottom: 0.5555555555555556em;
 }
 #chat .message .block .time {
   float: right;
-  padding-right: 1.4705882352941178em;
+  padding-right: 1.6666666666666667em;
 }
 #chat .message .avatar,
 #chat .message .content,
