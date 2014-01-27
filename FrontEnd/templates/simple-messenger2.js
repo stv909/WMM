@@ -9,6 +9,11 @@ window.onload = function() {
 		var newTemplateElem = templateElem.cloneNode(true);
 		return newTemplateElem;
 	};
+	var formatDate = function(date) {
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		return [hours <= 9 ? 'o' + hours : hours, minutes <= 9 ? '0' + minutes : minutes].join(':');
+	};
 	
 	var Counter = function(size) {
 		var self = this;
@@ -550,15 +555,21 @@ window.onload = function() {
 
 			sendElem.addEventListener('click', function() {
 				var content = getMessageElemContent(messageElem);
+				if (content === null || content === '') {
+					return;
+				}
+				
 				var newMessageElem = createMessageElem(content);
 				var profileId = ['profile', userId].join('.');
 				var author = getContactName(profileId);
 				var avatar = getContactAvatarUrl(profileId);
+				var now = new Date();
+				var time = formatDate(now);
 
 				sendMessage(content);
 				setMessageElemAuthor(newMessageElem, author);
 				setMessageElemAvatar(newMessageElem, avatar);
-				setMessageElemTime(newMessageElem, "17:15");
+				setMessageElemTime(newMessageElem, time);
 				imbueStreamMessageElem(newMessageElem);
 				appendMessageElem(newMessageElem);
 				html.scrollToBottom(streamWrapElem);
@@ -944,10 +955,20 @@ window.onload = function() {
 			var sendChatClientListener = function(event) {
 				var send = event.response.send;
 				newMessageSoundElem.play();
-				if (_companionId === send.from) {
+				if (_companionId === send.from && _chatMode === 'contact') {
+					console.log(send);
+					var timestamp = send.body.timestamp;
+					var now = new Date(timestamp);
+					var time = formatDate(now);
+					var profileId = ['profile', send.from].join('.');
 					var content = base64.decode(send.body.content);
+					var author = getContactName(profileId);
+					var avatar = getContactAvatarUrl(profileId);
 					var messageElem = createMessageElem(content);
 					imbueStreamMessageElem(messageElem);
+					setMessageElemAuthor(messageElem, author);
+					setMessageElemAvatar(messageElem, avatar);
+					setMessageElemTime(messageElem, time);
 					appendMessageElem(messageElem);
 				}
 			};
