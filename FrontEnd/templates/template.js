@@ -42,7 +42,7 @@ var template = template || {};
 
 		elem.className = className;
 		elem.id = id;
-		elem.appendChild(template.content);
+		elem.appendChild(template.content.cloneNode(true));
 
 		return elem;
 	};

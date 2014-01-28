@@ -7,27 +7,6 @@ mixin contact-template
 			.name
 		.message-block
 			.count
-mixin contact
-	.contact.offline
-		.avatar
-			div
-				img.avatar-image
-		.name
-			div.name-text
-mixin public
-	.public
-		.avatar
-			div
-				img.avatar-image
-		.name
-			div.name-text
-mixin theme
-	.theme
-		.avatar
-			div
-				img.avatar-image
-		.name
-			div.name-text
 mixin controls(composite)
 	.controls
 		if composite
@@ -126,14 +105,8 @@ html
 		audio#new-message-sound(src="newMessageSpace.wav", preload="auto", style="controls: none")
 		#template(style="display:none")
 			+message
-			//+stream-message
-			+contact
-			+public
-			+theme
 			+tool
 			+account
-		//button#hide-composer Hide composer
-		//button#add-message Add message
 		#page
 			.wrap
 				#application

@@ -15,7 +15,7 @@ window.onload = function() {
 		return [hours <= 9 ? 'o' + hours : hours, minutes <= 9 ? '0' + minutes : minutes].join(':');
 	};
 	
-	// Model must have attributes: avatar, name, count,
+	// Model must have attributes: id, avatar, name, count, online
 	var ContactView = function(model) {
 		var self = this;
 		mvp.EventTrigger.call(this);
@@ -23,6 +23,7 @@ window.onload = function() {
 		this.rootElem = null;
 		this.model = model;
 		this.contactElem = template.create('contact-template', { className: 'contact' });
+
 		this.avatarElem = this.contactElem.getElementsByClassName('avatar')[0];
 		this.nameElem = this.contactElem.getElementsByClassName('name')[0];
 		this.countElem = this.contactElem.getElementsByClassName('count')[0];
@@ -32,7 +33,20 @@ window.onload = function() {
 			self.avatarElem.src = event.avatar;	
 		};
 		var modelNameListener = function(event) {
-			self.nameElem.textContent = event.name;
+			var leftBrace = '';
+			var rightBrace = '';
+			
+			switch(self.model.getAttribute('type')) {
+				case 'public':
+					leftBrace = '[';
+					rightBrace = ']';
+					break;
+				case 'theme':
+					leftBrace = '{';
+					rightBrace = '}';
+					break;
+			}
+			self.nameElem.textContent = [leftBrace, event.name, rightBrace].join('');
 		};
 		var modelCountListener = function(event) {
 			var count = event.count;
@@ -43,10 +57,18 @@ window.onload = function() {
 				self.countElem.classList.remove('hidden');
 			}
 		};
+		var modelOnlineListener = function(event) {
+			if (event.online) {
+				self.contactElem.classList.remove('offline');
+			} else {
+				self.contactElem.classList.add('offline');
+			}
+		};
 		
 		this.model.on('change:avatar', modelAvatarListener);
 		this.model.on('change:name', modelNameListener);
 		this.model.on('change:count', modelCountListener);
+		this.model.on('change:online', modelOnlineListener);
 		
 		// elems listeners
 		var contactElemClickListener = function(event) {
@@ -64,16 +86,19 @@ window.onload = function() {
 			self.model.off('change:avatar', modelAvatarListener);
 			self.model.off('change:name', modelNameListener);
 			self.model.off('change:count', modelCountListener);
+			self.model.off('change:online', modelOnlineListener);
 			self.contactElem.removeEventListener('click', contactElemClickListener);
 		};
 		
 		this.on('dispose', disposeListener);
 		
 		// init ui
+		this.contactElem.title = model.getAttribute('id');
 		this.contactElem.classList.add(model.getAttribute('type'));
-		this.nameElem.textContent = model.getAttribute('name');
-		this.avatarElem.src = model.getAttribute('avatar');
-		this.countElem.textContent = model.getAttribute('count');
+		modelOnlineListener({ online: model.getAttribute('online') });
+		modelNameListener({ name: model.getAttribute('name') });
+		modelAvatarListener({ avatar: model.getAttribute('avatar') });
+		modelCountListener({ count: model.getAttribute('count') });
 	};
 	ContactView.prototype = Object.create(mvp.EventTrigger.prototype);
 	ContactView.prototype.constructor = ContactView;
@@ -96,6 +121,31 @@ window.onload = function() {
 		this.trigger('dispose');
 		this.dettach();
 	};
+	
+	var ContactModelFactory = function() { };
+	ContactModelFactory.fromPublic = function(public) {
+		var value = public.value || {};
+					
+		var id = public.id;
+		var name = value.label || id;
+					
+		var contactModel = new mvp.Model();
+		contactModel.setAttribute('id', id);
+		contactModel.setAttribute('type', 'public');
+		contactModel.setAttribute('name', name);
+		contactModel.setAttribute('online',true);
+		contactModel.setAttribute('count', 3);
+		contactModel.setAttribute('avatar', 'https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/world-512.png');
+		
+		return contactModel;
+	};
+	ContactModelFactory.fromTheme = function(theme) {
+		
+	};
+	ContactModelFactory.fromProfile = function(profile) {
+		
+	};
+
 	
 	var Counter = function(size) {
 		var self = this;
@@ -159,6 +209,9 @@ window.onload = function() {
 		
 		var themeMap = {};
 		var themes = {};
+		
+		this.contactModels = {};
+		this.contactViews = {};
 
 		var createContact = function(profile) {
 			var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
@@ -965,12 +1018,12 @@ window.onload = function() {
 				loadOperationCounter.on('empty', emptyLoadOperationCounterListener);
 				
 				chatClient.on('message:publiclist', publiclistClientChatListener);
-				chatClient.on('message:subscribelist', subscribelistClienChatListener);
-				chatClient.on('message:users', usersClientChatListener);
-				chatClient.on('message:tape', tapeClientChatListener);
+				// chatClient.on('message:subscribelist', subscribelistClienChatListener);
+				// chatClient.on('message:users', usersClientChatListener);
+				// chatClient.on('message:tape', tapeClientChatListener);
 				
 				chatClient.publiclist();
-				chatClient.subscribelist();
+				// chatClient.subscribelist();
 			};
 			var disconnectListener = function(event) {
 				chatClient.off('message:users');
@@ -1057,9 +1110,40 @@ window.onload = function() {
 				chatClient.off('message:retrieve', retrievePublicsClientChatListener);
 				
 				var publicDetails = event.response.retrieve;
-				createPublicList(publicDetails);
-				loadOperationCounter.release();	
-				groupLoadCounter.release();
+				console.log(JSON.stringify(publicDetails));
+				
+				publicDetails.forEach(function(publicDetail) {
+					var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+					var listElem = wrapElem.getElementsByClassName('list')[0];
+			
+					var contactModel = ContactModelFactory.fromPublic(publicDetail);
+					var id = contactModel.getAttribute('id');
+					var contactView = new ContactView(contactModel);
+					self.contactModels[id] = contactModel;
+					self.contactViews[id] = contactView;
+					contactView.attachTo(listElem);
+				});
+				
+				//createPublicList(publicDetails);
+				//loadOperationCounter.release();	
+				//groupLoadCounter.release();
+				
+			// 	if (publicValue) {
+			// 	newPublicElem.title = publicValue.id;
+			// 	nameTextElem.textContent = '[' + publicValue.label + ']';
+			// 	avatarImageElem.src = 'https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/world-512.png';
+				
+			// 	newPublicElem.addEventListener('click', function() {
+			// 		self.trigger({
+			// 			type: 'select:public',
+			// 			publicId: publicValue.id
+			// 		});
+			// 	});
+				
+			// 	publicMap[publicDetail.id] = newPublicElem;
+			// 	publicDetails[publicDetail.id] = publicDetail;
+			// 	listElem.appendChild(newPublicElem);
+			// }
 			};
 			
 			//loading themes
