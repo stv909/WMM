@@ -114,10 +114,10 @@ window.onload = function() {
 	};
 	ContactView.prototype.dettach = function() {
 		if (this.rootElem) {
-			this.rooteElem.removeChild(this.contactElem);
+			this.rootElem.removeChild(this.contactElem);
 			this.rootElem = null;
 		}
-	}
+	};
 	ContactView.prototype.dispose = function() {
 		this.trigger('dispose');
 		this.dettach();
@@ -851,6 +851,47 @@ window.onload = function() {
 			menuElem.appendChild(accountElem);
 		};
 		
+		self.dispose = function() {
+			var keys = Object.keys(self.contactViews);
+			keys.forEach(function(key) {
+				self.contactViews[key].dispose();
+				self.contactModels[key].off();
+			});
+			self.contactViews = {};
+			self.contactModels = {};
+		};
+		self.prepareContactViews = function() {
+			var prepareContactView = function(contactView) {
+				contactView.attachTo(contactListElem);
+				contactView.on('click', function(event) {
+					alert(JSON.stringify(event.model, null, 4));	
+				});	
+			};
+			
+			var self = this;
+			var keys = Object.keys(this.contactModels);
+			
+			var publicKeys = keys.filter(function(key) {
+				return self.contactModels[key].getAttribute('type') === 'public';
+			});
+			var themeKeys = keys.filter(function(key) {
+				return self.contactModels[key].getAttribute('type') === 'theme';
+			});
+			var userKeys = keys.filter(function(key) {
+				return self.contactModels[key].getAttribute('type') === 'user';
+			});
+			
+			publicKeys.forEach(function(key) {
+				prepareContactView(self.contactViews[key]);	
+			});
+			themeKeys.forEach(function(key) {
+				prepareContactView(self.contactViews[key]);	
+			});
+			userKeys.forEach(function(key) {
+				prepareContactView(self.contactViews[key]);	
+			});
+		};
+		
 		self.initialize = function() {
 			initializeAccountElem();
 			
@@ -894,7 +935,6 @@ window.onload = function() {
 					var id = contactModel.getAttribute('id');
 					self.contactModels[id] = contactModel;
 					self.contactViews[id] = contactView;
-					contactView.attachTo(contactListElem);
 				});
 				
 				chatClient.subscribelist();
@@ -932,7 +972,6 @@ window.onload = function() {
 					var id = contactModel.getAttribute('id');
 					self.contactModels[id] = contactModel;
 					self.contactViews[id] = contactView;
-					contactView.attachTo(contactListElem);
 				});
 				
 				chatClient.users();
@@ -970,7 +1009,6 @@ window.onload = function() {
 					var id = contactModel.getAttribute('id');
 					self.contactModels[id] = contactModel;
 					self.contactViews[id] = contactView;
-					contactView.attachTo(contactListElem);
 				});
 				
 				chatClient.online();
@@ -997,6 +1035,7 @@ window.onload = function() {
 				console.log('tape complete');
 				
 				chatClient.off('message:tape', tapeClientChatListener);
+				self.prepareContactViews();
 			};
 			
 			var disconnectListener = function(event) {
@@ -1005,16 +1044,14 @@ window.onload = function() {
 				chatClient.off('message:retrieve');
 				chatClient.off('message:subscribelist');
 				chatClient.off('message:online');
+				chatClient.off('message:tape');
+				
+				self.dispose();
 			};
 
 			self.on('authorize', authorizeListener);
 			self.on('disconnect', disconnectListener);
 			
-			// var groupLoadCounter = new Counter(2);
-			// groupLoadCounter.on('empty', function() {
-			// 	chatClient.users();
-			// });
-						
 			// showConversationTitle(false);
 			// updateConversationTitle('');
 			// showComposer(false);
