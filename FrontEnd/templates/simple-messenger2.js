@@ -156,7 +156,21 @@ window.onload = function() {
 		return contactModel;
 	};
 	ContactModelFactory.fromProfile = function(profile) {
+		var value = profile.value || {};
 		
+		var id = profile.id.replace('profile.', '');
+		var name = value.nickname || id;
+		var avatar = value.avatar || 'http://simpleicon.com/wp-content/uploads/business-man-1.png';
+		
+		var contactModel = new mvp.Model();
+		contactModel.setAttribute('id', id);
+		contactModel.setAttribute('type', 'user');
+		contactModel.setAttribute('name', name);
+		contactModel.setAttribute('online', false);
+		contactModel.setAttribute('count', 0)
+		contactModel.setAttribute('avatar', avatar);
+		
+		return contactModel;
 	};
 
 	var Counter = function(size) {
@@ -1031,11 +1045,12 @@ window.onload = function() {
 				
 				chatClient.on('message:publiclist', publiclistClientChatListener);
 				chatClient.on('message:subscribelist', subscribelistClienChatListener);
-				// chatClient.on('message:users', usersClientChatListener);
+				chatClient.on('message:users', usersClientChatListener);
 				// chatClient.on('message:tape', tapeClientChatListener);
 				
 				//chatClient.publiclist();
-				chatClient.subscribelist();
+				//chatClient.subscribelist();
+				chatClient.users();
 			};
 			var disconnectListener = function(event) {
 				chatClient.off('message:users');
@@ -1097,9 +1112,24 @@ window.onload = function() {
 				
 				chatClient.online();
 				var profiles = event.response.retrieve;
-				createContactList(profiles);
-				loadOperationCounter.release();
-				chatClient.tape();
+				console.log('profiles');
+				console.log(JSON.stringify(profiles, null, 4));
+				
+				profiles.forEach(function(profile) {
+					var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+					var listElem = wrapElem.getElementsByClassName('list')[0];
+			
+					var contactModel = ContactModelFactory.fromProfile(profile);
+					var id = contactModel.getAttribute('id');
+					var contactView = new ContactView(contactModel);
+					self.contactModels[id] = contactModel;
+					self.contactViews[id] = contactView;
+					contactView.attachTo(listElem);
+				});
+				
+				// createContactList(profiles);
+				// loadOperationCounter.release();
+				// chatClient.tape();
 			};
 			var onlineClientChatListener = function(event) {
 				var online = event.response.online;
