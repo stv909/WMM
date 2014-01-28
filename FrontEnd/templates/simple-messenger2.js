@@ -195,17 +195,6 @@ window.onload = function() {
 		EventEmitter.call(self);
 	};
 	
-	var MessageControl = function(model) {
-		this.model = model;
-		
-		this.messageElem = createTemplateElem('message');
-		this.userElem = this.messageElem.getElementsByClassName('user')[0];
-		this.timeElem = this.messageElem.getElementsByClassName('time')[0];
-		
-		this.userElem.textContent = this.model.getAuthor();
-		this.timeElem.textContent = this.model.getTimestamp();
-	};
-	
 	var ChatApplication = function() {
 		var self = this;
 		
