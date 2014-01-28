@@ -1,3 +1,12 @@
+mixin contact-template
+	template#contact-template(style="display:none")
+		.info-block
+			.contact-avatar-wrap
+				img.contact-avatar
+		.info-block
+			.contact-name
+		.messages-block
+			.message-count
 mixin contact
 	.contact.offline
 		.avatar
@@ -102,13 +111,17 @@ doctype html
 html
 	head
 		title Messenger
+		link(rel="stylesheet", href="styles/reset.css")
+		link(rel="stylesheet", href="styles/fonts.css")
 		link(rel="stylesheet", href="simple-messenger2.css")
 		script(type="application/javascript", src="uuid.js")
 		script(type="application/javascript", src="base64.js")
 		script(type="application/javascript", src="chat.js")
 		script(type="application/javascript", src="html.js")
+		script(type="application/javascript", src="template.js")
 		script(type="application/javascript", src="simple-messenger2.js")
 	body
+		+contact-template
 		audio#new-message-sound(src="newMessageSpace.wav", preload="auto", style="controls: none")
 		#template(style="display:none")
 			+message

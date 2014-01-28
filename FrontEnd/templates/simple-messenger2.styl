@@ -18,9 +18,6 @@ second-thumb-color = #999
 main-menu-color = rgb(21, 112, 166)
 titles-color = rgb(238, 238, 238)
 
-@font-face
-	font-family 'Segoe UI'
-	src url('http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff')
 ::-webkit-scrollbar
 	width real-scroll-width
 	height real-scroll-height
@@ -28,13 +25,9 @@ titles-color = rgb(238, 238, 238)
 ::-webkit-scrollbar-thumb
 	background-color thumb-color
 
-*
-	outline none
 body, html
 	width 100%
 	height 100%
-	margin 0
-	padding 0
 	font-family "Segoe UI", Helvetica
 
 .passive
@@ -53,7 +46,33 @@ input[type="text"]
 	padding 0
 	font-family 'Segoe UI'
 	font-size 1em
-	
+
+contact =
+	user-contact-color = #55BB55
+	public-contact-color = #5555BB
+	theme-contact-color = #BB55BB
+	.contact
+		font-size 0.8em
+		color black
+		background-color white
+		padding 0.75em 0 0.75em 0.75em
+		border-bottom 1px solid second-border-color
+		transition all 200ms ease
+		&:hover
+			color white
+		&.user:hover
+			background-color user-contact-color
+		&.public:hover
+			background-color public-contact-color
+		&.theme:hover
+			background-color theme-contact-color
+		.info-block, .messages-block
+			display inline-block
+			vertical-align top
+		.messages-block
+			float right
+{contact}
+
 #page
 	position relative
 	width page-width
@@ -170,7 +189,7 @@ input[type="text"]
 					border-left 1px solid main-border-color
 					border-right 1px solid main-border-color
 			>.list
-				width contacts-width //- scroll-width
+				width contacts-width
 				.contact, .public, .theme
 					font-size 0.8em
 					padding-left 0.75em
@@ -401,16 +420,3 @@ input[type="text"]
 		margin-right 1em
 		float right
 		cursor pointer
-
-#hide-composer
-	display none
-	z-index 10
-	position fixed
-	right 1em
-	top 1em
-#add-message
-	display block
-	z-index 10
-	position fixed
-	right 1em
-	bottom 3em

@@ -2,14 +2,28 @@
 <html>
   <head>
     <title>Messenger</title>
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/fonts.css">
     <link rel="stylesheet" href="simple-messenger2.css">
     <script type="application/javascript" src="uuid.js"></script>
     <script type="application/javascript" src="base64.js"></script>
     <script type="application/javascript" src="chat.js"></script>
     <script type="application/javascript" src="html.js"></script>
+    <script type="application/javascript" src="template.js"></script>
     <script type="application/javascript" src="simple-messenger2.js"></script>
   </head>
   <body>
+    <template id="contact-template" style="display:none">
+      <div class="info-block">
+        <div class="contact-avatar-wrap"><img class="contact-avatar"/></div>
+      </div>
+      <div class="info-block">
+        <div class="contact-name"></div>
+      </div>
+      <div class="messages-block">
+        <div class="message-count"></div>
+      </div>
+    </template>
     <audio id="new-message-sound" src="newMessageSpace.wav" preload="auto" style="controls: none"></audio>
     <div id="template" style="display:none">
       <div class="message static">

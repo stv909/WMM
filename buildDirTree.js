@@ -52,7 +52,7 @@ var traceDirTree = function(dirTree, callback) {
 };
 
 var dir = process.argv[2] || '.';
-var excludedDirs = ['node_modules', '.git'];
+var excludedDirs = ['node_modules', '.git', 'styles', 'contacts-prototype'];
 
 buildDirTree(dir, excludedDirs).then(function(dirTree) {
 	var fsWatchers = [];
