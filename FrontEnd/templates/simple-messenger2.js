@@ -30,7 +30,7 @@ window.onload = function() {
 		
 		// model listeners
 		var modelAvatarListener = function(event) {
-			self.avatarElem.src = event.avatar;	
+			self.avatarElem.src = event.value;	
 		};
 		var modelNameListener = function(event) {
 			var leftBrace = '';
@@ -46,10 +46,10 @@ window.onload = function() {
 					rightBrace = '}';
 					break;
 			}
-			self.nameElem.textContent = [leftBrace, event.name, rightBrace].join('');
+			self.nameElem.textContent = [leftBrace, event.value, rightBrace].join('');
 		};
 		var modelCountListener = function(event) {
-			var count = event.count;
+			var count = event.value;
 			self.countElem.textContent = count;
 			if (count > 0) {
 				self.countElem.classList.remove('hidden');
@@ -58,7 +58,8 @@ window.onload = function() {
 			}
 		};
 		var modelOnlineListener = function(event) {
-			if (event.online) {
+			var online = event.value;
+			if (online) {
 				self.contactElem.classList.remove('offline');
 			} else {
 				self.contactElem.classList.add('offline');
@@ -95,10 +96,10 @@ window.onload = function() {
 		// init ui
 		this.contactElem.title = model.getAttribute('id');
 		this.contactElem.classList.add(model.getAttribute('type'));
-		modelOnlineListener({ online: model.getAttribute('online') });
-		modelNameListener({ name: model.getAttribute('name') });
-		modelAvatarListener({ avatar: model.getAttribute('avatar') });
-		modelCountListener({ count: model.getAttribute('count') });
+		modelOnlineListener({ value: model.getAttribute('online') });
+		modelNameListener({ value: model.getAttribute('name') });
+		modelAvatarListener({ value: model.getAttribute('avatar') });
+		modelCountListener({ value: model.getAttribute('count') });
 	};
 	ContactView.prototype = Object.create(mvp.EventTrigger.prototype);
 	ContactView.prototype.constructor = ContactView;
@@ -167,7 +168,7 @@ window.onload = function() {
 		contactModel.setAttribute('type', 'user');
 		contactModel.setAttribute('name', name);
 		contactModel.setAttribute('online', false);
-		contactModel.setAttribute('count', 0)
+		contactModel.setAttribute('count', 0);
 		contactModel.setAttribute('avatar', avatar);
 		
 		return contactModel;
@@ -215,6 +216,8 @@ window.onload = function() {
 		var dialogElem = document.getElementById('dialog');
 		var menuElem = document.getElementById('menu');
 		var contactsElem = document.getElementById('contacts');
+		var contactWrapElem = contactsElem.getElementsByClassName('wrap')[0];
+		var contactListElem = contactWrapElem.getElementsByClassName('list')[0];
 		var composerElem = document.getElementById('composer');
 		var composerAvatarImgElem = composerElem
 			.getElementsByClassName('avatar')[0]
@@ -1025,231 +1028,389 @@ window.onload = function() {
 		};
 		
 		self.initialize = function() {
-			var groupLoadCounter = new Counter(2);
-			groupLoadCounter.on('empty', function() {
-				chatClient.users();
-			});
-						
-			showConversationTitle(false);
-			updateConversationTitle('');
-			showComposer(false);
 			initializeAccountElem();
-			initializeComposerMessageElem();
-			initializeDialogElem();
 			
 			var authorizeListener = function(event) {
-				userId = event.userId;
-				loadOperationCounter.reset(4);
-				groupLoadCounter.reset(2);
-				loadOperationCounter.on('empty', emptyLoadOperationCounterListener);
+				console.log('authorize complete');
 				
 				chatClient.on('message:publiclist', publiclistClientChatListener);
-				chatClient.on('message:subscribelist', subscribelistClienChatListener);
-				chatClient.on('message:users', usersClientChatListener);
-				// chatClient.on('message:tape', tapeClientChatListener);
 				
-				//chatClient.publiclist();
-				//chatClient.subscribelist();
-				chatClient.users();
+				userId = event.userId;
+				
+				chatClient.publiclist();
 			};
-			var disconnectListener = function(event) {
-				chatClient.off('message:users');
-				chatClient.off('message:retrieve');
-				chatClient.off('message:publiclist');
-				chatClient.off('message:send');
-				chatClient.off('message:sent');
-				chatClient.off('message:online');
-				chatClient.off('message:subscribelist');
-				chatClient.off('message:groupuserlist');
-				chatClient.off('message:tape');
-				loadOperationCounter.off('empty', emptyLoadOperationCounterListener);
-				
-				deleteAllPublics();
-				deleteAllContacts();
-				deleteAllThemes();
-				deleteAllMessageElems();
-				deleteAllMessages();
-				
-				updateConversationTitle('');
-				showConversationTitle(false);
-				showComposer(false);
-				resetChat();
-			};
-			
-			//loading tape
-			var tapeClientChatListener = function(event) {
-				chatClient.off('message:tape', tapeClientChatListener);
-				chatClient.on('message:retrieve', retrieveMessagesChatClientListener);
-				
-				var tape = event.response.tape;
-				var messageIds = tape.map(function(message) {
-					return message.id;	
-				});
-				chatClient.retrieve(messageIds.join(','));
-			};
-			var retrieveMessagesChatClientListener = function(event) {
-				chatClient.off('message:retrieve', retrieveMessagesChatClientListener);
-				
-				var retrieve = event.response.retrieve;
-				loadOperationCounter.release();
-				_messages = retrieve;
-			};
-			
-			//loading user profiles
-			var usersClientChatListener = function(event) {
-				chatClient.off('message:users', usersClientChatListener);
-				chatClient.on('message:retrieve', retrieveProfilesClientChatListener);
-				
-				var users = event.response.users;
-				var profileIds = users.map(function(user) {
-					return ['profile', user].join('.');
-				});
-				chatClient.retrieve(profileIds.join());
-			};
-			var retrieveProfilesClientChatListener = function(event) {
-				chatClient.off('message:retrieve', retrieveProfilesClientChatListener);
-				chatClient.on('message:online', onlineClientChatListener);
-				
-				chatClient.online();
-				var profiles = event.response.retrieve;
-				console.log('profiles');
-				console.log(JSON.stringify(profiles, null, 4));
-				
-				profiles.forEach(function(profile) {
-					var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
-					var listElem = wrapElem.getElementsByClassName('list')[0];
-			
-					var contactModel = ContactModelFactory.fromProfile(profile);
-					var id = contactModel.getAttribute('id');
-					var contactView = new ContactView(contactModel);
-					self.contactModels[id] = contactModel;
-					self.contactViews[id] = contactView;
-					contactView.attachTo(listElem);
-				});
-				
-				// createContactList(profiles);
-				// loadOperationCounter.release();
-				// chatClient.tape();
-			};
-			var onlineClientChatListener = function(event) {
-				var online = event.response.online;
-				chatClient.off('message:online', onlineClientChatListener);
-				updateOnlineContacts(online);
-			};
-			
-			//loading publiclist
 			var publiclistClientChatListener = function(event) {
+				console.log('publiclist complete');
+				
 				chatClient.off('message:publiclist', publiclistClientChatListener);
 				chatClient.on('message:retrieve', retrievePublicsClientChatListener);
 				
 				var publiclist = event.response.publiclist;
-				var publicIds = publiclist.map(function(public) {
+				var publicIdCollection = publiclist.map(function(public) {
 					return public.id;
 				});
-				chatClient.retrieve(publicIds.join(','));
+				var publicIdCollectionString = publicIdCollection.join(',');
+				
+				console.log('public id collection');
+				console.log(publicIdCollectionString);
+				
+				chatClient.retrieve(publicIdCollectionString);
 			};
 			var retrievePublicsClientChatListener = function(event) {
+				console.log('public details complete');
+				
 				chatClient.off('message:retrieve', retrievePublicsClientChatListener);
+				chatClient.on('message:subscribelist', subscribelistClientChatListener);
 				
-				var publicDetails = event.response.retrieve;
-				console.log(JSON.stringify(publicDetails));
-				
-				publicDetails.forEach(function(publicDetail) {
-					var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
-					var listElem = wrapElem.getElementsByClassName('list')[0];
-			
-					var contactModel = ContactModelFactory.fromPublic(publicDetail);
-					var id = contactModel.getAttribute('id');
+				var publics = event.response.retrieve;
+				var contactModelCollection = publics.map(ContactModelFactory.fromPublic);
+
+				contactModelCollection.forEach(function(contactModel) {
 					var contactView = new ContactView(contactModel);
+					var id = contactModel.getAttribute('id');
 					self.contactModels[id] = contactModel;
 					self.contactViews[id] = contactView;
-					contactView.attachTo(listElem);
+					contactView.attachTo(contactListElem);
 				});
+				
+				chatClient.subscribelist();
 			};
-			
-			//loading themes
-			var subscribelistClienChatListener = function(event) {
-				chatClient.off('message:subscribelist', subscribelistClienChatListener);
+			var subscribelistClientChatListener = function(event) {
+				console.log('theme list complete');
+				
+				chatClient.off('message:subscribelist', subscribelistClientChatListener);
 				chatClient.on('message:retrieve', retrieveThemesClientChatListener);
 				
 				var subscribelist = event.response.subscribelist;
-				var themeIds = subscribelist.filter(function(item) {
+				var themeIdCollection = subscribelist.filter(function(item) {
 					return item.type !== 'public';	
 				}).map(function(item) {
 					return item.id;
 				});
-
-				chatClient.retrieve(themeIds.join(','));
+				var themeIdCollectionString = themeIdCollection.join(',');
+				
+				console.log('theme id collection');
+				console.log(themeIdCollectionString);
+				
+				chatClient.retrieve(themeIdCollectionString);
 			};
 			var retrieveThemesClientChatListener = function(event) {
-				chatClient.off('message:retrieve', retrieveThemesClientChatListener);
-	
-				var themes = event.response.retrieve;
-				console.log('themes');
-				console.log(JSON.stringify(themes, null, 4));
+				console.log('theme details complete');
 				
-				themes.forEach(function(theme) {
-					console.log(theme);
-					var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
-					var listElem = wrapElem.getElementsByClassName('list')[0];
-			
-					var contactModel = ContactModelFactory.fromTheme(theme);
-					var id = contactModel.getAttribute('id');
+				chatClient.off('message:retrieve', retrieveThemesClientChatListener);
+				chatClient.on('message:users', usersClientChatListener);
+				
+				var themes = event.response.retrieve;
+				var contactModelCollection = themes.map(ContactModelFactory.fromTheme);
+				
+				contactModelCollection.forEach(function(contactModel) {
 					var contactView = new ContactView(contactModel);
+					var id = contactModel.getAttribute('id');
 					self.contactModels[id] = contactModel;
 					self.contactViews[id] = contactView;
-					contactView.attachTo(listElem);
+					contactView.attachTo(contactListElem);
 				});
+				
+				chatClient.users();
+			};
+			var usersClientChatListener = function(event) {
+				console.log('users complete');
+				
+				chatClient.off('message:users', usersClientChatListener);
+				chatClient.on('message:retrieve', retrieveProfilesClientChatListener);
+				
+				var users = event.response.users;
+				var profileIdCollection = users.filter(function(user) {
+					return userId !== user; 
+				}).map(function(user) {
+					return ['profile', user].join('.');
+				});
+				var profileIdCollectionString = profileIdCollection.join(',');
+				
+				console.log('profile id collection');
+				console.log(profileIdCollectionString);
+				
+				chatClient.retrieve(profileIdCollectionString);
+			};
+			var retrieveProfilesClientChatListener = function(event) {
+				console.log('profile details complete');
+				
+				chatClient.off('message:retrieve', retrieveProfilesClientChatListener);
+				chatClient.on('message:online', onlineClientChatListener);
+				
+				var profiles = event.response.retrieve;
+				var contactModelCollection = profiles.map(ContactModelFactory.fromProfile);
+				
+				contactModelCollection.forEach(function(contactModel) {
+					var contactView = new ContactView(contactModel);
+					var id = contactModel.getAttribute('id');
+					self.contactModels[id] = contactModel;
+					self.contactViews[id] = contactView;
+					contactView.attachTo(contactListElem);
+				});
+				
+				chatClient.online();
+			};
+			var onlineClientChatListener = function(event) {
+				console.log('online complete');
+				
+				chatClient.off('message:online', onlineClientChatListener);
+				chatClient.on('message:tape', tapeClientChatListener);
+				
+				var online = event.response.online;
+				online.forEach(function(item) {
+					var contactModel = self.contactModels[item];
+					if (contactModel) {
+						contactModel.setAttribute('online', true);
+					}
+				});
+				console.log('online users');
+				console.log(JSON.stringify(online, null, 4));
+				
+				chatClient.tape();
+			};
+			var tapeClientChatListener = function(event) {
+				console.log('tape complete');
+				
+				chatClient.off('message:tape', tapeClientChatListener);
 			};
 			
-			//all startup info loaded
-			var emptyLoadOperationCounterListener = function() {
-				loadOperationCounter.off('empty', loadOperationCounter);
-				chatClient.on('message:send', sendChatClientListener);
-				chatClient.on('message:sent', sentChatClientListener);
+			var disconnectListener = function(event) {
+				chatClient.off('message:users');
+				chatClient.off('message:publiclist');
+				chatClient.off('message:retrieve');
+				chatClient.off('message:subscribelist');
+				chatClient.off('message:online');
 			};
-			var sendChatClientListener = function(event) {
-				var send = event.response.send;
-				send.value = send.body;
-				_messages.push(send);
-				newMessageSoundElem.play();
-				if (_companionId === send.from && _chatMode === 'contact') {
-					var timestamp = send.body.timestamp;
-					var now = new Date(timestamp);
-					var time = formatDate(now);
-					var profileId = ['profile', send.from].join('.');
-					var content = base64.decode(send.body.content);
-					var author = getContactName(profileId);
-					var avatar = getContactAvatarUrl(profileId);
-					var messageElem = createMessageElem(content);
-					imbueStreamMessageElem(messageElem);
-					setMessageElemAuthor(messageElem, author);
-					setMessageElemAvatar(messageElem, avatar);
-					setMessageElemTime(messageElem, time);
-					appendMessageElem(messageElem);
-					html.scrollToBottom(streamWrapElem);
-				}
-			};
-			var sentChatClientListener = function(event) {
-				var sent = event.response.sent;
-				sent.value = sent.body;
-				_messages.push(sent);
-			};
-			
+
 			self.on('authorize', authorizeListener);
 			self.on('disconnect', disconnectListener);
 			
-			self.on('select:contact', function(event) {
-				changeChat('contact', event.contactId);
-			});
-			self.on('select:public', function(event) {
-				showConversationTitle(true);
-				changeChat('public', event.publicId);
-			});
-			self.on('select:theme', function(event) {
-				showConversationTitle(true);
-				changeChat('theme', event.themeId);
-			});
+			// var groupLoadCounter = new Counter(2);
+			// groupLoadCounter.on('empty', function() {
+			// 	chatClient.users();
+			// });
+						
+			// showConversationTitle(false);
+			// updateConversationTitle('');
+			// showComposer(false);
+			// initializeAccountElem();
+			// initializeComposerMessageElem();
+			// initializeDialogElem();
+			
+			// var authorizeListener = function(event) {
+			// 	userId = event.userId;
+			// 	loadOperationCounter.reset(4);
+			// 	groupLoadCounter.reset(2);
+			// 	loadOperationCounter.on('empty', emptyLoadOperationCounterListener);
+				
+			// 	chatClient.on('message:publiclist', publiclistClientChatListener);
+			// 	chatClient.on('message:subscribelist', subscribelistClienChatListener);
+			// 	chatClient.on('message:users', usersClientChatListener);
+			// 	// chatClient.on('message:tape', tapeClientChatListener);
+				
+			// 	//chatClient.publiclist();
+			// 	//chatClient.subscribelist();
+			// 	chatClient.users();
+			// };
+			// var disconnectListener = function(event) {
+			// 	chatClient.off('message:users');
+			// 	chatClient.off('message:retrieve');
+			// 	chatClient.off('message:publiclist');
+			// 	chatClient.off('message:send');
+			// 	chatClient.off('message:sent');
+			// 	chatClient.off('message:online');
+			// 	chatClient.off('message:subscribelist');
+			// 	chatClient.off('message:groupuserlist');
+			// 	chatClient.off('message:tape');
+			// 	loadOperationCounter.off('empty', emptyLoadOperationCounterListener);
+				
+			// 	deleteAllPublics();
+			// 	deleteAllContacts();
+			// 	deleteAllThemes();
+			// 	deleteAllMessageElems();
+			// 	deleteAllMessages();
+				
+			// 	updateConversationTitle('');
+			// 	showConversationTitle(false);
+			// 	showComposer(false);
+			// 	resetChat();
+			// };
+			
+			// //loading tape
+			// var tapeClientChatListener = function(event) {
+			// 	chatClient.off('message:tape', tapeClientChatListener);
+			// 	chatClient.on('message:retrieve', retrieveMessagesChatClientListener);
+				
+			// 	var tape = event.response.tape;
+			// 	var messageIds = tape.map(function(message) {
+			// 		return message.id;	
+			// 	});
+			// 	chatClient.retrieve(messageIds.join(','));
+			// };
+			// var retrieveMessagesChatClientListener = function(event) {
+			// 	chatClient.off('message:retrieve', retrieveMessagesChatClientListener);
+				
+			// 	var retrieve = event.response.retrieve;
+			// 	loadOperationCounter.release();
+			// 	_messages = retrieve;
+			// };
+			
+			// //loading user profiles
+			// var usersClientChatListener = function(event) {
+			// 	chatClient.off('message:users', usersClientChatListener);
+			// 	chatClient.on('message:retrieve', retrieveProfilesClientChatListener);
+				
+			// 	var users = event.response.users;
+			// 	var profileIds = users.map(function(user) {
+			// 		return ['profile', user].join('.');
+			// 	});
+			// 	chatClient.retrieve(profileIds.join());
+			// };
+			// var retrieveProfilesClientChatListener = function(event) {
+			// 	chatClient.off('message:retrieve', retrieveProfilesClientChatListener);
+			// 	chatClient.on('message:online', onlineClientChatListener);
+				
+			// 	chatClient.online();
+			// 	var profiles = event.response.retrieve;
+			// 	console.log('profiles');
+			// 	console.log(JSON.stringify(profiles, null, 4));
+				
+			// 	profiles.forEach(function(profile) {
+			// 		var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+			// 		var listElem = wrapElem.getElementsByClassName('list')[0];
+			
+			// 		var contactModel = ContactModelFactory.fromProfile(profile);
+			// 		var id = contactModel.getAttribute('id');
+			// 		var contactView = new ContactView(contactModel);
+			// 		self.contactModels[id] = contactModel;
+			// 		self.contactViews[id] = contactView;
+			// 		contactView.attachTo(listElem);
+			// 	});
+				
+			// 	// createContactList(profiles);
+			// 	// loadOperationCounter.release();
+			// 	// chatClient.tape();
+			// };
+			// var onlineClientChatListener = function(event) {
+			// 	var online = event.response.online;
+			// 	chatClient.off('message:online', onlineClientChatListener);
+			// 	updateOnlineContacts(online);
+			// };
+			
+			// //loading publiclist
+			// var publiclistClientChatListener = function(event) {
+			// 	chatClient.off('message:publiclist', publiclistClientChatListener);
+			// 	chatClient.on('message:retrieve', retrievePublicsClientChatListener);
+				
+			// 	var publiclist = event.response.publiclist;
+			// 	var publicIds = publiclist.map(function(public) {
+			// 		return public.id;
+			// 	});
+			// 	chatClient.retrieve(publicIds.join(','));
+			// };
+			// var retrievePublicsClientChatListener = function(event) {
+			// 	chatClient.off('message:retrieve', retrievePublicsClientChatListener);
+				
+			// 	var publicDetails = event.response.retrieve;
+			// 	console.log(JSON.stringify(publicDetails));
+				
+			// 	publicDetails.forEach(function(publicDetail) {
+			// 		var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+			// 		var listElem = wrapElem.getElementsByClassName('list')[0];
+			
+			// 		var contactModel = ContactModelFactory.fromPublic(publicDetail);
+			// 		var id = contactModel.getAttribute('id');
+			// 		var contactView = new ContactView(contactModel);
+			// 		self.contactModels[id] = contactModel;
+			// 		self.contactViews[id] = contactView;
+			// 		contactView.attachTo(listElem);
+			// 	});
+			// };
+			
+			// //loading themes
+			// var subscribelistClienChatListener = function(event) {
+			// 	chatClient.off('message:subscribelist', subscribelistClienChatListener);
+			// 	chatClient.on('message:retrieve', retrieveThemesClientChatListener);
+				
+			// 	var subscribelist = event.response.subscribelist;
+			// 	var themeIds = subscribelist.filter(function(item) {
+			// 		return item.type !== 'public';	
+			// 	}).map(function(item) {
+			// 		return item.id;
+			// 	});
+
+			// 	chatClient.retrieve(themeIds.join(','));
+			// };
+			// var retrieveThemesClientChatListener = function(event) {
+			// 	chatClient.off('message:retrieve', retrieveThemesClientChatListener);
+	
+			// 	var themes = event.response.retrieve;
+			// 	console.log('themes');
+			// 	console.log(JSON.stringify(themes, null, 4));
+				
+			// 	themes.forEach(function(theme) {
+			// 		console.log(theme);
+			// 		var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+			// 		var listElem = wrapElem.getElementsByClassName('list')[0];
+			
+			// 		var contactModel = ContactModelFactory.fromTheme(theme);
+			// 		var id = contactModel.getAttribute('id');
+			// 		var contactView = new ContactView(contactModel);
+			// 		self.contactModels[id] = contactModel;
+			// 		self.contactViews[id] = contactView;
+			// 		contactView.attachTo(listElem);
+			// 	});
+			// };
+			
+			// //all startup info loaded
+			// var emptyLoadOperationCounterListener = function() {
+			// 	loadOperationCounter.off('empty', loadOperationCounter);
+			// 	chatClient.on('message:send', sendChatClientListener);
+			// 	chatClient.on('message:sent', sentChatClientListener);
+			// };
+			// var sendChatClientListener = function(event) {
+			// 	var send = event.response.send;
+			// 	send.value = send.body;
+			// 	_messages.push(send);
+			// 	newMessageSoundElem.play();
+			// 	if (_companionId === send.from && _chatMode === 'contact') {
+			// 		var timestamp = send.body.timestamp;
+			// 		var now = new Date(timestamp);
+			// 		var time = formatDate(now);
+			// 		var profileId = ['profile', send.from].join('.');
+			// 		var content = base64.decode(send.body.content);
+			// 		var author = getContactName(profileId);
+			// 		var avatar = getContactAvatarUrl(profileId);
+			// 		var messageElem = createMessageElem(content);
+			// 		imbueStreamMessageElem(messageElem);
+			// 		setMessageElemAuthor(messageElem, author);
+			// 		setMessageElemAvatar(messageElem, avatar);
+			// 		setMessageElemTime(messageElem, time);
+			// 		appendMessageElem(messageElem);
+			// 		html.scrollToBottom(streamWrapElem);
+			// 	}
+			// };
+			// var sentChatClientListener = function(event) {
+			// 	var sent = event.response.sent;
+			// 	sent.value = sent.body;
+			// 	_messages.push(sent);
+			// };
+			
+			// self.on('authorize', authorizeListener);
+			// self.on('disconnect', disconnectListener);
+			
+			// self.on('select:contact', function(event) {
+			// 	changeChat('contact', event.contactId);
+			// });
+			// self.on('select:public', function(event) {
+			// 	showConversationTitle(true);
+			// 	changeChat('public', event.publicId);
+			// });
+			// self.on('select:theme', function(event) {
+			// 	showConversationTitle(true);
+			// 	changeChat('theme', event.themeId);
+			// });
 		};
 		
 		EventEmitter.call(self);
