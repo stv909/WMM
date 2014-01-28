@@ -52,9 +52,9 @@ window.onload = function() {
 			var count = event.count;
 			self.countElem.textContent = count;
 			if (count > 0) {
-				self.countElem.classList.add('hidden');
-			} else {
 				self.countElem.classList.remove('hidden');
+			} else {
+				self.countElem.classList.add('hidden');
 			}
 		};
 		var modelOnlineListener = function(event) {
@@ -133,20 +133,32 @@ window.onload = function() {
 		contactModel.setAttribute('id', id);
 		contactModel.setAttribute('type', 'public');
 		contactModel.setAttribute('name', name);
-		contactModel.setAttribute('online',true);
-		contactModel.setAttribute('count', 3);
+		contactModel.setAttribute('online', true);
+		contactModel.setAttribute('count', 0);
 		contactModel.setAttribute('avatar', 'https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/world-512.png');
 		
 		return contactModel;
 	};
 	ContactModelFactory.fromTheme = function(theme) {
+		var value = theme.value || {};
 		
+		var id = theme.id;
+		var name = value.label || id;
+		
+		var contactModel = new mvp.Model();
+		contactModel.setAttribute('id', id);
+		contactModel.setAttribute('type', 'theme');
+		contactModel.setAttribute('name', name);
+		contactModel.setAttribute('online', true);
+		contactModel.setAttribute('count', 0);
+		contactModel.setAttribute('avatar', 'http://simpleicon.com/wp-content/uploads/group-1.png');
+		
+		return contactModel;
 	};
 	ContactModelFactory.fromProfile = function(profile) {
 		
 	};
 
-	
 	var Counter = function(size) {
 		var self = this;
 		var _size = size || 0;
@@ -1018,12 +1030,12 @@ window.onload = function() {
 				loadOperationCounter.on('empty', emptyLoadOperationCounterListener);
 				
 				chatClient.on('message:publiclist', publiclistClientChatListener);
-				// chatClient.on('message:subscribelist', subscribelistClienChatListener);
+				chatClient.on('message:subscribelist', subscribelistClienChatListener);
 				// chatClient.on('message:users', usersClientChatListener);
 				// chatClient.on('message:tape', tapeClientChatListener);
 				
-				chatClient.publiclist();
-				// chatClient.subscribelist();
+				//chatClient.publiclist();
+				chatClient.subscribelist();
 			};
 			var disconnectListener = function(event) {
 				chatClient.off('message:users');
@@ -1123,27 +1135,6 @@ window.onload = function() {
 					self.contactViews[id] = contactView;
 					contactView.attachTo(listElem);
 				});
-				
-				//createPublicList(publicDetails);
-				//loadOperationCounter.release();	
-				//groupLoadCounter.release();
-				
-			// 	if (publicValue) {
-			// 	newPublicElem.title = publicValue.id;
-			// 	nameTextElem.textContent = '[' + publicValue.label + ']';
-			// 	avatarImageElem.src = 'https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/world-512.png';
-				
-			// 	newPublicElem.addEventListener('click', function() {
-			// 		self.trigger({
-			// 			type: 'select:public',
-			// 			publicId: publicValue.id
-			// 		});
-			// 	});
-				
-			// 	publicMap[publicDetail.id] = newPublicElem;
-			// 	publicDetails[publicDetail.id] = publicDetail;
-			// 	listElem.appendChild(newPublicElem);
-			// }
 			};
 			
 			//loading themes
@@ -1164,9 +1155,21 @@ window.onload = function() {
 				chatClient.off('message:retrieve', retrieveThemesClientChatListener);
 	
 				var themes = event.response.retrieve;
-				createThemeList(themes);
-				loadOperationCounter.release();
-				groupLoadCounter.release();
+				console.log('themes');
+				console.log(JSON.stringify(themes, null, 4));
+				
+				themes.forEach(function(theme) {
+					console.log(theme);
+					var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
+					var listElem = wrapElem.getElementsByClassName('list')[0];
+			
+					var contactModel = ContactModelFactory.fromTheme(theme);
+					var id = contactModel.getAttribute('id');
+					var contactView = new ContactView(contactModel);
+					self.contactModels[id] = contactModel;
+					self.contactViews[id] = contactView;
+					contactView.attachTo(listElem);
+				});
 			};
 			
 			//all startup info loaded
