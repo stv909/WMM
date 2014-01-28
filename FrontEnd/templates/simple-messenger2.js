@@ -173,27 +173,6 @@ window.onload = function() {
 		
 		return contactModel;
 	};
-
-	var Counter = function(size) {
-		var self = this;
-		var _size = size || 0;
-		
-		self.reset = function(size) {
-			_size = size;
-		};
-		self.release = function() {
-			_size--;
-			_size = _size <= 0 ? 0 : _size;
-			if (_size === 0) {
-				self.trigger('empty');
-			}
-		};
-		self.add = function() {
-			_size++;	
-		};
-		
-		EventEmitter.call(self);
-	};
 	
 	var ChatApplication = function() {
 		var self = this;
@@ -214,18 +193,11 @@ window.onload = function() {
 			.getElementsByTagName('img')[0];
 		var streamElem = document.getElementById('stream');
 		var streamWrapElem = streamElem.getElementsByClassName('wrap')[0];
-		var newMessageSoundElem = document.getElementById('new-message-sound');
 		
-		var loadOperationCounter = new Counter();
 		var userId = null;
 		
-		var contactsMap = {};
 		var profiles = {};
-		
-		var publicMap = {};
 		var publicDetails = {};
-		
-		var themeMap = {};
 		var themes = {};
 		
 		this.contactModels = {};
@@ -840,7 +812,7 @@ window.onload = function() {
 			menuElem.appendChild(accountElem);
 		};
 		
-		self.dispose = function() {
+		this.dispose = function() {
 			var keys = Object.keys(self.contactViews);
 			keys.forEach(function(key) {
 				self.contactViews[key].dispose();
@@ -849,7 +821,7 @@ window.onload = function() {
 			self.contactViews = {};
 			self.contactModels = {};
 		};
-		self.prepareContactViews = function() {
+		this.prepareContactViews = function() {
 			var prepareContactView = function(contactView) {
 				contactView.attachTo(contactListElem);
 				contactView.on('click', function(event) {
@@ -881,8 +853,13 @@ window.onload = function() {
 			});
 		};
 		
-		self.initialize = function() {
+		this.initialize = function() {
+			showConversationTitle(false);
+			updateConversationTitle('');
+			showComposer(false);
 			initializeAccountElem();
+			initializeComposerMessageElem();
+			initializeDialogElem();
 			
 			var authorizeListener = function(event) {
 				console.log('authorize complete');
@@ -1024,6 +1001,27 @@ window.onload = function() {
 				console.log('tape complete');
 				
 				chatClient.off('message:tape', tapeClientChatListener);
+				chatClient.on('message:retrieve', retrieveMessagesChatListener);
+				
+				var tape = event.response.tape;
+				var messageIdCollection = tape.map(function(item) {
+					return item.id;	
+				});
+				var messageIdCollectionString = messageIdCollection.join(',');
+
+				console.log('message id collection');
+				console.log(messageIdCollectionString);
+
+				chatClient.retrieve(messageIdCollectionString);
+			};
+			var retrieveMessagesChatListener = function(event) {
+				console.log('messages retrieve');
+				
+				chatClient.off('message:retrieve', retrieveMessagesChatListener);
+				
+				var messages = event.response.retrieve;
+				_messages = messages;
+				
 				self.prepareContactViews();
 			};
 			
@@ -1034,236 +1032,23 @@ window.onload = function() {
 				chatClient.off('message:subscribelist');
 				chatClient.off('message:online');
 				chatClient.off('message:tape');
+				chatClient.off('message:groupuserlist');
+				chatClient.off('message:sent');
+				chatClient.off('message:send');
+				
+				updateConversationTitle('');
+				showConversationTitle(false);
+				showComposer(false);
+				resetChat();
 				
 				self.dispose();
 			};
 
 			self.on('authorize', authorizeListener);
 			self.on('disconnect', disconnectListener);
-			
-			// showConversationTitle(false);
-			// updateConversationTitle('');
-			// showComposer(false);
-			// initializeAccountElem();
-			// initializeComposerMessageElem();
-			// initializeDialogElem();
-			
-			// var authorizeListener = function(event) {
-			// 	userId = event.userId;
-			// 	loadOperationCounter.reset(4);
-			// 	groupLoadCounter.reset(2);
-			// 	loadOperationCounter.on('empty', emptyLoadOperationCounterListener);
-				
-			// 	chatClient.on('message:publiclist', publiclistClientChatListener);
-			// 	chatClient.on('message:subscribelist', subscribelistClienChatListener);
-			// 	chatClient.on('message:users', usersClientChatListener);
-			// 	// chatClient.on('message:tape', tapeClientChatListener);
-				
-			// 	//chatClient.publiclist();
-			// 	//chatClient.subscribelist();
-			// 	chatClient.users();
-			// };
-			// var disconnectListener = function(event) {
-			// 	chatClient.off('message:users');
-			// 	chatClient.off('message:retrieve');
-			// 	chatClient.off('message:publiclist');
-			// 	chatClient.off('message:send');
-			// 	chatClient.off('message:sent');
-			// 	chatClient.off('message:online');
-			// 	chatClient.off('message:subscribelist');
-			// 	chatClient.off('message:groupuserlist');
-			// 	chatClient.off('message:tape');
-			// 	loadOperationCounter.off('empty', emptyLoadOperationCounterListener);
-				
-			// 	deleteAllPublics();
-			// 	deleteAllContacts();
-			// 	deleteAllThemes();
-			// 	deleteAllMessageElems();
-			// 	deleteAllMessages();
-				
-			// 	updateConversationTitle('');
-			// 	showConversationTitle(false);
-			// 	showComposer(false);
-			// 	resetChat();
-			// };
-			
-			// //loading tape
-			// var tapeClientChatListener = function(event) {
-			// 	chatClient.off('message:tape', tapeClientChatListener);
-			// 	chatClient.on('message:retrieve', retrieveMessagesChatClientListener);
-				
-			// 	var tape = event.response.tape;
-			// 	var messageIds = tape.map(function(message) {
-			// 		return message.id;	
-			// 	});
-			// 	chatClient.retrieve(messageIds.join(','));
-			// };
-			// var retrieveMessagesChatClientListener = function(event) {
-			// 	chatClient.off('message:retrieve', retrieveMessagesChatClientListener);
-				
-			// 	var retrieve = event.response.retrieve;
-			// 	loadOperationCounter.release();
-			// 	_messages = retrieve;
-			// };
-			
-			// //loading user profiles
-			// var usersClientChatListener = function(event) {
-			// 	chatClient.off('message:users', usersClientChatListener);
-			// 	chatClient.on('message:retrieve', retrieveProfilesClientChatListener);
-				
-			// 	var users = event.response.users;
-			// 	var profileIds = users.map(function(user) {
-			// 		return ['profile', user].join('.');
-			// 	});
-			// 	chatClient.retrieve(profileIds.join());
-			// };
-			// var retrieveProfilesClientChatListener = function(event) {
-			// 	chatClient.off('message:retrieve', retrieveProfilesClientChatListener);
-			// 	chatClient.on('message:online', onlineClientChatListener);
-				
-			// 	chatClient.online();
-			// 	var profiles = event.response.retrieve;
-			// 	console.log('profiles');
-			// 	console.log(JSON.stringify(profiles, null, 4));
-				
-			// 	profiles.forEach(function(profile) {
-			// 		var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
-			// 		var listElem = wrapElem.getElementsByClassName('list')[0];
-			
-			// 		var contactModel = ContactModelFactory.fromProfile(profile);
-			// 		var id = contactModel.getAttribute('id');
-			// 		var contactView = new ContactView(contactModel);
-			// 		self.contactModels[id] = contactModel;
-			// 		self.contactViews[id] = contactView;
-			// 		contactView.attachTo(listElem);
-			// 	});
-				
-			// 	// createContactList(profiles);
-			// 	// loadOperationCounter.release();
-			// 	// chatClient.tape();
-			// };
-			// var onlineClientChatListener = function(event) {
-			// 	var online = event.response.online;
-			// 	chatClient.off('message:online', onlineClientChatListener);
-			// 	updateOnlineContacts(online);
-			// };
-			
-			// //loading publiclist
-			// var publiclistClientChatListener = function(event) {
-			// 	chatClient.off('message:publiclist', publiclistClientChatListener);
-			// 	chatClient.on('message:retrieve', retrievePublicsClientChatListener);
-				
-			// 	var publiclist = event.response.publiclist;
-			// 	var publicIds = publiclist.map(function(public) {
-			// 		return public.id;
-			// 	});
-			// 	chatClient.retrieve(publicIds.join(','));
-			// };
-			// var retrievePublicsClientChatListener = function(event) {
-			// 	chatClient.off('message:retrieve', retrievePublicsClientChatListener);
-				
-			// 	var publicDetails = event.response.retrieve;
-			// 	console.log(JSON.stringify(publicDetails));
-				
-			// 	publicDetails.forEach(function(publicDetail) {
-			// 		var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
-			// 		var listElem = wrapElem.getElementsByClassName('list')[0];
-			
-			// 		var contactModel = ContactModelFactory.fromPublic(publicDetail);
-			// 		var id = contactModel.getAttribute('id');
-			// 		var contactView = new ContactView(contactModel);
-			// 		self.contactModels[id] = contactModel;
-			// 		self.contactViews[id] = contactView;
-			// 		contactView.attachTo(listElem);
-			// 	});
-			// };
-			
-			// //loading themes
-			// var subscribelistClienChatListener = function(event) {
-			// 	chatClient.off('message:subscribelist', subscribelistClienChatListener);
-			// 	chatClient.on('message:retrieve', retrieveThemesClientChatListener);
-				
-			// 	var subscribelist = event.response.subscribelist;
-			// 	var themeIds = subscribelist.filter(function(item) {
-			// 		return item.type !== 'public';	
-			// 	}).map(function(item) {
-			// 		return item.id;
-			// 	});
-
-			// 	chatClient.retrieve(themeIds.join(','));
-			// };
-			// var retrieveThemesClientChatListener = function(event) {
-			// 	chatClient.off('message:retrieve', retrieveThemesClientChatListener);
-	
-			// 	var themes = event.response.retrieve;
-			// 	console.log('themes');
-			// 	console.log(JSON.stringify(themes, null, 4));
-				
-			// 	themes.forEach(function(theme) {
-			// 		console.log(theme);
-			// 		var wrapElem = contactsElem.getElementsByClassName('wrap')[0];
-			// 		var listElem = wrapElem.getElementsByClassName('list')[0];
-			
-			// 		var contactModel = ContactModelFactory.fromTheme(theme);
-			// 		var id = contactModel.getAttribute('id');
-			// 		var contactView = new ContactView(contactModel);
-			// 		self.contactModels[id] = contactModel;
-			// 		self.contactViews[id] = contactView;
-			// 		contactView.attachTo(listElem);
-			// 	});
-			// };
-			
-			// //all startup info loaded
-			// var emptyLoadOperationCounterListener = function() {
-			// 	loadOperationCounter.off('empty', loadOperationCounter);
-			// 	chatClient.on('message:send', sendChatClientListener);
-			// 	chatClient.on('message:sent', sentChatClientListener);
-			// };
-			// var sendChatClientListener = function(event) {
-			// 	var send = event.response.send;
-			// 	send.value = send.body;
-			// 	_messages.push(send);
-			// 	newMessageSoundElem.play();
-			// 	if (_companionId === send.from && _chatMode === 'contact') {
-			// 		var timestamp = send.body.timestamp;
-			// 		var now = new Date(timestamp);
-			// 		var time = formatDate(now);
-			// 		var profileId = ['profile', send.from].join('.');
-			// 		var content = base64.decode(send.body.content);
-			// 		var author = getContactName(profileId);
-			// 		var avatar = getContactAvatarUrl(profileId);
-			// 		var messageElem = createMessageElem(content);
-			// 		imbueStreamMessageElem(messageElem);
-			// 		setMessageElemAuthor(messageElem, author);
-			// 		setMessageElemAvatar(messageElem, avatar);
-			// 		setMessageElemTime(messageElem, time);
-			// 		appendMessageElem(messageElem);
-			// 		html.scrollToBottom(streamWrapElem);
-			// 	}
-			// };
-			// var sentChatClientListener = function(event) {
-			// 	var sent = event.response.sent;
-			// 	sent.value = sent.body;
-			// 	_messages.push(sent);
-			// };
-			
-			// self.on('authorize', authorizeListener);
-			// self.on('disconnect', disconnectListener);
-			
-			// self.on('select:contact', function(event) {
-			// 	changeChat('contact', event.contactId);
-			// });
-			// self.on('select:public', function(event) {
-			// 	showConversationTitle(true);
-			// 	changeChat('public', event.publicId);
-			// });
-			// self.on('select:theme', function(event) {
-			// 	showConversationTitle(true);
-			// 	changeChat('theme', event.themeId);
-			// });
 		};
 		
-		EventEmitter.call(self);
+		EventEmitter.call(this);
 	};
 	
 	var chatApplication = new ChatApplication();
