@@ -233,8 +233,11 @@ input[type="text"] {
   box-shadow: 0 0 0.5em #aaa;
 }
 #contacts >.prewrap >.wrap >.list .contact .info-block .name {
+  display: inline-block;
+  position: absolute;
   margin-left: 0.5em;
-  margin-top: 0.5em;
+  margin-top: 0.6em;
+  white-space: nowrap;
 }
 #contacts >.prewrap >.wrap >.list .contact .message-block {
   float: right;
