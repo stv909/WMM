@@ -51,26 +51,48 @@ contact =
 	user-contact-color = #55BB55
 	public-contact-color = #5555BB
 	theme-contact-color = #BB55BB
+	
+	.online
+		opacity 1.0
+	.offline
+		opacity 0.6
+	.user:hover
+		background-color user-contact-color
+	.public:hover
+		background-color public-contact-color
+	.theme:hover
+		background-color theme-contact-color
 	.contact
 		font-size 0.8em
 		color black
 		background-color white
-		padding 0.75em 0 0.75em 0.75em
+		padding-left 0.75em
+		padding-top 0.75em
+		padding-bottom 0.75em
 		border-bottom 1px solid second-border-color
 		transition all 200ms ease
 		&:hover
 			color white
-		&.user:hover
-			background-color user-contact-color
-		&.public:hover
-			background-color public-contact-color
-		&.theme:hover
-			background-color theme-contact-color
 		.info-block, .messages-block
 			display inline-block
 			vertical-align top
-		.messages-block
+		.info-block
+			.avatar-wrap
+				width 2.5em
+				height 2.5em
+				.avatar
+					background-color white
+					border 1px solid white
+					width 100%
+					height 100%
+					box-shadow 0 0 0.5em #aaa
+			.name
+				margin-left 0.5em
+				margin-top 0.5em
+		.message-block
 			float right
+			.count
+				background-color red
 {contact}
 
 #page

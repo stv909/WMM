@@ -1,12 +1,12 @@
 mixin contact-template
 	template#contact-template(style="display:none")
 		.info-block
-			.contact-avatar-wrap
-				img.contact-avatar
+			.avatar-wrap
+				img.avatar
 		.info-block
-			.contact-name
-		.messages-block
-			.message-count
+			.name
+		.message-block
+			.count
 mixin contact
 	.contact.offline
 		.avatar
@@ -118,6 +118,7 @@ html
 		script(type="application/javascript", src="base64.js")
 		script(type="application/javascript", src="chat.js")
 		script(type="application/javascript", src="html.js")
+		script(type="application/javascript", src="mvp.js")
 		script(type="application/javascript", src="template.js")
 		script(type="application/javascript", src="simple-messenger2.js")
 	body

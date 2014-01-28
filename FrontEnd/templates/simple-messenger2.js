@@ -15,6 +15,88 @@ window.onload = function() {
 		return [hours <= 9 ? 'o' + hours : hours, minutes <= 9 ? '0' + minutes : minutes].join(':');
 	};
 	
+	// Model must have attributes: avatar, name, count,
+	var ContactView = function(model) {
+		var self = this;
+		mvp.EventTrigger.call(this);
+
+		this.rootElem = null;
+		this.model = model;
+		this.contactElem = template.create('contact-template', { className: 'contact' });
+		this.avatarElem = this.contactElem.getElementsByClassName('avatar')[0];
+		this.nameElem = this.contactElem.getElementsByClassName('name')[0];
+		this.countElem = this.contactElem.getElementsByClassName('count')[0];
+		
+		// model listeners
+		var modelAvatarListener = function(event) {
+			self.avatarElem.src = event.avatar;	
+		};
+		var modelNameListener = function(event) {
+			self.nameElem.textContent = event.name;
+		};
+		var modelCountListener = function(event) {
+			var count = event.count;
+			self.countElem.textContent = count;
+			if (count > 0) {
+				self.countElem.classList.add('hidden');
+			} else {
+				self.countElem.classList.remove('hidden');
+			}
+		};
+		
+		this.model.on('change:avatar', modelAvatarListener);
+		this.model.on('change:name', modelNameListener);
+		this.model.on('change:count', modelCountListener);
+		
+		// elems listeners
+		var contactElemClickListener = function(event) {
+			self.trigger({
+				type: 'click',
+				model: model	
+			});	
+		};
+		
+		this.contactElem.addEventListener('click', contactElemClickListener);
+		
+		// dispose block
+		var disposeListener = function(event) {
+			self.off();	
+			self.model.off('change:avatar', modelAvatarListener);
+			self.model.off('change:name', modelNameListener);
+			self.model.off('change:count', modelCountListener);
+			self.contactElem.removeEventListener('click', contactElemClickListener);
+		};
+		
+		this.on('dispose', disposeListener);
+		
+		// init ui
+		this.contactElem.classList.add(model.getAttribute('type'));
+		this.nameElem.textContent = model.getAttribute('name');
+		this.avatarElem.src = model.getAttribute('avatar');
+		this.countElem.textContent = model.getAttribute('count');
+	};
+	ContactView.prototype = Object.create(mvp.EventTrigger.prototype);
+	ContactView.prototype.constructor = ContactView;
+	ContactView.prototype.getModel = function() {
+		return this._model;	
+	};
+	ContactView.prototype.attachTo = function(rootElem) {
+		if (!this.rootElem) {
+			this.rootElem = rootElem;
+			this.rootElem.appendChild(this.contactElem);
+		}
+	};
+	ContactView.prototype.dettach = function() {
+		if (this.rootElem) {
+			this.rooteElem.removeChild(this.contactElem);
+			this.rootElem = null;
+		}
+	}
+	ContactView.prototype.dispose = function() {
+		this.trigger('dispose');
+		this.dettach();
+	};
+	
 	var Counter = function(size) {
 		var self = this;
 		var _size = size || 0;

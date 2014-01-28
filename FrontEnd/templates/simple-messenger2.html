@@ -9,19 +9,20 @@
     <script type="application/javascript" src="base64.js"></script>
     <script type="application/javascript" src="chat.js"></script>
     <script type="application/javascript" src="html.js"></script>
+    <script type="application/javascript" src="mvp.js"></script>
     <script type="application/javascript" src="template.js"></script>
     <script type="application/javascript" src="simple-messenger2.js"></script>
   </head>
   <body>
     <template id="contact-template" style="display:none">
       <div class="info-block">
-        <div class="contact-avatar-wrap"><img class="contact-avatar"/></div>
+        <div class="avatar-wrap"><img class="avatar"/></div>
       </div>
       <div class="info-block">
-        <div class="contact-name"></div>
+        <div class="name"></div>
       </div>
-      <div class="messages-block">
-        <div class="message-count"></div>
+      <div class="message-block">
+        <div class="count"></div>
       </div>
     </template>
     <audio id="new-message-sound" src="newMessageSpace.wav" preload="auto" style="controls: none"></audio>
