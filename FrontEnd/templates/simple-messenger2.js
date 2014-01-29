@@ -127,7 +127,7 @@ window.onload = function() {
 	ContactModelFactory.fromPublic = function(public) {
 		var value = public.value || {};
 					
-		var id = public.id;
+		var id = public.id.replace('public.', '');
 		var name = value.label || id;
 		var author = value.auther || '';
 		var moderators = value.moderators || {};
@@ -147,7 +147,7 @@ window.onload = function() {
 	ContactModelFactory.fromTheme = function(theme) {
 		var value = theme.value || {};
 		
-		var id = theme.id;
+		var id = theme.id.replace('theme.', '');
 		var name = value.label || id;
 		var author = value.auther || '';
 		
@@ -259,7 +259,7 @@ window.onload = function() {
 					};
 					
 					chatClient.on('message:groupuserlist', createGroupuserlistListener());
-					chatClient.groupuserlist(id);
+					chatClient.groupuserlist(['theme', id].join('.'));
 			
 					var title = label.concat([authorName, ' and ...'].join(', ')).join('');
 					updateConversationTitle(title);
@@ -495,8 +495,8 @@ window.onload = function() {
 				
 				var newMessageElem = createMessageElem(content);
 				var profileId = ['profile', userId].join('.');
-				var author = getContactName(profileId);
-				var avatar = getContactAvatarUrl(profileId);
+				var author = self.contactModels[userId].getAttribute('name');
+				var avatar = self.contactModels[userId].getAttribute('avatar');
 				var now = new Date();
 				var time = formatDate(now);
 
@@ -645,15 +645,18 @@ window.onload = function() {
 		};
 
 		var sendMessage = function(content) {
+			var type = self.currentContactModel.getAttribute('type');
+			var id = self.currentContactModel.getAttribute('id');
 			var message = chat.MessageFactory.create(
 				uuid.v4(),
 				content,
 				userId,
-				_companionId,
+				id,
 				Date.now()
 			);
-			switch(_chatMode) {
-				case 'contact':
+
+			switch(type) {
+				case 'user':
 					chatClient.sendMessage(message);
 					break;
 				case 'public':
@@ -817,7 +820,7 @@ window.onload = function() {
 				var message = self.messages[key];
 				var shown = message.shown;
 				var value = message.value || {};
-				var from = value.from || '';
+				var from =  value.group || value.from || '';
 				if (!shown && from !== userId) {
 					var contactModel = self.contactModels[from];
 					if (contactModel) {
@@ -1018,9 +1021,10 @@ window.onload = function() {
 			};
 			
 			var sendChatClientListener = function(event) {
-				var send = event.response.send;
-				send.value = send.body;
-				_messages.push(send);
+				var message = event.response.send;
+				message.value = send.body;
+				message.shown = false;
+				self.messages[message.id] = message;
 				newMessageSoundElem.play();
 				// if (_companionId === send.from && _chatMode === 'contact') {
 				// 	var timestamp = send.body.timestamp;
@@ -1041,9 +1045,10 @@ window.onload = function() {
 				// }
 			};
 			var sentChatClientListener = function(event) {
-				var sent = event.response.sent;
-				sent.value = sent.body;
-				_messages.push(sent);
+				var message = event.response.sent;
+				message.value = message.body;
+				message.shown = true;
+				self.messages[message.id] = message;
 			};
 			
 			var disconnectListener = function(event) {
