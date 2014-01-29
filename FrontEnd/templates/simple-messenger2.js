@@ -524,21 +524,29 @@ window.onload = function() {
 				}
 				
 				var newMessageElem = createMessageElem(content);
-				var profileId = ['profile', userId].join('.');
 				var author = self.contactModels[userId].getAttribute('name');
 				var avatar = self.contactModels[userId].getAttribute('avatar');
-				var now = new Date();
-				var time = formatDate(now);
 
 				sendMessage(content);
 				setMessageElemAuthor(newMessageElem, author);
 				setMessageElemAvatar(newMessageElem, avatar);
-				setMessageElemTime(newMessageElem, time);
 				imbueStreamMessageElem(newMessageElem);
 				appendMessageElem(newMessageElem);
 				html.scrollToBottom(streamWrapElem);
 				checkMessageElemOverflow(newMessageElem);
 				clearMessageElem(messageElem);
+				
+				var nowChatClientListener = function(event) {
+					chatClient.off('message:now', nowChatClientListener);
+					
+					var now = new Date(event.response.now);
+					var time = formatDate(now);
+	
+					setMessageElemTime(newMessageElem, time);
+				};
+				
+				chatClient.on('message:now', nowChatClientListener);
+				chatClient.now();
 			});
 
 			var enterCode = 13;
@@ -714,6 +722,7 @@ window.onload = function() {
 				messageElem.classList.add('unshown');
 				var id = group || from;
 				var mouseMoveListener = function(event) {
+					message.shown = true;
 					messageElem.removeEventListener('mousemove', mouseMoveListener);
 					messageElem.classList.remove('unshown');
 					var contactModel = self.contactModels[id];
@@ -1165,6 +1174,7 @@ window.onload = function() {
 				chatClient.off('message:sent');
 				chatClient.off('message:send');
 				chatClient.off('message:broadcast');
+				chatClient.off('message:now');
 				
 				updateConversationTitle('');
 				showConversationTitle(false);
