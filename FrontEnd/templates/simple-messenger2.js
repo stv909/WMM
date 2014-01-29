@@ -1068,7 +1068,7 @@ window.onload = function() {
 				console.log('tape complete');
 				
 				chatClient.off('message:tape', tapeClientChatListener);
-				chatClient.on('message:retrieve', retrieveMessagesChatListener);
+				chatClient.on('message:retrieve', retrieveMessagesClientChatListener);
 				
 				var tape = event.response.tape;
 				var messageIdCollection = tape.map(function(item) {
@@ -1091,10 +1091,10 @@ window.onload = function() {
 
 				chatClient.retrieve(messageIdCollectionString);
 			};
-			var retrieveMessagesChatListener = function(event) {
+			var retrieveMessagesClientChatListener = function(event) {
 				console.log('messages retrieve');
 				
-				chatClient.off('message:retrieve', retrieveMessagesChatListener);
+				chatClient.off('message:retrieve', retrieveMessagesClientChatListener);
 				
 				var messages = event.response.retrieve;
 				messages.forEach(function(message) {
@@ -1172,9 +1172,13 @@ window.onload = function() {
 				
 				self.dispose();
 			};
+			var errorMessageClientChatListener = function(event) {
+				alert('There\'s a terrible error on the server side. Call 911.');
+			};
 
 			self.on('authorize', authorizeListener);
 			self.on('disconnect', disconnectListener);
+			chatClient.on('error:message', errorMessageClientChatListener);
 		};
 		
 		EventEmitter.call(this);

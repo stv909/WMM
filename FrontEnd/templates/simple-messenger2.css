@@ -330,7 +330,7 @@ input[type="text"] {
   background-color: #ebf5ff;
 }
 #chat .message.unshown {
-  background-color: #f8fff8;
+  background-color: #f0fff0;
 }
 #chat .message .block .name,
 #chat .message .block .time {
