@@ -701,16 +701,30 @@ window.onload = function() {
 			var now = new Date(timestamp);
 			var time = formatDate(now);
 			var from = message.value.from;
+			var group = message.value.group;
 			var contactModel = self.contactModels[from];
 			var content = base64.decode(message.value.content);
 			var author = contactModel.getAttribute('name');
 			var avatar = contactModel.getAttribute('avatar');
 			var messageElem = createMessageElem(content);
+			
 			if (message.shown) {
 				messageElem.classList.remove('unshown'); 
 			} else {
 				messageElem.classList.add('unshown');
+				var id = group || from;
+				var mouseMoveListener = function(event) {
+					messageElem.removeEventListener('mousemove', mouseMoveListener);
+					messageElem.classList.remove('unshown');
+					var contactModel = self.contactModels[id];
+					var count = contactModel.getAttribute('count');
+					count--;
+					contactModel.setAttribute('count', count);
+					chatClient.shown(message.id);
+				};
+				messageElem.addEventListener('mousemove', mouseMoveListener);
 			}
+			
 			imbueStreamMessageElem(messageElem);
 			setMessageElemAuthor(messageElem, author);
 			setMessageElemAvatar(messageElem, avatar);
