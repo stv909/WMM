@@ -329,6 +329,9 @@ input[type="text"] {
 #chat .message.dynamic {
   background-color: #ebf5ff;
 }
+#chat .message.unshown {
+  background-color: #f8fff8;
+}
 #chat .message .block .name,
 #chat .message .block .time {
   display: inline-block;

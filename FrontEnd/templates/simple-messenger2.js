@@ -706,6 +706,11 @@ window.onload = function() {
 			var author = contactModel.getAttribute('name');
 			var avatar = contactModel.getAttribute('avatar');
 			var messageElem = createMessageElem(content);
+			if (message.shown) {
+				messageElem.classList.remove('unshown'); 
+			} else {
+				messageElem.classList.add('unshown');
+			}
 			imbueStreamMessageElem(messageElem);
 			setMessageElemAuthor(messageElem, author);
 			setMessageElemAvatar(messageElem, avatar);
@@ -1090,11 +1095,21 @@ window.onload = function() {
 			};
 			
 			var sendChatClientListener = function(event) {
+				console.log('send');
+				
 				var message = event.response.send;
 				message.value = message.body;
 				message.shown = false;
 				self.messages[message.id] = message;
 				newMessageSoundElem.play();
+				
+				var from = message.value.from;
+				var group = message.value.group;
+				var id = group || from;
+				var contactModel = self.contactModels[id];
+				var count = contactModel.getAttribute('count');
+				count++;
+				contactModel.setAttribute('count', count);
 				
 				if (self.currentContactModel !== null && 
 					(self.currentContactModel.getAttribute('id') === message.value.from || 
