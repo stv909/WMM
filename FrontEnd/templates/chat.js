@@ -237,7 +237,7 @@ var chat = chat || {};
 			var data = JSON.stringify(message);
 			
 			this.store(tag, message.id, data);
-			this.send(tag, message.id, data, message.to, contactMode);	
+			this.send(tag, message.id, data, message.group || message.to, contactMode);	
 		};
 		this.notifyMessage = function(message, contactMode) {
 			var tag = 'msg';

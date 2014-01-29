@@ -692,14 +692,21 @@ window.onload = function() {
 				id,
 				Date.now()
 			);
+			
+			if (type === 'public' || type === 'theme') {
+				message.group = id;
+				message.to = '%recipientid%';
+			}
 
 			switch(type) {
 				case 'user':
 					chatClient.sendMessage(message);
 					break;
 				case 'public':
+					chatClient.sendMessage(message, type);
 					break;
 				case 'theme':
+					chatClient.sendMessage(message, type);
 					break;
 			}
 		};
@@ -782,7 +789,7 @@ window.onload = function() {
 			statusElem.classList.add('hidden');
 			cancelLoginButtonElem.classList.add('hidden');
 			
-			loginInputElem.addEventListener('keydown', function() {
+			loginInputElem.addEventListener('keydown', function(event) {
 				if (event.keyCode === 13) {
 					loginButtonElem.click();
 					loginInputElem.blur();
