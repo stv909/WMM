@@ -15,7 +15,6 @@ window.onload = function() {
 		return [hours <= 9 ? 'o' + hours : hours, minutes <= 9 ? '0' + minutes : minutes].join(':');
 	};
 	
-	// Model must have attributes: id, avatar, name, count, online
 	var ContactView = function(model) {
 		var self = this;
 		mvp.EventTrigger.call(this);
@@ -124,6 +123,18 @@ window.onload = function() {
 	};
 	
 	var ContactModelFactory = function() { };
+	ContactModelFactory.create = function(id, name, avatar, type, online, count) {
+		var contactModel = new mvp.Model();
+		
+		contactModel.setAttribute('id', id);
+		contactModel.setAttribute('name', name);
+		contactModel.setAttribute('avatar', avatar);
+		contactModel.setAttribute('type', type);
+		contactModel.setAttribute('online', online);
+		contactModel.setAttribute('count', count);
+		
+		return contactModel;
+	};
 	ContactModelFactory.fromPublic = function(public) {
 		var value = public.value || {};
 					
@@ -666,6 +677,23 @@ window.onload = function() {
 			}
 		};
 		
+		this.renderMessageElem = function(message) {
+			var timestamp = message.value.timestamp;
+			var now = new Date(timestamp);
+			var time = formatDate(now);
+			var from = message.from;
+			var contactModel = self.contactModels[from];
+			var content = base64.decode(message.value.content);
+			var author = contactModel.getAttribute('name');
+			var avatar = contactModel.getAttribute('avatar');
+			var messageElem = createMessageElem(content);
+			imbueStreamMessageElem(messageElem);
+			setMessageElemAuthor(messageElem, author);
+			setMessageElemAvatar(messageElem, avatar);
+			setMessageElemTime(messageElem, time);
+			appendMessageElem(messageElem);
+		};
+		
 		var initializeAccountElem = function() {
 			var accountElem = createTemplateElem('account');
 			
@@ -1022,10 +1050,18 @@ window.onload = function() {
 			
 			var sendChatClientListener = function(event) {
 				var message = event.response.send;
-				message.value = send.body;
+				message.value = message.body;
 				message.shown = false;
 				self.messages[message.id] = message;
 				newMessageSoundElem.play();
+				
+				if (self.currentContactModel !== null && 
+					(self.currentContactModel.getAttribute('id') === message.value.from || 
+					 self.currentContactModel.getAttribute('id') === message.value.group)) {
+					self.renderMessageElem(message);
+					html.scrollToBottom(streamWrapElem);
+				}
+
 				// if (_companionId === send.from && _chatMode === 'contact') {
 				// 	var timestamp = send.body.timestamp;
 				// 	var now = new Date(timestamp);
