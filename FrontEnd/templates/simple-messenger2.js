@@ -1086,6 +1086,7 @@ window.onload = function() {
 				self.prepareContactViews();
 				chatClient.on('message:send', sendChatClientListener);
 				chatClient.on('message:sent', sentChatClientListener);
+				chatClient.on('message:broadcast', broadcastChatClientListener);
 			};
 			
 			var sendChatClientListener = function(event) {
@@ -1108,6 +1109,21 @@ window.onload = function() {
 				message.shown = true;
 				self.messages[message.id] = message;
 			};
+			var broadcastChatClientListener = function(event) {
+				console.log('broadcast');
+				console.log(JSON.stringify(event.response.broadcast));
+				
+				var broadcast = event.response.broadcast;
+				var from = broadcast.from;
+				var status = broadcast.id;
+				var contactModel = self.contactModels[from];
+				
+				if (status.indexOf('online.') === 0) {
+					contactModel.setAttribute('online', true);
+				} else if (status.indexOf('offline.') === 0) {
+					contactModel.setAttribute('online', false);
+				}
+			};
 			
 			var disconnectListener = function(event) {
 				chatClient.off('message:users');
@@ -1119,6 +1135,7 @@ window.onload = function() {
 				chatClient.off('message:groupuserlist');
 				chatClient.off('message:sent');
 				chatClient.off('message:send');
+				chatClient.off('message:broadcast');
 				
 				updateConversationTitle('');
 				showConversationTitle(false);
