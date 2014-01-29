@@ -50,7 +50,7 @@ window.onload = function() {
 		};
 		var modelCountListener = function(event) {
 			var count = event.value;
-			self.countElem.textContent = count;
+			self.countElem.textContent = ['+', count].join('');
 			if (count > 0) {
 				self.countElem.classList.remove('hidden');
 			} else {
@@ -230,7 +230,7 @@ window.onload = function() {
 			}
 		};
 		
-		var _messages = [];
+		this.messages = {};
 		this.currentContactModel = null;
 		this.setChatContactModel = function(contactModel) {
 			if (self.currentContactModel === null || 
@@ -778,6 +778,7 @@ window.onload = function() {
 			self.contactViews = {};
 			self.contactModels = {};
 			self.currentContactModel = null;
+			self.messages = {};
 		};
 		
 		this.prepareContactViews = function() {
@@ -809,6 +810,22 @@ window.onload = function() {
 			});
 			userKeys.forEach(function(key) {
 				prepareContactView(self.contactViews[key]);	
+			});
+			
+			var messageKeys = Object.keys(self.messages);
+			messageKeys.forEach(function(key) {
+				var message = self.messages[key];
+				var shown = message.shown;
+				var value = message.value || {};
+				var from = value.from || '';
+				if (!shown && from !== userId) {
+					var contactModel = self.contactModels[from];
+					if (contactModel) {
+						var count = contactModel.getAttribute('count');
+						count += 1;
+						contactModel.setAttribute('count', count);
+					}
+				};
 			});
 		};
 		
@@ -968,7 +985,17 @@ window.onload = function() {
 					return item.id;	
 				});
 				var messageIdCollectionString = messageIdCollection.join(',');
+				
+				tape.forEach(function(item) {
+					var message = { 
+						id: item.id, 
+						shown: item.shown
+					};
+					self.messages[item.id] = message;
+				});
 
+				console.log('tape');
+				console.log(JSON.stringify(tape, null, 4));
 				console.log('message id collection');
 				console.log(messageIdCollectionString);
 
@@ -980,7 +1007,10 @@ window.onload = function() {
 				chatClient.off('message:retrieve', retrieveMessagesChatListener);
 				
 				var messages = event.response.retrieve;
-				_messages = messages;
+				messages.forEach(function(message) {
+					self.messages[message.id].value = message.value;	
+				});
+				console.log(JSON.stringify(self.messages, null, 4));
 
 				self.prepareContactViews();
 				chatClient.on('message:send', sendChatClientListener);

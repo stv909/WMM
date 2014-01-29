@@ -241,9 +241,12 @@ input[type="text"] {
 }
 #contacts >.prewrap >.wrap >.list .contact .message-block {
   float: right;
+  margin-right: 1.5em;
 }
 #contacts >.prewrap >.wrap >.list .contact .message-block .count {
+  color: #fff;
   background-color: #f00;
+  padding: 0.5em;
 }
 #chat {
   width: 45em;
