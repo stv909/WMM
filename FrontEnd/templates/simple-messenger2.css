@@ -345,7 +345,7 @@ input[type="text"] {
 }
 #chat .message .block .time {
   float: right;
-  padding-right: 1.6666666666666667em;
+  padding-right: 0.5555555555555556em;
 }
 #chat .message .avatar,
 #chat .message .content,

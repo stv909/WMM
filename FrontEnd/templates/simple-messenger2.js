@@ -12,7 +12,22 @@ window.onload = function() {
 	var formatDate = function(date) {
 		var hours = date.getHours();
 		var minutes = date.getMinutes();
-		return [hours <= 9 ? 'o' + hours : hours, minutes <= 9 ? '0' + minutes : minutes].join(':');
+		var month = date.getMonth() + 1;
+		var day = date.getDate();
+		
+		var now = new Date();
+		var currentDay = now.getDate();
+		var currentMonth = now.getMonth() + 1;
+		
+		var clock = [hours <= 9 ? '0' + hours : hours,
+				minutes <= 9 ? '0' + minutes : minutes].join(':');
+				
+		if (currentDay !== day || currentMonth != month) {
+			return [[month <= 9 ? '0' + month : month,
+					day <= 9 ? '0' + day : day].join('.'), clock].join(' ');
+		} else {
+			return clock;
+		}
 	};
 	
 	var ContactView = function(model) {
@@ -317,6 +332,10 @@ window.onload = function() {
 						break;
 				}
 				
+				var messages = self.getMessagesBySender(self.currentContactModel.getAttribute('id'));
+				messages.forEach(function(message) {
+					self.renderMessageElem(message);	
+				});
 				html.scrollToBottom(streamWrapElem);
 			}
 		};
@@ -681,7 +700,7 @@ window.onload = function() {
 			var timestamp = message.value.timestamp;
 			var now = new Date(timestamp);
 			var time = formatDate(now);
-			var from = message.from;
+			var from = message.value.from;
 			var contactModel = self.contactModels[from];
 			var content = base64.decode(message.value.content);
 			var author = contactModel.getAttribute('name');
@@ -692,6 +711,25 @@ window.onload = function() {
 			setMessageElemAvatar(messageElem, avatar);
 			setMessageElemTime(messageElem, time);
 			appendMessageElem(messageElem);
+		};
+		this.getMessagesBySender = function(senderId) {
+			var keys = Object.keys(self.messages);
+			var messages = keys.map(function(key) {
+				return self.messages[key];
+			}).filter(function(message) {
+				return (message.value.from === senderId && !message.value.group) ||
+						(message.value.to === senderId && !message.value.group) || 
+						message.value.group === senderId;
+			}).sort(function(message1, message2) {
+				if (message1.value.timestamp > message2.value.timestamp) {
+					return 1;
+				} else if (message1.value.timestamp < message2.value.timestamp) {
+					return -1;
+				} else {
+					return 0;
+				}
+			});
+			return messages;
 		};
 		
 		var initializeAccountElem = function() {
@@ -810,6 +848,8 @@ window.onload = function() {
 			self.contactModels = {};
 			self.currentContactModel = null;
 			self.messages = {};
+			
+			deleteAllMessageElems();
 		};
 		
 		this.prepareContactViews = function() {
@@ -1061,24 +1101,6 @@ window.onload = function() {
 					self.renderMessageElem(message);
 					html.scrollToBottom(streamWrapElem);
 				}
-
-				// if (_companionId === send.from && _chatMode === 'contact') {
-				// 	var timestamp = send.body.timestamp;
-				// 	var now = new Date(timestamp);
-				// 	var time = formatDate(now);
-				// 	var profileId = send.from
-				// 	var contactModel = self.contactModels[profileId];
-				// 	var content = base64.decode(send.body.content);
-				// 	var author = contactModel.getAttribute('name');
-				// 	var avatar = contactModel.getAttribute('avatar');
-				// 	var messageElem = createMessageElem(content);
-				// 	imbueStreamMessageElem(messageElem);
-				// 	setMessageElemAuthor(messageElem, author);
-				// 	setMessageElemAvatar(messageElem, avatar);
-				// 	setMessageElemTime(messageElem, time);
-				// 	appendMessageElem(messageElem);
-				// 	html.scrollToBottom(streamWrapElem);
-				// }
 			};
 			var sentChatClientListener = function(event) {
 				var message = event.response.sent;
