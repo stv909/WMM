@@ -85,6 +85,7 @@ window.onload = function() {
 		};
 		
 		this.messages = {};
+		this.currentMessages = [];
 		this.currentContactModel = null;
 		this.setChatContactModel = function(contactModel) {
 			if (self.currentContactModel === null || 
@@ -215,9 +216,7 @@ window.onload = function() {
 		};
 		var deleteAllMessageElems = function() {
 			streamWrapElem.innerHTML = '';
-		};
-		var deleteAllMessages = function() {
-			_messages = [];	
+			self.currentMessages = [];
 		};
 		
 		var currentMessageElem = null;
@@ -347,15 +346,16 @@ window.onload = function() {
 
 			sendElem.addEventListener('click', function() {
 				var content = getMessageElemContent(messageElem);
-				alert(content);
 				if (content === null || content === '' || content === '<br>') {
 					return;
 				}
 				
-				var newMessageElem = createMessageElem(content);
 				var author = self.contactModels[userId].getAttribute('name');
 				var avatar = self.contactModels[userId].getAttribute('avatar');
+				var msgId = uuid.v4();
+				self.currentMessages.push(['msg', msgId].join('.'));
 
+				var newMessageElem = createMessageElem(content);
 				setMessageElemAuthor(newMessageElem, author);
 				setMessageElemAvatar(newMessageElem, avatar);
 				imbueStreamMessageElem(newMessageElem);
@@ -370,7 +370,7 @@ window.onload = function() {
 					var now = new Date(event.response.now);
 					var time = formatDate(now);
 	
-					sendMessage(content, now);
+					sendMessage(content, now, msgId);
 					setMessageElemTime(newMessageElem, time);
 				};
 				
@@ -514,11 +514,11 @@ window.onload = function() {
 			document.addEventListener('click', documentElemHandler);
 		};
 
-		var sendMessage = function(content, now) {
+		var sendMessage = function(content, now, msgId) {
 			var type = self.currentContactModel.getAttribute('type');
 			var id = self.currentContactModel.getAttribute('id');
 			var message = chat.MessageFactory.create(
-				uuid.v4(),
+				msgId || uuid.v4(),
 				content,
 				userId,
 				id,
@@ -544,6 +544,7 @@ window.onload = function() {
 		};
 		
 		this.renderMessageElem = function(message) {
+			self.currentMessages.push(message.id);
 			var timestamp = message.value.timestamp;
 			var now = new Date(timestamp);
 			var time = formatDate(now);
@@ -765,7 +766,7 @@ window.onload = function() {
 						count += 1;
 						contactModel.setAttribute('count', count);
 					}
-				};
+				}
 			});
 		};
 		
@@ -983,10 +984,19 @@ window.onload = function() {
 				}
 			};
 			var sentChatClientListener = function(event) {
+				console.log('sent');
+				
 				var message = event.response.sent;
 				message.value = message.body;
 				message.shown = true;
 				self.messages[message.id] = message;
+				
+				if (self.currentContactModel &&
+					message.value.to === self.currentContactModel.getAttribute('id') && 
+					self.currentMessages.indexOf(message.id) === -1) {
+					self.renderMessageElem(message);
+					html.scrollToBottom(streamWrapElem);
+				}
 			};
 			var broadcastChatClientListener = function(event) {
 				console.log('broadcast');
