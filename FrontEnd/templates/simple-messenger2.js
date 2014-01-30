@@ -649,6 +649,7 @@ window.onload = function() {
 					chatClient.off('message:login', loginChatClientListener);
 					chatClient.on('message:retrieve', retrieveChatClientListener);
 					chatClient.retrieve(['profile', userId].join('.'));
+					chatClient.broadcast(['online', userId].join('.'));
 				};
 				var retrieveChatClientListener = function(event) {
 					chatClient.off('message:retrieve', retrieveChatClientListener);
@@ -692,6 +693,7 @@ window.onload = function() {
 				chatClient.on('disconnect', disconnectChatClientListener);
 			});
 			logoutButtonElem.addEventListener('click', function(event) {
+				chatClient.broadcast(['offline', userId].join('.'));
 				chatClient.disconnect();
 			});
 			cancelLoginButtonElem.addEventListener('click', function(event) {
