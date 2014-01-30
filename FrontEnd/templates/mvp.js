@@ -44,9 +44,11 @@ var mvp = mvp || {};
 	EventTrigger.prototype.fire = EventTrigger.prototype.trigger;
 	
 	var Model = function() {
+		Model.super.constructor.apply(this);
+		
 		this.attributes = {};
-		EventTrigger.call(this);
 	};
+	Model.super = EventTrigger.prototype;
 	Model.prototype = Object.create(EventTrigger.prototype);
 	Model.prototype.constructor = Model;
 	Model.prototype.setAttribute = function(attribute, value, silent) {
@@ -86,8 +88,39 @@ var mvp = mvp || {};
 		return this.attributes;	
 	};
 	
-	mvp.Model = Model;
+	var View = function() {
+		View.super.constructor.apply(this);
+		
+		this.model = null;
+		this.parentElem = null;
+		this.elem = null;
+	};
+	View.super = EventTrigger.prototype;
+	View.prototype = Object.create(EventTrigger.prototype);
+	View.prototype.constructor = View;
+	View.prototype.getModel = function() {
+		return this.model;	
+	};
+	View.prototype.attachTo = function(parentElem) {
+		if (!this.parentElem) {
+			this.parentElem = parentElem;
+			this.parentElem.appendChild(this.elem);
+		}
+	};
+	View.prototype.dettach = function() {
+		if (this.parentElem) {
+			this.parentElem.removeChild(this.elem);
+			this.parentElem = null;	
+		}	
+	};
+	View.prototype.dispose = function() {
+		this.detach();
+		this.off();
+	};
+	
 	mvp.EventTrigger = EventTrigger;
+	mvp.Model = Model;
+	mvp.View = View;
 	
 	if (typeof(module) !== typeof(undefined)) {
 		module.exports = mvp;
