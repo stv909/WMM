@@ -3,6 +3,10 @@ window.onload = function() {
 	var EventEmitter = chat.EventEmitter;
 	var ChatClient = chat.ChatClient;
 	
+	var ContactModel = chat.models.ContactModel;
+	var MessageModel = chat.models.MessageModel;
+	var ContactView = chat.views.ContactView;
+	
 	var createTemplateElem = function(className) {
 		var templatesElem = document.getElementById('template');
 		var templateElem = templatesElem.getElementsByClassName(className)[0];
@@ -28,182 +32,6 @@ window.onload = function() {
 		} else {
 			return clock;
 		}
-	};
-	
-	var ContactView = function(model) {
-		var self = this;
-		mvp.EventTrigger.call(this);
-
-		this.rootElem = null;
-		this.model = model;
-		this.contactElem = template.create('contact-template', { className: 'contact' });
-
-		this.avatarElem = this.contactElem.getElementsByClassName('avatar')[0];
-		this.nameElem = this.contactElem.getElementsByClassName('name')[0];
-		this.countElem = this.contactElem.getElementsByClassName('count')[0];
-		
-		// model listeners
-		var modelAvatarListener = function(event) {
-			self.avatarElem.src = event.value;	
-		};
-		var modelNameListener = function(event) {
-			var leftBrace = '';
-			var rightBrace = '';
-			
-			switch(self.model.getAttribute('type')) {
-				case 'public':
-					leftBrace = '[';
-					rightBrace = ']';
-					break;
-				case 'theme':
-					leftBrace = '{';
-					rightBrace = '}';
-					break;
-			}
-			self.nameElem.textContent = [leftBrace, event.value, rightBrace].join('');
-		};
-		var modelCountListener = function(event) {
-			var count = event.value;
-			self.countElem.textContent = ['+', count].join('');
-			if (count > 0) {
-				self.countElem.classList.remove('hidden');
-			} else {
-				self.countElem.classList.add('hidden');
-			}
-		};
-		var modelOnlineListener = function(event) {
-			var online = event.value;
-			if (online) {
-				self.contactElem.classList.remove('offline');
-			} else {
-				self.contactElem.classList.add('offline');
-			}
-		};
-		
-		this.model.on('change:avatar', modelAvatarListener);
-		this.model.on('change:name', modelNameListener);
-		this.model.on('change:count', modelCountListener);
-		this.model.on('change:online', modelOnlineListener);
-		
-		// elems listeners
-		var contactElemClickListener = function(event) {
-			self.trigger({
-				type: 'click',
-				model: model	
-			});	
-		};
-		
-		this.contactElem.addEventListener('click', contactElemClickListener);
-		
-		// dispose block
-		var disposeListener = function(event) {
-			self.off();	
-			self.model.off('change:avatar', modelAvatarListener);
-			self.model.off('change:name', modelNameListener);
-			self.model.off('change:count', modelCountListener);
-			self.model.off('change:online', modelOnlineListener);
-			self.contactElem.removeEventListener('click', contactElemClickListener);
-		};
-		
-		this.on('dispose', disposeListener);
-		
-		// init ui
-		this.contactElem.title = model.getAttribute('id');
-		this.contactElem.classList.add(model.getAttribute('type'));
-		modelOnlineListener({ value: model.getAttribute('online') });
-		modelNameListener({ value: model.getAttribute('name') });
-		modelAvatarListener({ value: model.getAttribute('avatar') });
-		modelCountListener({ value: model.getAttribute('count') });
-	};
-	ContactView.prototype = Object.create(mvp.EventTrigger.prototype);
-	ContactView.prototype.constructor = ContactView;
-	ContactView.prototype.getModel = function() {
-		return this._model;	
-	};
-	ContactView.prototype.attachTo = function(rootElem) {
-		if (!this.rootElem) {
-			this.rootElem = rootElem;
-			this.rootElem.appendChild(this.contactElem);
-		}
-	};
-	ContactView.prototype.dettach = function() {
-		if (this.rootElem) {
-			this.rootElem.removeChild(this.contactElem);
-			this.rootElem = null;
-		}
-	};
-	ContactView.prototype.dispose = function() {
-		this.trigger('dispose');
-		this.dettach();
-	};
-	
-	var ContactModelFactory = function() { };
-	ContactModelFactory.create = function(id, name, avatar, type, online, count) {
-		var contactModel = new mvp.Model();
-		
-		contactModel.setAttribute('id', id);
-		contactModel.setAttribute('name', name);
-		contactModel.setAttribute('avatar', avatar);
-		contactModel.setAttribute('type', type);
-		contactModel.setAttribute('online', online);
-		contactModel.setAttribute('count', count);
-		
-		return contactModel;
-	};
-	ContactModelFactory.fromPublic = function(public) {
-		var value = public.value || {};
-					
-		var id = public.id.replace('public.', '');
-		var name = value.label || id;
-		var author = value.auther || '';
-		var moderators = value.moderators || {};
-					
-		var contactModel = new mvp.Model();
-		contactModel.setAttribute('id', id);
-		contactModel.setAttribute('type', 'public');
-		contactModel.setAttribute('name', name);
-		contactModel.setAttribute('online', true);
-		contactModel.setAttribute('count', 0);
-		contactModel.setAttribute('avatar', 'https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/world-512.png');
-		contactModel.setAttribute('author', author);
-		contactModel.setAttribute('moderators', moderators);
-		
-		return contactModel;
-	};
-	ContactModelFactory.fromTheme = function(theme) {
-		var value = theme.value || {};
-		
-		var id = theme.id.replace('theme.', '');
-		var name = value.label || id;
-		var author = value.auther || '';
-		
-		var contactModel = new mvp.Model();
-		contactModel.setAttribute('id', id);
-		contactModel.setAttribute('type', 'theme');
-		contactModel.setAttribute('name', name);
-		contactModel.setAttribute('online', true);
-		contactModel.setAttribute('count', 0);
-		contactModel.setAttribute('avatar', 'http://simpleicon.com/wp-content/uploads/group-1.png');
-		contactModel.setAttribute('author', author);
-		
-		return contactModel;
-	};
-	ContactModelFactory.fromProfile = function(profile) {
-		var value = profile.value || {};
-		
-		var id = profile.id.replace('profile.', '');
-		var name = value.nickname || id;
-		var avatar = value.avatar || 'http://simpleicon.com/wp-content/uploads/business-man-1.png';
-		
-		var contactModel = new mvp.Model();
-		contactModel.setAttribute('id', id);
-		contactModel.setAttribute('type', 'user');
-		contactModel.setAttribute('name', name);
-		contactModel.setAttribute('online', false);
-		contactModel.setAttribute('count', 0);
-		contactModel.setAttribute('avatar', avatar);
-		
-		return contactModel;
 	};
 	
 	var ChatApplication = function() {
@@ -976,7 +804,7 @@ window.onload = function() {
 				chatClient.on('message:subscribelist', subscribelistClientChatListener);
 				
 				var publics = event.response.retrieve;
-				var contactModelCollection = publics.map(ContactModelFactory.fromPublic);
+				var contactModelCollection = publics.map(ContactModel.fromPublic);
 
 				contactModelCollection.forEach(function(contactModel) {
 					var contactView = new ContactView(contactModel);
@@ -1013,7 +841,7 @@ window.onload = function() {
 				chatClient.on('message:users', usersClientChatListener);
 				
 				var themes = event.response.retrieve;
-				var contactModelCollection = themes.map(ContactModelFactory.fromTheme);
+				var contactModelCollection = themes.map(ContactModel.fromTheme);
 				
 				contactModelCollection.forEach(function(contactModel) {
 					var contactView = new ContactView(contactModel);
@@ -1048,7 +876,7 @@ window.onload = function() {
 				chatClient.on('message:online', onlineClientChatListener);
 				
 				var profiles = event.response.retrieve;
-				var contactModelCollection = profiles.map(ContactModelFactory.fromProfile);
+				var contactModelCollection = profiles.map(ContactModel.fromProfile);
 				
 				contactModelCollection.forEach(function(contactModel) {
 					var id = contactModel.getAttribute('id');

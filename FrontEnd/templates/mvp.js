@@ -78,6 +78,10 @@ var mvp = mvp || {};
 	Model.prototype.getAttribute = function(attribute) {
 		return this.attributes[attribute];
 	};
+	Model.prototype.dispose = function() {
+		this.trigger('dispose');
+		this.off();
+	};
 	Model.prototype.toJSON = function() {
 		return this.attributes;	
 	};
