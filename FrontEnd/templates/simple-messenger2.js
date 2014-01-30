@@ -347,7 +347,8 @@ window.onload = function() {
 
 			sendElem.addEventListener('click', function() {
 				var content = getMessageElemContent(messageElem);
-				if (content === null || content === '') {
+				alert(content);
+				if (content === null || content === '' || content === '<br>') {
 					return;
 				}
 				
@@ -375,6 +376,9 @@ window.onload = function() {
 				
 				chatClient.on('message:now', nowChatClientListener);
 				chatClient.now();
+				
+				shiftPressed = false;
+				ctrlPressed = false;
 			});
 
 			var enterCode = 13;
@@ -393,9 +397,9 @@ window.onload = function() {
 				}
 				if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
 					sendElem.click();
-					editorElem.focus();
 					e.preventDefault();
 					e.stopPropagation();
+					editorElem.focus();
 				}
 			});
 			editorElem.addEventListener('keyup', function(e) {
