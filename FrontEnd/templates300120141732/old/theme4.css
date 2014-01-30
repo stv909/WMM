@@ -1,0 +1,324 @@
+@font-face {
+  font-family: 'Segoe UI';
+  src: url("http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff");
+}
+::-webkit-scrollbar {
+  width: 0.45em;
+  height: 0.45em;
+  margin: 0 auto;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 0.225em;
+  background-color: #aaa;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #fefefe;
+  font-family: 'Segoe UI', Segoe UI Light, Helvetica;
+  color: #444;
+}
+* {
+  outline: none;
+}
+#page {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#page >div {
+  display: table;
+  table-layout: fixed;
+  width: 70em;
+  height: 100%;
+  margin: 0 auto;
+  background-color: #fff;
+  box-shadow: 0 0 0.25em #ccc;
+}
+#menu,
+#workspace {
+  display: table-row;
+}
+#menu {
+  height: 3em;
+  background-color: #1570a6;
+}
+#menu .label {
+  line-height: 2.4000000000000004em;
+  display: inline-block;
+  height: 100%;
+  font-size: 1.25em;
+  padding-left: 1em;
+  color: #fff;
+}
+#workspace >div {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#workspace .row {
+  position: relative;
+  display: table-row;
+}
+#workspace .cell {
+  display: table-cell;
+}
+#titles {
+  background-color: #eee;
+  color: #000;
+  height: 2em;
+}
+#titles .label {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  width: 100%;
+  text-align: center;
+  font-size: 1em;
+  border-bottom: 1px solid #ddd;
+}
+#contacts,
+#chat,
+#tools {
+  position: relative;
+  height: 100%;
+}
+#contacts >div,
+#chat >div,
+#tools >div {
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  width: 100%;
+}
+#contacts {
+  width: 11em;
+}
+#contacts >div {
+  overflow: auto;
+}
+#contacts .list {
+  width: 10.5em;
+  border-right: 1px solid #ddd;
+}
+#contacts .list .item {
+  font-size: 0.8em;
+  padding-left: 2.5em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #eee;
+}
+#contacts .list .item:hover {
+  background-color: #5b5;
+  color: #fff;
+}
+#chat {
+  width: 43em;
+}
+#chat >div {
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+#tools {
+  width: 16em;
+}
+#chat-box {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+#chat-box >div {
+  display: table;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+#chat-title,
+#message-list,
+#message-composer {
+  display: table-row;
+}
+#chat-title {
+  font-size: 0.9em;
+  height: 2.25em;
+  max-height: 4.5em;
+  background-color: #fffcf1;
+}
+#chat-title >div {
+  max-height: 4.5em;
+  text-align: center;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #ddd;
+  overflow: auto;
+}
+#message-list >div {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+#message-list .list {
+  width: 42.5em;
+}
+#message-composer {
+  background-color: #f2faff;
+  height: 6em;
+}
+#message-composer >div {
+  max-height: 25em;
+  border-top: 1px solid #ddd;
+  padding-right: 0.5em;
+}
+#message-composer >div .message-item {
+  height: 100%;
+  border-right: none;
+}
+#message-composer >div .message-item .message .message-wrap {
+  margin-bottom: 0.5em;
+  border: 1px solid #ddd;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  width: 29.5em;
+}
+#message-composer >div .message-item .message .message-wrap .content {
+  width: 29em;
+  padding: 0;
+  margin: 0;
+  min-height: 5em;
+}
+.message-item {
+  width: 100%;
+  border-right: 1px solid #ddd;
+}
+.message-item:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+.message-item .contact,
+.message-item .message,
+.message-item .tools {
+  display: table-cell;
+  vertical-align: top;
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+}
+.message-item .contact {
+  width: 6em;
+}
+.message-item .contact .avatar {
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+  box-shadow: 0 0 0.25em #aaa;
+  width: 4.5em;
+  height: 4.5em;
+  border: 2px solid #fff;
+}
+.message-item .contact .avatar img {
+  width: 100%;
+}
+.message-item .message {
+  width: 29.5em;
+  overflow: hidden;
+}
+.message-item .message .message-wrap {
+  background-color: #fff;
+  width: 29em;
+  overflow: hidden;
+  max-height: 30em;
+  margin-left: 0em;
+  margin-right: 0em;
+  border: 1px solid #fff;
+}
+.message-item .tools {
+  margin-top: 0.5em !important;
+  width: 5.75em;
+  padding-left: 0.75em;
+  text-align: center;
+}
+.message-item .tools .simple-button {
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 0.8em;
+  color: #888;
+  border: 1px solid #eee;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  margin-bottom: 0.35em;
+  text-align: center;
+}
+.message-item .tools .simple-button:hover {
+  border: 1px solid #bbb;
+  box-shadow: 0 0 0.2em #ddd;
+  color: #222;
+}
+.message-item .tools .simple-button.negative {
+  margin-top: 1em;
+  border: 1px solid #fcc;
+}
+.message-item .tools .time {
+  line-height: 1.5em;
+  margin-bottom: 0.5em;
+}
+.message-item .tools .time .time-icon {
+  vertical-align: top;
+  width: 1em;
+  height: 1em;
+  margin-top: 0.43em;
+}
+.message-item .tools .time .time-value {
+  vertical-align: top;
+  font-size: 1.25em;
+  padding: 0;
+}
+.modalDialog {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+}
+.modalDialog > div {
+/*display inline-block;*/
+  background-color: #fff;
+  width: 80%;
+  height: 90%;
+  position: relative;
+  margin: 1em auto;
+  padding: 0;
+}
+.modalDialog:target {
+  opacity: 1;
+  pointer-events: auto;
+  display: block;
+}
+.close {
+  background: #bbc8d6;
+  color: #fff;
+  line-height: 25px;
+  position: absolute;
+  right: -12px;
+  text-align: center;
+  top: -10px;
+  width: 24px;
+  text-decoration: none;
+  font-weight: bold;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  border-radius: 12px;
+}
+.close:hover {
+  background: #54769a;
+}

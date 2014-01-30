@@ -21,6 +21,10 @@ mixin message-body(composer)
 					.simple-button.fullscreen fullscreen
 					.simple-button.negative.delete delete
 
+mixin message(composer)
+	.message
+		+message-body(composer)
+
 mixin composer-message-template
 	template#composer-message-template(style="display:none")
 		+message-body(true)
@@ -38,9 +42,22 @@ mixin contact-template
 			.name
 		.message-block
 			.count
-			
-mixin account-template
-	template#account-template(style="display:none")
+
+		
+mixin controls(composite)
+	.controls
+		if composite
+			.simple-button.send send
+			.simple-button.negative.clear clear
+		else
+			.simple-button.edit edit
+			.simple-button.negative.clear(style="display: none") clear
+			.simple-button.negative.cancel(style="display: none") cancel
+			.simple-button.share share
+			.simple-button.fullscreen fullscreen
+			.simple-button.negative.delete delete
+mixin account
+	.account
 		.login-controls
 			form#login-form
 				input.login-input(type="text", size=16)
@@ -54,9 +71,43 @@ mixin account-template
 			.name
 			.settings Settings
 			.logout-button Logout
-			
-mixin chatbox-template
-	template#chatbox-template(style="display:none")
+mixin message-old(editable, composite)
+	if editable
+		.message.dynamic
+			if !composite
+				.block
+					.name
+					.time
+			.block
+				.avatar
+					.image
+						img
+				.content
+					.container.dynamic
+						.editor(contenteditable="true", spellcheck="false")
+				if composite
+					+controls(true)
+				else
+					+controls(false)
+	else
+		.message.static
+			if !composite
+				.block
+					.name
+					.time
+			.block
+				.avatar
+					.image
+						img
+				.content
+					.container.static
+						.editor(contenteditable="false", spellcheck="false")
+				if composite
+					+controls(true)
+				else
+					+controls(false)
+mixin chatbox
+	#chatbox
 		.wrap
 			#board
 				#conversation.passive
@@ -87,12 +138,14 @@ html
 		script(type="application/javascript", src="chat.views.js")
 		script(type="application/javascript", src="simple-messenger2.js")
 	body
+		+contact-template
 		+composer-message-template
 		+stream-message-template
-		+contact-template
-		+account-template
-		+chatbox-template
 		audio#new-message-sound(src="newMessageSpace.wav", preload="auto", style="controls: none")
+		#template(style="display:none")
+			+message-old
+			+tool
+			+account
 		#page
 			.wrap
 				#application
@@ -115,6 +168,7 @@ html
 								#chat.cell
 									.prewrap
 										.wrap
+											+chatbox
 								#tools.cell
 									.prewrap
 										.wrap

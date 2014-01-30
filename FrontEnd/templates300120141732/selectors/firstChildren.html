@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <style>
+    #container {
+      color: blue;
+    }
+    #container >.box:first-child {
+      color: red;
+    }
+    #container >.box >.name {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div class="box">
+      box
+      <div class="name">name</div>
+    </div>
+    <div class="box">
+      box
+      <div class="name">name</div>
+    </div>
+  </div>
+</body>
+</html>

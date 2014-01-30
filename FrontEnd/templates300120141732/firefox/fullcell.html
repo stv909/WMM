@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Firefox Full Cell</title>
+    <style>
+      #container {
+        margin-top: 2em;
+        margin-left: 2em;
+        border: 1px solid #bbb;
+        width: 10em;
+        height: 10em;
+        display: table-cell;
+        position: relative;
+      }
+      #prewrap {
+          position: relative;
+          width: 100%;
+          height: 100%;
+      }
+      #wrap {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: red;
+          overflow: auto;
+      }
+      #content {
+          color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="prewrap">
+        <div id="wrap">
+          <div id="content">
+            <h1>mkm</h1>
+            <h1>mkm</h1>
+            <h1>mkm</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

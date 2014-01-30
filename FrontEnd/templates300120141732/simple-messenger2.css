@@ -1,0 +1,497 @@
+::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
+  margin: 0 auto;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #eee;
+}
+body,
+html {
+  width: 100%;
+  height: 100%;
+  font-family: "Segoe UI", Helvetica;
+}
+.passive {
+  display: none !important;
+}
+.hidden {
+  display: none !important;
+}
+.offline {
+  opacity: 0.6;
+}
+input[type="text"] {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #000;
+  padding: 0;
+  font-family: 'Segoe UI';
+  font-size: 1em;
+}
+#page {
+  position: relative;
+  width: 70em;
+  margin: 0 auto;
+  box-shadow: 0 0 0.5em #aaa;
+  height: 100%;
+}
+#page >.wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  overflow: hidden;
+}
+#application {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#menu,
+#workspace {
+  display: table-row;
+}
+#menu {
+  color: #fff;
+  height: 1%;
+  background-color: #1570a6;
+}
+#menu >.content {
+  display: inline-block;
+  font-size: 1.1em;
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+  margin-left: 1em;
+}
+#menu >.account {
+  color: #ddd;
+  margin-top: 0.9em;
+  float: right;
+  font-size: 0.9em;
+  margin-right: 0.5em;
+}
+#menu >.account .login-controls,
+#menu >.account .logout-controls {
+  display: inline-block;
+}
+#menu >.account .name,
+#menu >.account .settings,
+#menu >.account .logout-button,
+#menu >.account .login-button,
+#menu >.account .cancel-login-button,
+#menu >.account .status,
+#menu >.account .login-input {
+  display: inline-block;
+  padding-right: 0.75em;
+  padding-left: 0.75em;
+  height: 100%;
+  vertical-align: middle;
+}
+#menu >.account .name {
+  color: #fff;
+  padding-left: 0.25em;
+}
+#menu >.account .name,
+#menu >.account .settings,
+#menu >.account .status {
+  border-right: 1px dotted #ddd;
+}
+#menu >.account .login-button {
+  border-left: 1px dotted #ddd;
+}
+#menu >.account .settings,
+#menu >.account .logout-button,
+#menu >.account .login-button,
+#menu >.account .cancel-login-button {
+  text-decoration: underline;
+  cursor: pointer;
+}
+#menu >.account .settings:hover,
+#menu >.account .logout-button:hover,
+#menu >.account .login-button:hover,
+#menu >.account .cancel-login-button:hover {
+  color: #fff;
+}
+#menu >.account .login-input {
+  padding: 0.2em;
+  margin-right: 0.75em;
+}
+#menu >.account .avatar {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+}
+#menu >.account .avatar >img {
+  background-color: #fff;
+  outline: 1px solid #ddd;
+  width: 100%;
+}
+#workspace {
+  height: 99%;
+}
+#workspace >.content {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#workspace >.content .row {
+  display: table-row;
+}
+#workspace >.content .cell {
+  display: table-cell;
+}
+#workspace >.content .titles {
+  height: 1%;
+  background-color: #eee;
+}
+#workspace >.content .titles .title {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  width: 100%;
+  text-align: center;
+  font-size: 0.95em;
+  border-bottom: 1px solid #ddd;
+}
+#contacts,
+#chat,
+#tools {
+  position: relative;
+}
+#contacts >.prewrap,
+#chat >.prewrap,
+#tools >.prewrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+#contacts >.prewrap >.wrap,
+#chat >.prewrap >.wrap,
+#tools >.prewrap >.wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#contacts {
+  width: 11em;
+}
+#contacts >.prewrap >.wrap {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#contacts >.prewrap >.wrap::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+#contacts >.prewrap >.wrap::-webkit-scrollbar-thumb:vertical {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+#contacts >.prewrap >.wrap >.list {
+  width: 11em;
+}
+#contacts >.prewrap >.wrap >.list .user:hover {
+  background-color: #5b5;
+}
+#contacts >.prewrap >.wrap >.list .public:hover {
+  background-color: #55b;
+}
+#contacts >.prewrap >.wrap >.list .theme:hover {
+  background-color: #b5b;
+}
+#contacts >.prewrap >.wrap >.list .contact {
+  font-size: 0.8em;
+  color: #000;
+  background-color: #fff;
+  padding-left: 0.75em;
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+  border-bottom: 1px solid #eee;
+  transition: all 200ms ease;
+}
+#contacts >.prewrap >.wrap >.list .contact:hover {
+  color: #fff;
+}
+#contacts >.prewrap >.wrap >.list .contact .info-block,
+#contacts >.prewrap >.wrap >.list .contact .messages-block {
+  display: inline-block;
+  vertical-align: top;
+}
+#contacts >.prewrap >.wrap >.list .contact .info-block .avatar-wrap {
+  width: 2.5em;
+  height: 2.5em;
+}
+#contacts >.prewrap >.wrap >.list .contact .info-block .avatar-wrap .avatar {
+  background-color: #fff;
+  border: 1px solid #fff;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 0.5em #aaa;
+}
+#contacts >.prewrap >.wrap >.list .contact .info-block .name {
+  display: inline-block;
+  position: absolute;
+  margin-left: 0.5em;
+  margin-top: 0.6em;
+  white-space: nowrap;
+}
+#contacts >.prewrap >.wrap >.list .contact .message-block {
+  float: right;
+  margin-right: 1.5em;
+}
+#contacts >.prewrap >.wrap >.list .contact .message-block .count {
+  color: #fff;
+  background-color: #f00;
+  padding: 0.5em;
+}
+#chat {
+  width: 45em;
+}
+#chat >.prewrap >.wrap {
+  overflow: hidden;
+  border-right: 1px solid #ddd;
+}
+#chat #chatbox {
+  position: relative;
+  height: 100%;
+}
+#chat #chatbox >.wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  overflow: hidden;
+}
+#chat #chatbox #board {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#chat #chatbox #board #conversation,
+#chat #chatbox #board #stream,
+#chat #chatbox #board #composer {
+  display: table-row;
+}
+#chat #chatbox #board #conversation {
+  text-align: center;
+  min-height: 1%;
+}
+#chat #chatbox #board #conversation >.wrap {
+  font-size: 0.8em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  background-color: #fffcf1;
+  border-bottom: 1px solid #ddd;
+}
+#chat #chatbox #board #stream {
+  height: 98%;
+}
+#chat #chatbox #board #stream >.wrap {
+  height: 100%;
+  overflow-y: scroll;
+}
+#chat #chatbox #board #stream >.wrap::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat #chatbox #board #stream >.wrap::-webkit-scrollbar-thumb:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat #chatbox #board #composer {
+  height: 1%;
+}
+#chat #chatbox #board #composer.static {
+  background-color: #fff;
+}
+#chat #chatbox #board #composer.dynamic {
+  background-color: #ebf5ff;
+}
+#chat #chatbox #board #composer >.wrap {
+  border-top: 1px solid #ddd;
+  overflow: hidden;
+  min-height: 1em;
+  max-height: 22em;
+}
+#chat .message {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  width: 44.5em;
+/*&:not(:last-child)*/
+  border-bottom: 1px solid #eee;
+}
+#chat .message.static {
+  background-color: #fff;
+}
+#chat .message.dynamic {
+  background-color: #ebf5ff;
+}
+#chat .message.unshown {
+  background-color: #f0fff0;
+}
+#chat .message .block .name,
+#chat .message .block .time {
+  display: inline-block;
+  color: #888;
+  font-size: 0.9em;
+}
+#chat .message .block .name:hover,
+#chat .message .block .time:hover {
+  color: #000;
+}
+#chat .message .block .name {
+  margin-left: 0.9444444444444444em;
+  margin-bottom: 0.5555555555555556em;
+}
+#chat .message .block .time {
+  float: right;
+  padding-right: 0.5555555555555556em;
+}
+#chat .message .avatar,
+#chat .message .content,
+#chat .message .controls {
+  display: inline-block;
+  vertical-align: top;
+}
+#chat .message .avatar {
+  width: 6em;
+}
+#chat .message .avatar .image {
+  background-color: #fff;
+  margin: 0 auto;
+  width: 4em;
+  height: 4em;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0.5em #aaa;
+}
+#chat .message .avatar .image img {
+  width: 100%;
+}
+#chat .message .content {
+  width: 33em;
+}
+#chat .message .content .container {
+  background-color: #fff;
+  position: relative;
+  display: inline-block;
+  min-height: 5em;
+  box-shadow: 0 0 0.4em #aaa;
+}
+#chat .message .content .container.static {
+  width: 32.5em;
+  overflow: hidden;
+  max-height: 20em;
+  border: 2px solid #fff;
+}
+#chat .message .content .container.dynamic {
+  width: 33em;
+  border: 2px solid #ddd;
+  overflow: scroll;
+  max-height: 20.5em;
+}
+#chat .message .content .container::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat .message .content .container::-webkit-scrollbar-track:horizontal {
+  border-top: 1px solid #ddd;
+}
+#chat .message .content .container::-webkit-scrollbar-thumb {
+  background-color: #999;
+}
+#chat .message .content .container::-webkit-scrollbar-thumb:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat .message .content .container::-webkit-scrollbar-thumb:horizontal {
+  border-top: 1px solid #ddd;
+}
+#chat .message .content .container .editor {
+  width: 32.5em;
+  min-height: 4em;
+}
+#chat .message .controls {
+  text-align: center;
+  width: 4em;
+  padding-left: 0.5em;
+/*outline 2px solid #fff*/
+/*box-shadow 0 0 0.5em #aaa*/
+}
+#chat .message .controls .time {
+  margin-bottom: 0.5em;
+}
+#chat .message .controls .simple-button {
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 0.75em;
+  color: #888;
+  border: 1px solid #eee;
+  padding-top: 0.25em;
+  padding-bottom: 0.255em;
+  margin-bottom: 0.25em;
+  transition: all 200ms ease;
+}
+#chat .message .controls .simple-button:hover {
+  background-color: #5b5;
+  border: 1px solid #5b5;
+  box-shadow: 0 0 0.5em #aaa;
+  color: #fff;
+}
+#chat .message .controls .simple-button.negative {
+  margin-top: 1em;
+}
+#chat .message .controls .simple-button.negative:hover {
+  background-color: #d22;
+  border: 1px solid #d22;
+}
+#tools .tool .title {
+  text-align: center;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  font-size: 0.8em;
+  background-color: #ebf5ff;
+  border-bottom: 1px solid #ddd;
+}
+#tools .tool .controls {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5em;
+}
+#dialog .title {
+  font-size: 1.2em;
+  z-index: 100;
+  box-shadow: 0 0 0.5em #aaa;
+  position: abosolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2em;
+  line-height: 2em;
+  background-color: #5b5;
+  color: #fff;
+}
+#dialog .container {
+  z-index: 0;
+  position: absolute;
+  background-color: #fff;
+  top: 3.5em;
+  left: 2em;
+  right: 2em;
+  bottom: 1em;
+  overflow: auto;
+  box-shadow: 0 0 0.5em #aaa;
+  outline: 2px solid #fff;
+}
+#dialog .container .content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+#dialog .container .content::-webkit-scrollbar-thumb {
+  background-color: #999;
+}
+#dialog .close {
+  margin-right: 1em;
+  float: right;
+  cursor: pointer;
+}

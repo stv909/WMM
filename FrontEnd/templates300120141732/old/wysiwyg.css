@@ -1,0 +1,130 @@
+::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 0.25em;
+  background-color: #aaa;
+}
+* {
+  outline: none;
+}
+body,
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#page {
+  position: relative;
+  height: 100%;
+  width: 60em;
+  margin: 0 auto;
+  box-shadow: 0 0 0.25em #ddd;
+}
+#page >.wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+#chat {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#chat .row {
+  display: table-row;
+}
+#chat .messages {
+  height: 95%;
+}
+#chat .messages >.wrap {
+  height: 100%;
+  overflow: auto;
+}
+#chat .composer {
+  height: 5%;
+  overflow: hidden;
+}
+#chat .composer >.wrap {
+  border-top: 1px solid #aaa;
+  overflow: hidden;
+  min-height: 1em;
+  max-height: 22em;
+}
+#chat .message {
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+  border-bottom: 1px solid #ddd;
+}
+#chat .message.static {
+  background-color: #fff;
+}
+#chat .message.dynamic {
+  background-color: #ebf5ff;
+}
+#chat .message .avatar,
+#chat .message .content,
+#chat .message .tools {
+  display: inline-block;
+  vertical-align: top;
+}
+#chat .message .avatar {
+  width: 6em;
+}
+#chat .message .avatar .image {
+  background-color: #fff;
+  margin: 0 auto;
+  width: 4em;
+  height: 4em;
+  outline: 2px solid #fff;
+  box-shadow: 0 0 0.5em #666;
+}
+#chat .message .content {
+  width: 40em;
+}
+#chat .message .content .container {
+  background-color: #fff;
+  position: relative;
+  display: inline-block;
+  min-height: 5em;
+  box-shadow: 0 0 0.5em #666;
+}
+#chat .message .content .container.static {
+  width: 39.5em;
+  overflow: hidden;
+  max-height: 20em;
+  outline: 2px solid #fff;
+}
+#chat .message .content .container.dynamic {
+  width: 40em;
+  outline: 2px solid #eee;
+  overflow: scroll;
+  max-height: 20.5em;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #eee;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-track:horizontal {
+  border-top: 1px solid #eee;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-thumb:vertical {
+  border-left: 1px solid #eee;
+}
+#chat .message .content .container.dynamic::-webkit-scrollbar-thumb:horizontal {
+  border-top: 1px solid #eee;
+}
+#chat .message .content .container .editor {
+  width: 39.5em;
+  min-height: 3em;
+}
+#chat .message .tools {
+  width: 10em;
+}

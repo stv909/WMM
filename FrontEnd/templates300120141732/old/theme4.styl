@@ -1,0 +1,285 @@
+body-color = #FEFEFE
+tiny-border-color = #eeeeee
+thick-border-color = #dddddd
+main-font-color = #444444
+main-menu-color = rgb(21, 112, 166)
+titles-color = rgb(238, 238, 238)
+
+page-width = 70em
+menu-height = 3em
+contacts-width = 11em
+chat-width = 43em
+tools-width = page-width - (contacts-width + chat-width)
+scroll-width = 0.5em
+scroll-height = 0.5em
+real-scroll-width = scroll-width - 0.05em
+real-scroll-height = scroll-height - 0.05em
+//avatar-column-width =
+
+@font-face
+  font-family 'Segoe UI'
+  src url('http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff')
+::-webkit-scrollbar
+  width real-scroll-width
+  height real-scroll-height
+  margin 0 auto
+::-webkit-scrollbar-thumb
+  border-radius real-scroll-width * 0.5
+  background-color #aaa
+
+html, body
+  width 100%
+  height 100%
+  margin 0
+  padding 0
+  background-color body-color
+  font-family 'Segoe UI', Segoe UI Light, Helvetica
+  color main-font-color
+*
+  outline none
+
+#page
+  position absolute
+  top 0
+  bottom 0
+  left 0
+  right 0
+  >div
+    display table
+    table-layout fixed
+    width page-width
+    height 100%
+    margin 0 auto
+    background-color white
+    box-shadow 0 0 0.25em #ccc
+#menu, #workspace
+  display table-row
+#menu
+  height menu-height
+  background-color main-menu-color
+  .label
+    line-height 3em * (1 / 1.25)
+    display inline-block
+    height 100%
+    font-size 1.25em
+    padding-left 1em
+    color white
+#workspace
+  >div
+    display table
+    width 100%
+    height 100%
+  .row
+    position relative
+    display table-row
+  .cell
+    display table-cell
+#titles
+  background-color titles-color
+  color black
+  height 2em
+  .label
+    padding-top 0.5em
+    padding-bottom 0.5em
+    width 100%
+    text-align center
+    font-size 1em
+    border-bottom 1px solid thick-border-color
+#contacts, #chat, #tools
+  position relative
+  height 100%
+  >div
+    position absolute
+    bottom 0
+    top 0
+    width 100%
+#contacts
+  width contacts-width
+  >div
+    overflow auto
+  .list
+    width contacts-width - scroll-width
+    border-right 1px solid thick-border-color
+    .item
+      font-size 0.8em
+      padding-left 2.5em
+      padding-top 1em
+      padding-bottom 1em
+      border-bottom 1px solid tiny-border-color
+      &:hover
+        background-color #55BB55
+        color white
+#chat
+  width chat-width
+  >div
+    border-right 1px solid thick-border-color
+    border-left 1px solid thick-border-color
+#tools
+  width tools-width
+
+#chat-box
+  display block
+  position relative
+  width 100%
+  height 100%
+  min-height 100%
+  overflow hidden
+  >div
+    display table
+    position relative
+    overflow hidden
+    width 100%
+    height 100%
+#chat-title, #message-list, #message-composer
+  display table-row
+#chat-title
+  font-size 0.9em
+  height 2.25em
+  max-height 4.5em
+  background-color #fffcf1
+  >div
+    max-height 4.5em
+    text-align center
+    padding-top 0.5em
+    padding-bottom 0.5em
+    border-bottom 1px solid #ddd
+    overflow auto
+#message-list
+  >div
+    width 100%
+    height 100%
+    overflow auto
+  .list
+    width chat-width - scroll-width
+#message-composer
+  background-color #f2faff
+  height 6em
+  >div
+    max-height 25em
+    border-top 1px solid #ddd
+    padding-right scroll-width
+    .message-item
+      height 100%
+      border-right none
+      .message
+        .message-wrap
+          margin-bottom 0.5em
+          border 1px solid #ddd
+          //height 100%
+          //max-height 20em !important
+          overflow-y auto !important
+          overflow-x hidden
+          width 29em + scroll-width
+          .content
+            width 29em
+            padding 0
+            margin 0
+            //margin-bottom 0.75em
+            min-height 5em
+.message-item
+  width 100%
+  border-right 1px solid thick-border-color
+  &:not(:last-child)
+    border-bottom 1px solid #eee
+  .contact, .message, .tools
+    display table-cell
+    vertical-align top
+    padding-top 0.75em
+    padding-bottom 0.75em
+  .contact
+    width 6em
+    .avatar
+      margin 0 auto
+      display block
+      text-align center
+      box-shadow 0 0 0.25em #aaa
+      width 4.5em
+      height 4.5em
+      border 2px solid white
+      img
+        width 100%
+  .message
+    width 29em + scroll-width
+    overflow hidden
+    .message-wrap
+      background-color white
+      width 29em
+      overflow hidden
+      max-height 30em
+      margin-left 0em
+      margin-right 0em
+      border 1px solid white
+  .tools
+    margin-top 0.5em !important
+    width 5.75em
+    padding-left 0.75em
+    text-align center
+    .simple-button
+      background-color white
+      cursor pointer
+      font-size 0.8em
+      color #888
+      border 1px solid #eee
+      padding-top 0.5em
+      padding-bottom 0.5em
+      margin-bottom 0.35em
+      text-align center
+      &:hover
+        border 1px solid #bbb
+        box-shadow 0 0 0.2em #ddd
+        color #222
+      &.negative
+        margin-top 1em
+        border 1px solid #ffcccc
+    .time
+      line-height 1.5em
+      margin-bottom 0.5em
+      .time-icon
+        vertical-align top
+        width 1em
+        height 1em
+        margin-top 0.43em
+      .time-value
+        vertical-align top
+        font-size 1.25em
+        padding 0
+
+.modalDialog
+  position fixed
+  top 0
+  right 0
+  left 0
+  bottom 0
+  background-color rgba(0, 0, 0, 0.5)
+  z-index 99999
+  opacity 0
+  pointer-events none
+  display none
+  > div
+    /*display inline-block;*/
+    background-color white
+    width 80%
+    height 90%;
+    position relative
+    margin 1em auto
+    padding 0
+.modalDialog:target
+  opacity 1
+  pointer-events auto
+  display block
+.close
+  background: rgb(187,200,214)
+  color #FFFFFF
+  line-height 25px
+  position absolute
+  right -12px
+  text-align center
+  top -10px
+  width 24px
+  text-decoration none
+  font-weight bold
+  -webkit-border-radius 12px
+  -moz-border-radius 12px
+  border-radius 12px
+  &:hover
+    background rgb(84,118,154)
