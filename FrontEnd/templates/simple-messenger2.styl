@@ -18,6 +18,9 @@ second-thumb-color = #999
 main-menu-color = rgb(21, 112, 166)
 titles-color = rgb(238, 238, 238)
 
+inv(num)
+	1 / num
+
 ::-webkit-scrollbar
 	width real-scroll-width
 	height real-scroll-height
@@ -46,16 +49,13 @@ input[type="text"]
 	font-size 1em
 
 contact =
-	user-contact-color = #55BB55
-	public-contact-color = #5555BB
-	theme-contact-color = #BB55BB
-	
 	.user:hover
-		background-color user-contact-color
+		background-color #55bb55
 	.public:hover
-		background-color public-contact-color
+		background-color #5555bb
 	.theme:hover
-		background-color theme-contact-color
+		background-color #bb55bb
+	
 	.contact
 		font-size 0.8em
 		color black
@@ -93,7 +93,103 @@ contact =
 				color white
 				background-color red
 				padding 0.5em
-				
+
+message = 
+	.static
+		background-color white
+	.dynamic
+		background-color #ebf5ff
+	.unshown
+		background-color #f0ffff0
+		
+	.message
+		padding-top 0.5em
+		padding-bottom 0.5em
+		width chat-width - scroll-width
+		border-bottom 1px solid main-border-color
+		.name, .time
+			display inline-block
+			color #888
+			font-size 0.9em
+			&:hover
+				color black
+		.name
+			margin-left inv(0.9) * 0.85em
+			margin-bottom inv(0.9) * 0.5em
+		.time
+			float right
+			padding-right inv(0.9) * 0.5em
+		.avatar-block, .content-block, .controls-block
+			display inline-block
+			vertical-align top
+		.avatar-block
+			width avatar-width
+			.avatar-wrap
+				background-color white
+				margin 0 auto
+				width 4em
+				height 4em
+				border 2px solid white
+				box-shadow 0 0 0.5em #aaa
+				.avatar
+					width 100%
+		.content-block
+			width content-width
+			.static
+				width content-width - scroll-width
+				overflow hidden
+				border 2px solid white
+				max-height 20em
+			.dynamic
+				width content-width
+				overflow scroll
+				border 2px solid main-border-color
+				max-height 20em + scroll-height
+			.container
+				background-color white
+				position relative
+				display inline-block
+				min-height 5em
+				box-shadow 0 0 0 0.5em #aaa
+				&::-webkit-scrollbar-track
+					&:vertical
+						border-left 1px solid main-border-color
+					&:horizontal
+						border-top 1px solid main-border-color
+				&::-webkit-scrollbar-thumb
+					background-color second-thumb-color
+					&:vertical
+						border-left 1px solid main-border-color
+					&:horizontal
+						border-top 1px solid main-border-color
+				.editor
+					width content-width - scroll-width
+					min-height 4em
+		.controls-block
+			width controls-width
+			text-align center
+			padding-left 0.5em
+			.simple-button
+				background-color white
+				cursor pointer
+				font-size 0.75em
+				color #888
+				border 1px solid #eee
+				padding-top 0.25em
+				padding-bottom 0.255em
+				margin-bottom 0.25em
+				transition all 200ms ease
+				&:hover
+					background-color #55BB55
+					border 1px solid #55BB55
+					box-shadow 0 0 0.5em #aaa
+					color #fff
+				&.negative
+					margin-top 1em
+					&:hover
+						background-color #dd2222
+						border 1px solid #dd2222
+
 #page
 	position relative
 	width page-width
@@ -214,6 +310,7 @@ contact =
 				{contact}
 #chat
 	width chat-width
+	{message}
 	>.prewrap
 		>.wrap
 			overflow hidden
@@ -265,105 +362,6 @@ contact =
 					overflow hidden
 					min-height 1em
 					max-height 22em
-	.message
-		padding-top 0.5em
-		padding-bottom 0.5em
-		width chat-width - scroll-width
-		/*&:not(:last-child)*/
-		border-bottom 1px solid second-border-color
-		&.static
-			background-color white
-		&.dynamic
-			background-color #ebf5ff
-		&.unshown
-			background-color #F0FFF0
-		.block
-			.name, .time
-				display inline-block
-				color #888
-				font-size 0.9em
-				&:hover
-					color black
-			.name
-				margin-left (1 / 0.9) * 0.85em
-				margin-bottom (1 / 0.9) * 0.5em
-			.time
-				float right
-				padding-right (1 / 0.9) * 0.5em
-		.avatar, .content, .controls
-			display inline-block
-			vertical-align top
-		.avatar
-			width avatar-width
-			.image
-				background-color white
-				margin 0 auto
-				width 4em
-				height 4em
-				border 2px solid #fff
-				box-shadow 0 0 0.5em #aaa
-				img
-					width 100%
-		.content
-			width content-width
-			.container
-				background-color white
-				position relative
-				display inline-block
-				min-height 5em
-				box-shadow 0 0 0.4em #aaa
-				&.static
-					width content-width - scroll-width
-					overflow hidden
-					max-height 20em
-					border 2px solid #fff
-				&.dynamic
-					width content-width
-					border 2px solid main-border-color
-					overflow scroll
-					max-height 20em + scroll-height
-				&::-webkit-scrollbar-track
-					&:vertical
-						border-left 1px solid main-border-color
-					&:horizontal
-						border-top 1px solid main-border-color
-				&::-webkit-scrollbar-thumb
-					background-color second-thumb-color
-					&:vertical
-						border-left 1px solid main-border-color
-					&:horizontal
-						border-top 1px solid main-border-color
-				.editor
-					width content-width - scroll-width
-					min-height 4em
-		.controls
-			text-align center
-			width controls-width
-			padding-left 0.5em
-			.time
-				margin-bottom 0.5em
-			/*outline 2px solid #fff*/
-			/*box-shadow 0 0 0.5em #aaa*/
-			.simple-button
-				background-color white
-				cursor pointer
-				font-size 0.75em
-				color #888
-				border 1px solid #eee
-				padding-top 0.25em
-				padding-bottom 0.255em
-				margin-bottom 0.25em
-				transition all 200ms ease
-				&:hover
-					background-color #55BB55
-					border 1px solid #55BB55
-					box-shadow 0 0 0.5em #aaa
-					color #fff
-				&.negative
-					margin-top 1em
-					&:hover
-						background-color #dd2222
-						border 1px solid #dd2222
 #tools
 	.tool
 		.title

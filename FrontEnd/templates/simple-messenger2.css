@@ -251,6 +251,129 @@ input[type="text"] {
 #chat {
   width: 45em;
 }
+#chat .static {
+  background-color: #fff;
+}
+#chat .dynamic {
+  background-color: #ebf5ff;
+}
+#chat .unshown {
+  background-color: #f0ffff 0;
+}
+#chat .message {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  width: 44.5em;
+  border-bottom: 1px solid #ddd;
+}
+#chat .message .name,
+#chat .message .time {
+  display: inline-block;
+  color: #888;
+  font-size: 0.9em;
+}
+#chat .message .name:hover,
+#chat .message .time:hover {
+  color: #000;
+}
+#chat .message .name {
+  margin-left: 0.9444444444444444em;
+  margin-bottom: 0.5555555555555556em;
+}
+#chat .message .time {
+  float: right;
+  padding-right: 0.5555555555555556em;
+}
+#chat .message .avatar-block,
+#chat .message .content-block,
+#chat .message .controls-block {
+  display: inline-block;
+  vertical-align: top;
+}
+#chat .message .avatar-block {
+  width: 6em;
+}
+#chat .message .avatar-block .avatar-wrap {
+  background-color: #fff;
+  margin: 0 auto;
+  width: 4em;
+  height: 4em;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0.5em #aaa;
+}
+#chat .message .avatar-block .avatar-wrap .avatar {
+  width: 100%;
+}
+#chat .message .content-block {
+  width: 33em;
+}
+#chat .message .content-block .static {
+  width: 32.5em;
+  overflow: hidden;
+  border: 2px solid #fff;
+  max-height: 20em;
+}
+#chat .message .content-block .dynamic {
+  width: 33em;
+  overflow: scroll;
+  border: 2px solid #ddd;
+  max-height: 20.5em;
+}
+#chat .message .content-block .container {
+  background-color: #fff;
+  position: relative;
+  display: inline-block;
+  min-height: 5em;
+  box-shadow: 0 0 0 0.5em #aaa;
+}
+#chat .message .content-block .container::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat .message .content-block .container::-webkit-scrollbar-track:horizontal {
+  border-top: 1px solid #ddd;
+}
+#chat .message .content-block .container::-webkit-scrollbar-thumb {
+  background-color: #999;
+}
+#chat .message .content-block .container::-webkit-scrollbar-thumb:vertical {
+  border-left: 1px solid #ddd;
+}
+#chat .message .content-block .container::-webkit-scrollbar-thumb:horizontal {
+  border-top: 1px solid #ddd;
+}
+#chat .message .content-block .container .editor {
+  width: 32.5em;
+  min-height: 4em;
+}
+#chat .message .controls-block {
+  width: 4em;
+  text-align: center;
+  padding-left: 0.5em;
+}
+#chat .message .controls-block .simple-button {
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 0.75em;
+  color: #888;
+  border: 1px solid #eee;
+  padding-top: 0.25em;
+  padding-bottom: 0.255em;
+  margin-bottom: 0.25em;
+  transition: all 200ms ease;
+}
+#chat .message .controls-block .simple-button:hover {
+  background-color: #5b5;
+  border: 1px solid #5b5;
+  box-shadow: 0 0 0.5em #aaa;
+  color: #fff;
+}
+#chat .message .controls-block .simple-button.negative {
+  margin-top: 1em;
+}
+#chat .message .controls-block .simple-button.negative:hover {
+  background-color: #d22;
+  border: 1px solid #d22;
+}
 #chat >.prewrap >.wrap {
   overflow: hidden;
   border-right: 1px solid #ddd;
@@ -315,135 +438,6 @@ input[type="text"] {
   overflow: hidden;
   min-height: 1em;
   max-height: 22em;
-}
-#chat .message {
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
-  width: 44.5em;
-/*&:not(:last-child)*/
-  border-bottom: 1px solid #eee;
-}
-#chat .message.static {
-  background-color: #fff;
-}
-#chat .message.dynamic {
-  background-color: #ebf5ff;
-}
-#chat .message.unshown {
-  background-color: #f0fff0;
-}
-#chat .message .block .name,
-#chat .message .block .time {
-  display: inline-block;
-  color: #888;
-  font-size: 0.9em;
-}
-#chat .message .block .name:hover,
-#chat .message .block .time:hover {
-  color: #000;
-}
-#chat .message .block .name {
-  margin-left: 0.9444444444444444em;
-  margin-bottom: 0.5555555555555556em;
-}
-#chat .message .block .time {
-  float: right;
-  padding-right: 0.5555555555555556em;
-}
-#chat .message .avatar,
-#chat .message .content,
-#chat .message .controls {
-  display: inline-block;
-  vertical-align: top;
-}
-#chat .message .avatar {
-  width: 6em;
-}
-#chat .message .avatar .image {
-  background-color: #fff;
-  margin: 0 auto;
-  width: 4em;
-  height: 4em;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0.5em #aaa;
-}
-#chat .message .avatar .image img {
-  width: 100%;
-}
-#chat .message .content {
-  width: 33em;
-}
-#chat .message .content .container {
-  background-color: #fff;
-  position: relative;
-  display: inline-block;
-  min-height: 5em;
-  box-shadow: 0 0 0.4em #aaa;
-}
-#chat .message .content .container.static {
-  width: 32.5em;
-  overflow: hidden;
-  max-height: 20em;
-  border: 2px solid #fff;
-}
-#chat .message .content .container.dynamic {
-  width: 33em;
-  border: 2px solid #ddd;
-  overflow: scroll;
-  max-height: 20.5em;
-}
-#chat .message .content .container::-webkit-scrollbar-track:vertical {
-  border-left: 1px solid #ddd;
-}
-#chat .message .content .container::-webkit-scrollbar-track:horizontal {
-  border-top: 1px solid #ddd;
-}
-#chat .message .content .container::-webkit-scrollbar-thumb {
-  background-color: #999;
-}
-#chat .message .content .container::-webkit-scrollbar-thumb:vertical {
-  border-left: 1px solid #ddd;
-}
-#chat .message .content .container::-webkit-scrollbar-thumb:horizontal {
-  border-top: 1px solid #ddd;
-}
-#chat .message .content .container .editor {
-  width: 32.5em;
-  min-height: 4em;
-}
-#chat .message .controls {
-  text-align: center;
-  width: 4em;
-  padding-left: 0.5em;
-/*outline 2px solid #fff*/
-/*box-shadow 0 0 0.5em #aaa*/
-}
-#chat .message .controls .time {
-  margin-bottom: 0.5em;
-}
-#chat .message .controls .simple-button {
-  background-color: #fff;
-  cursor: pointer;
-  font-size: 0.75em;
-  color: #888;
-  border: 1px solid #eee;
-  padding-top: 0.25em;
-  padding-bottom: 0.255em;
-  margin-bottom: 0.25em;
-  transition: all 200ms ease;
-}
-#chat .message .controls .simple-button:hover {
-  background-color: #5b5;
-  border: 1px solid #5b5;
-  box-shadow: 0 0 0.5em #aaa;
-  color: #fff;
-}
-#chat .message .controls .simple-button.negative {
-  margin-top: 1em;
-}
-#chat .message .controls .simple-button.negative:hover {
-  background-color: #d22;
-  border: 1px solid #d22;
 }
 #tools .tool .title {
   text-align: center;

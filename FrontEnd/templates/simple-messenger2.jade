@@ -6,20 +6,20 @@ mixin message-body(composer)
 		.avatar-block
 			.avatar-wrap
 				img.avatar
-		.content
+		.content-block
 			.container
 				.editor(contenteditable="false", spellcheck="false")
-			.controls
-				if composer
-					.simple-button.send send
-					.simple-button.negative.clear clear
-				else
-					.simple-button.edit edit
-					.simple-button.negative.clear(style="display: none") clear
-					.simple-button.negative.cancel(style="display: none") cancel
-					.simple-button.share share
-					.simple-button.fullscreen fullscreen
-					.simple-button.negative.delete delete
+		.controls-block
+			if composer
+				.simple-button.send send
+				.simple-button.negative.clear clear
+			else
+				.simple-button.edit edit
+				.simple-button.negative.clear(style="display: none") clear
+				.simple-button.negative.cancel(style="display: none") cancel
+				.simple-button.share share
+				.simple-button.fullscreen fullscreen
+				.simple-button.negative.delete delete
 
 mixin composer-message-template
 	template#composer-message-template(style="display:none")
@@ -65,11 +65,7 @@ mixin chatbox-template
 					.wrap
 				#composer.dynamic.passive
 					.wrap
-						+message-old(true, true)
-mixin tool
-	.tool
-		.title
-		.controls
+
 doctype html
 html
 	head

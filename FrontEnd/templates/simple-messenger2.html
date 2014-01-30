@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Messenger</title>
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/fonts.css">
+    <link rel="stylesheet" href="simple-messenger2.css">
+    <script type="application/javascript" src="uuid.js"></script>
+    <script type="application/javascript" src="base64.js"></script>
+    <script type="application/javascript" src="html.js"></script>
+    <script type="application/javascript" src="template.js"></script>
+    <script type="application/javascript" src="mvp.js"></script>
+    <script type="application/javascript" src="chat.js"></script>
+    <script type="application/javascript" src="chat.models.js"></script>
+    <script type="application/javascript" src="chat.views.js"></script>
+    <script type="application/javascript" src="simple-messenger2.js"></script>
+  </head>
+  <body>
+    <template id="composer-message-template" style="display:none">
+      <div class="info-block">
+        <div class="name"></div>
+        <div class="time"></div>
+      </div>
+      <div class="info-block">
+        <div class="avatar-block">
+          <div class="avatar-wrap"><img class="avatar"/></div>
+        </div>
+        <div class="content-block">
+          <div class="container">
+            <div contenteditable="false" spellcheck="false" class="editor"></div>
+          </div>
+        </div>
+        <div class="controls-block">
+          <div class="simple-button send">send</div>
+          <div class="simple-button negative clear">clear</div>
+        </div>
+      </div>
+    </template>
+    <template id="stream-message-template" style="display:none">
+      <div class="info-block">
+        <div class="name"></div>
+        <div class="time"></div>
+      </div>
+      <div class="info-block">
+        <div class="avatar-block">
+          <div class="avatar-wrap"><img class="avatar"/></div>
+        </div>
+        <div class="content-block">
+          <div class="container">
+            <div contenteditable="false" spellcheck="false" class="editor"></div>
+          </div>
+        </div>
+        <div class="controls-block">
+          <div class="simple-button edit">edit</div>
+          <div style="display: none" class="simple-button negative clear">clear</div>
+          <div style="display: none" class="simple-button negative cancel">cancel</div>
+          <div class="simple-button share">share</div>
+          <div class="simple-button fullscreen">fullscreen</div>
+          <div class="simple-button negative delete">delete</div>
+        </div>
+      </div>
+    </template>
+    <template id="contact-template" style="display:none">
+      <div class="info-block">
+        <div class="avatar-wrap"><img class="avatar"/></div>
+      </div>
+      <div class="info-block">
+        <div class="name"></div>
+      </div>
+      <div class="message-block">
+        <div class="count"></div>
+      </div>
+    </template>
+    <template id="account-template" style="display:none">
+      <div class="login-controls">
+        <form id="login-form">
+          <input type="text" size="16" class="login-input"/>
+          <input type="text" style="display: none"/>
+          <div class="login-button">Login</div>
+          <div class="status"></div>
+          <div class="cancel-login-button">Cancel</div>
+        </form>
+      </div>
+      <div class="logout-controls">
+        <div class="avatar"><img/></div>
+        <div class="name"></div>
+        <div class="settings">Settings</div>
+        <div class="logout-button">Logout</div>
+      </div>
+    </template>
+    <template id="chatbox-template" style="display:none">
+      <div class="wrap">
+        <div id="board">
+          <div id="conversation" class="passive">
+            <div class="wrap"></div>
+          </div>
+          <div id="stream">
+            <div class="wrap"></div>
+          </div>
+          <div id="composer" class="dynamic passive">
+            <div class="wrap"></div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <audio id="new-message-sound" src="newMessageSpace.wav" preload="auto" style="controls: none"></audio>
+    <div id="page">
+      <div class="wrap">
+        <div id="application">
+          <div id="menu">
+            <div class="content">Messenger</div>
+          </div>
+          <div id="workspace">
+            <div class="content">
+              <div class="row titles">
+                <div class="cell">
+                  <div class="title">Contacts</div>
+                </div>
+                <div class="cell">
+                  <div class="title">Chat</div>
+                </div>
+                <div class="cell">
+                  <div class="title">Tools</div>
+                </div>
+              </div>
+              <div class="row">
+                <div id="contacts" class="cell">
+                  <div class="prewrap">
+                    <div class="wrap">
+                      <div class="list"></div>
+                    </div>
+                  </div>
+                </div>
+                <div id="chat" class="cell">
+                  <div class="prewrap">
+                    <div class="wrap"></div>
+                  </div>
+                </div>
+                <div id="tools" class="cell">
+                  <div class="prewrap">
+                    <div class="wrap"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="dialog" class="passive">
+      <div class="container">
+        <div class="content"></div>
+      </div>
+      <div class="title"><span style="margin-left: 1em">Message</span>
+        <div class="close">Close</div>
+      </div>
+    </div>
+  </body>
+</html>
