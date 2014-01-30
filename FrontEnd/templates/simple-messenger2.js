@@ -6,6 +6,7 @@ window.onload = function() {
 	var ContactModel = chat.models.ContactModel;
 	var MessageModel = chat.models.MessageModel;
 	var ContactView = chat.views.ContactView;
+	var AccountView = chat.views.AccountView;
 	
 	var createTemplateElem = function(className) {
 		var templatesElem = document.getElementById('template');
@@ -39,6 +40,8 @@ window.onload = function() {
 		
 		var serverUrl = 'ws://www.bazelevscontent.net:9009/';
 		var chatClient = new ChatClient(serverUrl);
+		
+		this.accountView = new AccountView(chatClient);
 
 		var pageElem = document.getElementById('page');
 		var dialogElem = document.getElementById('dialog');
@@ -47,12 +50,12 @@ window.onload = function() {
 		var contactWrapElem = contactsElem.getElementsByClassName('wrap')[0];
 		var contactListElem = contactWrapElem.getElementsByClassName('list')[0];
 		var composerElem = document.getElementById('composer');
-		var composerAvatarImgElem = composerElem
-			.getElementsByClassName('avatar')[0]
-			.getElementsByClassName('image')[0]
-			.getElementsByTagName('img')[0];
-		var streamElem = document.getElementById('stream');
-		var streamWrapElem = streamElem.getElementsByClassName('wrap')[0];
+		// var composerAvatarImgElem = composerElem
+		// 	.getElementsByClassName('avatar')[0]
+		// 	.getElementsByClassName('image')[0]
+		// 	.getElementsByTagName('img')[0];
+		// var streamElem = document.getElementById('stream');
+		// var streamWrapElem = streamElem.getElementsByClassName('wrap')[0];
 		var newMessageSoundElem = document.getElementById('new-message-sound');
 		
 		var userId = null;
@@ -600,114 +603,6 @@ window.onload = function() {
 			return messages;
 		};
 		
-		var initializeAccountElem = function() {
-			var accountElem = createTemplateElem('account');
-			
-			var loginControlsElem = accountElem.getElementsByClassName('login-controls')[0];
-			var logoutControlsElem = accountElem.getElementsByClassName('logout-controls')[0];
-
-			var loginInputElem = accountElem.getElementsByClassName('login-input')[0];
-			var loginButtonElem = accountElem.getElementsByClassName('login-button')[0];
-			var cancelLoginButtonElem = accountElem.getElementsByClassName('cancel-login-button')[0];
-			
-			var nameElem = accountElem.getElementsByClassName('name')[0];
-			var avatarImg = (accountElem.getElementsByClassName('avatar')[0]).getElementsByTagName('img')[0];
-			var logoutButtonElem = accountElem.getElementsByClassName('logout-button')[0];
-			
-			var statusElem = accountElem.getElementsByClassName('status')[0];
-			
-			loginControlsElem.classList.remove('hidden');
-			logoutControlsElem.classList.add('hidden');
-			
-			statusElem.classList.add('hidden');
-			cancelLoginButtonElem.classList.add('hidden');
-			
-			loginInputElem.addEventListener('keydown', function(event) {
-				if (event.keyCode === 13) {
-					loginButtonElem.click();
-					loginInputElem.blur();
-				}
-			});
-			loginButtonElem.addEventListener('click', function() {
-				var userId = loginInputElem.value;
-				chatClient.connect();
-				
-				statusElem.textContent = 'Connecting ...';
-				
-				statusElem.classList.remove('hidden');
-				cancelLoginButtonElem.classList.remove('hidden');
-				
-				loginInputElem.classList.add('hidden');
-				loginButtonElem.classList.add('hidden');
-				
-				var connectChatClientListener = function(event) {
-					statusElem.textContent = 'Authorizating ...';
-					
-					chatClient.off('connect', connectChatClientListener);
-					chatClient.on('message:login', loginChatClientListener);
-					chatClient.login(userId);
-				};
-				var loginChatClientListener = function(event) {
-					loginControlsElem.classList.add('hidden');
-					logoutControlsElem.classList.remove('hidden');
-					
-					chatClient.off('message:login', loginChatClientListener);
-					chatClient.on('message:retrieve', retrieveChatClientListener);
-					chatClient.retrieve(['profile', userId].join('.'));
-					chatClient.broadcast(['online', userId].join('.'));
-				};
-				var retrieveChatClientListener = function(event) {
-					chatClient.off('message:retrieve', retrieveChatClientListener);
-
-					var profile = event.response.retrieve[0];
-					var profileId = profile.id.replace('profile.', '');
-
-					if (userId === profileId) {
-						var profileValue = profile.value || {};
-						avatarImg.src = profileValue.avatar || 'http://simpleicon.com/wp-content/uploads/business-man-1.png';
-						composerAvatarImgElem.src = avatarImg.src;
-						nameElem.textContent = profileValue.nickname || userId;
-					}
-					
-					self.trigger({
-						type: 'authorize',
-						userId: userId
-					});
-				};
-				var disconnectChatClientListener = function(event) {
-					chatClient.off();
-					
-					loginControlsElem.classList.remove('hidden');
-					logoutControlsElem.classList.add('hidden');
-					
-					statusElem.classList.add('hidden');
-					cancelLoginButtonElem.classList.add('hidden');
-					
-					loginInputElem.classList.remove('hidden');
-					loginButtonElem.classList.remove('hidden');
-					
-					avatarImg.src = 'http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg';
-					nameElem.textContent = "";
-					
-					self.trigger({
-						type: 'disconnect'	
-					});
-				};
-				
-				chatClient.on('connect', connectChatClientListener);
-				chatClient.on('disconnect', disconnectChatClientListener);
-			});
-			logoutButtonElem.addEventListener('click', function(event) {
-				chatClient.broadcast(['offline', userId].join('.'));
-				chatClient.disconnect();
-			});
-			cancelLoginButtonElem.addEventListener('click', function(event) {
-				chatClient.disconnect();
-			});
-
-			menuElem.appendChild(accountElem);
-		};
-		
 		this.dispose = function() {
 			var keys = Object.keys(self.contactViews);
 			keys.forEach(function(key) {
@@ -771,11 +666,12 @@ window.onload = function() {
 		};
 		
 		this.initialize = function() {
-			showConversationTitle(false);
-			updateConversationTitle('');
-			showComposer(false);
-			initializeAccountElem();
-			initializeComposerMessageElem();
+			this.accountView.attachTo(menuElem);
+			
+			// showConversationTitle(false);
+			// updateConversationTitle('');
+			// showComposer(false);
+			// initializeComposerMessageElem();
 			initializeDialogElem();
 			
 			var authorizeListener = function(event) {
@@ -1037,8 +933,8 @@ window.onload = function() {
 				alert('There\'s a terrible error on the server side. Call 911.');
 			};
 
-			self.on('authorize', authorizeListener);
-			self.on('disconnect', disconnectListener);
+			//this.accountView.on('authorize', authorizeListener);
+			//this.accountView.on('disconnect', disconnectListener);
 			chatClient.on('error:message', errorMessageClientChatListener);
 		};
 		
