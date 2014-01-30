@@ -355,7 +355,6 @@ window.onload = function() {
 				var author = self.contactModels[userId].getAttribute('name');
 				var avatar = self.contactModels[userId].getAttribute('avatar');
 
-				sendMessage(content);
 				setMessageElemAuthor(newMessageElem, author);
 				setMessageElemAvatar(newMessageElem, avatar);
 				imbueStreamMessageElem(newMessageElem);
@@ -370,6 +369,7 @@ window.onload = function() {
 					var now = new Date(event.response.now);
 					var time = formatDate(now);
 	
+					sendMessage(content, now);
 					setMessageElemTime(newMessageElem, time);
 				};
 				
@@ -510,7 +510,7 @@ window.onload = function() {
 			document.addEventListener('click', documentElemHandler);
 		};
 
-		var sendMessage = function(content) {
+		var sendMessage = function(content, now) {
 			var type = self.currentContactModel.getAttribute('type');
 			var id = self.currentContactModel.getAttribute('id');
 			var message = chat.MessageFactory.create(
@@ -518,7 +518,7 @@ window.onload = function() {
 				content,
 				userId,
 				id,
-				Date.now()
+				now
 			);
 			
 			if (type === 'public' || type === 'theme') {
