@@ -13,12 +13,6 @@ window.onload = function() {
 	var ChatboxView = chat.views.ChatboxView;
 	var DialogView = chat.views.DialogView;
 	
-	var createTemplateElem = function(className) {
-		var templatesElem = document.getElementById('template');
-		var templateElem = templatesElem.getElementsByClassName(className)[0];
-		var newTemplateElem = templateElem.cloneNode(true);
-		return newTemplateElem;
-	};
 	var formatDate = function(date) {
 		var hours = date.getHours();
 		var minutes = date.getMinutes();
@@ -156,45 +150,6 @@ window.onload = function() {
 			}
 		};
 		
-		var clearMessageElem = function(messageElem) {
-			var editorElem = messageElem.getElementsByClassName('editor')[0];
-			editorElem.innerHTML = '';
-		};
-		var getMessageElemContent = function(messageElem) {
-			var editor = messageElem.getElementsByClassName('editor')[0];
-			return editor.innerHTML;
-		};
-		var setMessageElemContent = function(messageElem, content) {
-			var editorElem = messageElem.getElementsByClassName('editor')[0];
-			editorElem.innerHTML = content;
-		};
-		var setMessageElemAuthor = function(messageElem, author) {
-			var nameElem = messageElem.getElementsByClassName('name')[0];
-			nameElem.textContent = author;
-		};
-		var setMessageElemAvatar = function(messageElem, avatar) {
-			var avatarElem = messageElem.getElementsByClassName('avatar')[0];
-			var avatarImgElem = avatarElem.getElementsByTagName('img')[0];
-			avatarImgElem.src = avatar;
-		};
-		var setMessageElemTime = function(messageElem, time) {
-			var timeElem = messageElem.getElementsByClassName('time')[0];
-			timeElem.textContent = time;
-		};
-		var checkMessageElemOverflow = function(messageElem) {
-			var containerElem = messageElem.getElementsByClassName('container')[0];
-			var isOverflow = html.checkElemOverflow(containerElem);
-			if (isOverflow) {
-				containerElem.style.border = '2px solid #fffc63';
-			}
-			else {
-				containerElem.style.border = '2px solid #fff';
-			}
-		};
-		var isEditingMessageElem = function(messageElem) {
-			var containerElems = messageElem.getElementsByClassName('container dynamic');
-			return containerElems.length !== 0;
-		};
 		var createMessageElem = function(content) {
 			var messageElem = createTemplateElem('message');
 			var editorElem = messageElem.getElementsByClassName('editor')[0];
@@ -288,82 +243,6 @@ window.onload = function() {
 			streamWrapElem.appendChild(messageElem);
 		};
 		
-		var imbueComposerMessageElem = function(messageElem) {
-			var sendElem = messageElem.getElementsByClassName('send')[0];
-			var clearElem = messageElem.getElementsByClassName('clear')[0];
-			var editorElem = messageElem.getElementsByClassName('editor')[0];
-
-			sendElem.addEventListener('click', function() {
-				var content = getMessageElemContent(messageElem);
-				if (content === null || content === '' || content === '<br>') {
-					return;
-				}
-				
-				var author = self.contactModels[userId].getAttribute('name');
-				var avatar = self.contactModels[userId].getAttribute('avatar');
-				var msgId = uuid.v4();
-				self.currentMessages.push(['msg', msgId].join('.'));
-
-				var newMessageElem = createMessageElem(content);
-				setMessageElemAuthor(newMessageElem, author);
-				setMessageElemAvatar(newMessageElem, avatar);
-				imbueStreamMessageElem(newMessageElem);
-				appendMessageElem(newMessageElem);
-				html.scrollToBottom(streamWrapElem);
-				checkMessageElemOverflow(newMessageElem);
-				clearMessageElem(messageElem);
-				
-				var nowChatClientListener = function(event) {
-					chatClient.off('message:now', nowChatClientListener);
-					
-					var now = new Date(event.response.now);
-					var time = formatDate(now);
-	
-					sendMessage(content, now, msgId);
-					setMessageElemTime(newMessageElem, time);
-				};
-				
-				chatClient.on('message:now', nowChatClientListener);
-				chatClient.now();
-				
-				shiftPressed = false;
-				ctrlPressed = false;
-			});
-
-			var enterCode = 13;
-			var shiftPressed = false;
-			var ctrlPressed = false;
-
-			clearElem.addEventListener('click', function() {
-				clearMessageElem(messageElem);
-			});
-			editorElem.addEventListener('keydown', function(e) {
-				if (e.shiftKey) {
-					shiftPressed = true;
-				}
-				if (e.ctrlKey) {
-					ctrlPressed = true;
-				}
-				if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
-					sendElem.click();
-					e.preventDefault();
-					e.stopPropagation();
-					editorElem.focus();
-				}
-			});
-			editorElem.addEventListener('keyup', function(e) {
-				if (e.shiftKey) {
-					shiftPressed = false;
-				}
-				if (e.ctrlKey) {
-					ctrlPressed = false;
-				}
-			});
-			editorElem.addEventListener('blur', function() {
-				shiftPressed = false;
-				ctrlPressed = false;
-			});
-		};
 		var imbueStreamMessageElem = function(messageElem) {
 			var deleteElem = messageElem.getElementsByClassName('delete')[0];
 			var clearElem = messageElem.getElementsByClassName('clear')[0];
@@ -853,6 +732,12 @@ window.onload = function() {
 			
 			this.on('change:account', changeAccountListener);
 			this.on('change:contact', changeContactListener);
+			
+			var sendMessageComposerListener = function(event) {
+				alert(event.content);	
+			};
+			
+			this.messageComposerView.on('send', sendMessageComposerListener);
 		};
 	};
 	ChatApplication.super = EventTrigger.prototype;

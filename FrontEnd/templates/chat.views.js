@@ -317,7 +317,7 @@ var chat = chat || {};
 		this.editorElem.innerHTML = content;	
 	};
 	MessageView.prototype.getContent = function() {
-		this.editorElem.innerHTML = '';	
+		return this.editorElem.innerHTML;	
 	};
 	MessageView.prototype.isEditing = function() {
 		return this.containerElem.contains('dynamic');
@@ -325,6 +325,7 @@ var chat = chat || {};
 	
 	var MessageComposerView = function() {
 		MessageComposerView.super.constructor.apply(this, arguments);
+		var self = this;
 		
 		this.elem = template.create('message-composer-template', { className: 'message' });
 		this.elem.classList.add('dynamic');
@@ -332,6 +333,57 @@ var chat = chat || {};
 		this.containerElem = this.elem.getElementsByClassName('container')[0];
 		this.editorElem = this.elem.getElementsByClassName('editor')[0];
 		this.avatarElem = this.elem.getElementsByClassName('avatar')[0];
+		this.sendElem = this.elem.getElementsByClassName('send')[0];
+		this.clearElem = this.elem.getElementsByClassName('clear')[0];
+		
+		var enterCode = 13;
+		var shiftPressed = false;
+		var ctrlPressed = false;
+			
+		this.sendElem.addEventListener('click', function() {
+			var content = self.getContent();
+			if (content === null || content === '' || content === '<br>') {
+				return;
+			}
+			
+			self.trigger({
+				type: 'send',
+				content: content
+			});
+			self.clear();
+			
+			shiftPressed = false;
+			ctrlPressed = false;
+		});
+		this.clearElem.addEventListener('click', function() {
+			self.clear();
+		});
+		this.editorElem.addEventListener('keydown', function(e) {
+			if (e.shiftKey) {
+				shiftPressed = true;
+			}
+			if (e.ctrlKey) {
+				ctrlPressed = true;
+			}
+			if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
+				self.sendElem.click();
+				self.editorElem.focus();
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		});
+		this.editorElem.addEventListener('keyup', function(e) {
+			if (e.shiftKey) {
+				shiftPressed = false;
+			}
+			if (e.ctrlKey) {
+				ctrlPressed = false;
+			}
+		});
+		this.editorElem.addEventListener('blur', function() {
+			shiftPressed = false;
+			ctrlPressed = false;
+		});
 	};
 	MessageComposerView.super = MessageView.prototype;
 	MessageComposerView.prototype = Object.create(MessageView.prototype);
@@ -379,7 +431,8 @@ var chat = chat || {};
 		
 		this.trigger({
 			type: 'editing:begin',
-			model: this.model
+			model: this.model,
+			elem: this.elem
 		});
 	};
 	MessageStreamView.prototype.endEditing = function() {
@@ -401,7 +454,8 @@ var chat = chat || {};
 		
 		this.trigger({
 			type: 'editing:end',
-			model: this.model
+			model: this.model,
+			elem: this.elem
 		});
 	};
 	MessageStreamView.prototype.cancelEditing = function() {
@@ -424,7 +478,8 @@ var chat = chat || {};
 		
 		this.trigger({
 			type: 'editing:cancel',
-			model: this.model
+			model: this.model,
+			elem: this.elem
 		});
 	};
 	
