@@ -277,6 +277,7 @@ var chat = chat || {};
 		
 		this.containerElem = this.elem.getElementsByClassName('container')[0];
 		this.editorElem = this.elem.getElementsByClassName('editor')[0];
+		this.avatarElem = this.elem.getElementsByClassName('avatar')[0];
 	};
 	MessageComposerView.super = View.prototype;
 	MessageComposerView.prototype = Object.create(View.prototype);
@@ -300,12 +301,25 @@ var chat = chat || {};
 			this.editorElem.contentEditable = 'false';
 		}
 	};
+	MessageComposerView.prototype.setAvatar = function(avatar) {
+		this.avatarElem.src = avatar;	
+	};
+	
+	var MessageStreamView = function(model) {
+		MessageComposerView.super.constructor.apply(this, arguments);
+		
+		this.model = model;
+	};
+	MessageStreamView.super = View.prototype;
+	MessageStreamView.prototype = Object.create(View.prototype);
+	MessageStreamView.prototype.constructor = MessageStreamView;
 	
 	chat.views = {
 		ContactView: ContactView,
 		AccountView: AccountView,
 		ChatboxView: ChatboxView,
-		MessageComposerView: MessageComposerView
+		MessageComposerView: MessageComposerView,
+		MessageStreamView: MessageStreamView
 	};
 	
 })(chat, mvp, template);
