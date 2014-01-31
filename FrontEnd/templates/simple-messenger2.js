@@ -62,100 +62,6 @@ window.onload = function() {
 		this.messageModels = {};
 		this.messageViews = {};
 
-		this.messages = {};
-		this.currentMessages = [];
-		this.currentContactModel = null;
-		this.setChatContactModel = function(contactModel) {
-			if (self.currentContactModel === null || 
-				self.currentContactModel.getAttribute('id') !== contactModel.getAttribute('id')) {
-					
-				var setThemeChat = function() {
-					var id = self.currentContactModel.getAttribute('id');
-					var name = self.currentContactModel.getAttribute('name');
-					var author = self.currentContactModel.getAttribute('author');
-					var authorName = self.contactModels[author].getAttribute('name');
-					var label = ['{', name, '}: '];
-					
-					var createGroupuserlistListener = function() {
-						var groupuserlistListener = function(event) {
-							var groupuserlist = event.response.groupuserlist;
-							var currentgroup = groupuserlist[0];
-							var users = currentgroup.users || [];
-							var userNames = users.map(function(user) {
-								return self.contactModels[user].getAttribute('name');	
-							});
-							var title = label.concat(userNames.join(', ')).join('');
-							updateConversationTitle(title);
-							chatClient.off("groupuserlist", groupuserlistListener);
-						};
-						return groupuserlistListener;
-					};
-					
-					chatClient.on('message:groupuserlist', createGroupuserlistListener());
-					chatClient.groupuserlist(['theme', id].join('.'));
-			
-					var title = label.concat([authorName, ' and ...'].join(', ')).join('');
-					updateConversationTitle(title);
-					showConversationTitle(true);
-				};
-				var setUserChat = function() {
-					var title = self.currentContactModel.getAttribute('name');
-					updateConversationTitle(title);
-					showConversationTitle(true);
-				};
-				var setPublicChat = function() {
-					var name = self.currentContactModel.getAttribute('name');
-					var author = self.currentContactModel.getAttribute('author');
-					var authorName = [self.contactModels[author].getAttribute('name')];
-					var moderators = Object.keys(self.currentContactModel.getAttribute('moderators'));
-					var userNames = moderators.filter(function(moderator) {
-						return moderator !== userId;	
-					}).map(function(moderator) {
-						return self.contactModels[moderator].getAttribute('name');
-					});
-					var allUsers = authorName.concat(userNames).join(', ');
-					var label = ['[', name, ']: '].join('');
-					var title = [label, allUsers].join('');
- 
-					updateConversationTitle(title);
-					showConversationTitle(true);
-				};
-				
-				self.currentContactModel = contactModel;
-				chatClient.off('message:grouplist');
-				deleteAllMessageElems();
-				showComposer(true);
-				
-				var type = self.currentContactModel.getAttribute('type');
-				switch(type) {
-					case 'user':
-						setUserChat();
-						break;
-					case 'public':
-						setPublicChat();
-						break;
-					case 'theme':
-						setThemeChat();
-						break;
-				}
-				
-				var messages = self.getMessagesBySender(self.currentContactModel.getAttribute('id'));
-				messages.forEach(function(message) {
-					self.renderMessageElem(message);	
-				});
-				html.scrollToBottom(streamWrapElem);
-			}
-		};
-		
-		var createMessageElem = function(content) {
-			var messageElem = createTemplateElem('message');
-			var editorElem = messageElem.getElementsByClassName('editor')[0];
-			editorElem.innerHTML = content;
-			return messageElem;
-		};
-		
-		var currentMessageElem = null;
-		var currentMessageContent = null;
 		var messageElemHandler = function(e) {
 			e.stopPropagation();
 		};
@@ -539,13 +445,13 @@ window.onload = function() {
 				});
 				var messageIdCollectionString = messageIdCollection.join(',');
 				
-				tape.forEach(function(item) {
-					var message = { 
-						id: item.id, 
-						shown: item.shown
-					};
-					self.messages[item.id] = message;
-				});
+				// tape.forEach(function(item) {
+				// 	var message = { 
+				// 		id: item.id, 
+				// 		shown: item.shown
+				// 	};
+				// 	self.messages[item.id] = message;
+				// });
 
 				console.log('tape');
 				console.log(JSON.stringify(tape, null, 4));
@@ -560,10 +466,10 @@ window.onload = function() {
 				self.chatClient.off('message:retrieve', retrieveMessagesClientChatListener);
 				
 				var messages = event.response.retrieve;
-				messages.forEach(function(message) {
-					self.messages[message.id].value = message.value;	
-				});
-				console.log(JSON.stringify(self.messages, null, 4));
+				// messages.forEach(function(message) {
+				// 	self.messages[message.id].value = message.value;	
+				// });
+				// console.log(JSON.stringify(self.messages, null, 4));
 
 				self.prepareContactViews();
 				self.chatClient.on('message:send', sendChatClientListener);
@@ -659,14 +565,16 @@ window.onload = function() {
 				self.messageComposerView.setAvatar('');
 			};
 			var setContactListener = function(event) {
-				var contact = event.contact;
-				
 				self.chatboxView.showMessageComposer(true);
 				self.chatboxView.enableMessageComposer(true);
+				self.chatboxView.showConversationTitle(true);
+				self.updateConversationTitle();
 			};
 			var unsetContactListener = function(event) {
 				self.chatboxView.showMessageComposer(false);
 				self.chatboxView.enableMessageComposer(false);
+				self.chatboxView.showConversationTitle(false);
+				self.chatboxView.setConverstationTitle('');
 			};
 			
 			this.on('set:account', setAccountListener);
@@ -678,9 +586,9 @@ window.onload = function() {
 				var messageModel = new MessageModel();
 				
 				messageModel.setAttribute('id', uuid.v4());
-				messageModel.setAttribute('author', self.account.getAttribute('id'));
 				messageModel.setAttribute('type', self.contact.getAttribute('type'));
-				messageModel.setAttribute('receiver', self.contact.getAttribute('id'));
+				messageModel.setAttribute('authorId', self.account.getAttribute('id'));
+				messageModel.setAttribute('receiverId', self.contact.getAttribute('id'));
 				messageModel.setAttribute('content', event.content);
 				
 				console.log(JSON.stringify(messageModel, null, 4));
@@ -758,23 +666,23 @@ window.onload = function() {
 			prepareContactView(self.contactViews[key]);
 		});
 
-		var accountId = this.account.getAttribute('id');
-		var messageKeys = Object.keys(this.messages);
+		// var accountId = this.account.getAttribute('id');
+		// var messageKeys = Object.keys(this.messages);
 
-		messageKeys.forEach(function(key) {
-			var message = self.messages[key];
-			var shown = message.shown;
-			var value = message.value || {};
-			var from = value.group || value.from || '';
-			if (!shown && from !== accountId) {
-				var contactModel = self.contactModels[from];
-				if (contactModel) {
-					var count = contactModel.getAttribute('count');
-					count += 1;
-					contactModel.setAttribute('count', count);
-				}
-			}
-		});
+		// messageKeys.forEach(function(key) {
+		// 	var message = self.messages[key];
+		// 	var shown = message.shown;
+		// 	var value = message.value || {};
+		// 	var from = value.group || value.from || '';
+		// 	if (!shown && from !== accountId) {
+		// 		var contactModel = self.contactModels[from];
+		// 		if (contactModel) {
+		// 			var count = contactModel.getAttribute('count');
+		// 			count += 1;
+		// 			contactModel.setAttribute('count', count);
+		// 		}
+		// 	}
+		// });
 	};
 	ChatApplication.prototype.sendMessage = function(messageModel) {
 		var self = this;
@@ -796,6 +704,73 @@ window.onload = function() {
 		};
 		self.chatClient.on('message:now', nowChatClientListener);
 		self.chatClient.now();
+	};
+	ChatApplication.prototype.updateConversationTitle = function() {
+		var self = this;
+		
+		var setThemeTitle = function() {
+			var id = self.contact.getAttribute('id');
+			var name = self.contact.getAttribute('name');
+			var author = self.contact.getAttribute('author');
+			var authorName = self.contactModels[author].getAttribute('name');
+			var label = ['{', name, '}: '];
+			var title = label.concat([authorName, ' and ...'].join(', ')).join('');
+
+			var createGroupuserlistListener = function() {
+				var groupuserlistListener = function(event) {
+					self.chatClient.off("groupuserlist", groupuserlistListener);
+					var groupuserlist = event.response.groupuserlist;
+					var currentgroup = groupuserlist[0];
+					var users = currentgroup.users || [];
+					var userNames = users.map(function(user) {
+						return self.contactModels[user].getAttribute('name');
+					});
+					var title = label.concat(userNames.join(', ')).join('');
+					self.chatboxView.setConverstationTitle(title);
+				};
+				return groupuserlistListener;
+			};
+
+			self.chatClient.on('message:groupuserlist', createGroupuserlistListener());
+			self.chatClient.groupuserlist(['theme', id].join('.'));
+
+			self.chatboxView.setConverstationTitle(title);
+		};
+		var setUserTitle = function() {
+			var title = self.contact.getAttribute('name');
+			self.chatboxView.setConverstationTitle(title);
+		};
+		var setPublicTitle = function() {
+			var name = self.contact.getAttribute('name');
+			var author = self.contact.getAttribute('author');
+			var authorName = [self.contactModels[author].getAttribute('name')];
+			var moderators = Object.keys(self.contact.getAttribute('moderators'));
+			var accountId = self.account.getAttribute('id');
+			var userNames = moderators.filter(function(moderator) {
+				return moderator !== accountId;
+			}).map(function(moderator) {
+				return self.contactModels[moderator].getAttribute('name');
+			});
+			var allUsers = authorName.concat(userNames).join(', ');
+			var label = ['[', name, ']: '].join('');
+			var title = [label, allUsers].join('');
+
+			self.chatboxView.setConverstationTitle(title);
+		};
+		self.chatClient.off('message:groupuserlist');
+		
+		var type = self.contact.getAttribute('type');
+		switch (type) {
+			case 'user':
+				setUserTitle();
+				break;
+			case 'public':
+				setPublicTitle();
+				break;
+			case 'theme':
+				setThemeTitle();
+				break;
+		}
 	};
 	ChatApplication.prototype.dispose = function() {
 		var self = this;

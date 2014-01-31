@@ -87,15 +87,15 @@ var chat = chat || {};
 	MessageModel.prototype.toRawMessage = function() {
 		var id = this.getAttribute('id');
 		var type = this.getAttribute('type');
-		var author = this.getAttribute('author');
-		var receiver = this.getAttribute('receiver');
+		var authorId = this.getAttribute('authorId');
+		var receiverId = this.getAttribute('receiverId');
 		var timestamp = this.getAttribute('timestamp');
 		var content = this.getAttribute('content');
 
-		var rawMessage = chat.MessageFactory.create(id, content, author, receiver, timestamp);
+		var rawMessage = chat.MessageFactory.create(id, content, authorId, receiverId, timestamp);
 		
 		if (type !== 'user') {
-			rawMessage.group = receiver;
+			rawMessage.group = receiverId;
 			rawMessage.to = '%recipientid%';
 		}
 		

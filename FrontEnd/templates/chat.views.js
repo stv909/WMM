@@ -242,7 +242,7 @@ var chat = chat || {};
 	ChatboxView.prototype = Object.create(View.prototype);
 	ChatboxView.prototype.constructor = ChatboxView;
 	ChatboxView.prototype.setConverstationTitle = function(title) {
-		this.conversationElem.textContent = title;	
+		this.conversationWrapElem.textContent = title;	
 	};
 	ChatboxView.prototype.showConversationTitle = function(isVisible) {
 		if (isVisible) {
