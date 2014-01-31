@@ -391,6 +391,7 @@ var chat = chat || {};
 
 	var MessageStreamView = function(model) {
 		MessageComposerView.super.constructor.apply(this, arguments);
+		var self = this;
 		
 		this.model = model;
 		
@@ -409,6 +410,43 @@ var chat = chat || {};
 		this.shareElem = this.elem.getElementsByClassName('share')[0];
 		this.fullscreenElem = this.elem.getElementsByClassName('fullscreen')[0];
 		this.deleteElem = this.elem.getElementsByClassName('delete')[0];
+		
+		var editElemClickListener = function(event) {
+			alert('edit');
+		};
+		var clearElemClickListener = function(event) {
+			alert('clear');
+		};
+		var cancelElemClickListener = function(event) {
+			alert('cancel');
+		};
+		var shareElemClickListener = function(event) {
+			alert('share');
+		};
+		var fullscreenElemClickListener = function(event) {
+			alert('fullscreen');
+		};
+		var deleteElemClickListener = function(event) {
+			alert('delete');
+		};
+		
+		this.editorElem.addEventListener('click', editElemClickListener);
+		this.clearElem.addEventListener('click', clearElemClickListener);
+		this.cancelElem.addEventListener('click', cancelElemClickListener);
+		this.shareElem.addEventListener('click', shareElemClickListener);
+		this.fullscreenElem.addEventListener('click', fullscreenElemClickListener);
+		this.deleteElemClickListener.addEventListener('click', deleteElemClickListener);
+		
+		var disposeListener = function() {
+			self.editorElem.removeEventListener('click', editElemClickListener);
+			self.clearElem.removeEventListener('click', clearElemClickListener);
+			self.cancelElem.removeEventListener('click', cancelElemClickListener);
+			self.shareElem.removeEventListener('click', shareElemClickListener);
+			self.fullscreenElem.removeEventListener('click', fullscreenElemClickListener);
+			self.deleteElem.removeEventListener('click', deleteElemClickListener);
+		};
+		
+		this.on('dispose', disposeListener);
 	};
 	MessageStreamView.super = MessageView.prototype;
 	MessageStreamView.prototype = Object.create(MessageView.prototype);

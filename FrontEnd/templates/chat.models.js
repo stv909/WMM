@@ -1,6 +1,6 @@
 var chat = chat || {};
 
-(function(chat, mvp) {
+(function(chat, mvp, base64) {
 	
 	var Model = mvp.Model;
 	
@@ -84,10 +84,27 @@ var chat = chat || {};
 	MessageModel.super = Model.prototype;
 	MessageModel.prototype = Object.create(Model.prototype);
 	MessageModel.prototype.constructor = MessageModel;
+	MessageModel.prototype.toRawMessage = function() {
+		var id = this.getAttribute('id');
+		var type = this.getAttribute('type');
+		var author = this.getAttribute('author');
+		var receiver = this.getAttribute('receiver');
+		var timestamp = this.getAttribute('timestamp');
+		var content = this.getAttribute('content');
+
+		var rawMessage = chat.MessageFactory.create(id, content, author, receiver, timestamp);
+		
+		if (type !== 'user') {
+			rawMessage.group = receiver;
+			rawMessage.to = '%recipientid%';
+		}
+		
+		return rawMessage;
+	};
 	
 	chat.models = {
 		ContactModel: ContactModel,
 		MessageModel: MessageModel
 	};
 	
-})(chat, mvp);
+})(chat, mvp, base64);

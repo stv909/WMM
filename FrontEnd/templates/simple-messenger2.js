@@ -58,6 +58,9 @@ window.onload = function() {
 		
 		this.contactModels = {};
 		this.contactViews = {};
+		
+		this.messageModels = {};
+		this.messageViews = {};
 
 		this.messages = {};
 		this.currentMessages = [];
@@ -229,9 +232,6 @@ window.onload = function() {
 		var cancelEditingMessageElem = function(messageElem) {
 			setMessageElemContent(messageElem, currentMessageContent);
 		};
-		var appendMessageElem = function(messageElem) {
-			streamWrapElem.appendChild(messageElem);
-		};
 		
 		var imbueStreamMessageElem = function(messageElem) {
 			var deleteElem = messageElem.getElementsByClassName('delete')[0];
@@ -327,40 +327,9 @@ window.onload = function() {
 		};
 
 		var initializeComposerMessageElem = function() {
-			var messageElem = composerElem.getElementsByClassName('message')[0];
-			imbueComposerMessageElem(messageElem);
 			document.addEventListener('click', documentElemHandler);
 		};
 
-		var sendMessage = function(content, now, msgId) {
-			var type = self.currentContactModel.getAttribute('type');
-			var id = self.currentContactModel.getAttribute('id');
-			var message = chat.MessageFactory.create(
-				msgId || uuid.v4(),
-				content,
-				userId,
-				id,
-				now
-			);
-			
-			if (type === 'public' || type === 'theme') {
-				message.group = id;
-				message.to = '%recipientid%';
-			}
-
-			switch(type) {
-				case 'user':
-					chatClient.sendMessage(message);
-					break;
-				case 'public':
-					chatClient.sendMessage(message, type);
-					break;
-				case 'theme':
-					chatClient.sendMessage(message, type);
-					break;
-			}
-		};
-		
 		this.renderMessageElem = function(message) {
 			self.currentMessages.push(message.id);
 			var timestamp = message.value.timestamp;
@@ -706,7 +675,17 @@ window.onload = function() {
 			this.on('unset:contact', unsetContactListener);
 			
 			var sendMessageComposerListener = function(event) {
-				alert(event.content);	
+				var messageModel = new MessageModel();
+				
+				messageModel.setAttribute('id', uuid.v4());
+				messageModel.setAttribute('author', self.account.getAttribute('id'));
+				messageModel.setAttribute('type', self.contact.getAttribute('type'));
+				messageModel.setAttribute('receiver', self.contact.getAttribute('id'));
+				messageModel.setAttribute('content', event.content);
+				
+				console.log(JSON.stringify(messageModel, null, 4));
+				
+				self.sendMessage(messageModel);
 			};
 			
 			this.messageComposerView.on('send', sendMessageComposerListener);
@@ -797,6 +776,27 @@ window.onload = function() {
 			}
 		});
 	};
+	ChatApplication.prototype.sendMessage = function(messageModel) {
+		var self = this;
+		var nowChatClientListener = function(event) {
+			self.chatClient.off('message:now', nowChatClientListener);
+			messageModel.setAttribute('timestamp', event.response.now);
+			
+			var rawMessage = messageModel.toRawMessage();
+			var type = messageModel.getAttribute('type');
+			
+			switch (type) {
+				case 'user':
+					self.chatClient.sendMessage(rawMessage);
+					break;
+				default:
+					self.chatClient.sendMessage(rawMessage, type);
+					break;
+			}
+		};
+		self.chatClient.on('message:now', nowChatClientListener);
+		self.chatClient.now();
+	};
 	ChatApplication.prototype.dispose = function() {
 		var self = this;
 		
@@ -809,9 +809,17 @@ window.onload = function() {
 		Object.keys(this.contactModels).forEach(function(key) {
 			self.contactModels[key].dispose();
 		});
+		Object.keys(this.messageViews).forEach(function(key) {
+			self.messageViews[key].dispose();
+		});
+		Object.keys(this.messageModels).forEach(function(key) {
+			self.messageModels[key].dispose();	
+		});
 		
-		this.contactModels = {};
 		this.contactViews = {};
+		this.contactModels = {};
+		this.messageViews = {};
+		this.messageModels = {};
 	};
 	
 	var chatApplication = new ChatApplication();
