@@ -94,7 +94,7 @@ contact =
 				background-color red
 				padding 0.5em
 
-message = 
+message =
 	.static
 		background-color white
 	.dynamic
@@ -150,7 +150,7 @@ message =
 				position relative
 				display inline-block
 				min-height 5em
-				box-shadow 0 0 0 0.5em #aaa
+				box-shadow 0 0 0.5em #aaa
 				&::-webkit-scrollbar-track
 					&:vertical
 						border-left 1px solid main-border-color
@@ -315,7 +315,7 @@ message =
 		>.wrap
 			overflow hidden
 			border-right 1px solid main-border-color
-	#chatbox
+	.chatbox
 		position relative
 		height 100%
 		>.wrap
@@ -325,13 +325,13 @@ message =
 			right 0
 			left 0
 			overflow hidden
-		#board
+		.board
 			display table
 			width 100%
 			height 100%
-			#conversation, #stream, #composer
+			.conversation, .stream, .composer
 				display table-row
-			#conversation
+			.conversation
 				text-align center
 				min-height 1%
 				>.wrap
@@ -340,7 +340,7 @@ message =
 					padding-bottom 0.5em
 					background-color #fffcf1
 					border-bottom 1px solid main-border-color
-			#stream
+			.stream
 				height 98%
 				>.wrap
 					height 100%
@@ -351,7 +351,7 @@ message =
 					&::-webkit-scrollbar-thumb
 						&:vertical
 							border-left 1px solid main-border-color
-			#composer
+			.composer
 				height 1%
 				&.static
 					background-color #fff

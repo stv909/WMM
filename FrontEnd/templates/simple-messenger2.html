@@ -16,11 +16,7 @@
     <script type="application/javascript" src="simple-messenger2.js"></script>
   </head>
   <body>
-    <template id="composer-message-template" style="display:none">
-      <div class="info-block">
-        <div class="name"></div>
-        <div class="time"></div>
-      </div>
+    <template id="message-composer-template" style="display:none">
       <div class="info-block">
         <div class="avatar-block">
           <div class="avatar-wrap"><img class="avatar"/></div>
@@ -36,7 +32,7 @@
         </div>
       </div>
     </template>
-    <template id="stream-message-template" style="display:none">
+    <template id="message-stream-template" style="display:none">
       <div class="info-block">
         <div class="name"></div>
         <div class="time"></div>
@@ -90,14 +86,14 @@
     </template>
     <template id="chatbox-template" style="display:none">
       <div class="wrap">
-        <div id="board">
-          <div id="conversation" class="passive">
+        <div class="board">
+          <div class="conversation passive">
             <div class="wrap"></div>
           </div>
-          <div id="stream">
+          <div class="stream">
             <div class="wrap"></div>
           </div>
-          <div id="composer" class="dynamic passive">
+          <div class="composer dynamic passive">
             <div class="wrap"></div>
           </div>
         </div>

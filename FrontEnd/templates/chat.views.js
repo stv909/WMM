@@ -2,6 +2,9 @@ var chat = chat || {};
 
 (function(chat, mvp, template) {
 	
+	var View = mvp.View;
+	var ContactModel = chat.models.ContactModel;
+	
 	var ContactView = function(model) {
 		mvp.EventTrigger.call(this);
 		var self = this;
@@ -180,7 +183,7 @@ var chat = chat || {};
 
 				self.trigger({
 					type: 'authorize',
-					profile: profile
+					account: ContactModel.fromProfile(profile)
 				});
 			};
 			var disconnectChatClientListener = function(event) {
@@ -214,13 +217,95 @@ var chat = chat || {};
 			self.chatClient.disconnect();
 		});
 	};
-	AccountView.super = mvp.View.prototype;
-	AccountView.prototype = Object.create(mvp.View.prototype);
+	AccountView.super = View.prototype;
+	AccountView.prototype = Object.create(View.prototype);
 	AccountView.prototype.constructor = AccountView;
+	
+	var ChatboxView = function(messageComposerView) {
+		ChatboxView.super.constructor.apply(this, arguments);
+		
+		this.messageComposerView = messageComposerView;
+		this.elem = template.create('chatbox-template', { className: 'chatbox' });
+		
+		this.conversationElem = this.elem.getElementsByClassName('conversation')[0];
+		this.conversationWrapElem = this.conversationElem.getElementsByClassName('wrap')[0];
+		
+		this.streamElem = this.elem.getElementsByClassName('stream')[0];
+		this.streamWrapElem = this.streamElem.getElementsByClassName('wrap')[0];
+		
+		this.composerElem = this.elem.getElementsByClassName('composer')[0];
+		this.composerWrapElem = this.composerElem.getElementsByClassName('wrap')[0];
+		
+		this.messageComposerView.attachTo(this.composerWrapElem);
+	};
+	ChatboxView.super = View.prototype;
+	ChatboxView.prototype = Object.create(View.prototype);
+	ChatboxView.prototype.constructor = ChatboxView;
+	ChatboxView.prototype.setConverstationTitle = function(title) {
+		this.conversationElem.textContent = title;	
+	};
+	ChatboxView.prototype.showConversationTitle = function(isVisible) {
+		if (isVisible) {
+			this.conversationElem.classList.remove('passive');
+		} else {
+			this.conversationElem.classList.add('passive');
+		}
+	};
+	ChatboxView.prototype.showMessageComposer = function(isVisible) {
+		if (isVisible) {
+			this.composerElem.classList.remove('passive');
+		} else {
+			this.composerElem.classList.add('passive');
+		}
+	};
+	ChatboxView.prototype.enableMessageComposer = function(isEnable) {
+		if (isEnable) {
+			this.composerElem.classList.add('dynamic');
+			this.composerElem.classList.remove('static');
+		} else {
+			this.composerElem.classList.add('static');
+			this.composerElem.classList.remove('dynamic');
+		}
+		this.messageComposerView.enable(isEnable);	
+	};
+	
+	var MessageComposerView = function() {
+		MessageComposerView.super.constructor.apply(this, arguments);
+		
+		this.elem = template.create('message-composer-template', { className: 'message' });
+		this.elem.classList.add('dynamic');
+		
+		this.containerElem = this.elem.getElementsByClassName('container')[0];
+		this.editorElem = this.elem.getElementsByClassName('editor')[0];
+	};
+	MessageComposerView.super = View.prototype;
+	MessageComposerView.prototype = Object.create(View.prototype);
+	MessageComposerView.prototype.constructor = MessageComposerView;
+	MessageComposerView.prototype.enable = function(isEnable) {
+		if (isEnable) {
+			this.elem.classList.add('dynamic');
+			this.elem.classList.remove('static');
+			
+			this.containerElem.classList.add('dynamic');
+			this.containerElem.classList.remove('static');
+			
+			this.editorElem.contentEditable = 'true';
+		} else {
+			this.elem.classList.add('static');
+			this.elem.classList.remove('dynamic');
+			
+			this.containerElem.classList.add('static');
+			this.containerElem.classList.remove('dynamic');
+			
+			this.editorElem.contentEditable = 'false';
+		}
+	};
 	
 	chat.views = {
 		ContactView: ContactView,
-		AccountView: AccountView
+		AccountView: AccountView,
+		ChatboxView: ChatboxView,
+		MessageComposerView: MessageComposerView
 	};
 	
 })(chat, mvp, template);

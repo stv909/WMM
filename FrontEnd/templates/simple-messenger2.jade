@@ -1,7 +1,8 @@
 mixin message-body(composer)
-	.info-block
-		.name
-		.time
+	if (!composer)
+		.info-block
+			.name
+			.time
 	.info-block
 		.avatar-block
 			.avatar-wrap
@@ -21,12 +22,12 @@ mixin message-body(composer)
 				.simple-button.fullscreen fullscreen
 				.simple-button.negative.delete delete
 
-mixin composer-message-template
-	template#composer-message-template(style="display:none")
+mixin message-composer-template
+	template#message-composer-template(style="display:none")
 		+message-body(true)
 
-mixin stream-message-template(composer)
-	template#stream-message-template(style="display:none")
+mixin message-stream-template(composer)
+	template#message-stream-template(style="display:none")
 		+message-body(false)
 
 mixin contact-template
@@ -58,12 +59,12 @@ mixin account-template
 mixin chatbox-template
 	template#chatbox-template(style="display:none")
 		.wrap
-			#board
-				#conversation.passive
+			.board
+				.conversation.passive
 					.wrap
-				#stream
+				.stream
 					.wrap
-				#composer.dynamic.passive
+				.composer.dynamic.passive
 					.wrap
 
 doctype html
@@ -83,8 +84,8 @@ html
 		script(type="application/javascript", src="chat.views.js")
 		script(type="application/javascript", src="simple-messenger2.js")
 	body
-		+composer-message-template
-		+stream-message-template
+		+message-composer-template
+		+message-stream-template
 		+contact-template
 		+account-template
 		+chatbox-template

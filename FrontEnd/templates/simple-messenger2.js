@@ -5,8 +5,11 @@ window.onload = function() {
 	
 	var ContactModel = chat.models.ContactModel;
 	var MessageModel = chat.models.MessageModel;
+	
 	var ContactView = chat.views.ContactView;
 	var AccountView = chat.views.AccountView;
+	var MessageComposerView = chat.views.MessageComposerView;
+	var ChatboxView = chat.views.ChatboxView;
 	
 	var createTemplateElem = function(className) {
 		var templatesElem = document.getElementById('template');
@@ -41,11 +44,19 @@ window.onload = function() {
 		var serverUrl = 'ws://www.bazelevscontent.net:9009/';
 		var chatClient = new ChatClient(serverUrl);
 		
+		this.chatClient = chatClient;
+		this.account = null;
+		
+		this.chatElem = document.getElementById('chat');
+		this.chatWrapElem = this.chatElem.getElementsByClassName('wrap')[0];
+		this.menuElem = document.getElementById('menu');
+		
 		this.accountView = new AccountView(chatClient);
+		this.messageComposerView = new MessageComposerView();
+		this.chatboxView = new ChatboxView(this.messageComposerView);
 
 		var pageElem = document.getElementById('page');
 		var dialogElem = document.getElementById('dialog');
-		var menuElem = document.getElementById('menu');
 		var contactsElem = document.getElementById('contacts');
 		var contactWrapElem = contactsElem.getElementsByClassName('wrap')[0];
 		var contactListElem = contactWrapElem.getElementsByClassName('list')[0];
@@ -63,30 +74,6 @@ window.onload = function() {
 		this.contactModels = {};
 		this.contactViews = {};
 
-		var updateConversationTitle = function(title) {
-			var conversationElem = document.getElementById('conversation');
-			var wrapElem = conversationElem.getElementsByClassName('wrap')[0];
-			
-			wrapElem.textContent = title;
-		};
-		var showConversationTitle = function(isVisible) {
-			var conversationElem = document.getElementById('conversation');
-			if (isVisible) {
-				conversationElem.classList.remove('passive');
-			} else {
-				conversationElem.classList.add('passive');
-			}
-		};
-		
-		var showComposer = function(isVisible) {
-			if (isVisible) {
-				composerElem.classList.remove('passive');
-			} else {
-				composerElem.classList.add('passive');
-				composerAvatarImgElem.src = 'http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg';
-			}
-		};
-		
 		this.messages = {};
 		this.currentMessages = [];
 		this.currentContactModel = null;
@@ -666,22 +653,22 @@ window.onload = function() {
 		};
 		
 		this.initialize = function() {
-			this.accountView.attachTo(menuElem);
+			this.chatboxView.attachTo(this.chatWrapElem);
+			this.accountView.attachTo(this.menuElem);
 			
-			// showConversationTitle(false);
-			// updateConversationTitle('');
-			// showComposer(false);
-			// initializeComposerMessageElem();
 			initializeDialogElem();
 			
+			var self = this;
 			var authorizeListener = function(event) {
 				console.log('authorize complete');
 				
-				chatClient.on('message:publiclist', publiclistClientChatListener);
+				self.chatClient.on('message:publiclist', publiclistClientChatListener);
 				
-				userId = event.userId;
+				self.setAccount(event.account);
+				self.chatboxView.showMessageComposer(true);
+				self.chatboxView.enableMessageComposer(true);
 				
-				chatClient.publiclist();
+				//self.chatClient.publiclist();
 			};
 			var publiclistClientChatListener = function(event) {
 				console.log('publiclist complete');
@@ -923,22 +910,28 @@ window.onload = function() {
 				chatClient.off('message:broadcast');
 				chatClient.off('message:now');
 				
-				updateConversationTitle('');
-				showConversationTitle(false);
-				showComposer(false);
-				
 				self.dispose();
 			};
 			var errorMessageClientChatListener = function(event) {
 				alert('There\'s a terrible error on the server side. Call 911.');
 			};
 
-			//this.accountView.on('authorize', authorizeListener);
+			this.accountView.on('authorize', authorizeListener);
 			//this.accountView.on('disconnect', disconnectListener);
 			chatClient.on('error:message', errorMessageClientChatListener);
 		};
 		
 		EventEmitter.call(this);
+	};
+	ChatApplication.prototype.setAccount = function(account) {
+		if (this.account === null ||
+			this.account.getAttribute('id') !== account.getAttribute('id')) {
+			this.account = account;
+			this.trigger({
+				type: 'change:account',
+				account: this.account
+			}); 
+		}
 	};
 	
 	var chatApplication = new ChatApplication();

@@ -324,7 +324,7 @@ input[type="text"] {
   position: relative;
   display: inline-block;
   min-height: 5em;
-  box-shadow: 0 0 0 0.5em #aaa;
+  box-shadow: 0 0 0.5em #aaa;
 }
 #chat .message .content-block .container::-webkit-scrollbar-track:vertical {
   border-left: 1px solid #ddd;
@@ -378,11 +378,11 @@ input[type="text"] {
   overflow: hidden;
   border-right: 1px solid #ddd;
 }
-#chat #chatbox {
+#chat .chatbox {
   position: relative;
   height: 100%;
 }
-#chat #chatbox >.wrap {
+#chat .chatbox >.wrap {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -390,50 +390,50 @@ input[type="text"] {
   left: 0;
   overflow: hidden;
 }
-#chat #chatbox #board {
+#chat .chatbox .board {
   display: table;
   width: 100%;
   height: 100%;
 }
-#chat #chatbox #board #conversation,
-#chat #chatbox #board #stream,
-#chat #chatbox #board #composer {
+#chat .chatbox .board .conversation,
+#chat .chatbox .board .stream,
+#chat .chatbox .board .composer {
   display: table-row;
 }
-#chat #chatbox #board #conversation {
+#chat .chatbox .board .conversation {
   text-align: center;
   min-height: 1%;
 }
-#chat #chatbox #board #conversation >.wrap {
+#chat .chatbox .board .conversation >.wrap {
   font-size: 0.8em;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   background-color: #fffcf1;
   border-bottom: 1px solid #ddd;
 }
-#chat #chatbox #board #stream {
+#chat .chatbox .board .stream {
   height: 98%;
 }
-#chat #chatbox #board #stream >.wrap {
+#chat .chatbox .board .stream >.wrap {
   height: 100%;
   overflow-y: scroll;
 }
-#chat #chatbox #board #stream >.wrap::-webkit-scrollbar-track:vertical {
+#chat .chatbox .board .stream >.wrap::-webkit-scrollbar-track:vertical {
   border-left: 1px solid #ddd;
 }
-#chat #chatbox #board #stream >.wrap::-webkit-scrollbar-thumb:vertical {
+#chat .chatbox .board .stream >.wrap::-webkit-scrollbar-thumb:vertical {
   border-left: 1px solid #ddd;
 }
-#chat #chatbox #board #composer {
+#chat .chatbox .board .composer {
   height: 1%;
 }
-#chat #chatbox #board #composer.static {
+#chat .chatbox .board .composer.static {
   background-color: #fff;
 }
-#chat #chatbox #board #composer.dynamic {
+#chat .chatbox .board .composer.dynamic {
   background-color: #ebf5ff;
 }
-#chat #chatbox #board #composer >.wrap {
+#chat .chatbox .board .composer >.wrap {
   border-top: 1px solid #ddd;
   overflow: hidden;
   min-height: 1em;
