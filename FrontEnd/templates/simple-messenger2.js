@@ -824,18 +824,18 @@ window.onload = function() {
 			};
 			var broadcastChatClientListener = function(event) {
 				console.log('broadcast');
-				// console.log(JSON.stringify(event.response.broadcast));
+				console.log(JSON.stringify(event.response.broadcast));
 				
-				// var broadcast = event.response.broadcast;
-				// var from = broadcast.from;
-				// var status = broadcast.id;
-				// var contactModel = self.contactModels[from];
+				var broadcast = event.response.broadcast;
+				var from = broadcast.from;
+				var status = broadcast.id;
+				var contactModel = self.contactModels[from];
 				
-				// if (status.indexOf('online.') === 0) {
-				// 	contactModel.setAttribute('online', true);
-				// } else if (status.indexOf('offline.') === 0) {
-				// 	contactModel.setAttribute('online', false);
-				// }
+				if (status.indexOf('online.') === 0) {
+					contactModel.setAttribute('online', true);
+				} else if (status.indexOf('offline.') === 0) {
+					contactModel.setAttribute('online', false);
+				}
 			};
 			
 			var disconnectListener = function(event) {
