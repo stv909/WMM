@@ -314,12 +314,42 @@ var chat = chat || {};
 	MessageStreamView.prototype = Object.create(View.prototype);
 	MessageStreamView.prototype.constructor = MessageStreamView;
 	
+	var DialogView = function() {
+		DialogView.super.constructor.apply(this, arguments);
+		var self = this;
+		
+		this.elem = document.getElementById('dialog');
+		this.contentElem = this.elem.getElementsByClassName('content')[0];
+		this.pageElem = document.getElementById('page');
+		this.closeElem = this.elem.getElementsByClassName('close')[0];
+		
+		this.closeElem.addEventListener('click', function() {
+			self.close();
+		});
+	};
+	DialogView.super = View.prototype;
+	DialogView.prototype = Object.create(View.prototype);
+	DialogView.prototype.constructor = DialogView;
+	DialogView.prototype.show = function(content) {
+		this.pageElem.className = 'passive';
+		this.elem.className = 'active';
+		this.contentElem.innerHTML = content;
+	};
+	DialogView.prototype.close = function() {
+		this.pageElem.className = 'active';
+		this.elem.className = 'passive';
+		this.contentElem.innerHTML = 'content';
+		this.contentElem.scrollLeft = 0;
+		this.contentElem.scrollTop = 0;
+	};
+	
 	chat.views = {
 		ContactView: ContactView,
 		AccountView: AccountView,
 		ChatboxView: ChatboxView,
 		MessageComposerView: MessageComposerView,
-		MessageStreamView: MessageStreamView
+		MessageStreamView: MessageStreamView,
+		DialogView: DialogView,
 	};
 	
 })(chat, mvp, template);

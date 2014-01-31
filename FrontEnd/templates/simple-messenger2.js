@@ -11,6 +11,7 @@ window.onload = function() {
 	var AccountView = chat.views.AccountView;
 	var MessageComposerView = chat.views.MessageComposerView;
 	var ChatboxView = chat.views.ChatboxView;
+	var DialogView = chat.views.DialogView;
 	
 	var createTemplateElem = function(className) {
 		var templatesElem = document.getElementById('template');
@@ -60,19 +61,9 @@ window.onload = function() {
 		this.accountView = new AccountView(chatClient);
 		this.messageComposerView = new MessageComposerView();
 		this.chatboxView = new ChatboxView(this.messageComposerView);
+		this.dialogView = new DialogView();
 
-		var pageElem = document.getElementById('page');
-		var dialogElem = document.getElementById('dialog');
-		var contactsElem = document.getElementById('contacts');
-		var contactWrapElem = contactsElem.getElementsByClassName('wrap')[0];
-		var contactListElem = contactWrapElem.getElementsByClassName('list')[0];
 		var composerElem = document.getElementById('composer');
-		// var composerAvatarImgElem = composerElem
-		// 	.getElementsByClassName('avatar')[0]
-		// 	.getElementsByClassName('image')[0]
-		// 	.getElementsByTagName('img')[0];
-		// var streamElem = document.getElementById('stream');
-		// var streamWrapElem = streamElem.getElementsByClassName('wrap')[0];
 		var newMessageSoundElem = document.getElementById('new-message-sound');
 		
 		var userId = null;
@@ -295,26 +286,6 @@ window.onload = function() {
 		};
 		var appendMessageElem = function(messageElem) {
 			streamWrapElem.appendChild(messageElem);
-		};
-		var showDialogElem = function(content) {
-			pageElem.className = 'passive';
-			dialogElem.className = 'active';
-
-			var contentElem = dialogElem.getElementsByClassName('content')[0];
-			contentElem.innerHTML = content;
-		};
-		var hideDialogElem = function() {
-			pageElem.className = 'active';
-			dialogElem.className = 'passive';
-
-			var contentElem = dialogElem.getElementsByClassName('content')[0];
-			contentElem.innerHTML = '';
-			contentElem.scrollLeft = 0;
-			contentElem.scrollTop = 0;
-		};
-		var initializeDialogElem = function() {
-			var closeElem = dialogElem.getElementsByClassName('close')[0];
-			closeElem.addEventListener('click', hideDialogElem);
 		};
 		
 		var imbueComposerMessageElem = function(messageElem) {
@@ -597,8 +568,6 @@ window.onload = function() {
 			this.chatboxView.attachTo(this.chatWrapElem);
 			this.accountView.attachTo(this.menuElem);
 			
-			initializeDialogElem();
-			
 			var self = this;
 			var authorizeListener = function(event) {
 				console.log('authorize complete');
@@ -874,7 +843,7 @@ window.onload = function() {
 			var changeContactListener = function(event) {
 				var contact = event.contact;
 				if (contact) {
-					alert(JSON.stringify(contact));	
+					alert(JSON.stringify(contact, null, 4));	
 				} else {
 					self.chatboxView.enableMessageComposer(false);
 					self.chatboxView.showMessageComposer(false);
