@@ -38,10 +38,8 @@ window.onload = function() {
 		ChatApplication.super.constructor.apply(this, arguments);
 		var self = this;
 		
-		var serverUrl = 'ws://www.bazelevscontent.net:9009/';
-		var chatClient = new ChatClient(serverUrl);
-		
-		this.chatClient = chatClient;
+		this.serverUrl = 'ws://www.bazelevscontent.net:9009/';
+		this.chatClient = new ChatClient(this.serverUrl);
 		this.account = null;
 		this.contact = null;
 		
@@ -51,16 +49,12 @@ window.onload = function() {
 		this.contactsElem = document.getElementById('contacts');
 		this.contactWrapElem = this.contactsElem.getElementsByClassName('wrap')[0];
 		this.contactListElem = this.contactWrapElem.getElementsByClassName('list')[0];
+		this.newMessageSoundElem = document.getElementById('new-message-sound');
 		
-		this.accountView = new AccountView(chatClient);
+		this.accountView = new AccountView(this.chatClient);
 		this.messageComposerView = new MessageComposerView();
 		this.chatboxView = new ChatboxView(this.messageComposerView);
 		this.dialogView = new DialogView();
-
-		var composerElem = document.getElementById('composer');
-		var newMessageSoundElem = document.getElementById('new-message-sound');
-		
-		var userId = null;
 		
 		this.contactModels = {};
 		this.contactViews = {};
@@ -155,10 +149,6 @@ window.onload = function() {
 			var editorElem = messageElem.getElementsByClassName('editor')[0];
 			editorElem.innerHTML = content;
 			return messageElem;
-		};
-		var deleteAllMessageElems = function() {
-			streamWrapElem.innerHTML = '';
-			self.currentMessages = [];
 		};
 		
 		var currentMessageElem = null;
@@ -428,35 +418,15 @@ window.onload = function() {
 			return messages;
 		};
 		
-		this.dispose = function() {
-			var keys = Object.keys(self.contactViews);
-			keys.forEach(function(key) {
-				self.contactViews[key].dispose();
-				self.contactModels[key].off();
-			});
-			self.contactViews = {};
-			self.contactModels = {};
-			self.currentContactModel = null;
-			self.messages = {};
-			
-			deleteAllMessageElems();
-		};
-		
-		
 		this.initialize = function() {
 			this.chatboxView.attachTo(this.chatWrapElem);
 			this.accountView.attachTo(this.menuElem);
 			
-			var self = this;
 			var authorizeListener = function(event) {
 				console.log('authorize complete');
 				
 				self.chatClient.on('message:publiclist', publiclistClientChatListener);
-				
 				self.setAccount(event.account);
-				self.chatboxView.showMessageComposer(true);
-				self.chatboxView.enableMessageComposer(true);
-				
 				self.chatClient.publiclist();
 			};
 			var publiclistClientChatListener = function(event) {
@@ -556,17 +526,18 @@ window.onload = function() {
 				
 				var profiles = event.response.retrieve;
 				var contactModelCollection = profiles.map(ContactModel.fromProfile);
+				var accountId = self.account.getAttribute('id');
 				
 				contactModelCollection.forEach(function(contactModel) {
 					var id = contactModel.getAttribute('id');
 					self.contactModels[id] = contactModel;
-					if (id !== userId) {
+					if (id !== accountId) {
 						var contactView = new ContactView(contactModel);
 						self.contactViews[id] = contactView;
 					}
 				});
 				
-				chatClient.online();
+				self.chatClient.online();
 			};
 			var onlineClientChatListener = function(event) {
 				console.log('online complete');
@@ -687,17 +658,17 @@ window.onload = function() {
 			};
 			
 			var disconnectListener = function(event) {
-				chatClient.off('message:users');
-				chatClient.off('message:publiclist');
-				chatClient.off('message:retrieve');
-				chatClient.off('message:subscribelist');
-				chatClient.off('message:online');
-				chatClient.off('message:tape');
-				chatClient.off('message:groupuserlist');
-				chatClient.off('message:sent');
-				chatClient.off('message:send');
-				chatClient.off('message:broadcast');
-				chatClient.off('message:now');
+				self.chatClient.off('message:users');
+				self.chatClient.off('message:publiclist');
+				self.chatClient.off('message:retrieve');
+				self.chatClient.off('message:subscribelist');
+				self.chatClient.off('message:online');
+				self.chatClient.off('message:tape');
+				self.chatClient.off('message:groupuserlist');
+				self.chatClient.off('message:sent');
+				self.chatClient.off('message:send');
+				self.chatClient.off('message:broadcast');
+				self.chatClient.off('message:now');
 				
 				self.dispose();
 			};
@@ -706,32 +677,33 @@ window.onload = function() {
 			};
 
 			this.accountView.on('authorize', authorizeListener);
-			//this.accountView.on('disconnect', disconnectListener);
-			chatClient.on('error:message', errorMessageClientChatListener);
+			this.accountView.on('disconnect', disconnectListener);
+			this.chatClient.on('error:message', errorMessageClientChatListener);
 			
-			
-			var changeAccountListener = function(event) {
+			var setAccountListener = function(event) {
 				var account = event.account;
-				if (account) {
-					var avatar = account.getAttribute('avatar');
-					self.messageComposerView.setAvatar(avatar);
-				} else {
-					self.messageComposerView.setAvatar('');
-				}
+				var avatar = account.getAttribute('avatar');
+				
+				self.messageComposerView.setAvatar(avatar);
 			};
-			var changeContactListener = function(event) {
+			var unsetAccountListener = function(event) {
+				self.messageComposerView.setAvatar('');
+			};
+			var setContactListener = function(event) {
 				var contact = event.contact;
-				if (contact) {
-					alert(JSON.stringify(contact, null, 4));	
-				} else {
-					self.chatboxView.enableMessageComposer(false);
-					self.chatboxView.showMessageComposer(false);
-					self.chatboxView.showConversationTitle(false);
-				}
+				
+				self.chatboxView.showMessageComposer(true);
+				self.chatboxView.enableMessageComposer(true);
+			};
+			var unsetContactListener = function(event) {
+				self.chatboxView.showMessageComposer(false);
+				self.chatboxView.enableMessageComposer(false);
 			};
 			
-			this.on('change:account', changeAccountListener);
-			this.on('change:contact', changeContactListener);
+			this.on('set:account', setAccountListener);
+			this.on('unset:account', unsetAccountListener);
+			this.on('set:contact', setContactListener);
+			this.on('unset:contact', unsetContactListener);
 			
 			var sendMessageComposerListener = function(event) {
 				alert(event.content);	
@@ -748,20 +720,32 @@ window.onload = function() {
 			this.account.getAttribute('id') !== account.getAttribute('id')) {
 			this.account = account;
 			this.trigger({
-				type: 'change:account',
+				type: 'set:account',
 				account: this.account
 			}); 
 		}
+	};
+	ChatApplication.prototype.unsetAccount = function() {
+		this.account = null;
+		this.trigger({
+			type: 'unset:account'
+		});
 	};
 	ChatApplication.prototype.setContact = function(contact) {
 		if (this.contact === null ||
 			this.contact.getAttribute('id') !== contact.getAttribute('id')) {
 			this.contact = contact;
 			this.trigger({
-				type: 'change:contact',
+				type: 'set:contact',
 				contact: this.contact
 			});
 		}	
+	};
+	ChatApplication.prototype.unsetContact = function() {
+		this.contact = null;
+		this.trigger({
+			type: 'unset:contact'	
+		});
 	};
 	ChatApplication.prototype.prepareContactViews = function() {
 		var self = this;
@@ -812,6 +796,22 @@ window.onload = function() {
 				}
 			}
 		});
+	};
+	ChatApplication.prototype.dispose = function() {
+		var self = this;
+		
+		this.unsetAccount(null);
+		this.unsetContact(null);
+		
+		Object.keys(this.contactViews).forEach(function(key) {
+			self.contactViews[key].dispose();
+		});
+		Object.keys(this.contactModels).forEach(function(key) {
+			self.contactModels[key].dispose();
+		});
+		
+		this.contactModels = {};
+		this.contactViews = {};
 	};
 	
 	var chatApplication = new ChatApplication();

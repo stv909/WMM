@@ -198,7 +198,7 @@ var chat = chat || {};
 				self.loginInputElem.classList.remove('hidden');
 				self.loginButtonElem.classList.remove('hidden');
 
-				self.avatarImg.src = 'http://www.dangerouscreation.com/wp-content/uploads/2012/11/blank_avatar.jpg';
+				self.avatarImg.src = '';
 				self.nameElem.textContent = "";
 
 				self.trigger({
