@@ -114,6 +114,7 @@ var mvp = mvp || {};
 		}	
 	};
 	View.prototype.dispose = function() {
+		this.trigger('dispose');
 		this.detach();
 		this.off();
 	};

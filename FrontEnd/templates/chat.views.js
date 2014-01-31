@@ -1,6 +1,6 @@
 var chat = chat || {};
 
-(function(chat, mvp, template) {
+(function(chat, mvp, template, html) {
 	
 	var View = mvp.View;
 	var ContactModel = chat.models.ContactModel;
@@ -269,20 +269,20 @@ var chat = chat || {};
 		this.messageComposerView.enable(isEnable);	
 	};
 	
-	var MessageComposerView = function() {
-		MessageComposerView.super.constructor.apply(this, arguments);
+	var MessageView = function() {
+		MessageView.super.constructor.apply(this, arguments);
 		
-		this.elem = template.create('message-composer-template', { className: 'message' });
-		this.elem.classList.add('dynamic');
-		
-		this.containerElem = this.elem.getElementsByClassName('container')[0];
-		this.editorElem = this.elem.getElementsByClassName('editor')[0];
-		this.avatarElem = this.elem.getElementsByClassName('avatar')[0];
+		this.containerElem = null;
+		this.editorElem = null;
+		this.avatarElem = null;
 	};
-	MessageComposerView.super = View.prototype;
-	MessageComposerView.prototype = Object.create(View.prototype);
-	MessageComposerView.prototype.constructor = MessageComposerView;
-	MessageComposerView.prototype.enable = function(isEnable) {
+	MessageView.super = View.prototype;
+	MessageView.prototype = Object.create(View.prototype);
+	MessageView.prototype.constructor = MessageView;
+	MessageView.prototype.setAvatar = function(avatar) {
+		this.avatarElem.src = avatar;	
+	};
+	MessageView.prototype.enable = function(isEnable) {
 		if (isEnable) {
 			this.elem.classList.add('dynamic');
 			this.elem.classList.remove('static');
@@ -301,18 +301,132 @@ var chat = chat || {};
 			this.editorElem.contentEditable = 'false';
 		}
 	};
-	MessageComposerView.prototype.setAvatar = function(avatar) {
-		this.avatarElem.src = avatar;	
+	MessageView.prototype.clear = function() {
+		this.editorElem.innerHTML = '';
+	};
+	MessageView.prototype.checkOverflow = function() {
+		var isOverflow = html.checkMessageElemOverflow(this.containerElem);
+		if (isOverflow) {
+			this.containerElem.style.border = '2px solid #fffc63';
+		}
+		else {
+			this.containerElem.style.border = '2px solid #fff';
+		}
+	};
+	MessageView.prototype.setContent = function(content) {
+		this.editorElem.innerHTML = content;	
+	};
+	MessageView.prototype.getContent = function() {
+		this.editorElem.innerHTML = '';	
+	};
+	MessageView.prototype.isEditing = function() {
+		return this.containerElem.contains('dynamic');
 	};
 	
+	var MessageComposerView = function() {
+		MessageComposerView.super.constructor.apply(this, arguments);
+		
+		this.elem = template.create('message-composer-template', { className: 'message' });
+		this.elem.classList.add('dynamic');
+		
+		this.containerElem = this.elem.getElementsByClassName('container')[0];
+		this.editorElem = this.elem.getElementsByClassName('editor')[0];
+		this.avatarElem = this.elem.getElementsByClassName('avatar')[0];
+	};
+	MessageComposerView.super = MessageView.prototype;
+	MessageComposerView.prototype = Object.create(MessageView.prototype);
+	MessageComposerView.prototype.constructor = MessageComposerView;
+
 	var MessageStreamView = function(model) {
 		MessageComposerView.super.constructor.apply(this, arguments);
 		
 		this.model = model;
+		
+		this.elem = template.create('message-stream-template', { className: 'message' });
+		this.elem.classList.add('static');
+		
+		this.containerElem = this.elem.getElementsByClassName('container')[0];
+		this.editorElem = this.elem.getElementsByClassName('editor')[0];
+		this.avatarElem = this.elem.getElementsByClassName('avatar')[0];
+		this.nameElem = this.elem.getElementsByClassName('name')[0];
+		this.timeElem = this.elem.getElementsByClassName('time')[0];
+		
+		this.editElem = this.elem.getElementsByClassName('edit')[0];
+		this.clearElem = this.elem.getElementsByClassName('clear')[0];
+		this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
+		this.shareElem = this.elem.getElementsByClassName('share')[0];
+		this.fullscreenElem = this.elem.getElementsByClassName('fullscreen')[0];
+		this.deleteElem = this.elem.getElementsByClassName('delete')[0];
 	};
-	MessageStreamView.super = View.prototype;
-	MessageStreamView.prototype = Object.create(View.prototype);
+	MessageStreamView.super = MessageView.prototype;
+	MessageStreamView.prototype = Object.create(MessageView.prototype);
 	MessageStreamView.prototype.constructor = MessageStreamView;
+	MessageStreamView.prototype.beginEditing = function() {
+		this.editElem.textContent = 'finish';
+		this.clearElem.style.display = 'block';
+		this.cancelElem.style.display = 'block';
+		this.shareElem.style.display = 'none';
+		this.fullscreenElem.style.display = 'none';
+		this.deleteElem.style.display = 'none';
+
+		this.elem.className = 'message dynamic';
+		this.containerElem.className = 'container dynamic';
+		this.containerElem.style.overflow = 'scroll';
+		this.containerElem.style.border = '2px solid #ddd';
+		this.editorElem.contentEditable = 'true';
+		
+		this._tempContent = this.model.getAttribute('content');
+		
+		this.trigger({
+			type: 'editing:begin',
+			model: this.model
+		});
+	};
+	MessageStreamView.prototype.endEditing = function() {
+		this.editElem.textContent = 'edit';
+		this.clearElem.style.display = 'none';
+		this.cancelElem.style.display = 'none';
+		this.shareElem.style.display = 'block';
+		this.fullscreenElem.style.display = 'block';
+		this.deleteElem.style.display = 'block';
+
+		this.elem.className = 'message static';
+		this.containerElem.className = 'container static';
+		this.containerElem.style.overflow = 'hidden';
+		this.containerElem.scrollTop = 0;
+		this.containerElem.scrollLeft = 0;
+		this.editorElem.contentEditable = 'false';
+		
+		this._tempContent = null;
+		
+		this.trigger({
+			type: 'editing:end',
+			model: this.model
+		});
+	};
+	MessageStreamView.prototype.cancelEditing = function() {
+		this.editElem.textContent = 'edit';
+		this.clearElem.style.display = 'none';
+		this.cancelElem.style.display = 'none';
+		this.shareElem.style.display = 'block';
+		this.fullscreenElem.style.display = 'block';
+		this.deleteElem.style.display = 'block';
+
+		this.elem.className = 'message static';
+		this.containerElem.className = 'container static';
+		this.containerElem.style.overflow = 'hidden';
+		this.containerElem.scrollTop = 0;
+		this.containerElem.scrollLeft = 0;
+		this.editorElem.contentEditable = 'false';
+		
+		this.model.setAttribute('content', this._tempContent);
+		this._tempContent = null;
+		
+		this.trigger({
+			type: 'editing:cancel',
+			model: this.model
+		});
+	};
 	
 	var DialogView = function() {
 		DialogView.super.constructor.apply(this, arguments);
@@ -352,4 +466,4 @@ var chat = chat || {};
 		DialogView: DialogView,
 	};
 	
-})(chat, mvp, template);
+})(chat, mvp, template, html);
