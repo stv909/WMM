@@ -98,7 +98,7 @@ var chat = chat || {};
 			this.rootElem.appendChild(this.contactElem);
 		}
 	};
-	ContactView.prototype.dettach = function() {
+	ContactView.prototype.detach = function() {
 		if (this.rootElem) {
 			this.rootElem.removeChild(this.contactElem);
 			this.rootElem = null;
@@ -106,7 +106,7 @@ var chat = chat || {};
 	};
 	ContactView.prototype.dispose = function() {
 		this.trigger('dispose');
-		this.dettach();
+		this.detach();
 	};
 	
 	chat.views = {
