@@ -6,6 +6,7 @@ window.onload = function() {
 	
 	var ContactModel = chat.models.ContactModel;
 	var MessageModel = chat.models.MessageModel;
+	var Storage = chat.store.Storage;
 	
 	var ContactView = chat.views.ContactView;
 	var AccountView = chat.views.AccountView;
@@ -13,35 +14,13 @@ window.onload = function() {
 	var ChatboxView = chat.views.ChatboxView;
 	var DialogView = chat.views.DialogView;
 	
-	var formatDate = function(date) {
-		var hours = date.getHours();
-		var minutes = date.getMinutes();
-		var month = date.getMonth() + 1;
-		var day = date.getDate();
-		
-		var now = new Date();
-		var currentDay = now.getDate();
-		var currentMonth = now.getMonth() + 1;
-		
-		var clock = [hours <= 9 ? '0' + hours : hours,
-				minutes <= 9 ? '0' + minutes : minutes].join(':');
-				
-		if (currentDay !== day || currentMonth != month) {
-			return [[month <= 9 ? '0' + month : month,
-					day <= 9 ? '0' + day : day].join('.'), clock].join(' ');
-		} else {
-			return clock;
-		}
-	};
-	
 	var ChatApplication = function() {
 		ChatApplication.super.constructor.apply(this, arguments);
 		var self = this;
 		
 		this.serverUrl = 'ws://www.bazelevscontent.net:9009/';
 		this.chatClient = new ChatClient(this.serverUrl);
-		this.account = null;
-		this.contact = null;
+		this.storage = new Storage();
 		
 		this.chatElem = document.getElementById('chat');
 		this.chatWrapElem = this.chatElem.getElementsByClassName('wrap')[0];
@@ -55,11 +34,8 @@ window.onload = function() {
 		this.messageComposerView = new MessageComposerView();
 		this.chatboxView = new ChatboxView(this.messageComposerView);
 		this.dialogView = new DialogView();
-		
-		this.contactModels = {};
+
 		this.contactViews = {};
-		
-		this.messageModels = {};
 		this.messageViews = {};
 
 		var messageElemHandler = function(e) {
@@ -296,12 +272,13 @@ window.onload = function() {
 		this.initialize = function() {
 			this.chatboxView.attachTo(this.chatWrapElem);
 			this.accountView.attachTo(this.menuElem);
+			this.initializeStorageListeners();
 			
 			var authorizeListener = function(event) {
 				console.log('authorize complete');
 				
 				self.chatClient.on('message:publiclist', publiclistClientChatListener);
-				self.setAccount(event.account);
+				self.storage.setAccount(event.account);
 				self.chatClient.publiclist();
 			};
 			var publiclistClientChatListener = function(event) {
@@ -328,13 +305,9 @@ window.onload = function() {
 				self.chatClient.on('message:subscribelist', subscribelistClientChatListener);
 				
 				var publics = event.response.retrieve;
-				var contactModelCollection = publics.map(ContactModel.fromPublic);
-
-				contactModelCollection.forEach(function(contactModel) {
-					var contactView = new ContactView(contactModel);
-					var id = contactModel.getAttribute('id');
-					self.contactModels[id] = contactModel;
-					self.contactViews[id] = contactView;
+				var contactCollection = publics.map(ContactModel.fromPublic);
+				contactCollection.forEach(function(contact) {
+					self.storage.addContact(contact);
 				});
 				
 				self.chatClient.subscribelist();
@@ -365,13 +338,10 @@ window.onload = function() {
 				self.chatClient.on('message:users', usersClientChatListener);
 				
 				var themes = event.response.retrieve;
-				var contactModelCollection = themes.map(ContactModel.fromTheme);
-				
-				contactModelCollection.forEach(function(contactModel) {
-					var contactView = new ContactView(contactModel);
-					var id = contactModel.getAttribute('id');
-					self.contactModels[id] = contactModel;
-					self.contactViews[id] = contactView;
+				var contactCollection = themes.map(ContactModel.fromTheme);
+
+				contactCollection.forEach(function(contact) {
+					self.storage.addContact(contact);
 				});
 				
 				self.chatClient.users();
@@ -400,16 +370,10 @@ window.onload = function() {
 				self.chatClient.on('message:online', onlineClientChatListener);
 				
 				var profiles = event.response.retrieve;
-				var contactModelCollection = profiles.map(ContactModel.fromProfile);
-				var accountId = self.account.getAttribute('id');
-				
-				contactModelCollection.forEach(function(contactModel) {
-					var id = contactModel.getAttribute('id');
-					self.contactModels[id] = contactModel;
-					if (id !== accountId) {
-						var contactView = new ContactView(contactModel);
-						self.contactViews[id] = contactView;
-					}
+				var contactCollection = profiles.map(ContactModel.fromProfile);
+
+				contactCollection.forEach(function(contact) {
+					self.storage.addContact(contact);
 				});
 				
 				self.chatClient.online();
@@ -422,9 +386,9 @@ window.onload = function() {
 				
 				var online = event.response.online;
 				online.forEach(function(item) {
-					var contactModel = self.contactModels[item];
-					if (contactModel) {
-						contactModel.setAttribute('online', true);
+					var contact = self.storage.contacts[item];
+					if (contact) {
+						contact.setAttribute('online', true);
 					}
 				});
 				
@@ -554,41 +518,16 @@ window.onload = function() {
 			this.accountView.on('authorize', authorizeListener);
 			this.accountView.on('disconnect', disconnectListener);
 			this.chatClient.on('error:message', errorMessageClientChatListener);
-			
-			var setAccountListener = function(event) {
-				var account = event.account;
-				var avatar = account.getAttribute('avatar');
-				
-				self.messageComposerView.setAvatar(avatar);
-			};
-			var unsetAccountListener = function(event) {
-				self.messageComposerView.setAvatar('');
-			};
-			var setContactListener = function(event) {
-				self.chatboxView.showMessageComposer(true);
-				self.chatboxView.enableMessageComposer(true);
-				self.chatboxView.showConversationTitle(true);
-				self.updateConversationTitle();
-			};
-			var unsetContactListener = function(event) {
-				self.chatboxView.showMessageComposer(false);
-				self.chatboxView.enableMessageComposer(false);
-				self.chatboxView.showConversationTitle(false);
-				self.chatboxView.setConverstationTitle('');
-			};
-			
-			this.on('set:account', setAccountListener);
-			this.on('unset:account', unsetAccountListener);
-			this.on('set:contact', setContactListener);
-			this.on('unset:contact', unsetContactListener);
-			
+
 			var sendMessageComposerListener = function(event) {
+				var companion = self.storage.companion;
+				var account = self.storage.account;
 				var messageModel = new MessageModel();
 				
 				messageModel.setAttribute('id', uuid.v4());
-				messageModel.setAttribute('type', self.contact.getAttribute('type'));
-				messageModel.setAttribute('authorId', self.account.getAttribute('id'));
-				messageModel.setAttribute('receiverId', self.contact.getAttribute('id'));
+				messageModel.setAttribute('type', companion.getAttribute('type'));
+				messageModel.setAttribute('authorId', account.getAttribute('id'));
+				messageModel.setAttribute('receiverId', companion.getAttribute('id'));
 				messageModel.setAttribute('content', event.content);
 				
 				console.log(JSON.stringify(messageModel, null, 4));
@@ -602,37 +541,56 @@ window.onload = function() {
 	ChatApplication.super = EventTrigger.prototype;
 	ChatApplication.prototype = Object.create(EventTrigger.prototype);
 	ChatApplication.prototype.constructor = ChatApplication;
-	ChatApplication.prototype.setAccount = function(account) {
-		if (this.account === null ||
-			this.account.getAttribute('id') !== account.getAttribute('id')) {
-			this.account = account;
-			this.trigger({
-				type: 'set:account',
-				account: this.account
-			}); 
-		}
-	};
-	ChatApplication.prototype.unsetAccount = function() {
-		this.account = null;
-		this.trigger({
-			type: 'unset:account'
-		});
-	};
-	ChatApplication.prototype.setContact = function(contact) {
-		if (this.contact === null ||
-			this.contact.getAttribute('id') !== contact.getAttribute('id')) {
-			this.contact = contact;
-			this.trigger({
-				type: 'set:contact',
-				contact: this.contact
-			});
-		}	
-	};
-	ChatApplication.prototype.unsetContact = function() {
-		this.contact = null;
-		this.trigger({
-			type: 'unset:contact'	
-		});
+	ChatApplication.prototype.initializeStorageListeners = function() {
+		var self = this;
+
+		var setAccountListener = function(event) {
+			var account = event.account;
+			var avatar = account.getAttribute('avatar');
+
+			self.messageComposerView.setAvatar(avatar);
+		};
+		var unsetAccountListener = function(event) {
+			self.messageComposerView.setAvatar('');
+		};
+		var setCompanionListener = function(event) {
+			self.chatboxView.showMessageComposer(true);
+			self.chatboxView.enableMessageComposer(true);
+			self.chatboxView.showConversationTitle(true);
+			self.updateConversationTitle();
+		};
+		var unsetCompanionListener = function(event) {
+			self.chatboxView.showMessageComposer(false);
+			self.chatboxView.enableMessageComposer(false);
+			self.chatboxView.showConversationTitle(false);
+			self.chatboxView.setConverstationTitle('');
+		};
+		var addContactListener = function(event) {
+			var contact = event.contact;
+			var contactId = contact.getAttribute('id');
+			var accountId = self.storage.account.getAttribute('id');
+
+			if (contactId !== accountId) {
+				var contactView = new ContactView(contact);
+				self.contactViews[contactId] = contactView;
+			}
+		};
+		var removeContactListener = function(event) {
+			var contactId = event.contactId;
+			var contactView = self.contactViews[contactId];
+
+			if (contactView) {
+				contactView.dispose();
+				delete self.contactViews[contactId];
+			}
+		};
+
+		this.storage.on('set:account', setAccountListener);
+		this.storage.on('unset:account', unsetAccountListener);
+		this.storage.on('set:companion', setCompanionListener);
+		this.storage.on('unset:companion', unsetCompanionListener);
+		this.storage.on('add:contact', addContactListener);
+		this.storage.on('remove:contact', removeContactListener);
 	};
 	ChatApplication.prototype.prepareContactViews = function() {
 		var self = this;
@@ -640,21 +598,13 @@ window.onload = function() {
 		var prepareContactView = function(contactView) {
 			contactView.attachTo(self.contactListElem);
 			contactView.on('click', function(event) {
-				self.setContact(event.model);
+				self.storage.setCompanion(event.model);
 			});
 		};
 
-		var keys = Object.keys(this.contactViews);
-
-		var publicKeys = keys.filter(function(key) {
-			return self.contactModels[key].getAttribute('type') === 'public';
-		});
-		var themeKeys = keys.filter(function(key) {
-			return self.contactModels[key].getAttribute('type') === 'theme';
-		});
-		var userKeys = keys.filter(function(key) {
-			return self.contactModels[key].getAttribute('type') === 'user';
-		});
+		var publicKeys = self.storage.getPublicContactIds();
+		var themeKeys = self.storage.getThemeContactIds();
+		var userKeys = self.storage.getUserContactIds();
 
 		publicKeys.forEach(function(key) {
 			prepareContactView(self.contactViews[key]);
@@ -707,12 +657,16 @@ window.onload = function() {
 	};
 	ChatApplication.prototype.updateConversationTitle = function() {
 		var self = this;
-		
+		var storage = self.storage;
+		var companion = storage.companion;
+		var account = storage.account;
+		var contacts = storage.contacts;
+
 		var setThemeTitle = function() {
-			var id = self.contact.getAttribute('id');
-			var name = self.contact.getAttribute('name');
-			var author = self.contact.getAttribute('author');
-			var authorName = self.contactModels[author].getAttribute('name');
+			var id = companion.getAttribute('id');
+			var name = companion.getAttribute('name');
+			var author = companion.getAttribute('author');
+			var authorName = contacts[author].getAttribute('name');
 			var label = ['{', name, '}: '];
 			var title = label.concat([authorName, ' and ...'].join(', ')).join('');
 
@@ -723,7 +677,7 @@ window.onload = function() {
 					var currentgroup = groupuserlist[0];
 					var users = currentgroup.users || [];
 					var userNames = users.map(function(user) {
-						return self.contactModels[user].getAttribute('name');
+						return contacts[user].getAttribute('name');
 					});
 					var title = label.concat(userNames.join(', ')).join('');
 					self.chatboxView.setConverstationTitle(title);
@@ -737,19 +691,19 @@ window.onload = function() {
 			self.chatboxView.setConverstationTitle(title);
 		};
 		var setUserTitle = function() {
-			var title = self.contact.getAttribute('name');
+			var title = companion.getAttribute('name');
 			self.chatboxView.setConverstationTitle(title);
 		};
 		var setPublicTitle = function() {
-			var name = self.contact.getAttribute('name');
-			var author = self.contact.getAttribute('author');
-			var authorName = [self.contactModels[author].getAttribute('name')];
-			var moderators = Object.keys(self.contact.getAttribute('moderators'));
-			var accountId = self.account.getAttribute('id');
+			var name = companion.getAttribute('name');
+			var author = companion.getAttribute('author');
+			var authorName = [contacts[author].getAttribute('name')];
+			var moderators = Object.keys(companion.getAttribute('moderators'));
+			var accountId = account.getAttribute('id');
 			var userNames = moderators.filter(function(moderator) {
 				return moderator !== accountId;
 			}).map(function(moderator) {
-				return self.contactModels[moderator].getAttribute('name');
+				return contacts[moderator].getAttribute('name');
 			});
 			var allUsers = authorName.concat(userNames).join(', ');
 			var label = ['[', name, ']: '].join('');
@@ -759,7 +713,7 @@ window.onload = function() {
 		};
 		self.chatClient.off('message:groupuserlist');
 		
-		var type = self.contact.getAttribute('type');
+		var type = companion.getAttribute('type');
 		switch (type) {
 			case 'user':
 				setUserTitle();
@@ -773,28 +727,28 @@ window.onload = function() {
 		}
 	};
 	ChatApplication.prototype.dispose = function() {
-		var self = this;
-		
-		this.unsetAccount(null);
-		this.unsetContact(null);
-		
-		Object.keys(this.contactViews).forEach(function(key) {
-			self.contactViews[key].dispose();
-		});
-		Object.keys(this.contactModels).forEach(function(key) {
-			self.contactModels[key].dispose();
-		});
-		Object.keys(this.messageViews).forEach(function(key) {
-			self.messageViews[key].dispose();
-		});
-		Object.keys(this.messageModels).forEach(function(key) {
-			self.messageModels[key].dispose();	
-		});
-		
-		this.contactViews = {};
-		this.contactModels = {};
-		this.messageViews = {};
-		this.messageModels = {};
+		this.storage.clear();
+	};
+
+	var formatDate = function(date) {
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var month = date.getMonth() + 1;
+		var day = date.getDate();
+
+		var now = new Date();
+		var currentDay = now.getDate();
+		var currentMonth = now.getMonth() + 1;
+
+		var clock = [hours <= 9 ? '0' + hours : hours,
+			minutes <= 9 ? '0' + minutes : minutes].join(':');
+
+		if (currentDay !== day || currentMonth != month) {
+			return [[month <= 9 ? '0' + month : month,
+				day <= 9 ? '0' + day : day].join('.'), clock].join(' ');
+		} else {
+			return clock;
+		}
 	};
 	
 	var chatApplication = new ChatApplication();
