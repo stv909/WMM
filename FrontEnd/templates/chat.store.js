@@ -142,11 +142,18 @@ var chat = chat || {};
 			var messageId = message.getAttribute('id');
 			this.messages[messageId] = message;
 
+			var authorId = message.getAttribute('authorId');
+			var receiverId = message.getAttribute('receiverId');
+			var shown = message.getAttribute('shown');
+
+			if (!shown) {
+				var contact = message.getAttribute('contact');
+				var count = contact.getAttribute('count') + 1;
+				contact.setAttribute('count', count);
+			}
+
 			if (this.companion) {
 				var companionId = this.companion.getAttribute('id');
-				var authorId = message.getAttribute('authorId');
-				var receiverId = message.getAttribute('receiverId');
-
 				if (authorId === companionId || receiverId == companionId) {
 					this.companionMessages.push(message);
 					this.trigger({

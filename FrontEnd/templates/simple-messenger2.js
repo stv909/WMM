@@ -469,12 +469,12 @@ window.onload = function() {
 				var broadcast = event.response.broadcast;
 				var from = broadcast.from;
 				var status = broadcast.id;
-				var contactModel = self.contactModels[from];
+				var contact = self.storage.contacts[from];
 				
 				if (status.indexOf('online.') === 0) {
-					contactModel.setAttribute('online', true);
+					contact.setAttribute('online', true);
 				} else if (status.indexOf('offline.') === 0) {
-					contactModel.setAttribute('online', false);
+					contact.setAttribute('online', false);
 				}
 			};
 			
@@ -512,6 +512,7 @@ window.onload = function() {
 				messageModel.setAttribute('receiverId', companion.getAttribute('id'));
 				messageModel.setAttribute('content', event.content);
 				messageModel.setAttribute('contact', account);
+				messageModel.setAttribute('shown', true);
 				
 				self.sendMessage(messageModel);
 				self.storage.addMessage(messageModel);
@@ -635,24 +636,6 @@ window.onload = function() {
 		userKeys.forEach(function(key) {
 			prepareContactView(self.contactViews[key]);
 		});
-
-		// var accountId = this.account.getAttribute('id');
-		// var messageKeys = Object.keys(this.messages);
-
-		// messageKeys.forEach(function(key) {
-		// 	var message = self.messages[key];
-		// 	var shown = message.shown;
-		// 	var value = message.value || {};
-		// 	var from = value.group || value.from || '';
-		// 	if (!shown && from !== accountId) {
-		// 		var contactModel = self.contactModels[from];
-		// 		if (contactModel) {
-		// 			var count = contactModel.getAttribute('count');
-		// 			count += 1;
-		// 			contactModel.setAttribute('count', count);
-		// 		}
-		// 	}
-		// });
 	};
 	ChatApplication.prototype.sendMessage = function(messageModel) {
 		var self = this;
