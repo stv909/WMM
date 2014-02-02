@@ -3,7 +3,29 @@ var chat = chat || {};
 (function(chat, mvp, template, html) {
 	
 	var View = mvp.View;
+
 	var ContactModel = chat.models.ContactModel;
+
+	var formatDate = function(date) {
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var month = date.getMonth() + 1;
+		var day = date.getDate();
+
+		var now = new Date();
+		var currentDay = now.getDate();
+		var currentMonth = now.getMonth() + 1;
+
+		var clock = [hours <= 9 ? '0' + hours : hours,
+			minutes <= 9 ? '0' + minutes : minutes].join(':');
+
+		if (currentDay !== day || currentMonth != month) {
+			return [[month <= 9 ? '0' + month : month,
+				day <= 9 ? '0' + day : day].join('.'), clock].join(' ');
+		} else {
+			return clock;
+		}
+	};
 	
 	var ContactView = function(model) {
 		mvp.EventTrigger.call(this);
@@ -93,7 +115,7 @@ var chat = chat || {};
 	ContactView.prototype = Object.create(mvp.EventTrigger.prototype);
 	ContactView.prototype.constructor = ContactView;
 	ContactView.prototype.getModel = function() {
-		return this._model;	
+		return this.model;
 	};
 	ContactView.prototype.attachTo = function(rootElem) {
 		if (!this.rootElem) {
@@ -268,6 +290,11 @@ var chat = chat || {};
 		}
 		this.messageComposerView.enable(isEnable);	
 	};
+	ChatboxView.prototype.addMessageView = function(messageView) {
+		messageView.attachTo(this.streamWrapElem);
+		html.scrollToBottom(this.streamWrapElem);
+	};
+
 	
 	var MessageView = function() {
 		MessageView.super.constructor.apply(this, arguments);
@@ -370,6 +397,9 @@ var chat = chat || {};
 				self.editorElem.focus();
 				e.preventDefault();
 				e.stopPropagation();
+
+				shiftPressed = false;
+				ctrlPressed = false;
 			}
 		});
 		this.editorElem.addEventListener('keyup', function(e) {
@@ -394,9 +424,7 @@ var chat = chat || {};
 		var self = this;
 		
 		this.model = model;
-		
 		this.elem = template.create('message-stream-template', { className: 'message' });
-		this.elem.classList.add('static');
 		
 		this.containerElem = this.elem.getElementsByClassName('container')[0];
 		this.editorElem = this.elem.getElementsByClassName('editor')[0];
@@ -410,7 +438,10 @@ var chat = chat || {};
 		this.shareElem = this.elem.getElementsByClassName('share')[0];
 		this.fullscreenElem = this.elem.getElementsByClassName('fullscreen')[0];
 		this.deleteElem = this.elem.getElementsByClassName('delete')[0];
-		
+
+		this.elem.classList.add('static');
+		this.containerElem.classList.add('static');
+
 		var editElemClickListener = function(event) {
 			alert('edit');
 		};
@@ -430,12 +461,51 @@ var chat = chat || {};
 			alert('delete');
 		};
 		
-		this.editorElem.addEventListener('click', editElemClickListener);
+		this.editElem.addEventListener('click', editElemClickListener);
 		this.clearElem.addEventListener('click', clearElemClickListener);
 		this.cancelElem.addEventListener('click', cancelElemClickListener);
 		this.shareElem.addEventListener('click', shareElemClickListener);
 		this.fullscreenElem.addEventListener('click', fullscreenElemClickListener);
-		this.deleteElemClickListener.addEventListener('click', deleteElemClickListener);
+		this.deleteElem.addEventListener('click', deleteElemClickListener);
+
+		var changeTimestampListener = function(event) {
+			var timestamp = event.timestamp;
+			var date = timestamp ? new Date(timestamp) : new Date();
+
+			self.timeElem.textContent = formatDate(date);
+		};
+		var changeContentListener = function(event) {
+			self.editorElem.innerHTML = event.content;
+		};
+
+		this.model.on('change:timestamp', changeTimestampListener);
+		this.model.on('change:content', changeContentListener);
+
+		changeTimestampListener({
+			timestamp: this.model.getAttribute('timestamp')
+		});
+		changeContentListener({
+			content: this.model.getAttribute('content')
+		});
+
+		var contact = this.model.getAttribute('contact');
+
+		var changeAvatarListener = function(event) {
+			self.avatarElem.src = event.avatar;
+		};
+		var changeNameListener = function(event) {
+			self.nameElem.textContent = event.name || contact.getAttribute('id');
+		};
+
+		contact.on('change:avatar', changeAvatarListener);
+		contact.on('change:name', changeNameListener);
+
+		changeAvatarListener({
+			avatar: contact.getAttribute('avatar')
+		});
+		changeNameListener({
+			name: contact.getAttribute('name')
+		});
 		
 		var disposeListener = function() {
 			self.editorElem.removeEventListener('click', editElemClickListener);
@@ -444,6 +514,12 @@ var chat = chat || {};
 			self.shareElem.removeEventListener('click', shareElemClickListener);
 			self.fullscreenElem.removeEventListener('click', fullscreenElemClickListener);
 			self.deleteElem.removeEventListener('click', deleteElemClickListener);
+
+			self.off('change:timestamp', changeTimestampListener);
+			self.off('change:content', changeContentListener);
+
+			contact.off('change:avatar', changeAvatarListener);
+			contact.off('change:name', changeNameListener);
 		};
 		
 		this.on('dispose', disposeListener);

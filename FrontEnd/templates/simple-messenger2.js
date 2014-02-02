@@ -11,6 +11,7 @@ window.onload = function() {
 	var ContactView = chat.views.ContactView;
 	var AccountView = chat.views.AccountView;
 	var MessageComposerView = chat.views.MessageComposerView;
+	var MessageStreamView = chat.views.MessageStreamView;
 	var ChatboxView = chat.views.ChatboxView;
 	var DialogView = chat.views.DialogView;
 	
@@ -249,26 +250,7 @@ window.onload = function() {
 			setMessageElemTime(messageElem, time);
 			appendMessageElem(messageElem);
 		};
-		this.getMessagesBySender = function(senderId) {
-			var keys = Object.keys(self.messages);
-			var messages = keys.map(function(key) {
-				return self.messages[key];
-			}).filter(function(message) {
-				return (message.value.from === senderId && !message.value.group) ||
-						(message.value.to === senderId && !message.value.group) || 
-						message.value.group === senderId;
-			}).sort(function(message1, message2) {
-				if (message1.value.timestamp > message2.value.timestamp) {
-					return 1;
-				} else if (message1.value.timestamp < message2.value.timestamp) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});
-			return messages;
-		};
-		
+
 		this.initialize = function() {
 			this.chatboxView.attachTo(this.chatWrapElem);
 			this.accountView.attachTo(this.menuElem);
@@ -529,10 +511,10 @@ window.onload = function() {
 				messageModel.setAttribute('authorId', account.getAttribute('id'));
 				messageModel.setAttribute('receiverId', companion.getAttribute('id'));
 				messageModel.setAttribute('content', event.content);
-				
-				console.log(JSON.stringify(messageModel, null, 4));
+				messageModel.setAttribute('contact', account);
 				
 				self.sendMessage(messageModel);
+				self.storage.addMessage(messageModel);
 			};
 			
 			this.messageComposerView.on('send', sendMessageComposerListener);
@@ -558,6 +540,26 @@ window.onload = function() {
 			self.chatboxView.enableMessageComposer(true);
 			self.chatboxView.showConversationTitle(true);
 			self.updateConversationTitle();
+
+			var oldMessages = event.oldMessages;
+			var messages = event.messages;
+
+			oldMessages.forEach(function(message) {
+				var messageId = message.getAttribute('id');
+				var messageView = self.messageViews[messageId];
+				if (messageView) {
+					messageView.detach();
+				}
+			});
+			messages.forEach(function(message) {
+				var messageId = message.getAttribute('id');
+				var messageView = self.messageViews[messageId];
+				if (!messageView) {
+					messageView = new MessageStreamView(message);
+					self.messageViews[messageId] = messageView;
+				}
+				self.chatboxView.addMessageView(messageView);
+			});
 		};
 		var unsetCompanionListener = function(event) {
 			self.chatboxView.showMessageComposer(false);
@@ -584,6 +586,22 @@ window.onload = function() {
 				delete self.contactViews[contactId];
 			}
 		};
+		var addMessageListener = function(event) {
+			var message = event.message;
+			var messageId = message.getAttribute('id');
+			var messageView = new MessageStreamView(message);
+			self.messageViews[messageId] = messageView;
+			self.chatboxView.addMessageView(messageView);
+		};
+		var removeMessageListener = function(event) {
+			var messageId = event.messageId;
+			var messageView = self.messageViews[messageId];
+
+			if (messageView) {
+				messageView.dispose();
+				delete self.messageViews[messageId];
+			}
+		};
 
 		this.storage.on('set:account', setAccountListener);
 		this.storage.on('unset:account', unsetAccountListener);
@@ -591,6 +609,8 @@ window.onload = function() {
 		this.storage.on('unset:companion', unsetCompanionListener);
 		this.storage.on('add:contact', addContactListener);
 		this.storage.on('remove:contact', removeContactListener);
+		this.storage.on('add:message', addMessageListener);
+		this.storage.on('remove:message', removeMessageListener);
 	};
 	ChatApplication.prototype.prepareContactViews = function() {
 		var self = this;
@@ -730,27 +750,6 @@ window.onload = function() {
 		this.storage.clear();
 	};
 
-	var formatDate = function(date) {
-		var hours = date.getHours();
-		var minutes = date.getMinutes();
-		var month = date.getMonth() + 1;
-		var day = date.getDate();
-
-		var now = new Date();
-		var currentDay = now.getDate();
-		var currentMonth = now.getMonth() + 1;
-
-		var clock = [hours <= 9 ? '0' + hours : hours,
-			minutes <= 9 ? '0' + minutes : minutes].join(':');
-
-		if (currentDay !== day || currentMonth != month) {
-			return [[month <= 9 ? '0' + month : month,
-				day <= 9 ? '0' + day : day].join('.'), clock].join(' ');
-		} else {
-			return clock;
-		}
-	};
-	
 	var chatApplication = new ChatApplication();
 	chatApplication.initialize();
 };
