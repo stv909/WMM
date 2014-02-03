@@ -478,7 +478,10 @@ var chat = chat || {};
 			})
 		};
 		var deleteElemClickListener = function(event) {
-			alert('delete');
+			self.trigger({
+				type: 'click:delete',
+				model: self.model
+			});
 		};
 
 		var shown = this.model.getAttribute('shown');

@@ -464,6 +464,10 @@ window.onload = function() {
 			var content = model.getAttribute('content');
 			self.dialogView.show(content);
 		};
+		var deleteClickListener = function(event) {
+			var message = event.model;
+			self.storage.removeMessage(message.getAttribute('id'));
+		};
 		var editingBeginListener = function(event) {
 			if (self.currentMessageView !== null && self.currentMessageView !== messageView) {
 				self.currentMessageView.endEditing();
@@ -484,6 +488,7 @@ window.onload = function() {
 		};
 
 		messageView.on('click:fullscreen', fullscreenClickListener);
+		messageView.on('click:delete', deleteClickListener);
 		messageView.on('editing:begin', editingBeginListener);
 		messageView.on('editing:end', editingEndListener);
 		messageView.on('editing:cancel', editingCancelListener);

@@ -19,7 +19,8 @@ html {
   display: none !important;
 }
 .offline {
-  opacity: 0.6;
+  opacity: 0.4;
+  font-weight: normal !important;
 }
 input[type="text"] {
   background-color: #fff;
@@ -205,6 +206,7 @@ input[type="text"] {
 }
 #contacts >.prewrap >.wrap >.list .contact {
   font-size: 0.8em;
+  font-weight: bold;
   color: #000;
   background-color: #fff;
   padding-left: 0.75em;
