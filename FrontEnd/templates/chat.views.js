@@ -332,12 +332,12 @@ var chat = chat || {};
 		this.editorElem.innerHTML = '';
 	};
 	MessageView.prototype.checkOverflow = function() {
-		var isOverflow = html.checkMessageElemOverflow(this.containerElem);
+		var isOverflow = html.checkElemOverflow(this.containerElem);
 		if (isOverflow) {
-			this.containerElem.style.border = '2px solid #fffc63';
+			this.containerElem.classList.add('overflow');
 		}
 		else {
-			this.containerElem.style.border = '2px solid #fff';
+			this.containerElem.classList.remove('overflow');
 		}
 	};
 	MessageView.prototype.setContent = function(content) {
@@ -483,6 +483,11 @@ var chat = chat || {};
 				model: self.model
 			});
 		};
+		var containerElemOverflowListener = function(event) {
+			if (!self.isEditing()) {
+				self.checkOverflow();
+			}
+		};
 
 		var shown = this.model.getAttribute('shown');
 		if (!shown) {
@@ -502,6 +507,7 @@ var chat = chat || {};
 		this.shareElem.addEventListener('click', shareElemClickListener);
 		this.fullscreenElem.addEventListener('click', fullscreenElemClickListener);
 		this.deleteElem.addEventListener('click', deleteElemClickListener);
+		this.containerElem.addEventListener('overflowchanged', containerElemOverflowListener);
 
 		var changeTimestampListener = function(event) {
 			var timestamp = event.timestamp;
@@ -543,12 +549,14 @@ var chat = chat || {};
 		});
 		
 		var disposeListener = function() {
+			self.elem.removeEventListener('mousemove', elemMousemoveListener);
 			self.editorElem.removeEventListener('click', editElemClickListener);
 			self.clearElem.removeEventListener('click', clearElemClickListener);
 			self.cancelElem.removeEventListener('click', cancelElemClickListener);
 			self.shareElem.removeEventListener('click', shareElemClickListener);
 			self.fullscreenElem.removeEventListener('click', fullscreenElemClickListener);
 			self.deleteElem.removeEventListener('click', deleteElemClickListener);
+			self.containerElem.removeEventListener('overflowchanged', containerElemOverflowListener);
 
 			self.off('change:timestamp', changeTimestampListener);
 			self.off('change:content', changeContentListener);
@@ -574,11 +582,12 @@ var chat = chat || {};
 		this.elem.classList.remove('static');
 		this.containerElem.classList.add('dynamic');
 		this.containerElem.classList.remove('static');
+		this.containerElem.classList.remove('overflow');
 		this.containerElem.style.overflow = 'scroll';
 		this.editorElem.contentEditable = 'true';
-		
+
 		this._tempContent = this.editorElem.innerHTML;
-		
+
 		this.trigger({
 			type: 'editing:begin',
 			model: this.model,
@@ -603,7 +612,8 @@ var chat = chat || {};
 		this.editorElem.contentEditable = 'false';
 		
 		this._tempContent = null;
-		
+
+		this.checkOverflow();
 		this.trigger({
 			type: 'editing:end',
 			model: this.model,
@@ -628,7 +638,8 @@ var chat = chat || {};
 		this.editorElem.contentEditable = 'false';
 
 		this.editorElem.innerHTML = this._tempContent;
-		
+
+		this.checkOverflow();
 		this.trigger({
 			type: 'editing:cancel',
 			model: this.model,
