@@ -212,13 +212,17 @@ window.onload = function() {
 					}
 
 					var message = MessageModel.fromRawMessage(tempRawMessage);
-					var author = self.storage.contacts[message.getAttribute('authorId')];
+					var authorId = message.getAttribute('authorId');
+					var author = self.storage.contacts[authorId];
 					var receiver = self.storage.contacts[message.getAttribute('receiverId')];
+					var accountId = self.storage.account.getAttribute('id');
+					var own = authorId === accountId;
 
 					if (receiver && author) {
 						message.setAttribute('contact', author);
 						message.setAttribute('receiver', receiver);
 						message.setAttribute('type', receiver.getAttribute('type'));
+						message.setAttribute('own', own);
 						self.storage.addMessage(message);
 					}
 				});
@@ -245,6 +249,7 @@ window.onload = function() {
 				message.setAttribute('contact', author);
 				message.setAttribute('receiver', receiver);
 				message.setAttribute('type', receiver.getAttribute('type'));
+				message.setAttribute('own', false);
 
 				self.storage.addMessage(message);
 			};
@@ -267,6 +272,7 @@ window.onload = function() {
 					message.setAttribute('contact', author);
 					message.setAttribute('receiver', receiver);
 					message.setAttribute('type', receiver.getAttribute('type'));
+					message.setAttribute('own', true);
 
 					self.storage.addMessage(message);
 				}
@@ -323,6 +329,7 @@ window.onload = function() {
 				messageModel.setAttribute('contact', account);
 				messageModel.setAttribute('receiver', companion);
 				messageModel.setAttribute('shown', true);
+				messageModel.setAttribute('own', true);
 				
 				self.sendMessage(messageModel);
 				self.storage.addMessage(messageModel);

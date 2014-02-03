@@ -60,11 +60,11 @@ mixin chatbox-template
 	template#chatbox-template(style="display:none")
 		.wrap
 			.board
-				.conversation.passive
+				.conversation.hidden
 					.wrap
 				.stream
 					.wrap
-				.composer.dynamic.passive
+				.composer.dynamic.hidden
 					.wrap
 
 doctype html
@@ -116,7 +116,7 @@ html
 								#tools.cell
 									.prewrap
 										.wrap
-		#dialog.passive
+		#dialog.hidden
 			.container
 				.content
 			.title

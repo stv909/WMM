@@ -268,16 +268,16 @@ var chat = chat || {};
 	};
 	ChatboxView.prototype.showConversationTitle = function(isVisible) {
 		if (isVisible) {
-			this.conversationElem.classList.remove('passive');
+			this.conversationElem.classList.remove('hidden');
 		} else {
-			this.conversationElem.classList.add('passive');
+			this.conversationElem.classList.add('hidden');
 		}
 	};
 	ChatboxView.prototype.showMessageComposer = function(isVisible) {
 		if (isVisible) {
-			this.composerElem.classList.remove('passive');
+			this.composerElem.classList.remove('hidden');
 		} else {
-			this.composerElem.classList.add('passive');
+			this.composerElem.classList.add('hidden');
 		}
 	};
 	ChatboxView.prototype.enableMessageComposer = function(isEnable) {
@@ -486,6 +486,13 @@ var chat = chat || {};
 			this.elem.addEventListener('mousemove', elemMousemoveListener);
 			this.elem.classList.add('unshown');
 		}
+		var own = this.model.getAttribute('own');
+		if (!own) {
+			this.editElem.classList.add('super-hidden');
+			this.cancelElem.classList.add('super-hidden');
+			this.clearElem.classList.add('super-hidden');
+			this.deleteElem.classList.add('super-hidden');
+		}
 		this.editElem.addEventListener('click', editElemClickListener);
 		this.clearElem.addEventListener('click', clearElemClickListener);
 		this.cancelElem.addEventListener('click', cancelElemClickListener);
@@ -554,14 +561,16 @@ var chat = chat || {};
 	MessageStreamView.prototype.constructor = MessageStreamView;
 	MessageStreamView.prototype.beginEditing = function() {
 		this.editElem.textContent = 'finish';
-		this.clearElem.style.display = 'block';
-		this.cancelElem.style.display = 'block';
-		this.shareElem.style.display = 'none';
-		this.fullscreenElem.style.display = 'none';
-		this.deleteElem.style.display = 'none';
+		this.clearElem.classList.remove('hidden');
+		this.cancelElem.classList.remove('hidden');
+		this.shareElem.classList.add('hidden');
+		this.fullscreenElem.classList.add('hidden');
+		this.deleteElem.classList.add('hidden');
 
-		this.elem.className = 'message dynamic';
-		this.containerElem.className = 'container dynamic';
+		this.elem.classList.add('dynamic');
+		this.elem.classList.remove('static');
+		this.containerElem.classList.add('dynamic');
+		this.containerElem.classList.remove('static');
 		this.containerElem.style.overflow = 'scroll';
 		this.editorElem.contentEditable = 'true';
 		
@@ -575,14 +584,16 @@ var chat = chat || {};
 	};
 	MessageStreamView.prototype.endEditing = function() {
 		this.editElem.textContent = 'edit';
-		this.clearElem.style.display = 'none';
-		this.cancelElem.style.display = 'none';
-		this.shareElem.style.display = 'block';
-		this.fullscreenElem.style.display = 'block';
-		this.deleteElem.style.display = 'block';
+		this.clearElem.classList.add('hidden');
+		this.cancelElem.classList.add('hidden');
+		this.shareElem.classList.remove('hidden');
+		this.fullscreenElem.classList.remove('hidden');
+		this.deleteElem.classList.remove('hidden');
 
-		this.elem.className = 'message static';
-		this.containerElem.className = 'container static';
+		this.elem.classList.add('static');
+		this.elem.classList.remove('dynamic');
+		this.containerElem.classList.add('static');
+		this.containerElem.classList.remove('dynamic');
 		this.containerElem.style.overflow = 'hidden';
 		this.containerElem.scrollTop = 0;
 		this.containerElem.scrollLeft = 0;
@@ -598,14 +609,16 @@ var chat = chat || {};
 	};
 	MessageStreamView.prototype.cancelEditing = function() {
 		this.editElem.textContent = 'edit';
-		this.clearElem.style.display = 'none';
-		this.cancelElem.style.display = 'none';
-		this.shareElem.style.display = 'block';
-		this.fullscreenElem.style.display = 'block';
-		this.deleteElem.style.display = 'block';
+		this.clearElem.classList.add('hidden');
+		this.cancelElem.classList.add('hidden');
+		this.shareElem.classList.remove('hidden');
+		this.fullscreenElem.classList.remove('hidden');
+		this.deleteElem.classList.remove('hidden');
 
-		this.elem.className = 'message static';
-		this.containerElem.className = 'container static';
+		this.elem.classList.add('static');
+		this.elem.classList.remove('dynamic');
+		this.containerElem.classList.add('static');
+		this.containerElem.classList.remove('dynamic');
 		this.containerElem.style.overflow = 'hidden';
 		this.containerElem.scrollTop = 0;
 		this.containerElem.scrollLeft = 0;
@@ -637,13 +650,13 @@ var chat = chat || {};
 	DialogView.prototype = Object.create(View.prototype);
 	DialogView.prototype.constructor = DialogView;
 	DialogView.prototype.show = function(content) {
-		this.pageElem.className = 'passive';
-		this.elem.className = 'active';
+		this.pageElem.classList.add('hidden');
+		this.elem.classList.remove('hidden');
 		this.contentElem.innerHTML = content;
 	};
 	DialogView.prototype.close = function() {
-		this.pageElem.className = 'active';
-		this.elem.className = 'passive';
+		this.pageElem.classList.remove('hidden');
+		this.elem.classList.add('hidden');
 		this.contentElem.innerHTML = 'content';
 		this.contentElem.scrollLeft = 0;
 		this.contentElem.scrollTop = 0;
