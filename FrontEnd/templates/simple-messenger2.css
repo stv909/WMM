@@ -244,8 +244,11 @@ input[type="text"] {
 #contacts >.prewrap >.wrap >.list .contact .message-block {
   float: right;
   margin-right: 1.5em;
+  position: relative;
+  z-index: 1;
 }
 #contacts >.prewrap >.wrap >.list .contact .message-block .count {
+  position: relative;
   color: #fff;
   background-color: #f00;
   padding: 0.5em;
