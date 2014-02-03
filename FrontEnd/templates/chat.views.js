@@ -347,7 +347,7 @@ var chat = chat || {};
 		return this.editorElem.innerHTML;	
 	};
 	MessageView.prototype.isEditing = function() {
-		return this.containerElem.contains('dynamic');
+		return this.containerElem.classList.contains('dynamic');
 	};
 	
 	var MessageComposerView = function() {
@@ -442,25 +442,48 @@ var chat = chat || {};
 		this.elem.classList.add('static');
 		this.containerElem.classList.add('static');
 
+		var elemMousemoveListener = function(event) {
+			self.elem.removeEventListener('mousemove', elemMousemoveListener);
+
+			var shown = self.model.getAttribute('shown');
+			var contact = self.model.getAttribute('contact');
+			var count = contact.getAttribute('count') - 1;
+
+			contact.setAttribute('count', count);
+			self.model.setAttribute('shown', true);
+			self.elem.classList.remove('unshown');
+		};
 		var editElemClickListener = function(event) {
-			alert('edit');
+			if (self.isEditing()) {
+				self.endEditing();
+			} else {
+				self.beginEditing();
+			}
 		};
 		var clearElemClickListener = function(event) {
-			alert('clear');
+			self.clear();
 		};
 		var cancelElemClickListener = function(event) {
-			alert('cancel');
+			self.cancelEditing();
 		};
 		var shareElemClickListener = function(event) {
 			alert('share');
 		};
 		var fullscreenElemClickListener = function(event) {
-			alert('fullscreen');
+			self.trigger({
+				type: 'click:fullscreen',
+				model: self.model
+			})
 		};
 		var deleteElemClickListener = function(event) {
 			alert('delete');
 		};
-		
+
+		var shown = this.model.getAttribute('shown');
+		if (!shown) {
+			this.elem.addEventListener('mousemove', elemMousemoveListener);
+			this.elem.classList.add('unshown');
+		}
 		this.editElem.addEventListener('click', editElemClickListener);
 		this.clearElem.addEventListener('click', clearElemClickListener);
 		this.cancelElem.addEventListener('click', cancelElemClickListener);
@@ -538,10 +561,9 @@ var chat = chat || {};
 		this.elem.className = 'message dynamic';
 		this.containerElem.className = 'container dynamic';
 		this.containerElem.style.overflow = 'scroll';
-		this.containerElem.style.border = '2px solid #ddd';
 		this.editorElem.contentEditable = 'true';
 		
-		this._tempContent = this.model.getAttribute('content');
+		this._tempContent = this.editorElem.innerHTML;
 		
 		this.trigger({
 			type: 'editing:begin',
@@ -586,9 +608,8 @@ var chat = chat || {};
 		this.containerElem.scrollTop = 0;
 		this.containerElem.scrollLeft = 0;
 		this.editorElem.contentEditable = 'false';
-		
-		this.model.setAttribute('content', this._tempContent);
-		this._tempContent = null;
+
+		this.editorElem.innerHTML = this._tempContent;
 		
 		this.trigger({
 			type: 'editing:cancel',

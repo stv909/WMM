@@ -258,7 +258,7 @@ input[type="text"] {
   background-color: #ebf5ff;
 }
 #chat .unshown {
-  background-color: #f0ffff 0;
+  background-color: #f0fff0;
 }
 #chat .message {
   padding-top: 0.5em;

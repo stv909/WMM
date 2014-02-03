@@ -38,222 +38,12 @@ window.onload = function() {
 
 		this.contactViews = {};
 		this.messageViews = {};
-
-		var messageElemHandler = function(e) {
-			e.stopPropagation();
-		};
-		var documentElemHandler = function() {
-			if (currentMessageElem) {
-				checkMessageElemOverflow(currentMessageElem);
-				endEditingMessageElem(currentMessageElem);
-				enableMessageComposer();
-				currentMessageElem = null;
-			}
-		};
-		var beginEditingMessageElem = function(messageElem) {
-			if (currentMessageElem !== null && currentMessageElem !== messageElem) {
-				checkMessageElemOverflow(currentMessageElem);
-				endEditingMessageElem(currentMessageElem);
-			}
-
-			var editElem = messageElem.getElementsByClassName('edit')[0];
-			var clearElem = messageElem.getElementsByClassName('clear')[0];
-			var cancelElem = messageElem.getElementsByClassName('cancel')[0];
-			var shareElem = messageElem.getElementsByClassName('share')[0];
-			var fullscreenElem = messageElem.getElementsByClassName('fullscreen')[0];
-			var deleteElem = messageElem.getElementsByClassName('delete')[0];
-
-			var containerElem = messageElem.getElementsByClassName('container')[0];
-			var editorElem = messageElem.getElementsByClassName('editor')[0];
-
-			editElem.textContent = 'finish';
-			clearElem.style.display = 'block';
-			cancelElem.style.display = 'block';
-			shareElem.style.display = 'none';
-			fullscreenElem.style.display = 'none';
-			deleteElem.style.display = 'none';
-
-			messageElem.className = 'message dynamic';
-			containerElem.className = 'container dynamic';
-			containerElem.style.overflow = 'scroll';
-			containerElem.style.border = '2px solid #ddd';
-			editorElem.contentEditable = 'true';
-
-			currentMessageElem = messageElem;
-			currentMessageContent = getMessageElemContent(currentMessageElem);
-			messageElem.addEventListener('click', messageElemHandler);
-		};
-		var endEditingMessageElem = function(messageElem) {
-			var editElem = messageElem.getElementsByClassName('edit')[0];
-			var clearElem = messageElem.getElementsByClassName('clear')[0];
-			var cancelElem = messageElem.getElementsByClassName('cancel')[0];
-			var shareElem = messageElem.getElementsByClassName('share')[0];
-			var fullscreenElem = messageElem.getElementsByClassName('fullscreen')[0];
-			var deleteElem = messageElem.getElementsByClassName('delete')[0];
-
-			var containerElem = messageElem.getElementsByClassName('container')[0];
-			var editorElem = messageElem.getElementsByClassName('editor')[0];
-
-			editElem.textContent = 'edit';
-			clearElem.style.display = 'none';
-			cancelElem.style.display = 'none';
-			shareElem.style.display = 'block';
-			fullscreenElem.style.display = 'block';
-			deleteElem.style.display = 'block';
-
-			messageElem.className = 'message static';
-			containerElem.className = 'container static';
-			containerElem.style.overflow = 'hidden';
-			containerElem.scrollTop = 0;
-			containerElem.scrollLeft = 0;
-			editorElem.contentEditable = 'false';
-
-			messageElem.removeEventListener('click', messageElemHandler);
-			currentMessageElem = null;
-			currentMessageContent = null;
-		};
-		var cancelEditingMessageElem = function(messageElem) {
-			setMessageElemContent(messageElem, currentMessageContent);
-		};
-		
-		var imbueStreamMessageElem = function(messageElem) {
-			var deleteElem = messageElem.getElementsByClassName('delete')[0];
-			var clearElem = messageElem.getElementsByClassName('clear')[0];
-			var cancelElem = messageElem.getElementsByClassName('cancel')[0];
-			var editElem = messageElem.getElementsByClassName('edit')[0];
-			var fullscreenElem = messageElem.getElementsByClassName('fullscreen')[0];
-			var shareElem = messageElem.getElementsByClassName('share')[0];
-			var editorElem = messageElem.getElementsByClassName('editor')[0];
-
-			var editElemHandler = function(e) {
-				if (isEditingMessageElem(messageElem)) {
-					checkMessageElemOverflow(messageElem);
-					endEditingMessageElem(messageElem);
-					enableMessageComposer();
-				} else {
-					beginEditingMessageElem(messageElem);
-					disableMessageComposer();
-				}
-			};
-			var clearElemHandler = function() {
-				clearMessageElem(messageElem);
-			};
-			var cancelElemHandler = function() {
-				cancelEditingMessageElem(messageElem);
-				checkMessageElemOverflow(messageElem);
-				endEditingMessageElem(messageElem);
-				enableMessageComposer();
-			};
-			var fullscreenElemHandler = function() {
-				var messageContent = getMessageElemContent(messageElem);
-				showDialogElem(messageContent);
-			};
-			var shareElemHandler = function() {
-				alert('Not implemented');
-			};
-			var deleteElemHandler = function() {
-				editElem.removeEventListener('click', editElemHandler);
-				clearElem.removeEventListener('click', clearElemHandler);
-				cancelElem.removeEventListener('click', cancelElemHandler);
-				fullscreenElem.removeEventListener('click', fullscreenElemHandler);
-				shareElem.removeEventListener('click', shareElemHandler);
-				editorElem.removeEventListener('keydown', editorElemKeydownHandler);
-				editorElem.removeEventListener('keyup', editorElemKeyupHandler);
-				editorElem.removeEventListener('blur', editorElemBlurHandler);
-				deleteElem.removeEventListener('click', deleteElemHandler);
-				streamWrapElem.removeChild(messageElem);
-			};
-
-			var enterCode = 13;
-			var ctrlPressed = false;
-			var shiftPressed = false;
-
-			var editorElemKeydownHandler = function(e) {
-				if (e.ctrlKey) {
-					ctrlPressed = true;
-				}
-				if (e.shiftKey) {
-					shiftPressed = true;
-				}
-				if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
-					endEditingMessageElem(messageElem);
-					checkMessageElemOverflow(messageElem);
-					enableMessageComposer();
-					e.preventDefault();
-					e.stopPropagation();
-				}
-			};
-			var editorElemKeyupHandler = function(e) {
-				if (e.ctrlKey) {
-					ctrlPressed = false;
-				}
-				if (e.shiftKey) {
-					shiftPressed = false;
-				}
-			};
-			var editorElemBlurHandler = function(e) {
-				ctrlPressed = false;
-				shiftPressed = false;
-			};
-
-			editElem.addEventListener('click', editElemHandler);
-			clearElem.addEventListener('click', clearElemHandler);
-			cancelElem.addEventListener('click', cancelElemHandler);
-			fullscreenElem.addEventListener('click', fullscreenElemHandler);
-			shareElem.addEventListener('click', shareElemHandler);
-			editorElem.addEventListener('keydown', editorElemKeydownHandler);
-			editorElem.addEventListener('keyup', editorElemKeyupHandler);
-			editorElem.addEventListener('blur', editorElemBlurHandler);
-			deleteElem.addEventListener('click', deleteElemHandler);
-
-			checkMessageElemOverflow(messageElem);
-		};
-
-		var initializeComposerMessageElem = function() {
-			document.addEventListener('click', documentElemHandler);
-		};
-
-		this.renderMessageElem = function(message) {
-			self.currentMessages.push(message.id);
-			var timestamp = message.value.timestamp;
-			var now = new Date(timestamp);
-			var time = formatDate(now);
-			var from = message.value.from;
-			var group = message.value.group;
-			var contactModel = self.contactModels[from];
-			var content = base64.decode(message.value.content);
-			var author = contactModel.getAttribute('name');
-			var avatar = contactModel.getAttribute('avatar');
-			var messageElem = createMessageElem(content);
-			
-			if (message.shown) {
-				messageElem.classList.remove('unshown'); 
-			} else {
-				messageElem.classList.add('unshown');
-				var id = group || from;
-				var mouseMoveListener = function(event) {
-					message.shown = true;
-					messageElem.removeEventListener('mousemove', mouseMoveListener);
-					messageElem.classList.remove('unshown');
-					var contactModel = self.contactModels[id];
-					var count = contactModel.getAttribute('count');
-					count--;
-					contactModel.setAttribute('count', count);
-					chatClient.shown(message.id);
-				};
-				messageElem.addEventListener('mousemove', mouseMoveListener);
-			}
-			
-			imbueStreamMessageElem(messageElem);
-			setMessageElemAuthor(messageElem, author);
-			setMessageElemAvatar(messageElem, avatar);
-			setMessageElemTime(messageElem, time);
-			appendMessageElem(messageElem);
-		};
+		this.currentMessageView = null;
 
 		this.initialize = function() {
 			this.chatboxView.attachTo(this.chatWrapElem);
 			this.accountView.attachTo(this.menuElem);
+			this.initializeDocumentListeners();
 			this.initializeStorageListeners();
 			
 			var authorizeListener = function(event) {
@@ -524,6 +314,14 @@ window.onload = function() {
 	ChatApplication.super = EventTrigger.prototype;
 	ChatApplication.prototype = Object.create(EventTrigger.prototype);
 	ChatApplication.prototype.constructor = ChatApplication;
+	ChatApplication.prototype.initializeDocumentListeners = function() {
+		var self = this;
+		document.addEventListener('click', function(event) {
+			if (self.currentMessageView) {
+				self.currentMessageView.endEditing();
+			}
+		});
+	};
 	ChatApplication.prototype.initializeStorageListeners = function() {
 		var self = this;
 
@@ -556,8 +354,7 @@ window.onload = function() {
 				var messageId = message.getAttribute('id');
 				var messageView = self.messageViews[messageId];
 				if (!messageView) {
-					messageView = new MessageStreamView(message);
-					self.messageViews[messageId] = messageView;
+					messageView = self.createMessageView(message);
 				}
 				self.chatboxView.addMessageView(messageView);
 			});
@@ -590,9 +387,21 @@ window.onload = function() {
 		var addMessageListener = function(event) {
 			var message = event.message;
 			var messageId = message.getAttribute('id');
-			var messageView = new MessageStreamView(message);
-			self.messageViews[messageId] = messageView;
-			self.chatboxView.addMessageView(messageView);
+			var authorId = message.getAttribute('authorId');
+			var receiverId = message.getAttribute('receiverId');
+
+			var shownListener = function(event) {
+				self.chatClient.shown(messageId);
+			};
+			message.on('change:shown', shownListener);
+
+			if (self.storage.companion) {
+				var companionId = self.storage.companion.getAttribute('id');
+				if (authorId === companionId || receiverId == companionId) {
+					var messageView = self.createMessageView(message);
+					self.chatboxView.addMessageView(messageView);
+				}
+			}
 		};
 		var removeMessageListener = function(event) {
 			var messageId = event.messageId;
@@ -612,6 +421,48 @@ window.onload = function() {
 		this.storage.on('remove:contact', removeContactListener);
 		this.storage.on('add:message', addMessageListener);
 		this.storage.on('remove:message', removeMessageListener);
+	};
+	ChatApplication.prototype.createMessageView = function(message) {
+		var self = this;
+		var messageElemListener = function(event) {
+			event.stopPropagation();
+		};
+
+		var messageId = message.getAttribute('id');
+		var messageView = new MessageStreamView(message);
+
+		var fullscreenClickListener = function(event) {
+			var model = event.model;
+			var content = model.getAttribute('content');
+			self.dialogView.show(content);
+		};
+		var editingBeginListener = function(event) {
+			if (self.currentMessageView !== null && self.currentMessageView !== messageView) {
+				self.currentMessageView.endEditing();
+			}
+			messageView.elem.addEventListener('click', messageElemListener);
+			self.chatboxView.enableMessageComposer(false);
+			self.currentMessageView = messageView;
+		};
+		var editingEndListener = function(event) {
+			messageView.elem.removeEventListener('click', messageElemListener);
+			self.chatboxView.enableMessageComposer(true);
+			self.currentMessageView = null;
+		};
+		var editingCancelListener = function(event) {
+			messageView.elem.removeEventListener('click', messageElemListener);
+			self.chatboxView.enableMessageComposer(true);
+			self.currentMessageView = null;
+		};
+
+		messageView.on('click:fullscreen', fullscreenClickListener);
+		messageView.on('editing:begin', editingBeginListener);
+		messageView.on('editing:end', editingEndListener);
+		messageView.on('editing:cancel', editingCancelListener);
+
+		this.messageViews[messageId] = messageView;
+
+		return messageView;
 	};
 	ChatApplication.prototype.prepareContactViews = function() {
 		var self = this;
@@ -731,6 +582,7 @@ window.onload = function() {
 	};
 	ChatApplication.prototype.dispose = function() {
 		this.storage.clear();
+		this.currentMessageView = null;
 	};
 
 	var chatApplication = new ChatApplication();

@@ -156,12 +156,13 @@ var chat = chat || {};
 				var companionId = this.companion.getAttribute('id');
 				if (authorId === companionId || receiverId == companionId) {
 					this.companionMessages.push(message);
-					this.trigger({
-						type: 'add:message',
-						message: message
-					});
 				}
 			}
+
+			this.trigger({
+				type: 'add:message',
+				message: message
+			});
 		},
 		removeMessage: function(messageId) {
 			this.messages[messageId].off();
