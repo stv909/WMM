@@ -170,7 +170,30 @@ var chat = chat || {};
 			});
 		},
 		removeMessage: function(messageId) {
-			this.messages[messageId].off();
+			var message = this.messages[messageId];
+
+			var authorId = message.getAttribute('authorId');
+			var receiverId = message.getAttribute('receiverId');
+			var shown = message.getAttribute('shown');
+
+			if (!shown) {
+				var type = message.getAttribute('type');
+				var contact = (type === 'user') ?  this.contacts[authorId] : this.contacts[receiverId];
+				var count = contact.getAttribute('count') - 1;
+				contact.setAttribute('count', count);
+			}
+
+			if (this.companion) {
+				var companionId = this.companion.getAttribute('id');
+				if (authorId === companionId || receiverId == companionId) {
+					var index = this.companionMessages.indexOf(message);
+					if (index !== -1) {
+						this.companionMessages.splice(index, 1);
+					}
+				}
+			}
+
+			message.off();
 			delete this.messages[messageId];
 			this.trigger({
 				type: 'remove:message',

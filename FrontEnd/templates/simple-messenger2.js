@@ -207,7 +207,7 @@ window.onload = function() {
 					var tempRawMessage = tempRawMessages[rawMessage.id];
 					tempRawMessage.value = rawMessage.value;
 
-					if (!tempRawMessage.value.content) {
+					if (!tempRawMessage.value || !tempRawMessage.value.content) {
 						return;
 					}
 
@@ -290,6 +290,11 @@ window.onload = function() {
 					contact.setAttribute('online', true);
 				} else if (status.indexOf('offline.') === 0) {
 					contact.setAttribute('online', false);
+				} else if (status.indexOf('delete.msg.') === 0) {
+					var messageId = status.replace('delete.msg.', '');
+					if (self.storage.messages.hasOwnProperty(messageId)) {
+						self.storage.removeMessage(messageId);
+					}
 				}
 			};
 			
@@ -466,7 +471,13 @@ window.onload = function() {
 		};
 		var deleteClickListener = function(event) {
 			var message = event.model;
-			self.storage.removeMessage(message.getAttribute('id'));
+			var messageId = message.getAttribute('id');
+			var msgId = ['msg', messageId].join('.');
+			var deleteBroadcast = ['delete', msgId].join('.');
+
+			self.storage.removeMessage(messageId);
+			self.chatClient.remove(msgId);
+			self.chatClient.broadcast(deleteBroadcast);
 		};
 		var editingBeginListener = function(event) {
 			if (self.currentMessageView !== null && self.currentMessageView !== messageView) {

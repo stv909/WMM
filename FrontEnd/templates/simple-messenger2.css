@@ -273,6 +273,7 @@ input[type="text"] {
   display: inline-block;
   color: #888;
   font-size: 0.9em;
+  vertical-align: top;
 }
 #chat .message .name:hover,
 #chat .message .time:hover {

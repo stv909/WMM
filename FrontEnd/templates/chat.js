@@ -230,6 +230,10 @@ var chat = chat || {};
 		this.publiclist = function() {
 			_socket.send('publiclist');	
 		};
+		this.remove = function(idsString) {
+			_socket.send('delete');
+			_socket.send(idsString);
+		};
 		
 		//complex protocol operations
 		this.sendMessage = function(message, contactMode) {
