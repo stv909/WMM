@@ -3,7 +3,7 @@ var mvp = mvp || {};
 (function(mvp) {
 
 	var inherit = function(child, parent) {
-		child.super = parent.prototype;
+		child.super = parent;
 		child.prototype = Object.create(parent.prototype);
 		child.prototype.constructor = child;
 	};
@@ -54,7 +54,7 @@ var mvp = mvp || {};
 	});
 
 	var Model = function() {
-		Model.super.constructor.apply(this);
+		Model.super.call(this);
 		
 		this.attributes = {};
 	};
@@ -99,7 +99,7 @@ var mvp = mvp || {};
 	});
 
 	var View = function() {
-		View.super.constructor.apply(this);
+		View.super.apply(this);
 
 		this.model = null;
 		this.parentElem = null;

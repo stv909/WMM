@@ -5,9 +5,9 @@ var chat = chat || {};
 	var Model = mvp.Model;
 	
 	var ContactModel = function() {
-		ContactModel.super.constructor.apply(this, arguments);
+		ContactModel.super.call(this);
 	};
-	ContactModel.super = Model.prototype;
+	ContactModel.super = Model;
 	ContactModel.prototype = Object.create(Model.prototype);
 	ContactModel.prototype.constructor = ContactModel;
 	ContactModel.create = function(id, name, avatar, type, online, count) {
@@ -79,9 +79,9 @@ var chat = chat || {};
 	};
 	
 	var MessageModel = function() {
-		MessageModel.super.constructor.apply(this, arguments);	
+		MessageModel.super.apply(this, arguments);
 	};
-	MessageModel.super = Model.prototype;
+	MessageModel.super = Model;
 	MessageModel.prototype = Object.create(Model.prototype);
 	MessageModel.prototype.constructor = MessageModel;
 	MessageModel.prototype.toRawMessage = function() {
@@ -114,7 +114,7 @@ var chat = chat || {};
 
 		return message;
 	};
-	
+
 	chat.models = {
 		ContactModel: ContactModel,
 		MessageModel: MessageModel

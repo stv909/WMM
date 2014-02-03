@@ -135,7 +135,7 @@ var chat = chat || {};
 	};
 	
 	var AccountView = function(chatClient) {
-		AccountView.super.constructor.apply(this, arguments);
+		AccountView.super.apply(this, arguments);
 		var self = this;
 		
 		this.chatClient = chatClient;
@@ -239,12 +239,12 @@ var chat = chat || {};
 			self.chatClient.disconnect();
 		});
 	};
-	AccountView.super = View.prototype;
+	AccountView.super = View;
 	AccountView.prototype = Object.create(View.prototype);
 	AccountView.prototype.constructor = AccountView;
 	
 	var ChatboxView = function(messageComposerView) {
-		ChatboxView.super.constructor.apply(this, arguments);
+		ChatboxView.super.apply(this, arguments);
 		
 		this.messageComposerView = messageComposerView;
 		this.elem = template.create('chatbox-template', { className: 'chatbox' });
@@ -260,7 +260,7 @@ var chat = chat || {};
 		
 		this.messageComposerView.attachTo(this.composerWrapElem);
 	};
-	ChatboxView.super = View.prototype;
+	ChatboxView.super = View;
 	ChatboxView.prototype = Object.create(View.prototype);
 	ChatboxView.prototype.constructor = ChatboxView;
 	ChatboxView.prototype.setConverstationTitle = function(title) {
@@ -297,13 +297,13 @@ var chat = chat || {};
 
 	
 	var MessageView = function() {
-		MessageView.super.constructor.apply(this, arguments);
+		MessageView.super.apply(this, arguments);
 		
 		this.containerElem = null;
 		this.editorElem = null;
 		this.avatarElem = null;
 	};
-	MessageView.super = View.prototype;
+	MessageView.super = View;
 	MessageView.prototype = Object.create(View.prototype);
 	MessageView.prototype.constructor = MessageView;
 	MessageView.prototype.setAvatar = function(avatar) {
@@ -351,7 +351,7 @@ var chat = chat || {};
 	};
 	
 	var MessageComposerView = function() {
-		MessageComposerView.super.constructor.apply(this, arguments);
+		MessageComposerView.super.apply(this, arguments);
 		var self = this;
 		
 		this.elem = template.create('message-composer-template', { className: 'message' });
@@ -415,12 +415,12 @@ var chat = chat || {};
 			ctrlPressed = false;
 		});
 	};
-	MessageComposerView.super = MessageView.prototype;
+	MessageComposerView.super = MessageView;
 	MessageComposerView.prototype = Object.create(MessageView.prototype);
 	MessageComposerView.prototype.constructor = MessageComposerView;
 
 	var MessageStreamView = function(model) {
-		MessageComposerView.super.constructor.apply(this, arguments);
+		MessageComposerView.super.apply(this, arguments);
 		var self = this;
 		
 		this.model = model;
@@ -446,10 +446,12 @@ var chat = chat || {};
 			self.elem.removeEventListener('mousemove', elemMousemoveListener);
 
 			var shown = self.model.getAttribute('shown');
-			var receiver = self.model.getAttribute('receiver');
-			var count = receiver.getAttribute('count') - 1;
+			var type = self.model.getAttribute('type');
+			var isUser = type === 'user';
+			var contact = isUser ? self.model.getAttribute('contact') : self.model.getAttribute('receiver');
+			var count = contact.getAttribute('count') - 1;
 
-			receiver.setAttribute('count', count);
+			contact.setAttribute('count', count);
 			self.model.setAttribute('shown', true);
 			self.elem.classList.remove('unshown');
 		};
@@ -547,7 +549,7 @@ var chat = chat || {};
 		
 		this.on('dispose', disposeListener);
 	};
-	MessageStreamView.super = MessageView.prototype;
+	MessageStreamView.super = MessageView;
 	MessageStreamView.prototype = Object.create(MessageView.prototype);
 	MessageStreamView.prototype.constructor = MessageStreamView;
 	MessageStreamView.prototype.beginEditing = function() {
@@ -619,7 +621,7 @@ var chat = chat || {};
 	};
 	
 	var DialogView = function() {
-		DialogView.super.constructor.apply(this, arguments);
+		DialogView.super.apply(this, arguments);
 		var self = this;
 		
 		this.elem = document.getElementById('dialog');
@@ -631,7 +633,7 @@ var chat = chat || {};
 			self.close();
 		});
 	};
-	DialogView.super = View.prototype;
+	DialogView.super = View;
 	DialogView.prototype = Object.create(View.prototype);
 	DialogView.prototype.constructor = DialogView;
 	DialogView.prototype.show = function(content) {

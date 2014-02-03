@@ -16,7 +16,7 @@ window.onload = function() {
 	var DialogView = chat.views.DialogView;
 	
 	var ChatApplication = function() {
-		ChatApplication.super.constructor.apply(this, arguments);
+		ChatApplication.super.apply(this, arguments);
 		var self = this;
 		
 		this.serverUrl = 'ws://www.bazelevscontent.net:9009/';
@@ -55,7 +55,7 @@ window.onload = function() {
 				self.chatClient.publiclist();
 			};
 			var publiclistClientChatListener = function(event) {
-				console.log('publiclist complete');
+				//console.log('publiclist complete');
 				
 				self.chatClient.off('message:publiclist', publiclistClientChatListener);
 				self.chatClient.on('message:retrieve', retrievePublicsClientChatListener);
@@ -66,13 +66,13 @@ window.onload = function() {
 				});
 				var publicIdCollectionString = publicIdCollection.join(',');
 				
-				console.log('public id collection');
-				console.log(publicIdCollectionString);
+				//console.log('public id collection');
+				//console.log(publicIdCollectionString);
 				
 				self.chatClient.retrieve(publicIdCollectionString);
 			};
 			var retrievePublicsClientChatListener = function(event) {
-				console.log('public details complete');
+				//console.log('public details complete');
 				
 				self.chatClient.off('message:retrieve', retrievePublicsClientChatListener);
 				self.chatClient.on('message:subscribelist', subscribelistClientChatListener);
@@ -86,7 +86,7 @@ window.onload = function() {
 				self.chatClient.subscribelist();
 			};
 			var subscribelistClientChatListener = function(event) {
-				console.log('theme list complete');
+				//console.log('theme list complete');
 				
 				self.chatClient.off('message:subscribelist', subscribelistClientChatListener);
 				self.chatClient.on('message:retrieve', retrieveThemesClientChatListener);
@@ -99,13 +99,13 @@ window.onload = function() {
 				});
 				var themeIdCollectionString = themeIdCollection.join(',');
 				
-				console.log('theme id collection');
-				console.log(themeIdCollectionString);
+				//console.log('theme id collection');
+				//console.log(themeIdCollectionString);
 				
 				self.chatClient.retrieve(themeIdCollectionString);
 			};
 			var retrieveThemesClientChatListener = function(event) {
-				console.log('theme details complete');
+				//console.log('theme details complete');
 				
 				self.chatClient.off('message:retrieve', retrieveThemesClientChatListener);
 				self.chatClient.on('message:users', usersClientChatListener);
@@ -131,8 +131,8 @@ window.onload = function() {
 				});
 				var profileIdCollectionString = profileIdCollection.join(',');
 				
-				console.log('profile id collection');
-				console.log(profileIdCollectionString);
+				//console.log('profile id collection');
+				//console.log(profileIdCollectionString);
 				
 				self.chatClient.retrieve(profileIdCollectionString);
 			};
@@ -165,13 +165,13 @@ window.onload = function() {
 					}
 				});
 				
-				console.log('online users');
-				console.log(JSON.stringify(online, null, 4));
+				//console.log('online users');
+				//console.log(JSON.stringify(online, null, 4));
 				
 				self.chatClient.tape();
 			};
 			var tapeClientChatListener = function(event) {
-				console.log('tape complete');
+				//console.log('tape complete');
 				
 				self.chatClient.off('message:tape', tapeClientChatListener);
 				self.chatClient.on('message:retrieve', retrieveMessagesClientChatListener);
@@ -190,15 +190,15 @@ window.onload = function() {
 					tempRawMessages[item.id] = rawMessage;
 				});
 
-				console.log('tape');
-				console.log(JSON.stringify(tape, null, 4));
-				console.log('message id collection');
-				console.log(messageIdCollectionString);
+				//console.log('tape');
+				//console.log(JSON.stringify(tape, null, 4));
+				//console.log('message id collection');
+				//console.log(messageIdCollectionString);
 
 				self.chatClient.retrieve(messageIdCollectionString);
 			};
 			var retrieveMessagesClientChatListener = function(event) {
-				console.log('messages retrieve');
+				//console.log('messages retrieve');
 				
 				self.chatClient.off('message:retrieve', retrieveMessagesClientChatListener);
 				
@@ -207,11 +207,15 @@ window.onload = function() {
 					var tempRawMessage = tempRawMessages[rawMessage.id];
 					tempRawMessage.value = rawMessage.value;
 
+					if (!tempRawMessage.value.content) {
+						return;
+					}
+
 					var message = MessageModel.fromRawMessage(tempRawMessage);
 					var author = self.storage.contacts[message.getAttribute('authorId')];
 					var receiver = self.storage.contacts[message.getAttribute('receiverId')];
 
-					if (receiver) {
+					if (receiver && author) {
 						message.setAttribute('contact', author);
 						message.setAttribute('receiver', receiver);
 						message.setAttribute('type', receiver.getAttribute('type'));
@@ -228,26 +232,21 @@ window.onload = function() {
 			var sendChatClientListener = function(event) {
 				console.log('send');
 				
-				// var message = event.response.send;
-				// message.value = message.body;
-				// message.shown = false;
-				// self.messages[message.id] = message;
-				// newMessageSoundElem.play();
-				
-				// var from = message.value.from;
-				// var group = message.value.group;
-				// var id = group || from;
-				// var contactModel = self.contactModels[id];
-				// var count = contactModel.getAttribute('count');
-				// count++;
-				// contactModel.setAttribute('count', count);
-				
-				// if (self.currentContactModel !== null && 
-				// 	(self.currentContactModel.getAttribute('id') === message.value.from || 
-				// 	 self.currentContactModel.getAttribute('id') === message.value.group)) {
-				// 	self.renderMessageElem(message);
-				// 	html.scrollToBottom(streamWrapElem);
-				// }
+				var rawMessage = event.response.send;
+				rawMessage.value = rawMessage.body;
+				rawMessage.shown = false;
+				self.newMessageSoundElem.play();
+
+				var message = MessageModel.fromRawMessage(rawMessage);
+
+				var author = self.storage.contacts[message.getAttribute('authorId')];
+				var receiver = self.storage.contacts[message.getAttribute('receiverId')];
+
+				message.setAttribute('contact', author);
+				message.setAttribute('receiver', receiver);
+				message.setAttribute('type', receiver.getAttribute('type'));
+
+				self.storage.addMessage(message);
 			};
 			var sentChatClientListener = function(event) {
 				console.log('sent');
@@ -324,7 +323,7 @@ window.onload = function() {
 			this.messageComposerView.on('send', sendMessageComposerListener);
 		};
 	};
-	ChatApplication.super = EventTrigger.prototype;
+	ChatApplication.super = EventTrigger;
 	ChatApplication.prototype = Object.create(EventTrigger.prototype);
 	ChatApplication.prototype.constructor = ChatApplication;
 	ChatApplication.prototype.initializeDocumentListeners = function() {
@@ -409,7 +408,8 @@ window.onload = function() {
 			message.on('change:shown', shownListener);
 
 			if (self.storage.companion) {
-				var companionId = self.storage.companion.getAttribute('id');
+				var companion = self.storage.companion;
+				var companionId = companion.getAttribute('id');
 				if (authorId === companionId || receiverId == companionId) {
 					var messageView = self.createMessageView(message);
 					self.chatboxView.addMessageView(messageView);

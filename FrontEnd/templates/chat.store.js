@@ -7,7 +7,7 @@ var chat = chat || {};
 	var extend = mvp.extend;
 
 	var Storage = function() {
-		Storage.super.constructor.apply(this, arguments);
+		Storage.super.apply(this, arguments);
 
 		this.account = null;
 		this.companion = null;
@@ -62,8 +62,10 @@ var chat = chat || {};
 			}
 		},
 		unsetAccount: function() {
-			this.account.off();
-			this.account = null;
+			if (this.account) {
+				this.account.off();
+				this.account = null;
+			}
 			this.trigger({
 				type: 'unset:account'
 			});
@@ -149,9 +151,10 @@ var chat = chat || {};
 			var shown = message.getAttribute('shown');
 
 			if (!shown) {
-				var receiver = this.contacts[receiverId];
-				var count = receiver.getAttribute('count') + 1;
-				receiver.setAttribute('count', count);
+				var type = message.getAttribute('type');
+				var contact = (type === 'user') ?  this.contacts[authorId] : this.contacts[receiverId];
+				var count = contact.getAttribute('count') + 1;
+				contact.setAttribute('count', count);
 			}
 
 			if (this.companion) {
