@@ -362,10 +362,6 @@ var chat = chat || {};
 		this.avatarElem = this.elem.getElementsByClassName('avatar')[0];
 		this.sendElem = this.elem.getElementsByClassName('send')[0];
 		this.clearElem = this.elem.getElementsByClassName('clear')[0];
-		
-		var enterCode = 13;
-		var shiftPressed = false;
-		var ctrlPressed = false;
 			
 		this.sendElem.addEventListener('click', function() {
 			var content = self.getContent();
@@ -386,33 +382,12 @@ var chat = chat || {};
 			self.clear();
 		});
 		this.editorElem.addEventListener('keydown', function(e) {
-			if (e.shiftKey) {
-				shiftPressed = true;
-			}
-			if (e.ctrlKey) {
-				ctrlPressed = true;
-			}
-			if (e.keyCode === enterCode && !shiftPressed && !ctrlPressed) {
+			if (e.keyCode === 13 && !e.shiftKey && !e.ctrlKey) {
 				self.sendElem.click();
 				self.editorElem.focus();
 				e.preventDefault();
 				e.stopPropagation();
-
-				shiftPressed = false;
-				ctrlPressed = false;
 			}
-		});
-		this.editorElem.addEventListener('keyup', function(e) {
-			if (e.shiftKey) {
-				shiftPressed = false;
-			}
-			if (e.ctrlKey) {
-				ctrlPressed = false;
-			}
-		});
-		this.editorElem.addEventListener('blur', function() {
-			shiftPressed = false;
-			ctrlPressed = false;
 		});
 	};
 	MessageComposerView.super = MessageView;
