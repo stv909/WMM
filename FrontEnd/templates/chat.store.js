@@ -30,7 +30,9 @@ var chat = chat || {};
 			}).filter(function(message) {
 				var authorId = message.getAttribute('authorId');
 				var receiverId = message.getAttribute('receiverId');
-				return authorId === companionId || receiverId === companionId;
+				var type = message.getAttribute('type');
+				return (authorId === companionId && type === 'user') ||
+					(receiverId === companionId);
 			}).sort(function(message1, message2) {
 				var timestamp1 = message1.getAttribute('timestamp');
 				var timestamp2 = message2.getAttribute('timestamp');
@@ -147,9 +149,9 @@ var chat = chat || {};
 			var shown = message.getAttribute('shown');
 
 			if (!shown) {
-				var contact = message.getAttribute('contact');
-				var count = contact.getAttribute('count') + 1;
-				contact.setAttribute('count', count);
+				var receiver = this.contacts[receiverId];
+				var count = receiver.getAttribute('count') + 1;
+				receiver.setAttribute('count', count);
 			}
 
 			if (this.companion) {

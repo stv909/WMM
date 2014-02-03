@@ -45,7 +45,8 @@ window.onload = function() {
 			this.accountView.attachTo(this.menuElem);
 			this.initializeDocumentListeners();
 			this.initializeStorageListeners();
-			
+
+			var tempRawMessages = {};
 			var authorizeListener = function(event) {
 				console.log('authorize complete');
 				
@@ -180,14 +181,14 @@ window.onload = function() {
 					return item.id;	
 				});
 				var messageIdCollectionString = messageIdCollection.join(',');
-				
-				// tape.forEach(function(item) {
-				// 	var message = { 
-				// 		id: item.id, 
-				// 		shown: item.shown
-				// 	};
-				// 	self.messages[item.id] = message;
-				// });
+				tempRawMessages = {};
+				tape.forEach(function(item) {
+					var rawMessage = {
+						id: item.id,
+						shown: item.shown
+					};
+					tempRawMessages[item.id] = rawMessage;
+				});
 
 				console.log('tape');
 				console.log(JSON.stringify(tape, null, 4));
@@ -201,11 +202,22 @@ window.onload = function() {
 				
 				self.chatClient.off('message:retrieve', retrieveMessagesClientChatListener);
 				
-				var messages = event.response.retrieve;
-				// messages.forEach(function(message) {
-				// 	self.messages[message.id].value = message.value;	
-				// });
-				// console.log(JSON.stringify(self.messages, null, 4));
+				var rawMessages = event.response.retrieve;
+				rawMessages.forEach(function(rawMessage) {
+					var tempRawMessage = tempRawMessages[rawMessage.id];
+					tempRawMessage.value = rawMessage.value;
+
+					var message = MessageModel.fromRawMessage(tempRawMessage);
+					var author = self.storage.contacts[message.getAttribute('authorId')];
+					var receiver = self.storage.contacts[message.getAttribute('receiverId')];
+
+					if (receiver) {
+						message.setAttribute('contact', author);
+						message.setAttribute('receiver', receiver);
+						message.setAttribute('type', receiver.getAttribute('type'));
+						self.storage.addMessage(message);
+					}
+				});
 
 				self.prepareContactViews();
 				self.chatClient.on('message:send', sendChatClientListener);
@@ -302,6 +314,7 @@ window.onload = function() {
 				messageModel.setAttribute('receiverId', companion.getAttribute('id'));
 				messageModel.setAttribute('content', event.content);
 				messageModel.setAttribute('contact', account);
+				messageModel.setAttribute('receiver', companion);
 				messageModel.setAttribute('shown', true);
 				
 				self.sendMessage(messageModel);
@@ -391,7 +404,7 @@ window.onload = function() {
 			var receiverId = message.getAttribute('receiverId');
 
 			var shownListener = function(event) {
-				self.chatClient.shown(messageId);
+				self.chatClient.shown(['msg', messageId].join('.'));
 			};
 			message.on('change:shown', shownListener);
 

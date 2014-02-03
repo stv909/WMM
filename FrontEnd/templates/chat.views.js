@@ -446,10 +446,10 @@ var chat = chat || {};
 			self.elem.removeEventListener('mousemove', elemMousemoveListener);
 
 			var shown = self.model.getAttribute('shown');
-			var contact = self.model.getAttribute('contact');
-			var count = contact.getAttribute('count') - 1;
+			var receiver = self.model.getAttribute('receiver');
+			var count = receiver.getAttribute('count') - 1;
 
-			contact.setAttribute('count', count);
+			receiver.setAttribute('count', count);
 			self.model.setAttribute('shown', true);
 			self.elem.classList.remove('unshown');
 		};

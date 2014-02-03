@@ -101,6 +101,19 @@ var chat = chat || {};
 		
 		return rawMessage;
 	};
+	MessageModel.fromRawMessage = function(rawMessage) {
+		var message = new MessageModel();
+		var value = rawMessage.value || {};
+
+		message.setAttribute('id', value.id);
+		message.setAttribute('shown', rawMessage.shown);
+		message.setAttribute('authorId', value.from);
+		message.setAttribute('receiverId', value.group || value.to);
+		message.setAttribute('content', base64.decode(value.content));
+		message.setAttribute('timestamp', value.timestamp);
+
+		return message;
+	};
 	
 	chat.models = {
 		ContactModel: ContactModel,
