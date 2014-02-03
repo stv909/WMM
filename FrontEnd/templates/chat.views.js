@@ -655,7 +655,7 @@ var chat = chat || {};
 		ChatboxView: ChatboxView,
 		MessageComposerView: MessageComposerView,
 		MessageStreamView: MessageStreamView,
-		DialogView: DialogView,
+		DialogView: DialogView
 	};
 	
 })(chat, mvp, template, html);

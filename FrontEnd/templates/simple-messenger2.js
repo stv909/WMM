@@ -251,17 +251,25 @@ window.onload = function() {
 			var sentChatClientListener = function(event) {
 				console.log('sent');
 				
-				// var message = event.response.sent;
-				// message.value = message.body;
-				// message.shown = true;
-				// self.messages[message.id] = message;
-				
-				// if (self.currentContactModel &&
-				// 	message.value.to === self.currentContactModel.getAttribute('id') && 
-				// 	self.currentMessages.indexOf(message.id) === -1) {
-				// 	self.renderMessageElem(message);
-				// 	html.scrollToBottom(streamWrapElem);
-				// }
+				var rawMessage = event.response.sent;
+				rawMessage.value = rawMessage.body;
+				rawMessage.shown = true;
+
+				var messageId = rawMessage.value.id;
+				var message = self.storage.messages[messageId];
+
+				if (!message) {
+					message = MessageModel.fromRawMessage(rawMessage);
+
+					var author = self.storage.contacts[message.getAttribute('authorId')];
+					var receiver = self.storage.contacts[message.getAttribute('receiverId')];
+
+					message.setAttribute('contact', author);
+					message.setAttribute('receiver', receiver);
+					message.setAttribute('type', receiver.getAttribute('type'));
+
+					self.storage.addMessage(message);
+				}
 			};
 			var broadcastChatClientListener = function(event) {
 				console.log('broadcast');
