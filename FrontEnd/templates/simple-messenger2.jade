@@ -55,6 +55,12 @@ mixin account-template
 			.name
 			.settings Settings
 			.logout-button Logout
+
+mixin total-messages-template
+	template#total-messages-template(style="display:none")
+		.total-messages
+			.count
+			.mark-shown-button Mark all as shown
 			
 mixin chatbox-template
 	template#chatbox-template(style="display:none")
@@ -90,6 +96,7 @@ html
 		+contact-template
 		+account-template
 		+chatbox-template
+		+total-messages-template
 		audio#new-message-sound(src="newMessageSpace.wav", preload="auto", style="controls: none")
 		#page
 			.wrap

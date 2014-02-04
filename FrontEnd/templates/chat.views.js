@@ -646,6 +646,24 @@ var chat = chat || {};
 		this.contentElem.scrollLeft = 0;
 		this.contentElem.scrollTop = 0;
 	};
+
+	var TotalMessagesView = function() {
+		TotalMessagesView.super.call(this);
+		var self = this;
+
+		this.elem = template.create('total-messages-template', { className: 'total-messages' });
+
+		this.markShownButtonElem = this.elem.getElementsByClassName('mark-shown-button')[0];
+		this.countElem = this.elem.getElementsByClassName('count')[0];
+
+		var disposeListener = function() {
+			self.off('dispose', disposeListener);
+		};
+		this.on('dispose', disposeListener);
+	};
+	TotalMessagesView.super = View;
+	TotalMessagesView.prototype = Object.create(View.prototype);
+	TotalMessagesView.prototype.constructor = TotalMessagesView;
 	
 	chat.views = {
 		ContactView: ContactView,

@@ -156,15 +156,28 @@ window.onload = function() {
 				
 				self.chatClient.off('message:online', onlineClientChatListener);
 				self.chatClient.on('message:tape', tapeClientChatListener);
-				
-				var online = event.response.online;
-				online.forEach(function(item) {
-					var contact = self.storage.contacts[item];
-					if (contact) {
-						contact.setAttribute('online', true);
-					}
-				});
-				
+
+				var innerOnlineListener = function(event) {
+					var contacts = self.storage.contacts;
+					Object.keys(contacts).forEach(function(key) {
+						var contact = contacts[key];
+						var type = contact.getAttribute('type');
+						if (type === 'user') {
+							contact.setAttribute('online', false);
+						}
+					});
+
+					var online = event.response.online;
+					online.forEach(function(item) {
+						var contact = self.storage.contacts[item];
+						if (contact) {
+							contact.setAttribute('online', true);
+						}
+					});
+				};
+				self.chatClient.on('message:online', innerOnlineListener);
+				innerOnlineListener(event);
+
 				//console.log('online users');
 				//console.log(JSON.stringify(online, null, 4));
 				
@@ -285,11 +298,11 @@ window.onload = function() {
 				var from = broadcast.from;
 				var status = broadcast.id;
 				var contact = self.storage.contacts[from];
-				
+
 				if (status.indexOf('online.') === 0) {
-					contact.setAttribute('online', true);
+					self.chatClient.online();
 				} else if (status.indexOf('offline.') === 0) {
-					contact.setAttribute('online', false);
+					self.chatClient.online();
 				} else if (status.indexOf('delete.msg.') === 0) {
 					var messageId = status.replace('delete.msg.', '');
 					if (self.storage.messages.hasOwnProperty(messageId)) {
