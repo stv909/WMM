@@ -434,6 +434,17 @@ var chat = chat || {};
 				self.endEditing();
 			} else {
 				self.beginEditing();
+				self.editorElem.focus();
+			}
+		};
+		var editorElemKeydownListener = function(event) {
+			if (self.isEditing()) {
+				if (event.keyCode === 13 && !event.shiftKey && !event.ctrlKey) {
+					self.endEditing();
+				}
+				if (event.keyCode === 27) {
+					self.cancelEditing();
+				}
 			}
 		};
 		var clearElemClickListener = function(event) {
@@ -476,6 +487,7 @@ var chat = chat || {};
 			this.deleteElem.classList.add('super-hidden');
 		}
 		this.editElem.addEventListener('click', editElemClickListener);
+		this.editorElem.addEventListener('keydown', editorElemKeydownListener);
 		this.clearElem.addEventListener('click', clearElemClickListener);
 		this.cancelElem.addEventListener('click', cancelElemClickListener);
 		this.shareElem.addEventListener('click', shareElemClickListener);
@@ -521,7 +533,8 @@ var chat = chat || {};
 		
 		var disposeListener = function() {
 			self.elem.removeEventListener('mousemove', elemMousemoveListener);
-			self.editorElem.removeEventListener('click', editElemClickListener);
+			self.editElem.removeEventListener('click', editElemClickListener);
+			self.editorElem.removeEventListener('keydown', editorElemKeydownListener);
 			self.clearElem.removeEventListener('click', clearElemClickListener);
 			self.cancelElem.removeEventListener('click', cancelElemClickListener);
 			self.shareElem.removeEventListener('click', shareElemClickListener);
