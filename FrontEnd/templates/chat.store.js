@@ -207,10 +207,10 @@ var chat = chat || {};
 			});
 		},
 		clear: function() {
+			this.removeAllMessages();
+			this.removeAllContacts();
 			this.unsetAccount();
 			this.unsetCompanion();
-			this.removeAllContacts();
-			this.removeAllMessages();
 		}
 	});
 

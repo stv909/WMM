@@ -295,7 +295,6 @@ var chat = chat || {};
 		html.scrollToBottom(this.streamWrapElem);
 	};
 
-	
 	var MessageView = function() {
 		MessageView.super.apply(this, arguments);
 		
@@ -512,9 +511,6 @@ var chat = chat || {};
 		var changeNameListener = function(event) {
 			self.nameElem.textContent = event.name || contact.getAttribute('id');
 		};
-
-		contact.on('change:avatar', changeAvatarListener);
-		contact.on('change:name', changeNameListener);
 
 		changeAvatarListener({
 			avatar: contact.getAttribute('avatar')

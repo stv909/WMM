@@ -367,13 +367,12 @@ window.onload = function() {
 			self.messageComposerView.setAvatar('');
 		};
 		var setCompanionListener = function(event) {
-			self.chatboxView.showMessageComposer(true);
-			self.chatboxView.enableMessageComposer(true);
 			self.chatboxView.showConversationTitle(true);
 			self.updateConversationTitle();
 
 			var oldMessages = event.oldMessages;
 			var messages = event.messages;
+			var companion = event.companion;
 
 			oldMessages.forEach(function(message) {
 				var messageId = message.getAttribute('id');
@@ -390,6 +389,20 @@ window.onload = function() {
 				}
 				self.chatboxView.addMessageView(messageView);
 			});
+
+			var companionType = companion.getAttribute('type');
+			var enableComposer = false;
+			if (companionType !== 'user') {
+				var authorId = companion.getAttribute('authorId');
+				var moderators = companion.getAttribute('moderators');
+				var accountId = self.storage.account.getAttribute('id');
+				enableComposer = authorId === accountId || moderators[authorId];
+			} else {
+				enableComposer = true;
+			}
+
+			self.chatboxView.showMessageComposer(enableComposer);
+			self.chatboxView.enableMessageComposer(enableComposer);
 		};
 		var unsetCompanionListener = function(event) {
 			self.chatboxView.showMessageComposer(false);
