@@ -409,7 +409,7 @@ window.onload = function() {
 				var author = companion.getAttribute('author');
 				var moderators = companion.getAttribute('moderators');
 				var accountId = self.storage.account.getAttribute('id');
-				enableComposer = author === accountId || moderators[author];
+				enableComposer = author === accountId || moderators[accountId];
 			} else {
 				enableComposer = true;
 			}
@@ -625,7 +625,7 @@ window.onload = function() {
 			var moderators = Object.keys(companion.getAttribute('moderators'));
 			var accountId = account.getAttribute('id');
 			var userNames = moderators.filter(function(moderator) {
-				return moderator !== accountId && contacts[moderator];
+				return author === accountId || contacts[moderator];
 			}).map(function(moderator) {
 				return contacts[moderator].getAttribute('name');
 			});
