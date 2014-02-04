@@ -243,12 +243,14 @@ var chat = chat || {};
 			this.store(tag, message.id, data);
 			this.send(tag, message.id, data, message.group || message.to, contactMode);	
 		};
-		this.notifyMessage = function(message, contactMode) {
+		this.notifyMessage = function(message, contactMode, ignoreStore) {
 			var tag = 'msg';
 			var data = JSON.stringify(message);
-			
-			this.store(tag, message.id, data);
-			this.notify(tag, message.id, data, message.to, contactMode);	
+
+			if (!ignoreStore) {
+				this.store(tag, message.id, data);
+			}
+			this.notify(tag, message.id, data, message.group || message.to, contactMode);
 		};
 		this.saveTool = function(tool) {
 			var data = JSON.stringify(tool);

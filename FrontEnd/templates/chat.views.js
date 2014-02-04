@@ -581,7 +581,10 @@ var chat = chat || {};
 		this.containerElem.scrollTop = 0;
 		this.containerElem.scrollLeft = 0;
 		this.editorElem.contentEditable = 'false';
-		
+
+		if (this._tempContent !== this.editorElem.innerHTML) {
+			this.model.setAttribute('content', this.editorElem.innerHTML);
+		}
 		this._tempContent = null;
 
 		this.checkOverflow();
