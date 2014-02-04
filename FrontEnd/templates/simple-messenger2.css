@@ -257,7 +257,7 @@ input[type="text"] {
   padding: 0.5em;
 }
 #chat {
-  width: 45em;
+  width: 38em;
 }
 #chat .static {
   background-color: #fff;
@@ -271,7 +271,7 @@ input[type="text"] {
 #chat .message {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
-  width: 44.5em;
+  width: 37.5em;
   border-bottom: 1px solid #ddd;
 }
 #chat .message .name,
@@ -316,19 +316,19 @@ input[type="text"] {
   height: 100%;
 }
 #chat .message .content-block {
-  width: 33em;
+  width: 26em;
 }
 #chat .message .content-block .static {
-  width: 32.5em;
+  width: 403px;
   overflow: hidden;
   border: 2px solid #fff;
-  max-height: 20em;
+  max-height: 403px;
 }
 #chat .message .content-block .dynamic {
-  width: 33em;
+  width: 411px;
   overflow: scroll;
   border: 2px solid #ddd;
-  max-height: 20.5em;
+  max-height: 411px;
 }
 #chat .message .content-block .container {
   background-color: #fff;
@@ -336,6 +336,10 @@ input[type="text"] {
   display: inline-block;
   min-height: 5em;
   box-shadow: 0 0 0.5em #aaa;
+}
+#chat .message .content-block .container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 #chat .message .content-block .container::-webkit-scrollbar-track:vertical {
   border-left: 1px solid #ddd;
@@ -353,7 +357,7 @@ input[type="text"] {
   border-top: 1px solid #ddd;
 }
 #chat .message .content-block .container .editor {
-  width: 32.5em;
+  width: 403px;
   min-height: 4em;
 }
 #chat .message .controls-block {

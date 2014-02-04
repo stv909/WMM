@@ -5,10 +5,14 @@ real-scroll-height = scroll-height //- 0.05em
 
 page-width = 70em
 contacts-width = 11em
-chat-width = 45em
+chat-width = 38em
 tools-width = page-width - (contacts-width + chat-width)
 avatar-width = 6em
-content-width = 33em
+content-width = 26em
+message-width = 403px
+message-height = 403px
+message-scroll-width = 8px
+message-scroll-height = 8px
 controls-width = chat-width - (avatar-width + content-width + 4 * scroll-width)
 
 main-border-color = #ddd
@@ -146,21 +150,24 @@ message =
 		.content-block
 			width content-width
 			.static
-				width content-width - scroll-width
+				width message-width
 				overflow hidden
 				border 2px solid white
-				max-height 20em
+				max-height message-height
 			.dynamic
-				width content-width
+				width message-width + message-scroll-width
 				overflow scroll
 				border 2px solid main-border-color
-				max-height 20em + scroll-height
+				max-height message-height + message-scroll-height
 			.container
 				background-color white
 				position relative
 				display inline-block
 				min-height 5em
 				box-shadow 0 0 0.5em #aaa
+				&::-webkit-scrollbar
+					width message-scroll-width
+					height message-scroll-height
 				&::-webkit-scrollbar-track
 					&:vertical
 						border-left 1px solid main-border-color
@@ -173,7 +180,7 @@ message =
 					&:horizontal
 						border-top 1px solid main-border-color
 				.editor
-					width content-width - scroll-width
+					width message-height
 					min-height 4em
 		.controls-block
 			width controls-width
