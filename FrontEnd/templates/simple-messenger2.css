@@ -363,7 +363,7 @@ input[type="text"] {
 #chat .message .controls-block {
   width: 4em;
   text-align: center;
-  padding-left: 0.5em;
+  padding-left: 0.25em;
 }
 #chat .message .controls-block .simple-button {
   background-color: #fff;
