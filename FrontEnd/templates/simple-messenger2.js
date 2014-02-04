@@ -406,10 +406,10 @@ window.onload = function() {
 			var companionType = companion.getAttribute('type');
 			var enableComposer = false;
 			if (companionType !== 'user') {
-				var authorId = companion.getAttribute('authorId');
+				var author = companion.getAttribute('author');
 				var moderators = companion.getAttribute('moderators');
 				var accountId = self.storage.account.getAttribute('id');
-				enableComposer = authorId === accountId || moderators[authorId];
+				enableComposer = author === accountId || moderators[author];
 			} else {
 				enableComposer = true;
 			}
