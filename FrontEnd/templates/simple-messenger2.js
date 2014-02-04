@@ -625,14 +625,9 @@ window.onload = function() {
 			var moderators = Object.keys(companion.getAttribute('moderators'));
 			var accountId = account.getAttribute('id');
 			var userNames = moderators.filter(function(moderator) {
-				return moderator !== accountId;
+				return moderator !== accountId && contacts[moderator];
 			}).map(function(moderator) {
-				var contact = contacts[moderator];
-				if (contact) {
-					return contact.getAttribute('name');
-				} else {
-					return '';
-				}
+				return contacts[moderator].getAttribute('name');
 			});
 			var allUsers = authorName.concat(userNames).join(', ');
 			var label = ['[', name, ']: '].join('');
