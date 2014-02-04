@@ -484,23 +484,23 @@ var chat = chat || {};
 		this.containerElem.addEventListener('overflowchanged', containerElemOverflowListener);
 
 		var changeTimestampListener = function(event) {
-			var timestamp = event.timestamp;
-			var date = timestamp ? new Date(timestamp) : new Date();
+			var timestamp = event.value;
+			var date = timestamp ? new Date(timestamp) : null;
 
-			self.timeElem.textContent = formatDate(date);
+			self.timeElem.textContent = (date) ? formatDate(date): '';
 		};
 		var changeContentListener = function(event) {
-			self.editorElem.innerHTML = event.content;
+			self.editorElem.innerHTML = event.value;
 		};
 
 		this.model.on('change:timestamp', changeTimestampListener);
 		this.model.on('change:content', changeContentListener);
 
 		changeTimestampListener({
-			timestamp: this.model.getAttribute('timestamp')
+			value: this.model.getAttribute('timestamp')
 		});
 		changeContentListener({
-			content: this.model.getAttribute('content')
+			value: this.model.getAttribute('content')
 		});
 
 		var contact = this.model.getAttribute('contact');

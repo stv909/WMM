@@ -627,7 +627,12 @@ window.onload = function() {
 			var userNames = moderators.filter(function(moderator) {
 				return moderator !== accountId;
 			}).map(function(moderator) {
-				return contacts[moderator].getAttribute('name');
+				var contact = contacts[moderator];
+				if (contact) {
+					return contact.getAttribute('name');
+				} else {
+					return '';
+				}
 			});
 			var allUsers = authorName.concat(userNames).join(', ');
 			var label = ['[', name, ']: '].join('');
