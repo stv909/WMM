@@ -271,6 +271,7 @@ input[type="text"] {
   position: relative;
   color: #fff;
   background-color: #f00;
+  margin-top: 0.1em;
   padding: 0.5em;
 }
 #chat {
