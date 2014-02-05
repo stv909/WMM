@@ -338,6 +338,7 @@ var chat = chat || {};
 		else {
 			this.containerElem.classList.remove('overflow');
 		}
+		return isOverflow;
 	};
 	MessageView.prototype.setContent = function(content) {
 		this.editorElem.innerHTML = content;	
@@ -391,7 +392,7 @@ var chat = chat || {};
 	MessageComposerView.prototype.constructor = MessageComposerView;
 
 	var MessageStreamView = function(model) {
-		MessageComposerView.super.apply(this, arguments);
+		MessageStreamView.super.apply(this, arguments);
 		var self = this;
 		
 		this.model = model;
@@ -402,7 +403,10 @@ var chat = chat || {};
 		this.avatarElem = this.elem.getElementsByClassName('avatar')[0];
 		this.nameElem = this.elem.getElementsByClassName('name')[0];
 		this.timeElem = this.elem.getElementsByClassName('time')[0];
-		
+
+		this.overflowFullscreenElem = this.elem.getElementsByClassName('overflow-fullscreen')[0];
+		this.moreElem = this.elem.getElementsByClassName('more')[0];
+		this.buttonsHolderElem = this.elem.getElementsByClassName('buttons-holder')[0];
 		this.editElem = this.elem.getElementsByClassName('edit')[0];
 		this.clearElem = this.elem.getElementsByClassName('clear')[0];
 		this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
@@ -426,6 +430,10 @@ var chat = chat || {};
 			contact.setAttribute('count', count);
 			self.model.setAttribute('shown', true);
 			self.elem.classList.remove('unshown');
+		};
+		var moreElemClickListener = function(event) {
+			self.moreElem.classList.add('hidden');
+			self.buttonsHolderElem.classList.remove('hidden');
 		};
 		var editElemClickListener = function(event) {
 			if (self.isEditing()) {
@@ -493,11 +501,13 @@ var chat = chat || {};
 			this.deleteElem.classList.add('super-hidden');
 		}
 		this.editElem.addEventListener('click', editElemClickListener);
+		this.moreElem.addEventListener('click', moreElemClickListener);
 		this.editorElem.addEventListener('keydown', editorElemKeydownListener);
 		this.clearElem.addEventListener('click', clearElemClickListener);
 		this.cancelElem.addEventListener('click', cancelElemClickListener);
 		this.shareElem.addEventListener('click', shareElemClickListener);
 		this.fullscreenElem.addEventListener('click', fullscreenElemClickListener);
+		this.overflowFullscreenElem.addEventListener('click', fullscreenElemClickListener);
 		this.deleteElem.addEventListener('click', deleteElemClickListener);
 		this.hideElem.addEventListener('click', hideElemClickListener);
 		this.containerElem.addEventListener('overflowchanged', containerElemOverflowListener);
@@ -540,12 +550,14 @@ var chat = chat || {};
 		
 		var disposeListener = function() {
 			self.elem.removeEventListener('mousemove', elemMousemoveListener);
+			self.moreElem.removeEventListener('click', moreElemClickListener);
 			self.editElem.removeEventListener('click', editElemClickListener);
 			self.editorElem.removeEventListener('keydown', editorElemKeydownListener);
 			self.clearElem.removeEventListener('click', clearElemClickListener);
 			self.cancelElem.removeEventListener('click', cancelElemClickListener);
 			self.shareElem.removeEventListener('click', shareElemClickListener);
 			self.fullscreenElem.removeEventListener('click', fullscreenElemClickListener);
+			self.overflowFullscreenElem.removeEventListener('click', fullscreenElemClickListener);
 			self.hideElem.removeEventListener('click', removeEventListener);
 			self.deleteElem.removeEventListener('click', deleteElemClickListener);
 			self.containerElem.removeEventListener('overflowchanged', containerElemOverflowListener);
@@ -568,6 +580,7 @@ var chat = chat || {};
 		this.cancelElem.classList.remove('hidden');
 		this.shareElem.classList.add('hidden');
 		this.fullscreenElem.classList.add('hidden');
+		this.overflowFullscreenElem.classList.add('hidden');
 		this.hideElem.classList.add('hidden');
 		this.deleteElem.classList.add('hidden');
 
@@ -593,6 +606,7 @@ var chat = chat || {};
 		this.cancelElem.classList.add('hidden');
 		this.shareElem.classList.remove('hidden');
 		this.fullscreenElem.classList.remove('hidden');
+		this.overflowFullscreenElem.classList.remove('hidden');
 		this.hideElem.classList.remove('hidden');
 		this.deleteElem.classList.remove('hidden');
 
@@ -623,6 +637,7 @@ var chat = chat || {};
 		this.cancelElem.classList.add('hidden');
 		this.shareElem.classList.remove('hidden');
 		this.fullscreenElem.classList.remove('hidden');
+		this.overflowFullscreenElem.classList.remove('hidden');
 		this.hideElem.classList.remove('hidden');
 		this.deleteElem.classList.remove('hidden');
 
@@ -643,6 +658,16 @@ var chat = chat || {};
 			model: this.model,
 			elem: this.elem
 		});
+	};
+	MessageStreamView.prototype.checkOverflow = function() {
+		var isOverflow = MessageStreamView.super.prototype.checkOverflow.apply(this);
+		if (isOverflow) {
+			this.overflowFullscreenElem.classList.remove('super-hidden');
+			this.fullscreenElem.classList.add('super-hidden');
+		} else {
+			this.overflowFullscreenElem.classList.add('super-hidden');
+			this.fullscreenElem.classList.remove('super-hidden');
+		}
 	};
 	
 	var DialogView = function() {
