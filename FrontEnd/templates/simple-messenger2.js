@@ -14,6 +14,7 @@ window.onload = function() {
 	var MessageStreamView = chat.views.MessageStreamView;
 	var ChatboxView = chat.views.ChatboxView;
 	var DialogView = chat.views.DialogView;
+	var ShareDialogView = chat.views.ShareDialogView;
 	var MessageCounterView = chat.views.MessageCounterView;
 	
 	var ChatApplication = function() {
@@ -21,6 +22,7 @@ window.onload = function() {
 		var self = this;
 		
 		this.serverUrl = 'ws://www.bazelevscontent.net:9009/';
+		this.shareUrl = 'https://c9.io/stv909/wmm/workspace/FrontEnd/templates/share.html';
 		this.chatClient = new ChatClient(this.serverUrl);
 		this.storage = new Storage();
 		
@@ -37,6 +39,7 @@ window.onload = function() {
 		this.messageComposerView = new MessageComposerView();
 		this.chatboxView = new ChatboxView(this.messageComposerView);
 		this.dialogView = new DialogView();
+		this.shareDialogView = new ShareDialogView();
 		this.messageCounterView = new MessageCounterView();
 
 		this.contactViews = {};
@@ -562,6 +565,12 @@ window.onload = function() {
 			self.storage.removeMessage(messageId);
 			self.chatClient.ignore(msgId);
 		};
+		var shareClickListener = function(event) {
+			var message = event.model;
+			var messageId = message.getAttribute('id');
+			var shareUrl = self.calculateShareUrl([messageId]);
+			self.shareDialogView.show(shareUrl);
+		};
 		var editingBeginListener = function(event) {
 			if (self.currentMessageView !== null && self.currentMessageView !== messageView) {
 				self.currentMessageView.endEditing();
@@ -584,6 +593,7 @@ window.onload = function() {
 		messageView.on('click:fullscreen', fullscreenClickListener);
 		messageView.on('click:delete', deleteClickListener);
 		messageView.on('click:hide', hideClickListener);
+		messageView.on('click:share', shareClickListener);
 		messageView.on('editing:begin', editingBeginListener);
 		messageView.on('editing:end', editingEndListener);
 		messageView.on('editing:cancel', editingCancelListener);
@@ -591,6 +601,15 @@ window.onload = function() {
 		this.messageViews[messageId] = messageView;
 
 		return messageView;
+	};
+	ChatApplication.prototype.calculateShareUrl = function(messageIds) {
+		var requestIds = '';
+		for (var i = 0; i < messageIds.length; i++)
+		{
+			requestIds += 'msg.' + messageIds[i] + ',';
+		}
+		(requestIds.length > 0) && (requestIds = requestIds.substring(0, requestIds.length - 1));
+		return this.shareUrl + '?ids=' + requestIds;
 	};
 	ChatApplication.prototype.prepareContactViews = function() {
 		var self = this;

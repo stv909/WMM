@@ -464,7 +464,10 @@ var chat = chat || {};
 			alert('borrow');
 		};
 		var shareElemClickListener = function(event) {
-			alert('share');
+			self.trigger({
+				type: 'click:share',
+				model: self.model
+			});
 		};
 		var fullscreenElemClickListener = function(event) {
 			self.trigger({
@@ -713,6 +716,38 @@ var chat = chat || {};
 		this.opened = false;
 	};
 
+	var ShareDialogView = function() {
+		ShareDialogView.super.call(this);
+		var self = this;
+
+		this.elem = document.getElementById('share-dialog');
+		this.boxElem = this.elem.getElementsByClassName('box')[0];
+		this.closeElem = this.elem.getElementsByClassName('close')[0];
+		this.linkElem = this.elem.getElementsByClassName('link')[0];
+
+		this.elem.addEventListener('click', function() {
+			self.close();
+		});
+		this.boxElem.addEventListener('click', function(event) {
+			event.stopPropagation();
+		});
+		this.closeElem.addEventListener('click', function() {
+			self.close();
+		});
+	};
+	ShareDialogView.super = View;
+	ShareDialogView.prototype = Object.create(View.prototype);
+	ShareDialogView.prototype.constructor = ShareDialogView;
+	ShareDialogView.prototype.show = function(url) {
+		this.elem.classList.remove('hidden');
+		this.linkElem.value = url;
+		this.linkElem.focus();
+		this.linkElem.select();
+	};
+	ShareDialogView.prototype.close = function() {
+		this.elem.classList.add('hidden');
+	};
+
 	var MessageCounterView = function() {
 		MessageCounterView.super.call(this);
 		var self = this;
@@ -750,6 +785,7 @@ var chat = chat || {};
 		MessageComposerView: MessageComposerView,
 		MessageStreamView: MessageStreamView,
 		DialogView: DialogView,
+		ShareDialogView: ShareDialogView,
 		MessageCounterView: MessageCounterView
 	};
 	

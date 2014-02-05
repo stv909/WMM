@@ -531,3 +531,80 @@ input[type="text"] {
   float: right;
   cursor: pointer;
 }
+#share-dialog {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: rgba(0,0,0,0.5);
+  display: table;
+}
+#share-dialog .container {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+#share-dialog .container .box {
+  display: inline-block;
+  width: 35em;
+  height: 15em;
+  background-color: #fff;
+  box-shadow: 0 0 3em #111;
+}
+#share-dialog .container .box .title {
+  background-color: #1570a6;
+  color: #fff;
+  font-size: 1.1em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+#share-dialog .container .box .link-place {
+  margin-top: 3em;
+  width: 100%;
+}
+#share-dialog .container .box .link-place .link-text {
+  display: inline-block;
+}
+#share-dialog .container .box .link-place .link {
+  margin-left: 1em;
+  padding: 0.5em;
+  font-size: 1em;
+  width: 23em;
+}
+#share-dialog .container .box .link-place .link:hover,
+#share-dialog .container .box .link-place .link:focus {
+  border: 1px solid #666;
+}
+#share-dialog .container .box .controls-place {
+  margin-top: 1.5em;
+}
+#share-dialog .container .box .simple-button {
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 1em;
+  border: 1px solid #ddd;
+  transition: all 200ms ease;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  display: inline-block;
+  margin-right: 0.5em;
+  margin-top: 0.5em;
+}
+#share-dialog .container .box .simple-button:hover {
+  background-color: #5b5;
+  border: 1px solid #5b5;
+  color: #fff;
+}
+#share-dialog .container .box .simple-button.negative {
+  margin-top: 1em;
+}
+#share-dialog .container .box .simple-button.negative:hover {
+  background-color: #d22;
+  border: 1px solid #d22;
+}

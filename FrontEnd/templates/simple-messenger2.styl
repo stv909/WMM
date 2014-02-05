@@ -450,3 +450,67 @@ message =
 		margin-right 1em
 		float right
 		cursor pointer
+
+#share-dialog
+	position fixed
+	top 0
+	bottom 0
+	left 0
+	right 0
+	width 100%
+	height 100%
+	z-index 10
+	background-color rgba(0, 0, 0, 0.5)
+	display table
+	.container
+		display table-cell
+		text-align center
+		vertical-align middle
+		.box
+			display inline-block
+			width 35em
+			height 15em
+			background-color white
+			box-shadow 0 0 3em #111
+			.title
+				background-color main-menu-color
+				color white
+				font-size 1.1em
+				padding-top 0.5em
+				padding-bottom 0.5em
+			.link-place
+				margin-top 3em
+				width 100%
+				.link-text
+					display inline-block
+				.link
+					margin-left 1em
+					padding 0.5em
+					font-size 1em
+					width 23em
+					&:hover, &:focus
+						border 1px solid #666
+			.controls-place
+				margin-top 1.5em
+			.simple-button
+				background-color white
+				cursor pointer
+				font-size 1em
+				border 1px solid main-border-color
+				transition all 200ms ease
+				padding-top 0.5em
+				padding-bottom 0.5em
+				padding-left 1em
+				padding-right 1em
+				display inline-block
+				margin-right 0.5em
+				margin-top 0.5em
+				&:hover
+					background-color #55BB55
+					border 1px solid #55BB55
+					color #fff
+				&.negative
+					margin-top 1em
+					&:hover
+						background-color #dd2222
+						border 1px solid #dd2222
