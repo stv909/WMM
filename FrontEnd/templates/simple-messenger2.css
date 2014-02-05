@@ -484,6 +484,15 @@ input[type="text"] {
   border-bottom: 1px solid #ddd;
   padding: 0.5em;
 }
+#dialog {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: #fff;
+}
 #dialog .title {
   font-size: 1.2em;
   z-index: 100;

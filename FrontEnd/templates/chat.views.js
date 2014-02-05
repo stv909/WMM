@@ -685,27 +685,32 @@ var chat = chat || {};
 		
 		this.elem = document.getElementById('dialog');
 		this.contentElem = this.elem.getElementsByClassName('content')[0];
-		this.pageElem = document.getElementById('page');
 		this.closeElem = this.elem.getElementsByClassName('close')[0];
-		
+		this.opened = false;
+
 		this.closeElem.addEventListener('click', function() {
 			self.close();
+		});
+		document.addEventListener('keyup', function(event) {
+			if (self.opened && event.keyCode === 27) {
+				self.close();
+			}
 		});
 	};
 	DialogView.super = View;
 	DialogView.prototype = Object.create(View.prototype);
 	DialogView.prototype.constructor = DialogView;
 	DialogView.prototype.show = function(content) {
-		this.pageElem.classList.add('hidden');
 		this.elem.classList.remove('hidden');
 		this.contentElem.innerHTML = content;
+		this.opened = true;
 	};
 	DialogView.prototype.close = function() {
-		this.pageElem.classList.remove('hidden');
 		this.elem.classList.add('hidden');
 		this.contentElem.innerHTML = 'content';
 		this.contentElem.scrollLeft = 0;
 		this.contentElem.scrollTop = 0;
+		this.opened = false;
 	};
 
 	var MessageCounterView = function() {
