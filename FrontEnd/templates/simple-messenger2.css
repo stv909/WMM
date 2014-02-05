@@ -383,6 +383,9 @@ input[type="text"] {
   text-align: center;
   padding-left: 0.25em;
 }
+#chat .message .controls-block .more {
+  margin-bottom: 0.75em !important;
+}
 #chat .message .controls-block .simple-button {
   background-color: #fff;
   cursor: pointer;
@@ -399,9 +402,6 @@ input[type="text"] {
   border: 1px solid #5b5;
   box-shadow: 0 0 0.5em #aaa;
   color: #fff;
-}
-#chat .message .controls-block .simple-button.negative {
-  margin-top: 1em;
 }
 #chat .message .controls-block .simple-button.negative:hover {
   background-color: #d22;

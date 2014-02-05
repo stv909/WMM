@@ -15,17 +15,17 @@ mixin message-body(composer)
 				.simple-button.send send
 				.simple-button.negative.clear clear
 			else
-				.simple-button.overflow-fullscreen.super-hidden fullscreen
 				.simple-button.more more...
 				.buttons-holder.hidden
+					.simple-button.share share
+					.simple-button.borrow borrow
 					.simple-button.edit edit
 					.simple-button.clear.hidden clear
 					.simple-button.negative.cancel.hidden cancel
-					.simple-button.fullscreen fullscreen
-					.simple-button.borrow borrow
-					.simple-button.share share
 					.simple-button.negative.hide hide
 					.simple-button.negative.delete delete
+					.simple-button.fullscreen fullscreen
+				.simple-button.overflow-fullscreen.super-hidden fullscreen
 
 mixin message-composer-template
 	template#message-composer-template(style="display:none")

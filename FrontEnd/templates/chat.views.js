@@ -433,8 +433,13 @@ var chat = chat || {};
 			self.elem.classList.remove('unshown');
 		};
 		var moreElemClickListener = function(event) {
-			self.moreElem.classList.add('hidden');
-			self.buttonsHolderElem.classList.remove('hidden');
+			if (self.moreElem.textContent === 'more...') {
+				self.moreElem.textContent = 'less';
+				self.buttonsHolderElem.classList.remove('hidden');
+			} else {
+				self.moreElem.textContent = 'more...';
+				self.buttonsHolderElem.classList.add('hidden');
+			}
 		};
 		var editElemClickListener = function(event) {
 			if (self.isEditing()) {
@@ -585,6 +590,7 @@ var chat = chat || {};
 	MessageStreamView.prototype.constructor = MessageStreamView;
 	MessageStreamView.prototype.beginEditing = function() {
 		this.editElem.textContent = 'finish';
+		this.moreElem.classList.add('hidden');
 		this.clearElem.classList.remove('hidden');
 		this.cancelElem.classList.remove('hidden');
 		this.borrowElem.classList.add('hidden');
@@ -612,6 +618,7 @@ var chat = chat || {};
 	};
 	MessageStreamView.prototype.endEditing = function() {
 		this.editElem.textContent = 'edit';
+		this.moreElem.classList.remove('hidden');
 		this.clearElem.classList.add('hidden');
 		this.cancelElem.classList.add('hidden');
 		this.borrowElem.classList.remove('hidden');
@@ -644,6 +651,7 @@ var chat = chat || {};
 	};
 	MessageStreamView.prototype.cancelEditing = function() {
 		this.editElem.textContent = 'edit';
+		this.moreElem.classList.remove('hidden');
 		this.clearElem.classList.add('hidden');
 		this.cancelElem.classList.add('hidden');
 		this.borrowElem.classList.remove('hidden');
