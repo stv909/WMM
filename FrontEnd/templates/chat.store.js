@@ -197,7 +197,8 @@ var chat = chat || {};
 			delete this.messages[messageId];
 			this.trigger({
 				type: 'remove:message',
-				messageId: messageId
+				messageId: messageId,
+				shown: shown
 			});
 		},
 		removeAllMessages: function() {

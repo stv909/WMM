@@ -678,7 +678,7 @@ var chat = chat || {};
 		MessageCounterView.super.call(this);
 		var self = this;
 
-		this.elem = template.create('message-counter-template', { className: 'message-counter' });
+		this.elem = template.create('message-counter-template', { className: 'message-counter', tagName: 'span' });
 		this.countElem = this.elem.getElementsByClassName('count')[0];
 		this.messagesInfoElem = this.elem.getElementsByClassName('messages-info')[0];
 		this.textElem = this.elem.getElementsByClassName('text')[0];
@@ -694,12 +694,13 @@ var chat = chat || {};
 	MessageCounterView.prototype = Object.create(View.prototype);
 	MessageCounterView.prototype.constructor = MessageCounterView;
 	MessageCounterView.prototype.setCount = function(count) {
-		if (count === 0) {
+		this.count = count;
+		if (this.count === 0) {
 			this.messagesInfoElem.classList.add('hidden');
 		} else {
 			this.messagesInfoElem.classList.remove('hidden');
-			this.countElem.textContent = ['+', count].join('');
-			this.textElem.textContent = 'unread message' + (count == 1 ? '' : 's');
+			this.countElem.textContent = ['+', this.count].join('');
+			this.textElem.textContent = 'unread message' + (this.count == 1 ? '' : 's');
 		}
 	};
 	

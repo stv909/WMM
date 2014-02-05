@@ -45,7 +45,6 @@ window.onload = function() {
 
 		this.initialize = function() {
 			this.messageCounterView.attachTo(this.chatHeadElem);
-			this.messageCounterView.setCount(1);
 			this.chatboxView.attachTo(this.chatWrapElem);
 			this.accountView.attachTo(this.menuElem);
 			this.initializeDocumentListeners();
@@ -481,6 +480,8 @@ window.onload = function() {
 
 			var shownListener = function(event) {
 				self.chatClient.shown(['msg', messageId].join('.'));
+				var count = self.messageCounterView.count;
+				self.messageCounterView.setCount(count - 1);
 			};
 			var contentListener = function(event) {
 				self.notifyMessage(message);
@@ -489,6 +490,10 @@ window.onload = function() {
 			message.on('change:shown', shownListener);
 			message.on('change:content', contentListener);
 
+			if (!message.getAttribute('shown')) {
+				var count = self.messageCounterView.count;
+				self.messageCounterView.setCount(count + 1);
+			}
 			if (self.storage.companion) {
 				var type = message.getAttribute('type');
 				var companion = self.storage.companion;
@@ -503,11 +508,16 @@ window.onload = function() {
 		};
 		var removeMessageListener = function(event) {
 			var messageId = event.messageId;
+			var shown = event.shown;
 			var messageView = self.messageViews[messageId];
 
 			if (messageView) {
 				messageView.dispose();
 				delete self.messageViews[messageId];
+			}
+			if (!shown) {
+				var count = self.messageCounterView.count;
+				self.messageCounterView.setCount(count - 1);
 			}
 		};
 
