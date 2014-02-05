@@ -555,13 +555,12 @@ window.onload = function() {
 			self.chatClient.broadcast(deleteBroadcast);
 		};
 		var hideClickListener = function(event) {
-			alert(JSON.stringify(event.model, 0, 4));
 			var message = event.model;
 			var messageId = message.getAttribute('id');
 			var msgId = ['msg', messageId].join('.');
 
 			self.storage.removeMessage(messageId);
-//			self.chatClient.ignore(msgId);
+			self.chatClient.ignore(msgId);
 		};
 		var editingBeginListener = function(event) {
 			if (self.currentMessageView !== null && self.currentMessageView !== messageView) {
