@@ -20,6 +20,7 @@ mixin message-body(composer)
 				.simple-button.negative.cancel.hidden cancel
 				.simple-button.fullscreen fullscreen
 				.simple-button.share share
+				.simple-button.negative.hide hide
 				.simple-button.negative.delete delete
 
 mixin message-composer-template
@@ -57,10 +58,11 @@ mixin account-template
 			.logout-button Logout
 
 mixin total-messages-template
-	template#total-messages-template(style="display:none")
-		.total-messages
-			.count
-			.mark-shown-button Mark all as shown
+	template#message-counter-template(style="display:none")
+		span Chat
+		span.messages-info.hidden
+			span.count
+			span.text unread messages
 			
 mixin chatbox-template
 	template#chatbox-template(style="display:none")
@@ -109,7 +111,7 @@ html
 								.cell
 									.title Contacts
 								.cell
-									.title Chat
+									#chat-head.title
 								.cell
 									.title Tools
 							.row

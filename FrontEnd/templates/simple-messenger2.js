@@ -14,6 +14,7 @@ window.onload = function() {
 	var MessageStreamView = chat.views.MessageStreamView;
 	var ChatboxView = chat.views.ChatboxView;
 	var DialogView = chat.views.DialogView;
+	var MessageCounterView = chat.views.MessageCounterView;
 	
 	var ChatApplication = function() {
 		ChatApplication.super.apply(this, arguments);
@@ -24,6 +25,7 @@ window.onload = function() {
 		this.storage = new Storage();
 		
 		this.chatElem = document.getElementById('chat');
+		this.chatHeadElem = document.getElementById('chat-head');
 		this.chatWrapElem = this.chatElem.getElementsByClassName('wrap')[0];
 		this.menuElem = document.getElementById('menu');
 		this.contactsElem = document.getElementById('contacts');
@@ -35,12 +37,15 @@ window.onload = function() {
 		this.messageComposerView = new MessageComposerView();
 		this.chatboxView = new ChatboxView(this.messageComposerView);
 		this.dialogView = new DialogView();
+		this.messageCounterView = new MessageCounterView();
 
 		this.contactViews = {};
 		this.messageViews = {};
 		this.currentMessageView = null;
 
 		this.initialize = function() {
+			this.messageCounterView.attachTo(this.chatHeadElem);
+			this.messageCounterView.setCount(1);
 			this.chatboxView.attachTo(this.chatWrapElem);
 			this.accountView.attachTo(this.menuElem);
 			this.initializeDocumentListeners();
@@ -245,6 +250,7 @@ window.onload = function() {
 				self.chatClient.on('message:sent', sentChatClientListener);
 				self.chatClient.on('message:notify', notifyChatClientListener);
 				self.chatClient.on('message:broadcast', broadcastChatClientListener);
+				self.chatClient.on('message:ignore', ignoreChatClientListener);
 			};
 			
 			var sendChatClientListener = function(event) {
@@ -330,6 +336,9 @@ window.onload = function() {
 					}
 				}
 			};
+			var ignoreChatClientListener = function(event) {
+				console.log('ignore');
+			};
 			
 			var disconnectListener = function(event) {
 				self.chatClient.off('message:users');
@@ -342,6 +351,8 @@ window.onload = function() {
 				self.chatClient.off('message:sent');
 				self.chatClient.off('message:send');
 				self.chatClient.off('message:broadcast');
+				self.chatClient.off('message:notify');
+				self.chatClient.off('message:ignore');
 				self.chatClient.off('message:now');
 				
 				self.dispose();
@@ -533,6 +544,15 @@ window.onload = function() {
 			self.chatClient.remove(msgId);
 			self.chatClient.broadcast(deleteBroadcast);
 		};
+		var hideClickListener = function(event) {
+			alert(JSON.stringify(event.model, 0, 4));
+			var message = event.model;
+			var messageId = message.getAttribute('id');
+			var msgId = ['msg', messageId].join('.');
+
+			self.storage.removeMessage(messageId);
+//			self.chatClient.ignore(msgId);
+		};
 		var editingBeginListener = function(event) {
 			if (self.currentMessageView !== null && self.currentMessageView !== messageView) {
 				self.currentMessageView.endEditing();
@@ -554,6 +574,7 @@ window.onload = function() {
 
 		messageView.on('click:fullscreen', fullscreenClickListener);
 		messageView.on('click:delete', deleteClickListener);
+		messageView.on('click:hide', hideClickListener);
 		messageView.on('editing:begin', editingBeginListener);
 		messageView.on('editing:end', editingEndListener);
 		messageView.on('editing:cancel', editingCancelListener);

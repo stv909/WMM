@@ -234,6 +234,10 @@ var chat = chat || {};
 			_socket.send('delete');
 			_socket.send(idsString);
 		};
+		this.ignore = function(id) {
+			_socket.send('ignore');
+			_socket.send(id);
+		};
 		
 		//complex protocol operations
 		this.sendMessage = function(message, contactMode) {
@@ -319,6 +323,8 @@ var chat = chat || {};
 				type = 'message:groupuserlist';
 			} else if (response.publiclist) {
 				type = 'message:publiclist';
+			} else if (response.ignore) {
+				type = 'message:ignore';
 			}
 			
 			return type;

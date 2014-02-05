@@ -373,9 +373,6 @@ var chat = chat || {};
 				content: content
 			});
 			self.clear();
-			
-			shiftPressed = false;
-			ctrlPressed = false;
 		});
 		this.clearElem.addEventListener('click', function() {
 			self.clear();
@@ -411,6 +408,7 @@ var chat = chat || {};
 		this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
 		this.shareElem = this.elem.getElementsByClassName('share')[0];
 		this.fullscreenElem = this.elem.getElementsByClassName('fullscreen')[0];
+		this.hideElem = this.elem.getElementsByClassName('hide')[0];
 		this.deleteElem = this.elem.getElementsByClassName('delete')[0];
 
 		this.elem.classList.add('static');
@@ -462,6 +460,12 @@ var chat = chat || {};
 				model: self.model
 			})
 		};
+		var hideElemClickListener = function(event) {
+			self.trigger({
+				type: 'click:hide',
+				model: self.model
+			});
+		};
 		var deleteElemClickListener = function(event) {
 			self.trigger({
 				type: 'click:delete',
@@ -480,7 +484,9 @@ var chat = chat || {};
 			this.elem.classList.add('unshown');
 		}
 		var own = this.model.getAttribute('own');
-		if (!own) {
+		if (own) {
+			this.hideElem.classList.add('super-hidden');
+		} else {
 			this.editElem.classList.add('super-hidden');
 			this.cancelElem.classList.add('super-hidden');
 			this.clearElem.classList.add('super-hidden');
@@ -493,6 +499,7 @@ var chat = chat || {};
 		this.shareElem.addEventListener('click', shareElemClickListener);
 		this.fullscreenElem.addEventListener('click', fullscreenElemClickListener);
 		this.deleteElem.addEventListener('click', deleteElemClickListener);
+		this.hideElem.addEventListener('click', hideElemClickListener);
 		this.containerElem.addEventListener('overflowchanged', containerElemOverflowListener);
 
 		var changeTimestampListener = function(event) {
@@ -539,6 +546,7 @@ var chat = chat || {};
 			self.cancelElem.removeEventListener('click', cancelElemClickListener);
 			self.shareElem.removeEventListener('click', shareElemClickListener);
 			self.fullscreenElem.removeEventListener('click', fullscreenElemClickListener);
+			self.hideElem.removeEventListener('click', removeEventListener);
 			self.deleteElem.removeEventListener('click', deleteElemClickListener);
 			self.containerElem.removeEventListener('overflowchanged', containerElemOverflowListener);
 
@@ -560,6 +568,7 @@ var chat = chat || {};
 		this.cancelElem.classList.remove('hidden');
 		this.shareElem.classList.add('hidden');
 		this.fullscreenElem.classList.add('hidden');
+		this.hideElem.classList.add('hidden');
 		this.deleteElem.classList.add('hidden');
 
 		this.elem.classList.add('dynamic');
@@ -584,6 +593,7 @@ var chat = chat || {};
 		this.cancelElem.classList.add('hidden');
 		this.shareElem.classList.remove('hidden');
 		this.fullscreenElem.classList.remove('hidden');
+		this.hideElem.classList.remove('hidden');
 		this.deleteElem.classList.remove('hidden');
 
 		this.elem.classList.add('static');
@@ -613,6 +623,7 @@ var chat = chat || {};
 		this.cancelElem.classList.add('hidden');
 		this.shareElem.classList.remove('hidden');
 		this.fullscreenElem.classList.remove('hidden');
+		this.hideElem.classList.remove('hidden');
 		this.deleteElem.classList.remove('hidden');
 
 		this.elem.classList.add('static');
@@ -663,23 +674,34 @@ var chat = chat || {};
 		this.contentElem.scrollTop = 0;
 	};
 
-	var TotalMessagesView = function() {
-		TotalMessagesView.super.call(this);
+	var MessageCounterView = function() {
+		MessageCounterView.super.call(this);
 		var self = this;
 
-		this.elem = template.create('total-messages-template', { className: 'total-messages' });
-
-		this.markShownButtonElem = this.elem.getElementsByClassName('mark-shown-button')[0];
+		this.elem = template.create('message-counter-template', { className: 'message-counter' });
 		this.countElem = this.elem.getElementsByClassName('count')[0];
+		this.messagesInfoElem = this.elem.getElementsByClassName('messages-info')[0];
+		this.textElem = this.elem.getElementsByClassName('text')[0];
+
+		this.count = 0;
 
 		var disposeListener = function() {
 			self.off('dispose', disposeListener);
 		};
 		this.on('dispose', disposeListener);
 	};
-	TotalMessagesView.super = View;
-	TotalMessagesView.prototype = Object.create(View.prototype);
-	TotalMessagesView.prototype.constructor = TotalMessagesView;
+	MessageCounterView.super = View;
+	MessageCounterView.prototype = Object.create(View.prototype);
+	MessageCounterView.prototype.constructor = MessageCounterView;
+	MessageCounterView.prototype.setCount = function(count) {
+		if (count === 0) {
+			this.messagesInfoElem.classList.add('hidden');
+		} else {
+			this.messagesInfoElem.classList.remove('hidden');
+			this.countElem.textContent = ['+', count].join('');
+			this.textElem.textContent = 'unread message' + (count == 1 ? '' : 's');
+		}
+	};
 	
 	chat.views = {
 		ContactView: ContactView,
@@ -687,7 +709,8 @@ var chat = chat || {};
 		ChatboxView: ChatboxView,
 		MessageComposerView: MessageComposerView,
 		MessageStreamView: MessageStreamView,
-		DialogView: DialogView
+		DialogView: DialogView,
+		MessageCounterView: MessageCounterView
 	};
 	
 })(chat, mvp, template, html);

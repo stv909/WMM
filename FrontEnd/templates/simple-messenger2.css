@@ -33,6 +33,23 @@ input[type="text"] {
   font-family: 'Segoe UI';
   font-size: 1em;
 }
+#chat-head .message-counter .messages-info {
+  opacity: 0.6;
+  margin-left: 1em;
+  font-size: 0.9em;
+}
+#chat-head .message-counter .messages-info:hover {
+  opacity: 1;
+}
+#chat-head .message-counter .messages-info span {
+  margin-right: 0.25em;
+}
+#chat-head .message-counter .messages-info .count {
+  background-color: #f00;
+  color: #fff;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+}
 #page {
   position: relative;
   width: 70em;
