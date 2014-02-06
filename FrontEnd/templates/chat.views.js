@@ -1,7 +1,7 @@
 var chat = chat || {};
 
 (function(chat, mvp, template, html) {
-	
+
 	var View = mvp.View;
 
 	var ContactModel = chat.models.ContactModel;

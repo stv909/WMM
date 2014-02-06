@@ -2,6 +2,8 @@ var event = event || {};
 
 (function(event) {
 
+	'use strict';
+
 	var EventEmitter = function() {
 		this.listeners = {};
 	};
