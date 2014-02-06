@@ -571,6 +571,12 @@ window.onload = function() {
 			var shareUrl = self.calculateShareUrl([messageId]);
 			self.shareDialogView.show(shareUrl);
 		};
+		var borrowClickListener = function(event) {
+			var message = event.model;
+			var content = message.getAttribute('content');
+			self.messageComposerView.clear();
+			html.pasteHtmlAtElement(self.messageComposerView.editorElem, content);
+		};
 		var editingBeginListener = function(event) {
 			if (self.currentMessageView !== null && self.currentMessageView !== messageView) {
 				self.currentMessageView.endEditing();
@@ -593,6 +599,7 @@ window.onload = function() {
 		messageView.on('click:fullscreen', fullscreenClickListener);
 		messageView.on('click:delete', deleteClickListener);
 		messageView.on('click:hide', hideClickListener);
+		messageView.on('click:borrow', borrowClickListener);
 		messageView.on('click:share', shareClickListener);
 		messageView.on('editing:begin', editingBeginListener);
 		messageView.on('editing:end', editingEndListener);

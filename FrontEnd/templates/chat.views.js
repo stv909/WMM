@@ -28,7 +28,7 @@ var chat = chat || {};
 	};
 	
 	var ContactView = function(model) {
-		mvp.EventTrigger.call(this);
+		mvp.EventTrigger.apply(this);
 		var self = this;
 
 		this.rootElem = null;
@@ -466,7 +466,10 @@ var chat = chat || {};
 			self.cancelEditing();
 		};
 		var borrowElemClickListener = function(event) {
-			alert('borrow');
+			self.trigger({
+				type: 'click:borrow',
+				model: self.model
+			});
 		};
 		var shareElemClickListener = function(event) {
 			self.trigger({
@@ -725,7 +728,7 @@ var chat = chat || {};
 	};
 
 	var ShareDialogView = function() {
-		ShareDialogView.super.call(this);
+		ShareDialogView.super.apply(this);
 		var self = this;
 
 		this.elem = document.getElementById('share-dialog');
@@ -757,7 +760,7 @@ var chat = chat || {};
 	};
 
 	var MessageCounterView = function() {
-		MessageCounterView.super.call(this);
+		MessageCounterView.super.apply(this);
 		var self = this;
 
 		this.elem = template.create('message-counter-template', { className: 'message-counter', tagName: 'span' });
