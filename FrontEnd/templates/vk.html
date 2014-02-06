@@ -1,32 +1,134 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title></title>
-  <script src="http://vkontakte.ru/js/api/openapi.js" type="text/javascript"></script>
-  <script language="javascript">
-    window.onload = function() {
-      VK.init({
-        apiId: 4170375
-      });
+	<head>
+		<title></title>
+		<script src="https://vkontakte.ru/js/api/openapi.js" type="text/javascript"></script>
+		<script language="javascript">
+			var VkontakteClient = function(appId) {
+				this.appId = appId;
+			};
+			VkontakteClient.prototype.initialize = function() {
+				VK.init({
+					apiId: this.appId
+				});
+			};
+			VkontakteClient.prototype.getLoginStatus = function(callback) {
+				VK.Auth.getLoginStatus(callback);
+			};
+			VkontakteClient.prototype.login = function(callback) {
+				VK.Auth.login(callback);
+			};
+			VkontakteClient.prototype.logout = function(callback) {
+				VK.Auth.logout(callback);
+			};
+			VkontakteClient.prototype.executeRequest = function(name, params, callback) {
+				VK.Api.call(name, params, callback);
+			};
 
-      VK.Auth.getLoginStatus(authInfo);
-      VK.UI.button('login_button');
-    };
-    function authInfo(response) {
-      if (response.session) {
-        alert('user: '+response.session.mid);
-      } else {
-        alert('not auth');
-      }
-    }
-  </script>
-</head>
-<body>
-  <div id="login_button" onclick="VK.Auth.login(authInfo);"></div>
-</body>
+			window.onload = function() {
+				var appId = 4170375;
+				
+				var loginButtonElem = document.getElementById('login-button');
+				var logoutButtonElem = document.getElementById('logout-button');
+				var toolsElem = document.getElementById('tools');
+				var statusElem = document.getElementById('status');
+				
+				var responseBodyElem = document.getElementById('response-body');
+				var executeButtonElem = document.getElementById('execute-button');
+				var paramsElem = document.getElementById('params');
+				var methodNameElem = document.getElementById('method-name');
+				
+				var vkontakteClient = new VkontakteClient(appId);
+				
+				methodNameElem.value = "photos.get";
+				paramsElem.value = JSON.stringify({
+					owner_id: 1,
+					album_id: "wall",
+					param_v: 5.8
+					}, null, 4);
+				
+				var getLoginStatusCallback = function(response) {
+					statusElem.textContent = JSON.stringify(response, null, 4);
+
+					var session = response.session;
+					if (session) {
+						toolsElem.classList.remove('hidden');
+						loginButtonElem.classList.add('hidden');
+						logoutButtonElem.classList.remove('hidden');
+					} else {
+						toolsElem.classList.add('hidden');
+						loginButtonElem.classList.remove('hidden');
+						logoutButtonElem.classList.add('hidden');
+					}
+				};
+				var executeRequestCallback = function(response) {
+					responseBodyElem.value = JSON.stringify(response, null, 4);	
+				};
+				var loginButtonElemClickListener = function(event) {
+					loginButtonElem.classList.add('hidden');
+					vkontakteClient.login(getLoginStatusCallback);
+				};
+				var logoutButtonElemClickListener = function(event) {
+					logoutButtonElem.classList.remove('hidden');
+					vkontakteClient.logout(getLoginStatusCallback);
+				};
+				var executeButtonClientListener = function(event) {
+					var methodName = methodNameElem.value;
+					var params = JSON.parse(paramsElem.value);
+					responseBodyElem.value = "";
+					vkontakteClient.executeRequest(methodName, params, executeRequestCallback);
+				};
+				
+				loginButtonElem.addEventListener('click', loginButtonElemClickListener);
+				logoutButtonElem.addEventListener('click', logoutButtonElemClickListener);
+				executeButtonElem.addEventListener('click', executeButtonClientListener);
+				
+				vkontakteClient.initialize();
+				vkontakteClient.getLoginStatus(getLoginStatusCallback);
+			};
+		</script>
+		<style>
+			.hidden {
+				display: none !important;
+			}
+			#request, #response {
+				vertical-align: top;
+				display: inline-block;
+				width: 30em;
+				margin-right: 1em;
+			}
+			#tools {
+				margin-top: 2em;
+			}
+			#params, #response-body {
+				display: block;
+				width: 100%;
+				height: 30em;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="menu">
+			<button id="login-button" class="hidden">Login via VK</button>
+			<button id="logout-button" class="hidden">Logout</button>
+			<div id="status"></div>
+		</div>
+		<div id="tools" class="hidden">
+			<div id="request">
+				<div>
+					<span>Method name:</span>
+					<input type="text" id="method-name">
+				</div>
+				<div>
+					<span>Params:</span>
+					<textarea id="params"></textarea>
+				</div>
+				<button id="execute-button">Execute</button>
+			</div>
+			<div id="response">
+				<textarea id="response-body"></textarea>
+			</div>
+		</div>
+	</body>
+
 </html>
-
-
-
-
-
