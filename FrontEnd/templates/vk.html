@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script src="http://vkontakte.ru/js/api/openapi.js" type="text/javascript"></script>
+  <script language="javascript">
+    window.onload = function() {
+      VK.init({
+        apiId: 4170375
+      });
+
+      VK.Auth.getLoginStatus(authInfo);
+      VK.UI.button('login_button');
+    };
+    function authInfo(response) {
+      if (response.session) {
+        alert('user: '+response.session.mid);
+      } else {
+        alert('not auth');
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="login_button" onclick="VK.Auth.login(authInfo);"></div>
+</body>
+</html>
+
+
+
+
+
