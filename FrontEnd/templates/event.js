@@ -4,9 +4,19 @@ var event = event || {};
 
 	'use strict';
 
+	/**
+	 * Creates a new EventEmitter instance.
+	 * @constructor
+	 */
 	var EventEmitter = function() {
 		this.listeners = {};
 	};
+	/**
+	 * Adds a callback to the EventEmitter object.
+	 * @param {string} type An event type to attach a callback.
+	 * @param {function} callback A callback function to call on an event.
+	 * @param {object=} context An object to use as a context for a callback function.
+	 */
 	EventEmitter.prototype.on = function(type, callback, context) {
 		this.listeners[type] = this.listeners[type] || [];
 		this.listeners[type].push({
@@ -14,6 +24,12 @@ var event = event || {};
 			context: context || this
 		});
 	};
+	/**
+	 * Adds a callback that fires once the EventEmitter object.
+	 * @param {string} type An event type to attach a callback.
+	 * @param {function} callback A callback function to call on an event.
+	 * @param {object=} context An object to use as a context for a callback function.
+	 */
 	EventEmitter.prototype.once = function(type, callback, context) {
 		this.listeners[type] = this.listeners[type] || [];
 		this.listeners[type].push({
@@ -22,6 +38,13 @@ var event = event || {};
 			once: true
 		});
 	};
+	/**
+	 * Removes a callback from the EventEmitter object.
+	 * @param {string} type An event type to remove a callback.
+	 * @param {function=} callback A callback to remove.
+	 * @param {object=} context A context object to determine which callbacks to remove
+	 * if many same callback attached.
+	 */
 	EventEmitter.prototype.off = function(type, callback, context) {
 		if (!type) {
 			this.listeners = {};
@@ -37,6 +60,10 @@ var event = event || {};
 			}
 		}
 	};
+	/**
+	 * Fires a specific event.
+	 * @param {object|string} event An event object that contains data for callbacks.
+	 */
 	EventEmitter.prototype.trigger = function(event) {
 		if (typeof(event) === 'string') {
 			event = { type: event };
