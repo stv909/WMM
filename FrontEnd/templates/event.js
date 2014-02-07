@@ -87,7 +87,7 @@ var event = event || {};
 
 	event.EventEmitter = EventEmitter;
 
-	if (module) {
+	if (typeof module !== 'undefined') {
 		module.exports = event;
 	}
 

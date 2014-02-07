@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script src="event.js"></script>
+  <script src="abyss.js"></script>
+  <script>
+    var Model = abyss.Model;
+
+    var model1 = new Model();
+    var model2 = new Model();
+
+    model1.on('change:firstName', function(event) {
+      console.log(event);
+      if (event.target !== model2) {
+        model2.set('firstName', 'box', { target: model1 });
+      }
+    });
+    model2.on('change:firstName', function(event) {
+      console.log(event);
+      if (event.target !== model1) {
+        model1.set('firstName', 'box', { target: model2 });
+      }
+    });
+
+    model1.set({ firstName: 'box' }, { target: this });
+    console.log(model1.attributes);
+    console.log(model1.has('firstName'));
+    console.log(model1.has('firstName2'));
+  </script>
+</head>
+<body>
+
+</body>
+</html>
