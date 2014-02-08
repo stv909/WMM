@@ -51,10 +51,12 @@ var abyss = abyss || {};
 		return this.attributes[attribute];
 	};
 	Model.prototype.has = function(attribute) {
-		return this.attributes.hasOwnProperty(attribute);
+		return (this.attributes).hasOwnProperty(attribute);
+	};
+	Model.prototype.dispose = function() {
+		this.off();
 	};
 
 	abyss.Model = Model;
-
 
 })(abyss, event);

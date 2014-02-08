@@ -1,5 +1,3 @@
-var event = event || {};
-
 (function(event) {
 
 	'use strict';
@@ -62,10 +60,12 @@ var event = event || {};
 	};
 	/**
 	 * Fires a specific event.
-	 * @param {object|string} event An event object that contains data for callbacks.
+	 * @params {object|string} event An event object that contains data for callbacks.
+	 * @config {string} event.type An event type to trigger callbacks.
+	 * @config {object=} event.target An object triggers an event.
 	 */
 	EventEmitter.prototype.trigger = function(event) {
-		if (typeof(event) === 'string') {
+		if (typeof event === 'string') {
 			event = { type: event };
 		}
 		if (!event.target) {
@@ -91,4 +91,4 @@ var event = event || {};
 		module.exports = event;
 	}
 
-})(event);
+})(event || {});
