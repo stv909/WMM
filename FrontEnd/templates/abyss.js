@@ -47,16 +47,62 @@ var abyss = abyss || {};
 			});
 		}
 	};
+	Model.prototype.unset = function(attribute, options) {
+		options || (options = {});
+		var silent = options.silent;
+		delete this.attributes[attribute];
+		if (!silent) {
+			this.trigger({
+				type: 'remove',
+				attribute: attribute
+			});
+			this.trigger({
+				type: 'remove:' + attribute
+			});
+		}
+	};
 	Model.prototype.get = function(attribute) {
 		return this.attributes[attribute];
 	};
 	Model.prototype.has = function(attribute) {
 		return (this.attributes).hasOwnProperty(attribute);
 	};
+	Model.prototype.toJSON = function() {
+		return this.attributes;
+	}
 	Model.prototype.dispose = function() {
 		this.off();
 	};
 
+	var View = function() {
+		View.super.apply(this);
+
+		this.model = null;
+		this.parentElem = null;
+		this.elem = null;
+	};
+	View.super = EventEmitter;
+	View.prototype = Object.create(EventEmitter.prototype);
+	View.prototype.constructor = View;
+	View.prototype.attachTo = function(parentElem) {
+		if (!this.parentElem) {
+			this.parentElem = parentElem;
+			this.parentElem.appendChild(this.elem);
+		}
+	};
+	View.prototype.detach = function() {
+		if (this.parentElem) {
+			this.parentElem.removeChild(this.elem);
+			this.parentElem = null;
+		}
+	};
+	View.prototype.dispose = function() {
+		this.trigger('dispose');
+		this.detach();
+		this.off();
+	};
+
 	abyss.Model = Model;
+	abyss.View = View;
 
 })(abyss, event);

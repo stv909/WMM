@@ -1,3 +1,5 @@
+var event = event || {};
+
 (function(event) {
 
 	'use strict';
@@ -91,4 +93,4 @@
 		module.exports = event;
 	}
 
-})(event || {});
+})(event);
