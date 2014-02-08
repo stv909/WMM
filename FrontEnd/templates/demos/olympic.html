@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<head>
+  <title></title>
+  <style>
+    @font-face {
+      font-family: "Segoe UI";
+      src: url("http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff");
+    }
+
+    body, html {
+      font-family: "Segoe UI";
+      margin: 0;
+      padding: 0;
+      width: 403px;
+      height: 403px;
+    }
+
+    #container {
+      width: 403px;
+      height: 403px;
+      background-color: rgb(20, 100, 210);
+      background: radial-gradient(rgb(20, 100, 210), rgb(0, 15, 30));
+      text-align: center;
+    }
+    .circle {
+      width: 90px;
+      height: 90px;
+      border: 5px solid white;
+      border-radius: 90px;
+      box-shadow: 0 0 15px 0px white,
+      inset 0 0 15px 0px white;
+      position: absolute;
+    }
+
+    @-webkit-keyframes flicker {
+      0% {
+        opacity: 1;
+      }
+      40% {
+        opacity: 0;
+      }
+      41% {
+        opacity: 1;
+      }
+      60% {
+        opacity: 1;
+      }
+      61% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    #olympic-logo {
+      display: inline-block;
+      position: relative;
+      top: 80px;
+      left: -165px;
+    }
+
+    #first {
+      top: 0;
+      left: 0;
+    }
+    #second {
+      top: 0;
+      left: 110px;
+    }
+    #third {
+      top: 55px;
+      left: 55px;
+    }
+    #fourth {
+      top: 55px;
+      left: 165px;
+    }
+    #stolen {
+      width: 90px;
+      height: 90px;
+      top: 0;
+      left: 220px;
+      text-shadow: 0 0 15px white;
+      color: white;
+      text-align: center;
+      line-height: 90px;
+      font-size: 80px;
+      position: absolute;
+      -webkit-animation-name: flicker;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: linear;
+    }
+    #line {
+      position: absolute;
+      width: 200px;
+      top: 210px;
+      border-top: 1px solid white;
+      box-shadow: 0 0 15px 0px white,
+      inset 0 0 15px 0px white;
+    }
+    #comment {
+      position: absolute;
+      top: 220px;
+      color: white;
+      text-align: left;
+      width: 300px;
+      text-shadow: 0 0 15px white;
+    }
+  </style>
+</head>
+<body>
+<div id="container">
+  <div id="olympic-logo">
+    <div class="circle" id="first"></div>
+    <div class="circle" id="second"></div>
+    <div class="circle" id="third"></div>
+    <div class="circle" id="fourth"></div>
+    <div id="stolen">*</div>
+    <div id="line"></div>
+    <div id="comment"><b>*</b> - не с#@!дили, а не успели достроить</div>
+  </div>
+</div>
+</body>
+</html>
