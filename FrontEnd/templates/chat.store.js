@@ -142,6 +142,30 @@ var chat = chat || {};
 				return isUserType && !isAccountId;
 			});
 		},
+		getOnlineUserContactIds: function() {
+			var self = this;
+			var accountId = this.account.getAttribute('id');
+			var keys = Object.keys(this.contacts);
+			return keys.filter(function(key) {
+				var contact = self.contacts[key];
+				var isUserType = contact.getAttribute('type') === 'user';
+				var isAccountId = contact.getAttribute('id') === accountId;
+				var isOnline = contact.getAttribute('online')
+				return isUserType && !isAccountId && isOnline;
+			});
+		},
+		getOfflineUserContactIds: function() {
+			var self = this;
+			var accountId = this.account.getAttribute('id');
+			var keys = Object.keys(this.contacts);
+			return keys.filter(function(key) {
+				var contact = self.contacts[key];
+				var isUserType = contact.getAttribute('type') === 'user';
+				var isAccountId = contact.getAttribute('id') === accountId;
+				var isOnline = contact.getAttribute('online')
+				return isUserType && !isAccountId && !isOnline;
+			});
+		},
 		addMessage: function(message) {
 			var messageId = message.getAttribute('id');
 			this.messages[messageId] = message;

@@ -630,7 +630,8 @@ window.onload = function() {
 
 		var publicKeys = self.storage.getPublicContactIds();
 		var themeKeys = self.storage.getThemeContactIds();
-		var userKeys = self.storage.getUserContactIds();
+		var onlineUserKeys = self.storage.getOnlineUserContactIds();
+		var offlineUserKeys = self.storage.getOfflineUserContactIds();
 
 		publicKeys.forEach(function(key) {
 			prepareContactView(self.contactViews[key]);
@@ -638,7 +639,10 @@ window.onload = function() {
 		themeKeys.forEach(function(key) {
 			prepareContactView(self.contactViews[key]);
 		});
-		userKeys.forEach(function(key) {
+		onlineUserKeys.forEach(function(key) {
+			prepareContactView(self.contactViews[key]);
+		});
+		offlineUserKeys.forEach(function(key) {
 			prepareContactView(self.contactViews[key]);
 		});
 	};
