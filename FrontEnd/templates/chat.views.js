@@ -735,6 +735,7 @@ var chat = chat || {};
 		this.boxElem = this.elem.getElementsByClassName('box')[0];
 		this.closeElem = this.elem.getElementsByClassName('close')[0];
 		this.linkElem = this.elem.getElementsByClassName('link')[0];
+		this.opened = false;
 
 		this.elem.addEventListener('click', function() {
 			self.close();
@@ -745,6 +746,14 @@ var chat = chat || {};
 		this.closeElem.addEventListener('click', function() {
 			self.close();
 		});
+		this.linkElem.addEventListener('click', function() {
+			self.linkElem.select();
+		});
+		document.addEventListener('keyup', function(event) {
+			if (self.opened && event.keyCode === 27) {
+				self.close();
+			}
+		});
 	};
 	ShareDialogView.super = View;
 	ShareDialogView.prototype = Object.create(View.prototype);
@@ -754,9 +763,11 @@ var chat = chat || {};
 		this.linkElem.value = url;
 		this.linkElem.focus();
 		this.linkElem.select();
+		this.opened = true;
 	};
 	ShareDialogView.prototype.close = function() {
 		this.elem.classList.add('hidden');
+		this.opened = false;
 	};
 
 	var MessageCounterView = function() {
