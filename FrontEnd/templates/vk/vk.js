@@ -12,6 +12,7 @@ window.onload = function() {
 			};
 			return result;
 		});
+		return result;
 	};
 
 	var VkontakteClient = function(appId) {
@@ -19,7 +20,7 @@ window.onload = function() {
 	}
 	VkontakteClient.prototype.initializeAsync = function() {
 		VK.init({
-			appId: this.appId
+			apiId: this.appId
 		});
 		return Promise.resolve(true);
 	};
@@ -45,8 +46,12 @@ window.onload = function() {
 	};
 	VkontakteClient.prototype.executeRequestAsync = function(name, params) {
 		var deferred = defer();
-		var callback = function(response) {
-			deferred.resolve(response);
+		var callback = function(value) {
+			if (value.response) {
+				deferred.resolve(value.response);
+			} else {
+				deferred.reject(value);
+			}
 		};
 		VK.Api.call(name, params, callback);
 		return deferred.promise;
@@ -59,5 +64,12 @@ window.onload = function() {
 		return vkontakteClient.loginAsync();
 	}).then(function(response) {
 		console.log(response);
+		var userId = response.session.user.id;
+		var friendsGetParams = { user_id: userId, v: 5.8 };
+		return vkontakteClient.executeRequestAsync('friends.get', friendsGetParams);
+	}).then(function(respose) {
+		console.log(respose);
+	}, function(error) {
+		console.log(error);
 	});
 };
