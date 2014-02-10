@@ -212,16 +212,16 @@ window.onload = function() {
 		friendsPromise.then(function(response) {
 			var users = response.items;
 			users.forEach(function(user) {
-				var friendView = new FriendView(user);
-				self.friendViews.push(friendView);
-				friendView.attachTo(self.friendListElem);
+				var view = new FriendView(user);
+				self.friendViews.push(view);
 			});
-		});
-		this.friendViews.forEach(function(view) {
-			view.on('click', function(event) {
-				self.trigger({
-					type: 'click:user',
-					user: event.user
+			self.friendViews.forEach(function(view) {
+				view.attachTo(self.friendListElem);
+				view.on('click', function(event) {
+					self.trigger({
+						type: 'click:user',
+						user: event.user
+					});
 				});
 			});
 		});
@@ -318,7 +318,6 @@ window.onload = function() {
 			var friends = self.storage.get('friends');
 			var session = self.storage.get('session');
 			var user = session.user;
-			console.log(friends);
 			self.chooseWallView.show(user, self.storage.get('friends'));
 		});
 		this.toolsView.hide();

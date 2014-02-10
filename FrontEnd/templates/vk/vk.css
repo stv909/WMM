@@ -129,8 +129,17 @@ body {
 #choose-wall-window .friend-list {
   box-sizing: border-box;
   width: 100%;
-  height: 25em;
+  height: 27.5em;
+  overflow: scroll;
 }
-#choose-wall-window .friend-list .friend .name {
-  color: #000;
+#choose-wall-window .friend-list .friend {
+  font-size: 0.9em;
+  padding: 0.75em;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  cursor: pointer;
+}
+#choose-wall-window .friend-list .friend:hover {
+  color: #fff;
+  background-color: #28f;
 }
