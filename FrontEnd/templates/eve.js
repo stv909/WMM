@@ -1,6 +1,6 @@
-var event = event || {};
+var eve = eve || {};
 
-(function(event) {
+(function(eve) {
 
 	'use strict';
 
@@ -87,10 +87,10 @@ var event = event || {};
 		}
 	};
 
-	event.EventEmitter = EventEmitter;
+	eve.EventEmitter = EventEmitter;
 
 	if (typeof module !== 'undefined') {
-		module.exports = event;
+		module.exports = eve;
 	}
 
-})(event);
+})(eve);

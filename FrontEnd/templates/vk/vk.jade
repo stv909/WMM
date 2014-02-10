@@ -1,23 +1,29 @@
+mixin account-template
+	template#account-template(style="display: none")
+		.name.hidden
+		.control.login Login via VK
+		.control.logout.hidden Logout
+
 doctype html
 html
 	head
 		script(src="https://vkontakte.ru/js/api/openapi.js")
 		script(src="../html.js")
-		script(src="../event.js")
+		script(src="../template.js")
+		script(src="../eve.js")
 		script(src="../abyss.js")
 		script(src="vk.js")
 		link(rel="stylesheet", href="../styles/reset.css")
 		link(rel="stylesheet", href="../styles/fonts.css")
 		link(rel="stylesheet", href="vk.css")
 	body
+		+account-template
 		#page
-				#menu
-					.main-container
-						.logo
-							span.logo-holder
-								.logo-first VK
-								.logo-second Integration
-						.account
-							.name Welcome, Shadeglare
-							.control.login.hidden Login via VK
-							.control.logout Logout
+			#menu
+				.main-container
+					.logo
+						span.logo-holder
+							.logo-first VK
+							.logo-second Integration
+			#wall
+				.main-container

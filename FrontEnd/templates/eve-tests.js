@@ -1,4 +1,4 @@
-var EventEmitter = require('./event').EventEmitter;
+var EventEmitter = require('./eve').EventEmitter;
 
 var em = new EventEmitter();
 em.once('test', function() {

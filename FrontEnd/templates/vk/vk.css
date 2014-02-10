@@ -1,6 +1,7 @@
 html,
 body {
   font-family: 'Segoe UI';
+  background-color: #efefef;
 }
 .hidden {
   display: none !important;
@@ -13,7 +14,6 @@ body {
 #menu {
   display: block;
   background-color: #222;
-  box-shadow: 0 0 0.5em #222;
 }
 #menu .logo,
 #menu .account {
@@ -61,5 +61,9 @@ body {
 }
 #menu .control:active {
   color: #222;
-  background-color: #eee;
+  background-color: #efefef;
+}
+#wall .main-container {
+  background-color: #fff;
+  min-height: 10em;
 }

@@ -1,10 +1,10 @@
 var abyss = abyss || {};
 
-(function(abyss, event) {
+(function(abyss, eve) {
 
 	'use strict';
 
-	var EventEmitter = event.EventEmitter;
+	var EventEmitter = eve.EventEmitter;
 
 	var Model = function() {
 		Model.super.apply(this);
@@ -105,4 +105,4 @@ var abyss = abyss || {};
 	abyss.Model = Model;
 	abyss.View = View;
 
-})(abyss, event);
+})(abyss, eve);

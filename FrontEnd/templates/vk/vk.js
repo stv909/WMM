@@ -1,6 +1,8 @@
 window.onload = function() {
 	console.log('onload complete');
 
+	var EventEmitter = eve.EventEmitter;
+
 	var defer = function() {
 		var result = {};
 		result.promise = new Promise(function(resolve, reject) {
@@ -57,8 +59,82 @@ window.onload = function() {
 		return deferred.promise;
 	};
 
-	var appId = 4170375;
-	var vkontakteClient = new VkontakteClient(appId);
+	var AccountView = function() {
+		AccountView.super.apply(this);
+		var self = this;
+
+		this.parentElem = null;
+		this.elem = template.create('account-template', { className: 'account' });
+		this.loginElem = this.elem.getElementsByClassName('login')[0];
+		this.logoutElem = this.elem.getElementsByClassName('logout')[0];
+		this.nameElem = this.elem.getElementsByClassName('name')[0];
+
+		var loginElemClickListener = function() {
+			self.trigger({
+				type: 'click:login'
+			});
+		};
+		var logoutElemClickListener = function() {
+			self.trigger({
+				type: 'click:logout'
+			});
+		};
+
+		this.loginElem.addEventListener('click', loginElemClickListener);
+		this.logoutElem.addEventListener('click', logoutElemClickListener);
+
+		this.once('dispose', function() {
+			this.loginElem.removeEventListener('click', loginElemClickListener);
+			this.logoutElem.removeEventListener('click', logoutElemClickListener);
+		});
+	};
+	AccountView.super = EventEmitter;
+	AccountView.prototype = Object.create(EventEmitter.prototype);
+	AccountView.prototype.constructor = AccountView;
+	AccountView.prototype.attachTo = function(parentElem) {
+		if (!this.parentElem) {
+			this.parentElem = parentElem;
+			this.parentElem.appendChild(this.elem);
+		}
+	};
+	AccountView.prototype.detach = function() {
+		if (this.parentElem) {
+			this.parentElem.removeChild(this.elem);
+			this.parentElem = null;
+		}
+	};
+	AccountView.setLoginName = function(name) {
+		this.nameElem.textContent = name;
+		this.nameElem.classList.remove('hidden');
+		this.loginElem.classList.add('hidden');
+		this.logoutElem.classList.remove('hidden');
+	};
+	AccountView.unsetLoginName = function() {
+		this.nameElem.textContent = '';
+		this.nameElem.classList.add('hidden');
+		this.loginElem.classList.remove('hidden');
+		this.logoutElem.classList.add('hidden');
+	};
+	AccountView.prototype.dispose = function() {
+		this.trigger('dispose');
+		this.detach();
+		this.off();
+	};
+
+	var Application = function() {
+		this.appId = 4170375;
+		this.vkontakteClient = new VkontakteClient(this.appId);
+
+		this.menuElem = document.getElementById('menu');
+		this.menuContainerElem = document.getElementsByClassName('main-container')[0];
+		this.accountView = new AccountView();
+	};
+	Application.prototype.initialize = function() {
+		this.accountView.attachTo(this.menuContainerElem);
+	};
+
+	var application = new Application();
+	application.initialize();
 
 //	vkontakteClient.initializeAsync().then(function() {
 //		return vkontakteClient.loginAsync();
