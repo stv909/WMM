@@ -75,7 +75,7 @@ html, body
 	right 0
 	width 100%
 	height 100%
-	background-color rgba(0, 0, 0, 0.7)
+	background-color rgba(0, 0, 0, 0.5)
 	.dialog-wrapper
 		display table-cell
 		vertical-align middle
@@ -83,7 +83,22 @@ html, body
 		.dialog-window
 			display inline-block
 			background-color white
-			box-shadow: 0 0 3em #111
+			box-shadow 0 0 5em #444
+			.title-holder
+				color white
+				background-color #222
+				height 2.5em
+				.title
+					line-height 2.5em
+			.content
+				width 100%
 #choose-wall-window
 	width 40em
 	height 30em
+	.friend-list
+		box-sizing border-box
+		width 100%
+		height 25em
+		.friend
+			.name
+				color black

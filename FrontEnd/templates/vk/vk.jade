@@ -13,6 +13,13 @@ mixin choose-wall-template
 	template#choose-wall-template(style="display: none")
 			.dialog-wrapper
 				#choose-wall-window.dialog-window
+					.title-holder
+						.title Choose wall
+					.content
+						.friend-list
+mixin friend-template
+	template#friend-template(style="display: none")
+		.name
 
 doctype html
 html
@@ -30,6 +37,7 @@ html
 		+account-template
 		+tools-template
 		+choose-wall-template
+		+friend-template
 		#page
 			#menu
 				.main-container

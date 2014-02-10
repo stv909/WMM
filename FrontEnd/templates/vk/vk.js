@@ -173,6 +173,8 @@ window.onload = function() {
 
 		this.elem = template.create('choose-wall-template', { className: 'dialog-background' } );
 		this.dialogWindowElem = this.elem.getElementsByClassName('dialog-window')[0];
+		this.friendListElem = this.elem.getElementsByClassName('friend-list')[0];
+		this.friendViews = [];
 		this.opened = false;
 
 		this.documentKeyupListener = function(event) {
@@ -199,16 +201,48 @@ window.onload = function() {
 	ChooseWallView.super = View;
 	ChooseWallView.prototype = Object.create(View.prototype);
 	ChooseWallView.prototype.constructor = View;
-	ChooseWallView.prototype.show = function() {
+	ChooseWallView.prototype.show = function(friendsPromise) {
 		ChooseWallView.super.prototype.show.apply(this);
 		document.addEventListener('keyup', this.documentKeyupListener);
 		this.opened = true;
+		this.removeFriendViews();
+		var self = this;
+		friendsPromise.then(function(response) {
+			var users = response.items;
+			users.forEach(function(user) {
+				var friendView = new FriendView(user);
+				self.friendViews.push(friendView);
+				friendView.attachTo(self.friendListElem);
+			});
+		});
 	};
 	ChooseWallView.prototype.hide = function() {
 		ChooseWallView.super.prototype.hide.apply(this);
 		document.removeEventListener('keyup', this.documentKeyupListener);
 		this.opened = false;
 	};
+	ChooseWallView.prototype.removeFriendViews = function() {
+		this.friendViews.forEach(function(view) {
+			view.dispose();
+		});
+		this.friendViews = [];
+	};
+
+	var FriendView = function(friend) {
+		FriendView.super.apply(this);
+		var self = this;
+
+		this.elem = template.create('friend-template', { className: 'friend' });
+		this.nameElem = this.elem.getElementsByClassName('name')[0];
+
+		var firstName = friend.first_name;
+		var lastName = friend.last_name;
+
+		this.nameElem.textContent = [firstName, lastName].join(' ');
+	};
+	FriendView.super = View;
+	FriendView.prototype = Object.create(View.prototype);
+	FriendView.prototype.constructor = View;
 	
 	var Storage = function() {
 		Storage.super.apply(this);
@@ -256,24 +290,9 @@ window.onload = function() {
 
 		this.toolsView.attachTo(this.wallContainerElem);
 		this.toolsView.on('click:create-message', function() {
-//			if (self.storage.has('friends')) {
-//
-//			} else {
-//				var session = self.storage.get('session');
-//				var params = {
-//					user_id: session.user.id,
-//					fields: 'domain',
-//					v: 5.8
-//				};
-//				var promise = self.vkontakteClient.executeRequestAsync('friends.get', params);
-//				promise.then(function(response) {
-//					self.storage.set('friends', response.items)
-//				});
-//			}
-
 		});
 		this.toolsView.on('click:choose-wall', function() {
-			self.chooseWallView.show();
+			self.chooseWallView.show(self.storage.get('friends'));
 		});
 		//this.toolsView.hide();
 
@@ -290,12 +309,27 @@ window.onload = function() {
 			self.accountView.setLoginName([firstName, lastName].join(' '));
 			self.toolsView.show();
 			self.wallElem.classList.remove('hidden');
+			self.prepareFriends();
 		});
 		this.storage.on('remove:session', function(event) {
 			self.accountView.unsetLoginName();
 			self.toolsView.hide();
 			self.wallElem.classList.add('hidden');
+			self.removeFriends();
 		});
+	};
+	Application.prototype.prepareFriends = function() {
+		var session = this.storage.get('storage');
+		var params = {
+			user_id: session.user.id,
+			fields: 'domain',
+			v: 5.8
+		};
+		var friendsPromise = this.vkontakteClient.executeRequest('friends.get', params);
+		this.storage.set('friends', friendsPromise);
+	};
+	Application.prototype.removeFriends = function() {
+		this.storage.unset('friends');
 	};
 
 	var application = new Application();
