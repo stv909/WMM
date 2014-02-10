@@ -2,6 +2,7 @@ window.onload = function() {
 	console.log('onload complete');
 
 	var EventEmitter = eve.EventEmitter;
+	var Model = abyss.Model;
 
 	var defer = function() {
 		var result = {};
@@ -102,13 +103,13 @@ window.onload = function() {
 			this.parentElem = null;
 		}
 	};
-	AccountView.setLoginName = function(name) {
+	AccountView.prototype.setLoginName = function(name) {
 		this.nameElem.textContent = 'Welcome, ' + name;
 		this.nameElem.classList.remove('hidden');
 		this.loginElem.classList.add('hidden');
 		this.logoutElem.classList.remove('hidden');
 	};
-	AccountView.unsetLoginName = function() {
+	AccountView.prototype.unsetLoginName = function() {
 		this.nameElem.textContent = '';
 		this.nameElem.classList.add('hidden');
 		this.loginElem.classList.remove('hidden');
@@ -119,46 +120,58 @@ window.onload = function() {
 		this.detach();
 		this.off();
 	};
+	
+	var Storage = function() {
+		Storage.super.apply(this);
+	};
+	Storage.super = Model;
+	Storage.prototype = Object.create(Model.prototype);
+	Storage.prototype.constructor = Storage;
 
 	var Application = function() {
 		this.appId = 4170375;
 		this.vkontakteClient = new VkontakteClient(this.appId);
+		this.storage = new Storage();
 
 		this.menuElem = document.getElementById('menu');
 		this.menuContainerElem = document.getElementsByClassName('main-container')[0];
 		this.accountView = new AccountView();
 	};
 	Application.prototype.initialize = function() {
-		var self = this;
 		this.vkontakteClient.initialize();
-
+		this.initializeViews();
+		this.initializeStorage();
+	};
+	Application.prototype.initializeViews = function() {
+		var self = this;
 		this.accountView.attachTo(this.menuContainerElem);
 		this.accountView.on('click:login', function() {
 			self.vkontakteClient.loginAsync().then(function(response) {
-				var session = response.session.user;
-				self.accountView.setLoginName('test');
+				self.storage.set('session', response.session);
+			}, function(error) {
+				console.log(error);
 			});
 		});
 		this.accountView.on('click:logout', function() {
 			self.vkontakteClient.logoutAsync().then(function() {
-				self.accountView.unsetLoginName();
+				self.storage.unset('session');
 			});
+		});
+	};
+	Application.prototype.initializeStorage = function() {
+		var self = this;
+		this.storage.on('change:session', function(event) {
+			var session = event.value;
+			var user = session.user;
+			var firstName = user.first_name;
+			var lastName = user.last_name;
+			self.accountView.setLoginName([firstName, lastName].join(' '));
+		});
+		this.storage.on('remove:session', function(event) {
+			self.accountView.unsetLoginName();
 		});
 	};
 
 	var application = new Application();
 	application.initialize();
-
-//	vkontakteClient.initializeAsync().then(function() {
-//		return vkontakteClient.loginAsync();
-//	}).then(function(response) {
-//		console.log(response);
-//		var userId = response.session.user.id;
-//		var friendsGetParams = { user_id: userId, v: 5.8 };
-//		return vkontakteClient.executeRequestAsync('friends.get', friendsGetParams);
-//	}).then(function(respose) {
-//		console.log(respose);
-//	}, function(error) {
-//		console.log(error);
-//	});
 };
