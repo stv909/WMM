@@ -166,6 +166,49 @@ window.onload = function() {
 	ToolsView.super = View;
 	ToolsView.prototype = Object.create(View.prototype);
 	ToolsView.prototype.constructor = ToolsView;
+
+	var ChooseWallView = function() {
+		ChooseWallView.super.apply(this);
+		var self = this;
+
+		this.elem = template.create('choose-wall-template', { className: 'dialog-background' } );
+		this.dialogWindowElem = this.elem.getElementsByClassName('dialog-window')[0];
+		this.opened = false;
+
+		this.documentKeyupListener = function(event) {
+			if (event.keyCode === 27 && self.opened) {
+				self.hide();
+			}
+		};
+
+		var elemClickListener = function(event) {
+			self.hide();
+		};
+		var dialogWindowElemClickListener = function(event) {
+			event.stopPropagation();
+		};
+
+		this.elem.addEventListener('click', elemClickListener);
+		this.dialogWindowElem.addEventListener('click', dialogWindowElemClickListener);
+
+		this.on('dispose', function() {
+			self.elem.removeEventListener('click', elemClickListener);
+			self.dialogWindowElem.removeEventListener('click', dialogWindowElemClickListener);
+		});
+	};
+	ChooseWallView.super = View;
+	ChooseWallView.prototype = Object.create(View.prototype);
+	ChooseWallView.prototype.constructor = View;
+	ChooseWallView.prototype.show = function() {
+		ChooseWallView.super.prototype.show.apply(this);
+		document.addEventListener('keyup', this.documentKeyupListener);
+		this.opened = true;
+	};
+	ChooseWallView.prototype.hide = function() {
+		ChooseWallView.super.prototype.hide.apply(this);
+		document.removeEventListener('keyup', this.documentKeyupListener);
+		this.opened = false;
+	};
 	
 	var Storage = function() {
 		Storage.super.apply(this);
@@ -187,6 +230,7 @@ window.onload = function() {
 
 		this.accountView = new AccountView();
 		this.toolsView = new ToolsView();
+		this.chooseWallView = new ChooseWallView();
 	};
 	Application.prototype.initialize = function() {
 		this.vkontakteClient.initialize();
@@ -212,12 +256,29 @@ window.onload = function() {
 
 		this.toolsView.attachTo(this.wallContainerElem);
 		this.toolsView.on('click:create-message', function() {
-			alert('create');
+//			if (self.storage.has('friends')) {
+//
+//			} else {
+//				var session = self.storage.get('session');
+//				var params = {
+//					user_id: session.user.id,
+//					fields: 'domain',
+//					v: 5.8
+//				};
+//				var promise = self.vkontakteClient.executeRequestAsync('friends.get', params);
+//				promise.then(function(response) {
+//					self.storage.set('friends', response.items)
+//				});
+//			}
+
 		});
 		this.toolsView.on('click:choose-wall', function() {
-			alert('choose');
+			self.chooseWallView.show();
 		});
-		this.toolsView.hide();
+		//this.toolsView.hide();
+
+		this.chooseWallView.attachTo(document.body);
+		this.chooseWallView.hide();
 	};
 	Application.prototype.initializeStorage = function() {
 		var self = this;
