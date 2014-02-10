@@ -20,6 +20,8 @@ mixin choose-wall-template
 mixin friend-template
 	template#friend-template(style="display: none")
 		.name
+mixin wall-template
+	template#wall-template(style="display: none")
 
 doctype html
 html
@@ -38,6 +40,7 @@ html
 		+tools-template
 		+choose-wall-template
 		+friend-template
+		+wall-template
 		#page
 			#menu
 				.main-container
@@ -45,5 +48,5 @@ html
 						span.logo-holder
 							.logo-first VK
 							.logo-second Integration
-			#wall
+			#wall-holder
 				.main-container

@@ -62,7 +62,7 @@ body {
   color: #222;
   background-color: #efefef;
 }
-#wall .main-container {
+#wall-holder .main-container {
   background-color: #fff;
 }
 #tools {
@@ -142,4 +142,7 @@ body {
 #choose-wall-window .friend-list .friend:hover {
   color: #fff;
   background-color: #28f;
+}
+#wall {
+  color: #000;
 }

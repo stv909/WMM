@@ -266,6 +266,16 @@ window.onload = function() {
 	FriendView.super = View;
 	FriendView.prototype = Object.create(View.prototype);
 	FriendView.prototype.constructor = View;
+
+	var WallView = function() {
+		WallView.super.apply(this);
+		var self = this;
+
+		this.elem = template.create('wall-template', { id: 'wall' });
+	};
+	WallView.super = View;
+	WallView.prototype = Object.create(View.prototype);
+	WallView.prototype.constructor = View;
 	
 	var Storage = function() {
 		Storage.super.apply(this);
@@ -282,12 +292,13 @@ window.onload = function() {
 		this.pageElem = document.getElementById('page');
 		this.menuElem = document.getElementById('menu');
 		this.menuContainerElem = this.menuElem.getElementsByClassName('main-container')[0];
-		this.wallElem = document.getElementById('wall');
-		this.wallContainerElem = this.wallElem.getElementsByClassName('main-container')[0];
+		this.wallHolderElem = document.getElementById('wall-holder');
+		this.wallContainerElem = this.wallHolderElem.getElementsByClassName('main-container')[0];
 
 		this.accountView = new AccountView();
 		this.toolsView = new ToolsView();
 		this.chooseWallView = new ChooseWallView();
+		this.wallView = new WallView();
 	};
 	Application.prototype.initialize = function() {
 		this.vkontakteClient.initialize();
@@ -327,30 +338,46 @@ window.onload = function() {
 			alert(JSON.stringify(event.user, null, 4));
 		});
 		this.chooseWallView.hide();
+
+		this.wallView.attachTo(this.wallContainerElem);
+		this.wallView.hide();
 	};
 	Application.prototype.initializeStorage = function() {
 		var self = this;
 		this.storage.on('change:session', function(event) {
 			var session = event.value;
 			var user = session.user;
+			var id = user.id;
 			var firstName = user.first_name;
 			var lastName = user.last_name;
 			self.accountView.setLoginName([firstName, lastName].join(' '));
 			self.toolsView.show();
 			self.wallElem.classList.remove('hidden');
 			self.prepareFriends();
+			self.prepareWall(id);
 		});
 		this.storage.on('remove:session', function(event) {
 			self.accountView.unsetLoginName();
 			self.toolsView.hide();
 			self.wallElem.classList.add('hidden');
 			self.removeFriends();
+			self.removeWall();
+		});
+		this.storage.on('change:wall', function(event) {
+			var wallPromise = event.value;
+			wallPromise.then(function(response) {
+				self.wallView.elem.textContent = JSON.stringify(response, null ,4);
+				self.wallView.show();
+			});
+		});
+		this.storage.on('remove:wall', function(event) {
+			self.wallView.hide();
 		});
 	};
 	Application.prototype.prepareFriends = function() {
 		var session = this.storage.get('session');
 		var params = {
-			user_id: 1,// session.user.id,
+			user_id: session.user.id,
 			fields: 'domain',
 			v: 5.8
 		};
@@ -359,6 +386,20 @@ window.onload = function() {
 	};
 	Application.prototype.removeFriends = function() {
 		this.storage.unset('friends');
+	};
+	Application.prototype.prepareWall = function(userId) {
+		var session = this.storage.get('session');
+		var params = {
+			owner_id: session.user.id,
+			count: 100,
+			filter: 'all',
+			v: 5.8
+		};
+		var wallPromise = this.vkontakteClient.executeRequestAsync('wall.get', params);
+		this.storage.set('wall', wallPromise);
+	};
+	Application.prototype.removeWall = function() {
+
 	};
 
 	var application = new Application();
