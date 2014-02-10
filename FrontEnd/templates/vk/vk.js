@@ -292,9 +292,11 @@ window.onload = function() {
 		this.toolsView.on('click:create-message', function() {
 		});
 		this.toolsView.on('click:choose-wall', function() {
+			var friends = self.storage.get('friends');
+			console.log(friends);
 			self.chooseWallView.show(self.storage.get('friends'));
 		});
-		//this.toolsView.hide();
+		this.toolsView.hide();
 
 		this.chooseWallView.attachTo(document.body);
 		this.chooseWallView.hide();
@@ -319,13 +321,13 @@ window.onload = function() {
 		});
 	};
 	Application.prototype.prepareFriends = function() {
-		var session = this.storage.get('storage');
+		var session = this.storage.get('session');
 		var params = {
-			user_id: session.user.id,
+			user_id: 1,// session.user.id,
 			fields: 'domain',
 			v: 5.8
 		};
-		var friendsPromise = this.vkontakteClient.executeRequest('friends.get', params);
+		var friendsPromise = this.vkontakteClient.executeRequestAsync('friends.get', params);
 		this.storage.set('friends', friendsPromise);
 	};
 	Application.prototype.removeFriends = function() {
