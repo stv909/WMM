@@ -66,8 +66,9 @@ body {
   background-color: #fff;
 }
 #tools {
-  padding-top: 0.75em;
-  padding-bottom: 0.75em;
+  font-size: 1.1em;
+  padding-top: 1em;
+  padding-bottom: 1em;
 }
 #tools .create-message,
 #tools .choose-wall,
@@ -145,4 +146,36 @@ body {
 }
 #wall {
   color: #000;
+}
+#wall .wall-item {
+  padding-bottom: 1em;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1em;
+}
+#wall .wall-item .date-holder,
+#wall .wall-item .content-holder {
+  display: inline-block;
+  text-align: justify;
+  vertical-align: top;
+}
+#wall .wall-item .date-holder {
+  width: 4em;
+  text-align: left;
+}
+#wall .wall-item .date {
+  display: inline-block;
+  color: #fff;
+  background-color: #222;
+  padding: 0.25em;
+}
+#wall .wall-item .year {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#wall .wall-item .content-holder {
+  padding-top: 0.25em;
+  width: 45em;
+}
+#wall .wall-item .text {
+  font-weight: normal;
 }

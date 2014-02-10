@@ -273,10 +273,42 @@ window.onload = function() {
 		var self = this;
 
 		this.elem = template.create('wall-template', { id: 'wall' });
+		
+		this.wallItemViews = [];
 	};
 	WallView.super = View;
 	WallView.prototype = Object.create(View.prototype);
 	WallView.prototype.constructor = View;
+	WallView.prototype.addWallItemView = function(wallItemView) {
+		this.wallItemViews.push(wallItemView);
+		wallItemView.attachTo(this.elem);
+	};
+	WallView.prototype.clearWallItemViews = function() {
+		this.wallItemViews.forEach(function(view) {
+			view.dispose();	
+		});
+		this.wallItemViews = [];
+	};
+	
+	var WallItemView = function(item) {
+		WallItemView.super.apply(this);
+		var self = this;
+		console.log(item);
+		
+		this.elem = template.create('wall-item-template', { className: 'wall-item' });
+		this.textElem = this.elem.getElementsByClassName('text')[0];
+		this.dateElem = this.elem.getElementsByClassName('date')[0];
+		
+		var date = new Date(item.date);
+		var month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+		var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+		
+		this.textElem.textContent = item.text;
+		this.dateElem.textContent = [day, month].join('.');
+	};
+	WallItemView.super = View;
+	WallItemView.prototype = Object.create(View.prototype);
+	WallItemView.prototype.constructor = View;
 	
 	var Storage = function() {
 		Storage.super.apply(this);
@@ -369,8 +401,15 @@ window.onload = function() {
 		this.storage.on('change:wall', function(event) {
 			var wallPromise = event.value;
 			wallPromise.then(function(response) {
-				self.wallView.elem.textContent = JSON.stringify(response, null ,4);
+				var items = response.items;
+				self.wallView.clearWallItemViews();
 				self.wallView.show();
+				items.forEach(function(item) {
+					var wallItemView = new WallItemView(item);
+					self.wallView.addWallItemView(wallItemView);
+				});
+			}, function(error) {
+				console.log(error);
 			});
 		});
 		this.storage.on('remove:wall', function(event) {
@@ -378,7 +417,6 @@ window.onload = function() {
 		});
 	};
 	Application.prototype.prepareFriends = function() {
-		console.log(6);
 		var session = this.storage.get('session');
 		var params = {
 			user_id: 1,//session.user.id,

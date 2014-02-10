@@ -22,6 +22,12 @@ mixin friend-template
 		.name
 mixin wall-template
 	template#wall-template(style="display: none")
+mixin wall-item-template
+	template#wall-item-template(style="display: none")
+		.date-holder
+			.date
+		.content-holder
+			.text
 
 doctype html
 html
@@ -41,6 +47,7 @@ html
 		+choose-wall-template
 		+friend-template
 		+wall-template
+		+wall-item-template
 		#page
 			#menu
 				.main-container
