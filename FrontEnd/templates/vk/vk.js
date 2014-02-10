@@ -201,18 +201,28 @@ window.onload = function() {
 	ChooseWallView.super = View;
 	ChooseWallView.prototype = Object.create(View.prototype);
 	ChooseWallView.prototype.constructor = View;
-	ChooseWallView.prototype.show = function(friendsPromise) {
+	ChooseWallView.prototype.show = function(me, friendsPromise) {
 		ChooseWallView.super.prototype.show.apply(this);
 		document.addEventListener('keyup', this.documentKeyupListener);
 		this.opened = true;
 		this.removeFriendViews();
 		var self = this;
+		var friendView = new FriendView(me);
+		self.friendViews.push(friendView);
 		friendsPromise.then(function(response) {
 			var users = response.items;
 			users.forEach(function(user) {
 				var friendView = new FriendView(user);
 				self.friendViews.push(friendView);
 				friendView.attachTo(self.friendListElem);
+			});
+		});
+		this.friendViews.forEach(function(view) {
+			view.on('click', function(event) {
+				self.trigger({
+					type: 'click:user',
+					user: event.user
+				});
 			});
 		});
 	};
@@ -239,6 +249,19 @@ window.onload = function() {
 		var lastName = friend.last_name;
 
 		this.nameElem.textContent = [firstName, lastName].join(' ');
+
+		var elemClickListener = function() {
+			self.trigger({
+				type: 'click',
+				user: friend
+			});
+		};
+
+		this.elem.addEventListener('click', elemClickListener);
+
+		this.once('dispose', function() {
+			this.elem.removeEventListener('click', elemClickListener);
+		});
 	};
 	FriendView.super = View;
 	FriendView.prototype = Object.create(View.prototype);
@@ -293,12 +316,17 @@ window.onload = function() {
 		});
 		this.toolsView.on('click:choose-wall', function() {
 			var friends = self.storage.get('friends');
+			var session = self.storage.get('session');
+			var user = session.user;
 			console.log(friends);
-			self.chooseWallView.show(self.storage.get('friends'));
+			self.chooseWallView.show(user, self.storage.get('friends'));
 		});
 		this.toolsView.hide();
 
 		this.chooseWallView.attachTo(document.body);
+		this.chooseWallView.on('click:user', function(event) {
+			alert(JSON.stringify(event.user, null, 4));
+		});
 		this.chooseWallView.hide();
 	};
 	Application.prototype.initializeStorage = function() {
