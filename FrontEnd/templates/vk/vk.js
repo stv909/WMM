@@ -59,11 +59,42 @@ window.onload = function() {
 		return deferred.promise;
 	};
 
+	var View = function() {
+		View.super.apply(this);
+		this.elem = null;
+		this.parentElem = null;
+	};
+	View.super = EventEmitter;
+	View.prototype = Object.create(EventEmitter.prototype);
+	View.prototype.constructor = View;
+	View.prototype.attachTo = function(parentElem) {
+		if (!this.parentElem) {
+			this.parentElem = parentElem;
+			this.parentElem.appendChild(this.elem);
+		}
+	};
+	View.prototype.detach = function() {
+		if (this.parentElem) {
+			this.parentElem.removeChild(this.elem);
+			this.parentElem = null;
+		}
+	};
+	View.prototype.dispose = function() {
+		this.trigger('dispose');
+		this.detach();
+		this.off();
+	};
+	View.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+	};
+	View.prototype.hide = function() {
+		this.elem.classList.add('hidden');
+	};
+
 	var AccountView = function() {
 		AccountView.super.apply(this);
 		var self = this;
 
-		this.parentElem = null;
 		this.elem = template.create('account-template', { className: 'account' });
 		this.loginElem = this.elem.getElementsByClassName('login')[0];
 		this.logoutElem = this.elem.getElementsByClassName('logout')[0];
@@ -88,21 +119,9 @@ window.onload = function() {
 			this.logoutElem.removeEventListener('click', logoutElemClickListener);
 		});
 	};
-	AccountView.super = EventEmitter;
-	AccountView.prototype = Object.create(EventEmitter.prototype);
+	AccountView.super = View;
+	AccountView.prototype = Object.create(View.prototype);
 	AccountView.prototype.constructor = AccountView;
-	AccountView.prototype.attachTo = function(parentElem) {
-		if (!this.parentElem) {
-			this.parentElem = parentElem;
-			this.parentElem.appendChild(this.elem);
-		}
-	};
-	AccountView.prototype.detach = function() {
-		if (this.parentElem) {
-			this.parentElem.removeChild(this.elem);
-			this.parentElem = null;
-		}
-	};
 	AccountView.prototype.setLoginName = function(name) {
 		this.nameElem.textContent = 'Welcome, ' + name;
 		this.nameElem.classList.remove('hidden');
@@ -115,11 +134,38 @@ window.onload = function() {
 		this.loginElem.classList.remove('hidden');
 		this.logoutElem.classList.add('hidden');
 	};
-	AccountView.prototype.dispose = function() {
-		this.trigger('dispose');
-		this.detach();
-		this.off();
+
+	var ToolsView = function() {
+		ToolsView.super.apply(this);
+		var self = this;
+
+		this.elem = template.create('tools-template', { id: 'tools' });
+		this.createMessageElem = this.elem.getElementsByClassName('create-message')[0];
+		this.chooseWallElem = this.elem.getElementsByClassName('choose-wall')[0];
+		this.wallNameElem = this.elem.getElementsByClassName('wall-name')[0];
+
+		var createMessageElemClickListener = function() {
+			self.trigger({
+				type: 'click:create-message'
+			});
+		};
+		var chooseWallElemClickListener = function() {
+			self.trigger({
+				type: 'click:choose-wall'
+			});
+		};
+
+		this.createMessageElem.addEventListener('click', createMessageElemClickListener);
+		this.chooseWallElem.addEventListener('click', chooseWallElemClickListener);
+
+		this.on('dispose', function() {
+			self.createMessageElem.removeEventListener('click', createMessageElemClickListener);
+			self.chooseWallElem.removeEventListener('click', chooseWallElemClickListener);
+		});
 	};
+	ToolsView.super = View;
+	ToolsView.prototype = Object.create(View.prototype);
+	ToolsView.prototype.constructor = ToolsView;
 	
 	var Storage = function() {
 		Storage.super.apply(this);
@@ -133,9 +179,14 @@ window.onload = function() {
 		this.vkontakteClient = new VkontakteClient(this.appId);
 		this.storage = new Storage();
 
+		this.pageElem = document.getElementById('page');
 		this.menuElem = document.getElementById('menu');
-		this.menuContainerElem = document.getElementsByClassName('main-container')[0];
+		this.menuContainerElem = this.menuElem.getElementsByClassName('main-container')[0];
+		this.wallElem = document.getElementById('wall');
+		this.wallContainerElem = this.wallElem.getElementsByClassName('main-container')[0];
+
 		this.accountView = new AccountView();
+		this.toolsView = new ToolsView();
 	};
 	Application.prototype.initialize = function() {
 		this.vkontakteClient.initialize();
@@ -144,6 +195,7 @@ window.onload = function() {
 	};
 	Application.prototype.initializeViews = function() {
 		var self = this;
+
 		this.accountView.attachTo(this.menuContainerElem);
 		this.accountView.on('click:login', function() {
 			self.vkontakteClient.loginAsync().then(function(response) {
@@ -157,6 +209,15 @@ window.onload = function() {
 				self.storage.unset('session');
 			});
 		});
+
+		this.toolsView.attachTo(this.wallContainerElem);
+		this.toolsView.on('click:create-message', function() {
+			alert('create');
+		});
+		this.toolsView.on('click:choose-wall', function() {
+			alert('choose');
+		});
+		this.toolsView.hide();
 	};
 	Application.prototype.initializeStorage = function() {
 		var self = this;
@@ -166,9 +227,13 @@ window.onload = function() {
 			var firstName = user.first_name;
 			var lastName = user.last_name;
 			self.accountView.setLoginName([firstName, lastName].join(' '));
+			self.toolsView.show();
+			self.wallElem.classList.remove('hidden');
 		});
 		this.storage.on('remove:session', function(event) {
 			self.accountView.unsetLoginName();
+			self.toolsView.hide();
+			self.wallElem.classList.add('hidden');
 		});
 	};
 

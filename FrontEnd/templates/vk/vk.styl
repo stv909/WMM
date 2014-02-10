@@ -1,6 +1,5 @@
 html, body
 	font-family 'Segoe UI'
-	background-color #efefef
 
 .hidden
 	display none !important
@@ -51,4 +50,18 @@ html, body
 #wall
 	.main-container
 		background-color #fff
-		min-height 10em
+#tools
+	padding-top 0.75em
+	padding-bottom 0.75em
+	.create-message, .choose-wall, .wall-status, .wall-name
+		display inline-block
+	.create-message, .choose-wall
+		float right
+		margin-left 1em
+		color #2288ff
+		cursor pointer
+		text-decoration underline
+		&:hover
+			color #44aaff
+	.wall-name
+		font-weight bold

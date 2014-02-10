@@ -1,7 +1,6 @@
 html,
 body {
   font-family: 'Segoe UI';
-  background-color: #efefef;
 }
 .hidden {
   display: none !important;
@@ -65,5 +64,29 @@ body {
 }
 #wall .main-container {
   background-color: #fff;
-  min-height: 10em;
+}
+#tools {
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+}
+#tools .create-message,
+#tools .choose-wall,
+#tools .wall-status,
+#tools .wall-name {
+  display: inline-block;
+}
+#tools .create-message,
+#tools .choose-wall {
+  float: right;
+  margin-left: 1em;
+  color: #28f;
+  cursor: pointer;
+  text-decoration: underline;
+}
+#tools .create-message:hover,
+#tools .choose-wall:hover {
+  color: #4af;
+}
+#tools .wall-name {
+  font-weight: bold;
 }

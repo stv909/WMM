@@ -3,6 +3,12 @@ mixin account-template
 		.name.hidden
 		.control.login Login via VK
 		.control.logout.hidden Logout
+mixin tools-template
+	template#tools-template(style="display: none")
+		.wall-status Current wall:
+		.wall-name My
+		.choose-wall Choose wall
+		.create-message Create message
 
 doctype html
 html
@@ -18,6 +24,7 @@ html
 		link(rel="stylesheet", href="vk.css")
 	body
 		+account-template
+		+tools-template
 		#page
 			#menu
 				.main-container
