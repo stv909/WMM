@@ -222,6 +222,7 @@ window.onload = function() {
 						type: 'click:user',
 						user: event.user
 					});
+					self.hide();
 				});
 			});
 		});
@@ -335,7 +336,8 @@ window.onload = function() {
 
 		this.chooseWallView.attachTo(document.body);
 		this.chooseWallView.on('click:user', function(event) {
-			alert(JSON.stringify(event.user, null, 4));
+			var user = event.user;
+			self.prepareWall(user.id);
 		});
 		this.chooseWallView.hide();
 
@@ -345,6 +347,7 @@ window.onload = function() {
 	Application.prototype.initializeStorage = function() {
 		var self = this;
 		this.storage.on('change:session', function(event) {
+			console.log(event);
 			var session = event.value;
 			var user = session.user;
 			var id = user.id;
@@ -352,14 +355,14 @@ window.onload = function() {
 			var lastName = user.last_name;
 			self.accountView.setLoginName([firstName, lastName].join(' '));
 			self.toolsView.show();
-			self.wallElem.classList.remove('hidden');
+			self.wallHolderElem.classList.remove('hidden');
 			self.prepareFriends();
 			self.prepareWall(id);
 		});
 		this.storage.on('remove:session', function(event) {
 			self.accountView.unsetLoginName();
 			self.toolsView.hide();
-			self.wallElem.classList.add('hidden');
+			self.wallHolderElem.classList.add('hidden');
 			self.removeFriends();
 			self.removeWall();
 		});
@@ -375,9 +378,10 @@ window.onload = function() {
 		});
 	};
 	Application.prototype.prepareFriends = function() {
+		console.log(6);
 		var session = this.storage.get('session');
 		var params = {
-			user_id: session.user.id,
+			user_id: 1,//session.user.id,
 			fields: 'domain',
 			v: 5.8
 		};
@@ -388,9 +392,8 @@ window.onload = function() {
 		this.storage.unset('friends');
 	};
 	Application.prototype.prepareWall = function(userId) {
-		var session = this.storage.get('session');
 		var params = {
-			owner_id: session.user.id,
+			owner_id: userId,
 			count: 100,
 			filter: 'all',
 			v: 5.8
@@ -399,7 +402,7 @@ window.onload = function() {
 		this.storage.set('wall', wallPromise);
 	};
 	Application.prototype.removeWall = function() {
-
+		this.storage.unset('wall');
 	};
 
 	var application = new Application();
