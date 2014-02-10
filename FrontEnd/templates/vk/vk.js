@@ -20,11 +20,10 @@ window.onload = function() {
 	var VkontakteClient = function(appId) {
 		this.appId = appId;
 	}
-	VkontakteClient.prototype.initializeAsync = function() {
+	VkontakteClient.prototype.initialize = function() {
 		VK.init({
 			apiId: this.appId
 		});
-		return Promise.resolve(true);
 	};
 	VkontakteClient.prototype.loginAsync = function() {
 		var deferred = defer();
@@ -104,7 +103,7 @@ window.onload = function() {
 		}
 	};
 	AccountView.setLoginName = function(name) {
-		this.nameElem.textContent = name;
+		this.nameElem.textContent = 'Welcome, ' + name;
 		this.nameElem.classList.remove('hidden');
 		this.loginElem.classList.add('hidden');
 		this.logoutElem.classList.remove('hidden');
@@ -130,7 +129,21 @@ window.onload = function() {
 		this.accountView = new AccountView();
 	};
 	Application.prototype.initialize = function() {
+		var self = this;
+		this.vkontakteClient.initialize();
+
 		this.accountView.attachTo(this.menuContainerElem);
+		this.accountView.on('click:login', function() {
+			self.vkontakteClient.loginAsync().then(function(response) {
+				var session = response.session.user;
+				self.accountView.setLoginName('test');
+			});
+		});
+		this.accountView.on('click:logout', function() {
+			self.vkontakteClient.logoutAsync().then(function() {
+				self.accountView.unsetLoginName();
+			});
+		});
 	};
 
 	var application = new Application();
