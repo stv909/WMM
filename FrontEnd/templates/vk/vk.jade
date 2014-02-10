@@ -2,8 +2,22 @@ doctype html
 html
 	head
 		script(src="https://vkontakte.ru/js/api/openapi.js")
+		script(src="../html.js")
 		script(src="../event.js")
 		script(src="../abyss.js")
 		script(src="vk.js")
-		link(rel="stylysheet", src="vk.css")
+		link(rel="stylesheet", href="../styles/reset.css")
+		link(rel="stylesheet", href="../styles/fonts.css")
+		link(rel="stylesheet", href="vk.css")
 	body
+		#page
+				#menu
+					.main-container
+						.logo
+							span.logo-holder
+								.logo-first VK
+								.logo-second Integration
+						.account
+							.name Welcome, Shadeglare
+							.control.login.hidden Login via VK
+							.control.logout Logout

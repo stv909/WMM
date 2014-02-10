@@ -1,0 +1,50 @@
+html, body
+	font-family 'Segoe UI'
+
+.hidden
+	display none !important
+
+.main-container
+	width 50em
+	margin 0 auto
+	position relative
+#menu
+	display block
+	background-color #222
+	box-shadow 0 0 0.5em #222
+	.logo, .account
+		display table-cell
+		height 100%
+	.logo-first, .logo-second
+		display inline-block
+	.logo-first
+		color #fff
+		padding-right 0.15em
+	.logo-second
+		color #2288ff
+	.logo-holder
+		&:hover
+			text-shadow 0 0 0.5em #888
+			cursor pointer
+	.logo
+		width 100%
+	.account
+		width 1px
+		white-space nowrap
+	.name
+		color #bbb
+		display table-cell
+		font-size 0.9em
+		padding 0.75em
+	.control
+		display table-cell
+		font-size 0.9em
+		padding 0.75em
+		color #fff
+		background-color #222
+		cursor pointer
+		&:hover
+			background-color #555
+		&:active
+			color #222
+			background-color #eee

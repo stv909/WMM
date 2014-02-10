@@ -1,0 +1,65 @@
+html,
+body {
+  font-family: 'Segoe UI';
+}
+.hidden {
+  display: none !important;
+}
+.main-container {
+  width: 50em;
+  margin: 0 auto;
+  position: relative;
+}
+#menu {
+  display: block;
+  background-color: #222;
+  box-shadow: 0 0 0.5em #222;
+}
+#menu .logo,
+#menu .account {
+  display: table-cell;
+  height: 100%;
+}
+#menu .logo-first,
+#menu .logo-second {
+  display: inline-block;
+}
+#menu .logo-first {
+  color: #fff;
+  padding-right: 0.15em;
+}
+#menu .logo-second {
+  color: #28f;
+}
+#menu .logo-holder:hover {
+  text-shadow: 0 0 0.5em #888;
+  cursor: pointer;
+}
+#menu .logo {
+  width: 100%;
+}
+#menu .account {
+  width: 1px;
+  white-space: nowrap;
+}
+#menu .name {
+  color: #bbb;
+  display: table-cell;
+  font-size: 0.9em;
+  padding: 0.75em;
+}
+#menu .control {
+  display: table-cell;
+  font-size: 0.9em;
+  padding: 0.75em;
+  color: #fff;
+  background-color: #222;
+  cursor: pointer;
+}
+#menu .control:hover {
+  background-color: #555;
+}
+#menu .control:active {
+  color: #222;
+  background-color: #eee;
+}

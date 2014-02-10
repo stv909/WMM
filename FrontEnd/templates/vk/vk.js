@@ -60,16 +60,16 @@ window.onload = function() {
 	var appId = 4170375;
 	var vkontakteClient = new VkontakteClient(appId);
 
-	vkontakteClient.initializeAsync().then(function() {
-		return vkontakteClient.loginAsync();
-	}).then(function(response) {
-		console.log(response);
-		var userId = response.session.user.id;
-		var friendsGetParams = { user_id: userId, v: 5.8 };
-		return vkontakteClient.executeRequestAsync('friends.get', friendsGetParams);
-	}).then(function(respose) {
-		console.log(respose);
-	}, function(error) {
-		console.log(error);
-	});
+//	vkontakteClient.initializeAsync().then(function() {
+//		return vkontakteClient.loginAsync();
+//	}).then(function(response) {
+//		console.log(response);
+//		var userId = response.session.user.id;
+//		var friendsGetParams = { user_id: userId, v: 5.8 };
+//		return vkontakteClient.executeRequestAsync('friends.get', friendsGetParams);
+//	}).then(function(respose) {
+//		console.log(respose);
+//	}, function(error) {
+//		console.log(error);
+//	});
 };
