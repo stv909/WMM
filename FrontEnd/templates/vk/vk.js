@@ -475,15 +475,15 @@ window.onload = function() {
 		this.galaryView.hide();
 		this.galaryView.on('click:send', function(event) {
 			var content = event.content;
-			var session = self.storage.get('session');
+			var userId = self.storage.get('userId');
 			var params = {
-				owner_id: session.user.id,
+				owner_id: userId,
 				message: content.message,
 				attachments: content.attachments
 			};
 			var promise = self.vkontakteClient.executeRequestAsync('wall.post', params);
 			promise.then(function(response) {
-				self.prepareWall(session.user.id);
+				self.prepareWall(userId);
 			}, function(error) {
 				console.log(error);
 			});
@@ -506,6 +506,7 @@ window.onload = function() {
 		this.chooseWallView.on('click:user', function(event) {
 			var user = event.user;
 			self.prepareWall(user.id);
+			self.storage.set('userId', user.id);
 			var firstName = user.first_name;
 			var lastName = user.last_name;
 			self.toolsView.setWallName([firstName, lastName].join(' '));
@@ -524,6 +525,7 @@ window.onload = function() {
 			var id = user.id;
 			var firstName = user.first_name;
 			var lastName = user.last_name;
+			self.storage.set('userId', id);
 			self.accountView.setLoginName([firstName, lastName].join(' '));
 			self.toolsView.setWallName([firstName, lastName].join(' '));
 			self.toolsView.show();
