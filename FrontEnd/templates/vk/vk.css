@@ -185,3 +185,52 @@ body {
   font-weight: normal;
   padding-bottom: 0.5em;
 }
+#galary {
+  background-color: #eee;
+  border-bottom: 1px solid #ddd;
+}
+#galary .wrapper {
+  height: 7em;
+  padding-left: 1em;
+  padding-right: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+#galary .wrapper .preview-item {
+  vertical-align: top;
+  margin-top: 1em;
+  margin-right: 1em;
+  display: inline-block;
+  width: 7em;
+  height: 5em;
+  background-color: #aaa;
+  border: 4px solid #fff;
+  cursor: pointer;
+  box-shadow: 0 0 0.1em #888;
+}
+#galary .wrapper .preview-item:hover {
+  box-shadow: 0 0 0.5em #222;
+}
+#galary .wrapper .preview-item img {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+#galary .tools {
+  text-align: center;
+  padding-bottom: 0.5em;
+}
+#galary .tools .send-button {
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline-block;
+  color: #06f;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+}
+#galary .tools .send-button:hover {
+  color: #4af;
+}

@@ -398,6 +398,15 @@ window.onload = function() {
 	WallItemView.prototype = Object.create(View.prototype);
 	WallItemView.prototype.constructor = View;
 	
+	var GalaryView = function() {
+		GalaryView.super.apply(this);	
+		
+		this.elem = template.create('galary-template', { id: 'galary' });
+	};
+	GalaryView.super = View;
+	GalaryView.prototype = Object.create(View.prototype);
+	GalaryView.prototype.constructor = View;
+	
 	var Storage = function() {
 		Storage.super.apply(this);
 	};
@@ -420,6 +429,7 @@ window.onload = function() {
 		this.toolsView = new ToolsView();
 		this.chooseWallView = new ChooseWallView();
 		this.wallView = new WallView();
+		this.galaryView = new GalaryView();
 	};
 	Application.prototype.initialize = function() {
 		this.vkontakteClient.initialize();
@@ -442,6 +452,11 @@ window.onload = function() {
 				self.storage.unset('session');
 			});
 		});
+		
+		this.galaryView.attachTo(this.wallHolderElem);
+		this.galaryView.hide();
+		this.wallHolderElem.removeChild(this.wallContainerElem);
+		this.wallHolderElem.appendChild(this.wallContainerElem);
 
 		this.toolsView.attachTo(this.wallContainerElem);
 		this.toolsView.on('click:create-message', function() {
@@ -463,7 +478,7 @@ window.onload = function() {
 			self.toolsView.setWallName([firstName, lastName].join(' '));
 		});
 		this.chooseWallView.hide();
-
+		
 		this.wallView.attachTo(this.wallContainerElem);
 		this.wallView.hide();
 	};
@@ -479,6 +494,7 @@ window.onload = function() {
 			self.accountView.setLoginName([firstName, lastName].join(' '));
 			self.toolsView.setWallName([firstName, lastName].join(' '));
 			self.toolsView.show();
+			self.galaryView.show();
 			self.wallHolderElem.classList.remove('hidden');
 			self.prepareFriends();
 			self.prepareWall(id);
@@ -486,6 +502,7 @@ window.onload = function() {
 		this.storage.on('remove:session', function(event) {
 			self.accountView.unsetLoginName();
 			self.toolsView.hide();
+			self.galaryView.hide();
 			self.wallHolderElem.classList.add('hidden');
 			self.removeFriends();
 			self.removeWall();

@@ -8,7 +8,7 @@ mixin tools-template
 		.wall-status Current wall:
 		.wall-name My
 		.choose-wall Choose wall
-		.create-message Create message
+		.create-message.hidden Create message
 mixin choose-wall-template
 	template#choose-wall-template(style="display: none")
 			.dialog-wrapper
@@ -28,7 +28,26 @@ mixin wall-item-template
 			.date
 		.content-holder
 			.text
-
+mixin galary-template
+	template#galary-template(style="display: none")
+		.wrapper
+			.preview-item
+				img(src="http://upload.wikimedia.org/wikipedia/commons/b/b3/Steampunk_Brass_Spider.jpg")
+			.preview-item
+				img(src="http://upload.wikimedia.org/wikipedia/commons/b/b3/Steampunk_Brass_Spider.jpg")
+			.preview-item
+			.preview-item
+			.preview-item
+			.preview-item
+			.preview-item
+			.preview-item
+			.preview-item
+			.preview-item
+			.preview-item
+			.preview-item
+		.tools
+			.send-button Send
+		
 doctype html
 html
 	head
@@ -48,6 +67,7 @@ html
 		+friend-template
 		+wall-template
 		+wall-item-template
+		+galary-template
 		#page
 			#menu
 				.main-container
