@@ -216,6 +216,7 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
+  outline: 1px solid #efefef;
 }
 #galary .tools {
   text-align: center;
