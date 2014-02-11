@@ -565,7 +565,7 @@ window.onload = function() {
 	Application.prototype.prepareFriends = function() {
 		var session = this.storage.get('session');
 		var params = {
-			user_id: 1,//session.user.id,
+			user_id: session.user.id,
 			fields: 'domain',
 			v: 5.8
 		};
