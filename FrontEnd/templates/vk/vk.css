@@ -176,6 +176,12 @@ body {
   padding-top: 0.25em;
   width: 45em;
 }
+#wall .wall-item .content-holder p {
+  font-size: 0.9em;
+  margin-top: 0;
+  padding-top: 0;
+}
 #wall .wall-item .text {
   font-weight: normal;
+  padding-bottom: 0.5em;
 }

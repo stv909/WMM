@@ -166,7 +166,10 @@ window.onload = function() {
 	ToolsView.super = View;
 	ToolsView.prototype = Object.create(View.prototype);
 	ToolsView.prototype.constructor = ToolsView;
-
+	ToolsView.prototype.setWallName = function(name) {
+		this.wallNameElem.textContent = name;	
+	};
+ 
 	var ChooseWallView = function() {
 		ChooseWallView.super.apply(this);
 		var self = this;
@@ -296,15 +299,100 @@ window.onload = function() {
 		console.log(item);
 		
 		this.elem = template.create('wall-item-template', { className: 'wall-item' });
+		this.contentHolder = this.elem.getElementsByClassName('content-holder')[0];
 		this.textElem = this.elem.getElementsByClassName('text')[0];
 		this.dateElem = this.elem.getElementsByClassName('date')[0];
 		
 		var date = new Date(item.date);
 		var month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
 		var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+		var copyHistory = item.copy_history || [];
+		var attachments = item.attachments || [];
 		
-		this.textElem.textContent = item.text;
+		if (item.text === '') {
+			this.textElem.classList.add('hidden');
+		} else {
+			this.textElem.textContent = item.text;
+		}
 		this.dateElem.textContent = [day, month].join('.');
+		
+		copyHistory.forEach(function(history) {
+			var p = document.createElement('p');
+			var text = history.text;
+			p.textContent = text;
+			self.contentHolder.appendChild(p);
+			
+			var attachments = history.attachments || [];
+			attachments.forEach(function(attachment) {
+				if (attachment.type === 'photo') {
+					var url = attachment.photo.photo_130;
+					if (url) {
+						var img = document.createElement('img');
+						img.src = url;
+						self.contentHolder.appendChild(img);
+					}
+				} else if (attachment.type === 'link') {
+					var title = attachment.link.title;
+					var url = attachment.link.url;
+					var image = attachment.link.image_src;
+					
+					var link = document.createElement('a');
+					link.href = url;
+					link.textContent = title;
+					
+					if (image) {
+						var br = document.createElement('br');
+						var img = document.createElement('img');
+						img.src = image;
+						link.appendChild(br);
+						link.appendChild(img);
+					}
+					self.contentHolder.appendChild(link);
+				} else if (attachment.type === 'audio') {
+					var title = attachment.audio.title;
+					var url = attachment.audio.url;
+					var link = document.createElement('a');
+					link.href = url;
+					link.textContent = title;
+					self.contentHolder.appendChild(link);
+				}
+			});
+		});
+		
+		attachments.forEach(function(attachment) {
+			if (attachment.type === 'photo') {
+				var url = attachment.photo.photo_130;
+				if (url) {
+					var img = document.createElement('img');
+						img.src = url;
+						self.contentHolder.appendChild(img);
+					}
+			} else if (attachment.type === 'link') {
+				var title = attachment.link.title;
+				var url = attachment.link.url;
+				var image = attachment.link.image_src;
+					
+				var link = document.createElement('a');
+				link.href = url;
+				link.textContent = title;
+					
+				if (image) {
+					var br = document.createElement('br');
+					var img = document.createElement('img');
+					img.src = image;
+					link.appendChild(br);
+					link.appendChild(img);
+				}	
+				self.contentHolder.appendChild(link);
+			} else if (attachment.type === 'audio') {
+				var title = attachment.audio.title;
+				var url = attachment.audio.url;
+				var link = document.createElement('a');
+				link.href = url;
+				link.textContent = title;
+				self.contentHolder.appendChild(link);
+			}
+		});
 	};
 	WallItemView.super = View;
 	WallItemView.prototype = Object.create(View.prototype);
@@ -370,6 +458,9 @@ window.onload = function() {
 		this.chooseWallView.on('click:user', function(event) {
 			var user = event.user;
 			self.prepareWall(user.id);
+			var firstName = user.first_name;
+			var lastName = user.last_name;
+			self.toolsView.setWallName([firstName, lastName].join(' '));
 		});
 		this.chooseWallView.hide();
 
@@ -386,6 +477,7 @@ window.onload = function() {
 			var firstName = user.first_name;
 			var lastName = user.last_name;
 			self.accountView.setLoginName([firstName, lastName].join(' '));
+			self.toolsView.setWallName([firstName, lastName].join(' '));
 			self.toolsView.show();
 			self.wallHolderElem.classList.remove('hidden');
 			self.prepareFriends();
@@ -405,8 +497,10 @@ window.onload = function() {
 				self.wallView.clearWallItemViews();
 				self.wallView.show();
 				items.forEach(function(item) {
-					var wallItemView = new WallItemView(item);
-					self.wallView.addWallItemView(wallItemView);
+					if (!item.geo) {
+						var wallItemView = new WallItemView(item);
+						self.wallView.addWallItemView(wallItemView);
+					}
 				});
 			}, function(error) {
 				console.log(error);
