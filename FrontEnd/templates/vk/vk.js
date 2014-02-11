@@ -35,7 +35,7 @@ window.onload = function() {
 				deferred.reject(response);
 			}
 		};
-		VK.Auth.login(loginCallback);
+		VK.Auth.login(loginCallback, VK.access.FRIENDS | VK.access.WALL);
 		return deferred.promise;
 	};
 	VkontakteClient.prototype.logoutAsync = function() {
@@ -304,8 +304,8 @@ window.onload = function() {
 		this.dateElem = this.elem.getElementsByClassName('date')[0];
 		
 		var date = new Date(item.date);
-		var month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
-		var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+		var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+		var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
 		var copyHistory = item.copy_history || [];
 		var attachments = item.attachments || [];
 		
@@ -314,7 +314,7 @@ window.onload = function() {
 		} else {
 			this.textElem.textContent = item.text;
 		}
-		this.dateElem.textContent = [day, month].join('.');
+		this.dateElem.textContent = [hours, minutes].join(':');
 		
 		copyHistory.forEach(function(history) {
 			var p = document.createElement('p');
@@ -399,9 +399,27 @@ window.onload = function() {
 	WallItemView.prototype.constructor = View;
 	
 	var GalaryView = function() {
-		GalaryView.super.apply(this);	
+		GalaryView.super.apply(this);
+		var self = this;
 		
 		this.elem = template.create('galary-template', { id: 'galary' });
+		this.sendButtonElem = this.elem.getElementsByClassName('send-button')[0];
+		
+		var sendButtonElemClickListener = function(event) {
+			self.trigger({
+				type: 'click:send',
+				content: {
+					message: 'test',
+					attachments: []
+				}
+			});
+		};
+		
+		this.sendButtonElem.addEventListener('click', sendButtonElemClickListener);
+		
+		this.once('dispose', function() {
+			self.sendButtonElem.removeEventListener('click', sendButtonElemClickListener);	
+		});
 	};
 	GalaryView.super = View;
 	GalaryView.prototype = Object.create(View.prototype);
@@ -455,6 +473,21 @@ window.onload = function() {
 		
 		this.galaryView.attachTo(this.wallHolderElem);
 		this.galaryView.hide();
+		this.galaryView.on('click:send', function(event) {
+			var content = event.content;
+			var session = self.storage.get('session');
+			var params = {
+				owner_id: session.user.id,
+				message: content.message,
+				attachments: content.attachments
+			};
+			var promise = self.vkontakteClient.executeRequestAsync('wall.post', params);
+			promise.then(function(response) {
+				self.prepareWall(session.user.id);
+			}, function(error) {
+				console.log(error);
+			});
+		});
 		this.wallHolderElem.removeChild(this.wallContainerElem);
 		this.wallHolderElem.appendChild(this.wallContainerElem);
 
