@@ -409,7 +409,7 @@ window.onload = function() {
 			self.trigger({
 				type: 'click:send',
 				content: {
-					message: 'test',
+					message: 'Test http://habrahabr.ru',
 					attachments: []
 				}
 			});
@@ -456,6 +456,14 @@ window.onload = function() {
 	};
 	Application.prototype.initializeViews = function() {
 		var self = this;
+		var share = document.getElementById('share');
+		share.innerHTML = VK.Share.button({
+		  url: 'http://infa.kharkov.ua/wp-content/uploads/2013/03/image.php_-130x130.jpg',
+		  title: 'Multi Message',
+		  description: 'Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck Fuck',
+		  image: 'https://pp.vk.me/c608427/v608427157/26e0/1nYOULQQ4Wc.jpg',
+		  noparse: true
+		});
 
 		this.accountView.attachTo(this.menuContainerElem);
 		this.accountView.on('click:login', function() {
@@ -565,7 +573,7 @@ window.onload = function() {
 	Application.prototype.prepareFriends = function() {
 		var session = this.storage.get('session');
 		var params = {
-			user_id: session.user.id,
+			user_id: 1,//session.user.id,
 			fields: 'domain',
 			v: 5.8
 		};

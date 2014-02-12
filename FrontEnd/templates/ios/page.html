@@ -1,0 +1,107 @@
+<html>
+	<head>
+		<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; user-scalable=0" />
+		<link rel="stylesheet" href="../styles/reset.css">
+		<link rel="stylesheet" href="../styles/fonts.css">
+		<style>
+			@media (-webkit-min-device-pixel-ratio: 1.5),
+			(-o-min-device-pixel-ratio: 3 / 2),
+			(min-device-pixel-ratio: 1.5) {
+				html, body {
+					font-family: 'HelveticaNeue';
+					background-color: #eee;
+					font-size: 18px;
+					font-weight: normal;
+					color: #888;
+					-webkit-text-size-adjust: 100%;
+    				-ms-text-size-adjust: 100%;
+				}
+				#content {
+					background-color: #fff;
+				}
+				#title {
+					text-align: left;	
+					background-color: #1570a6;
+					color: white;
+					padding-top: 6px;
+					padding-bottom: 6px; 
+					padding-left: 6px;
+				}
+				.message {
+					text-align: center;
+					position: relative;
+					min-height: 1px;
+				}
+				.message-image {
+					
+				}
+				.frame {
+					display: block;
+					position: absolute;
+					left: 0;
+					top: 0;
+					width: 100%;
+					height: 100%;
+					vertical-align: middle;
+				}
+				.play-wrapper {
+					display: table;
+					width: 100%;
+					height: 100%;
+				}
+				.play-holder {
+					display: table-cell;
+					vertical-align: middle;
+				}
+				.play {
+					background-color: #444;
+					opacity: 0.8;
+					font-size: 16px;
+					font-weight: lighter;
+					width: 70px;
+					height: 70px;
+					border-radius: 35px;
+					color: white;
+					display: inline-block;
+					line-height: 70px;
+					cursor: pointer;
+				}
+				.hidden {
+					display: none !important;
+				}
+			}
+		</style>
+		<script>
+			window.onload = function() {
+				var purl = 'http://i3.youcomedy.me/d/4/big_31d21c98b91bba679be2e1263d75ab4d.jpg';
+				var aurl = 'http://i4.youcomedy.me/0/9/gif_137ade770b8237a8eca24db42435af90.gif';
+				var play = document.getElementsByClassName('play')[0];
+				var messageImage = document.getElementsByClassName('message-image')[0];
+				var frame = document.getElementsByClassName('frame')[0];
+				messageImage.addEventListener('click', function() {
+					messageImage.src = purl;
+					frame.classList.remove('hidden');
+				});
+				play.addEventListener('click', function() {
+					frame.classList.add('hidden');
+					messageImage.src = aurl;
+				});
+			};
+		</script>
+	</head>
+	<body>
+		<div id="content">
+			<div id="title">Messenger</div>
+			<div class="message">
+				<div class="frame">
+					<div class="play-wrapper">
+						<div class="play-holder">
+							<div class="play">Play</div>
+						</div>
+					</div>
+				</div>
+				<img class="message-image" src="http://i3.youcomedy.me/d/4/big_31d21c98b91bba679be2e1263d75ab4d.jpg">
+			</div>
+		</div>
+	</body>
+</html>
