@@ -8,8 +8,8 @@
 			(-o-min-device-pixel-ratio: 3 / 2),
 			(min-device-pixel-ratio: 1.5) {
 				html, body {
-					font-family: 'HelveticaNeue';
-					background-color: #eee;
+					font-family: 'Segoe UI';
+					background-color: #ddd;
 					font-size: 18px;
 					font-weight: normal;
 					color: #888;
@@ -17,23 +17,35 @@
     				-ms-text-size-adjust: 100%;
 				}
 				#content {
-					background-color: #fff;
 				}
 				#title {
-					text-align: left;	
-					background-color: #1570a6;
-					color: white;
-					padding-top: 6px;
-					padding-bottom: 6px; 
-					padding-left: 6px;
+					top: 0;
+					z-index: 10;
+					position: fixed;
+					width: 100%;
+					font-weight: bolder;
+					text-align: center;	
+					background-color: rgba(255, 255, 255, 0.9);
+					color: black;
+					padding-top: 10px;
+					padding-bottom: 10px; 
+					border: 1px solid #ccc;
+				}
+				#message-list {
+					padding-top: 45px;
 				}
 				.message {
+					background-color: rgba(255, 255, 255, 0.9);
+					margin: 6px;
 					text-align: center;
 					position: relative;
 					min-height: 1px;
+					border: 1px solid #ccc;
+					border-radius: 2px;
+					padding: 6px;
 				}
 				.message-image {
-					
+					width: 100%;
 				}
 				.frame {
 					display: block;
@@ -91,16 +103,58 @@
 	</head>
 	<body>
 		<div id="content">
-			<div id="title">Messenger</div>
-			<div class="message">
-				<div class="frame">
-					<div class="play-wrapper">
-						<div class="play-holder">
-							<div class="play">Play</div>
+			<div id="title">Fresh Tiles</div>
+			<div id="message-list">
+				<div class="message">
+					<div class="frame">
+						<div class="play-wrapper">
+							<div class="play-holder">
+								<div class="play">Play</div>
+							</div>
 						</div>
 					</div>
+					<img class="message-image" src="http://i3.youcomedy.me/d/4/big_31d21c98b91bba679be2e1263d75ab4d.jpg">
 				</div>
-				<img class="message-image" src="http://i3.youcomedy.me/d/4/big_31d21c98b91bba679be2e1263d75ab4d.jpg">
+				<div class="message">
+					<div class="frame">
+						<div class="play-wrapper">
+							<div class="play-holder">
+								<!--<div class="play">Play</div>-->
+							</div>
+						</div>
+					</div>
+					<img class="message-image" src="http://multgubkabob.ru/data/uploads/pic/29.jpg">
+				</div>
+				<div class="message">
+					<div class="frame">
+						<div class="play-wrapper">
+							<div class="play-holder">
+								<!--<div class="play">Play</div>-->
+							</div>
+						</div>
+					</div>
+					<img class="message-image" src="http://fc06.deviantart.net/fs71/f/2010/067/9/e/Rapture_Records_by_Crome676.jpg">
+				</div>
+				<div class="message">
+					<div class="frame">
+						<div class="play-wrapper">
+							<div class="play-holder">
+								<!--<div class="play">Play</div>-->
+							</div>
+						</div>
+					</div>
+					<img class="message-image" src="http://gameswallpaperhd.com/wp-content/uploads/2013/12/bioshock-posterbioshock-art-deco-poster-by-deepfriedd0nut-on-deviantart-kztpplop.jpg">
+				</div>
+				<div class="message">
+					<!--<div class="frame">-->
+					<!--	<div class="play-wrapper">-->
+					<!--		<div class="play-holder">-->
+								<!--<div class="play">Play</div>-->
+					<!--		</div>-->
+					<!--	</div>-->
+					<!--</div>-->
+					<iframe width="100%" height="200" src="//www.youtube.com/embed/ST2H8FWDvEA" frameborder="0" allowfullscreen></iframe>
+				</div>
 			</div>
 		</div>
 	</body>
