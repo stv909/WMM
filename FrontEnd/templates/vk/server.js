@@ -3,6 +3,8 @@ var xmldom = require('xmldom');
 var xpath = require('xpath');
 var url = require('url');
 var q = require('q');
+var rest = require('restler');
+var fs = require('fs');
 
 var requestAsync = q.denodeify(request.defaults({ jar: true }));
 
@@ -161,11 +163,12 @@ vk.authAsync().spread(function(response, body) {
 	}, 'GET');
 }).spread(function(response, body) {
 	console.log(body);
-	return vk.methodAsync('photos.getUploadServer', {
-		album_id: 187534600,
+	return vk.methodAsync('photos.getWallUploadServer', {
+		uid: 233153157,
 		v: 5.9
 	}, 'GET', currentToken);
 }).spread(function(response, body) {
+	console.log(response.headers);
 	console.log(body);
 	var parsedData = JSON.parse(body);
 	if (parsedData.error) {
@@ -176,6 +179,20 @@ vk.authAsync().spread(function(response, body) {
 			return vk.unusualAsync(body);
 		}).spread(function(response, body) {
 			console.log(body);
+		});
+	} else {
+		var uploadUrl = parsedData.response.upload_url;
+		rest.post(uploadUrl, {
+			multipart: true,
+			data: {
+				'file1': rest.file(__dirname + '/HtmlToImage.png', null, fs.statSync(__dirname + '/HtmlToImage.png').size, null, 'image/png')
+			}
+		}).on('complete', function(data) {
+			var parsedData = JSON.parse(data);
+			console.log(parsedData);
+			vk.methodAsync('photos.saveWallPhoto', parsedData, 'GET', currentToken).spread(function(response, body) {
+				console.log(body);	
+			});
 		});
 	}
 }).fail(function(error) {

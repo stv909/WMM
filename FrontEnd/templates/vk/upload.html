@@ -1,0 +1,64 @@
+<html>
+<head>
+	<title></title>
+	<script src="https://vkontakte.ru/js/api/openapi.js" type="text/javascript"></script>
+	<script src="../base64.js"></script>
+	<script>
+		window.onload = function() {
+			console.log('onload');
+			
+			VK.init({
+				apiId: 4170375
+			});
+			
+			var uploadElem = document.getElementById('upload');
+			var uploadUrl;
+			var imageData;
+			
+			VK.Api.call('photos.getWallUploadServer', { v: 5.9 }, function(data) {
+				var response = data.response;
+				uploadUrl = response.upload_url;
+				console.log(uploadUrl);
+				
+				var imgElem = document.getElementById('img');
+				var imgSrc = imgElem.src;
+				var request = new XMLHttpRequest();
+				
+				request.open('GET', imgSrc, true);
+				request.onload = function() {
+					console.log('complete');
+					imageData = request.responseText;
+					uploadElem.classList.remove('hidden');
+				};
+				request.send(null);
+				
+			});
+			
+			uploadElem.addEventListener('click', function() {
+				var imgElem = document.getElementById('img');
+				var imgSrc = imgElem.src;
+				var request = new XMLHttpRequest();
+				var requestData = {
+					uri: uploadUrl,
+					file1: imgSrc
+				};
+				var requestBody= JSON.stringify(requestData, null, 4);
+				request.open('POST', 'https://wmm-c9-stv909.c9.io');
+				request.onload = function() {
+					console.log(request.responseText);	
+				};
+				request.send(requestBody);
+			});
+		};
+	</script>
+	<style>
+		.hidden {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<img src="http://joinfo.com/images/news/2013/12/52b0a7f3513ae_image1.jpeg" id="img">
+	<button id="upload">Upload</button>
+</body>
+</html>
