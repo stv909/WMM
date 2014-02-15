@@ -185,7 +185,8 @@ vk.authAsync().spread(function(response, body) {
 		rest.post(uploadUrl, {
 			multipart: true,
 			data: {
-				'file1': rest.file(__dirname + '/HtmlToImage.png', null, fs.statSync(__dirname + '/HtmlToImage.png').size, null, 'image/png')
+				//'file1': rest.data('image.png', 'image/png', fs.readFileSync(__dirname + '/HtmlToImage.png'))
+				file1: rest.file(__dirname + '/HtmlToImage.png', null, fs.statSync(__dirname + '/HtmlToImage.png').size, null, 'image/png')
 			}
 		}).on('complete', function(data) {
 			var parsedData = JSON.parse(data);
