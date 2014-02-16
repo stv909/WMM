@@ -38,7 +38,7 @@ var requestAsync = function(options, data, requestEncoding, responseEncoding) {
 	var deferred = q.defer();
 	var request = http.request(options, function(response) {
 		if (responseEncoding) {
-			response.setEncoding('responseEncoding')
+			response.setEncoding(responseEncoding);
 		}
 		var chunks = [];
 		response.on('data', function(chunk) {
@@ -76,8 +76,9 @@ http.createServer(function(req, res) {
 			var file1 = body.file1;
 			requestAsync(file1, null, null, 'binary').spread(function(response, body) {
 				var fileSize = body.length;
+				
 				console.log(fileSize);
-				var boundryBegin = multipart.getBoundryBegin('image', 'image.jpg', fileSize, 'image/jpeg');
+				var boundryBegin = multipart.getBoundryBegin('file1', 'image.jpg', fileSize, 'image/jpeg');
 				var boundryEnd = multipart.getBoundryEnd();
 				var parsedUri = url.parse(uri);
 				//console.log(parsedUri);
@@ -89,13 +90,13 @@ http.createServer(function(req, res) {
 					headers: {
 						'Content-Type': multipart.getContentType(),
 						'Content-Length': multipart.getContentLength(boundryBegin, boundryEnd, fileSize),
-						'User-Agent': multipart.getUserAgent()
 					}
 				};
-				var data = [boundryBegin, body, '\r\n', boundryEnd].join('');
+				var data = [boundryBegin, body, '\r\n', boundryEnd];
 				console.log('upload');
 				console.log(options);
 				return requestAsync(options, data, 'binary');
+				
 			}).spread(function(response, body) {
 				console.log('uploaded');
 				console.log(body);
