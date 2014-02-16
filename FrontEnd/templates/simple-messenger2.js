@@ -16,6 +16,7 @@ window.onload = function() {
 	var DialogView = chat.views.DialogView;
 	var ShareDialogView = chat.views.ShareDialogView;
 	var MessageCounterView = chat.views.MessageCounterView;
+	var WallPublicationView = chat.views.WallPublicationView;
 	
 	var ChatApplication = function() {
 		ChatApplication.super.apply(this, arguments);
@@ -41,6 +42,7 @@ window.onload = function() {
 		this.dialogView = new DialogView();
 		this.shareDialogView = new ShareDialogView();
 		this.messageCounterView = new MessageCounterView();
+		this.wallPublicationView = new WallPublicationView();
 
 		this.contactViews = {};
 		this.messageViews = {};
@@ -571,6 +573,12 @@ window.onload = function() {
 			var shareUrl = self.calculateShareUrl([messageId]);
 			self.shareDialogView.show(shareUrl);
 		};
+		var wallClickListener = function(event) {
+			var message = event.model;
+			var messageId = message.getAttribute('id');
+			var shareUrl = self.calculateShareUrl([messageId]);
+			self.wallPublicationView.show(shareUrl);
+		};
 		var borrowClickListener = function(event) {
 			var message = event.model;
 			var content = message.getAttribute('content');
@@ -601,6 +609,7 @@ window.onload = function() {
 		messageView.on('click:hide', hideClickListener);
 		messageView.on('click:borrow', borrowClickListener);
 		messageView.on('click:share', shareClickListener);
+		messageView.on('click:wall', wallClickListener);
 		messageView.on('editing:begin', editingBeginListener);
 		messageView.on('editing:end', editingEndListener);
 		messageView.on('editing:cancel', editingCancelListener);
@@ -762,6 +771,9 @@ window.onload = function() {
 		this.currentMessageView = null;
 	};
 
+	VK.init({
+		apiId: 4170375
+	});
 	var chatApplication = new ChatApplication();
 	chatApplication.initialize();
 };

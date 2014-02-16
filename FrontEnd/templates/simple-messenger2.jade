@@ -18,6 +18,7 @@ mixin message-body(composer)
 				.simple-button.more more...
 				.buttons-holder.hidden
 					.simple-button.share share
+					.simple-button.wall on wall
 					.simple-button.borrow borrow
 					.simple-button.edit edit
 					.simple-button.clear.hidden clear
@@ -85,6 +86,7 @@ html
 		link(rel="stylesheet", href="styles/reset.css")
 		link(rel="stylesheet", href="styles/fonts.css")
 		link(rel="stylesheet", href="simple-messenger2.css")
+		script(type="application/javascript", src="https://vkontakte.ru/js/api/openapi.js")
 		script(type="application/javascript", src="uuid.js")
 		script(type="application/javascript", src="base64.js")
 		script(type="application/javascript", src="html.js")
@@ -143,3 +145,7 @@ html
 						input.link(type="text", readonly, value="www.test.com")
 					.controls-place
 						.close.simple-button.negative close
+		#wall-publication.hidden
+			.container
+				.cancel Cancel
+			

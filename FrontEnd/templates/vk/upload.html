@@ -35,19 +35,36 @@
 			});
 			
 			uploadElem.addEventListener('click', function() {
-				var imgElem = document.getElementById('img');
-				var imgSrc = imgElem.src;
+				var generatorUrl = "https://www.bazelevscontent.net:8893";
+				var messageUrl = "https://c9.io/stv909/wmm/workspace/FrontEnd/templates/share.html?ids=msg.1e856a06-6170-4b44-a7d6-41f46c273675";
+				var data = {
+					url: messageUrl,
+					imageFormat: "png",
+					scale: 1,
+					contentType: 'share',
+				};
+				var rawData = JSON.stringify(data);
+				var payload = "type=render&data=" + encodeURIComponent(rawData);
 				var request = new XMLHttpRequest();
-				var requestData = {
-					uri: uploadUrl,
-					file1: imgSrc
-				};
-				var requestBody= JSON.stringify(requestData, null, 4);
-				request.open('POST', 'https://wmm-c9-stv909.c9.io');
+				request.open('POST', generatorUrl);
 				request.onload = function() {
-					console.log(request.responseText);	
+					console.log(request.responseText);
 				};
-				request.send(requestBody);
+				request.send(payload);
+				
+				// var imgElem = document.getElementById('img');
+				// var imgSrc = imgElem.src;
+				// var request = new XMLHttpRequest();
+				// var requestData = {
+				// 	uri: uploadUrl,
+				// 	file1: imgSrc
+				// };
+				// var requestBody= JSON.stringify(requestData, null, 4);
+				// request.open('POST', 'https://wmm-c9-stv909.c9.io');
+				// request.onload = function() {
+				// 	console.log(request.responseText);	
+				// };
+				// request.send(requestBody);
 			});
 		};
 	</script>

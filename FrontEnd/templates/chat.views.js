@@ -5,6 +5,43 @@ var chat = chat || {};
 	var View = mvp.View;
 
 	var ContactModel = chat.models.ContactModel;
+	
+	var defer = function() {
+		var result = {};
+		result.promise = new Promise(function(resolve, reject) {
+			result.resolve = resolve;
+			result.reject = reject;
+		});
+		return result;
+	};
+	
+	VK.Auth.getLoginStatusAsync = function() {
+		var deferred = defer();
+		VK.Auth.getLoginStatus(function(response) {
+			if (response.session) {
+				deferred.resolve(response.session);
+			} else {
+				deferred.reject();
+			}
+		});
+		return deferred.promise;
+	};
+	VK.Auth.loginAsync = function(settings) {
+		var deferred = defer();
+		VK.Auth.login(function(response) {
+			if (response.session) {
+				deferred.resolve(response.session);
+			} else {
+				deferred.reject();
+			}
+		}, settings);
+		return deferred.promise;
+	};
+	VK.Api.callAsync = function(method, params) {
+		var deferred = defer();	
+		VK.Api.call(method, params, deferred.resolve);
+		return deferred.promise;
+	};
 
 	var formatDate = function(date) {
 		var hours = date.getHours();
@@ -412,6 +449,7 @@ var chat = chat || {};
 		this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
 		this.borrowElem = this.elem.getElementsByClassName('borrow')[0];
 		this.shareElem = this.elem.getElementsByClassName('share')[0];
+		this.wallElem = this.elem.getElementsByClassName('wall')[0];
 		this.fullscreenElem = this.elem.getElementsByClassName('fullscreen')[0];
 		this.hideElem = this.elem.getElementsByClassName('hide')[0];
 		this.deleteElem = this.elem.getElementsByClassName('delete')[0];
@@ -477,11 +515,17 @@ var chat = chat || {};
 				model: self.model
 			});
 		};
+		var wallElemClickListener = function(event) {
+			self.trigger({
+				type: 'click:wall',
+				model: self.model
+			});
+		};
 		var fullscreenElemClickListener = function(event) {
 			self.trigger({
 				type: 'click:fullscreen',
 				model: self.model
-			})
+			});
 		};
 		var hideElemClickListener = function(event) {
 			self.trigger({
@@ -522,6 +566,7 @@ var chat = chat || {};
 		this.cancelElem.addEventListener('click', cancelElemClickListener);
 		this.borrowElem.addEventListener('click', borrowElemClickListener);
 		this.shareElem.addEventListener('click', shareElemClickListener);
+		this.wallElem.addEventListener('click', wallElemClickListener);
 		this.fullscreenElem.addEventListener('click', fullscreenElemClickListener);
 		this.overflowFullscreenElem.addEventListener('click', fullscreenElemClickListener);
 		this.deleteElem.addEventListener('click', deleteElemClickListener);
@@ -573,6 +618,7 @@ var chat = chat || {};
 			self.cancelElem.removeEventListener('click', cancelElemClickListener);
 			self.borrowElem.removeEventListener('click', borrowElemClickListener);
 			self.shareElem.removeEventListener('click', shareElemClickListener);
+			self.wallElem.removeEventListener('click', wallElemClickListener);
 			self.fullscreenElem.removeEventListener('click', fullscreenElemClickListener);
 			self.overflowFullscreenElem.removeEventListener('click', fullscreenElemClickListener);
 			self.hideElem.removeEventListener('click', removeEventListener);
@@ -598,6 +644,7 @@ var chat = chat || {};
 		this.cancelElem.classList.remove('hidden');
 		this.borrowElem.classList.add('hidden');
 		this.shareElem.classList.add('hidden');
+		this.wallElem.classList.add('hidden');
 		this.fullscreenElem.classList.add('hidden');
 		this.overflowFullscreenElem.classList.add('hidden');
 		this.hideElem.classList.add('hidden');
@@ -626,6 +673,7 @@ var chat = chat || {};
 		this.cancelElem.classList.add('hidden');
 		this.borrowElem.classList.remove('hidden');
 		this.shareElem.classList.remove('hidden');
+		this.wallElem.classList.remove('hidden');
 		this.fullscreenElem.classList.remove('hidden');
 		this.overflowFullscreenElem.classList.remove('hidden');
 		this.hideElem.classList.remove('hidden');
@@ -659,6 +707,7 @@ var chat = chat || {};
 		this.cancelElem.classList.add('hidden');
 		this.borrowElem.classList.remove('hidden');
 		this.shareElem.classList.remove('hidden');
+		this.wallElem.classList.remove('hidden');
 		this.fullscreenElem.classList.remove('hidden');
 		this.overflowFullscreenElem.classList.remove('hidden');
 		this.hideElem.classList.remove('hidden');
@@ -800,6 +849,56 @@ var chat = chat || {};
 		}
 	};
 	
+	var WallPublicationView = function() {
+		WallPublicationView.super.apply(this);
+		var self = this;
+		
+		this.elem = document.getElementById('wall-publication');
+		this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
+		
+		var cancelElemClickListener = function(event) {
+			self.close();
+		};
+		
+		this.cancelElem.addEventListener('click', cancelElemClickListener);
+		
+		var disposeListener = function(event) {
+			self.off('dispose', disposeListener);
+			self.cancelElem.removeEventListener('click', cancelElemClickListener);
+		};
+	};
+	WallPublicationView.super = View;
+	WallPublicationView.prototype = Object.create(View.prototype);
+	WallPublicationView.prototype.constructor = WallPublicationView;
+	WallPublicationView.prototype.show = function(shareUrl) {
+		var self = this;
+		this.elem.classList.remove('hidden');
+		this.authorizeVK()
+		.then(function(session) {
+			return session.mid;
+		}, function(error) {
+			self.close();
+			throw new Error('couldn\'t login');
+		})
+		.then(function(userId) {
+			
+		})
+		.catch(function(error) {
+			alert(error.message);
+		});
+	};
+	WallPublicationView.prototype.close = function() {
+		this.elem.classList.add('hidden');
+	};
+	WallPublicationView.prototype.authorizeVK = function() {
+		return VK.Auth.getLoginStatusAsync()
+		.then(function(session) {
+			return session;
+		}, function(error) {
+			return VK.Auth.loginAsync(VK.access.FRIENDS | VK.access.WALL | VK.access.PHOTOS);
+		});
+	};
+	
 	chat.views = {
 		ContactView: ContactView,
 		AccountView: AccountView,
@@ -808,7 +907,8 @@ var chat = chat || {};
 		MessageStreamView: MessageStreamView,
 		DialogView: DialogView,
 		ShareDialogView: ShareDialogView,
-		MessageCounterView: MessageCounterView
+		MessageCounterView: MessageCounterView,
+		WallPublicationView: WallPublicationView
 	};
 	
 })(chat, mvp, template, html);

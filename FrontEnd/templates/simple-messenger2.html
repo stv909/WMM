@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="styles/reset.css">
     <link rel="stylesheet" href="styles/fonts.css">
     <link rel="stylesheet" href="simple-messenger2.css">
+    <script type="application/javascript" src="https://vkontakte.ru/js/api/openapi.js"></script>
     <script type="application/javascript" src="uuid.js"></script>
     <script type="application/javascript" src="base64.js"></script>
     <script type="application/javascript" src="html.js"></script>
@@ -51,6 +52,7 @@
           <div class="simple-button more">more...</div>
           <div class="buttons-holder hidden">
             <div class="simple-button share">share</div>
+            <div class="simple-button wall">on wall</div>
             <div class="simple-button borrow">borrow</div>
             <div class="simple-button edit">edit</div>
             <div class="simple-button clear hidden">clear</div>
@@ -171,6 +173,11 @@
             <div class="close simple-button negative">close</div>
           </div>
         </div>
+      </div>
+    </div>
+    <div id="wall-publication" class="hidden">
+      <div class="container">
+        <div class="cancel">Cancel</div>
       </div>
     </div>
   </body>
