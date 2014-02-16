@@ -1,6 +1,5 @@
 var http = require('http');
 var q = require('q');
-var fs = require('fs');
 var url = require('url');
 
 var multipart = {
@@ -49,8 +48,7 @@ var requestAsync = function(options, data, requestEncoding, responseEncoding) {
 		});
 	});
 	request.on('error', function(error) {
-		console.log(error);
-		deferred.reject(new Error(error.message));	
+		deferred.reject(error);	
 	});
 	if (data instanceof Array) {
 		data.forEach(function(item) {
@@ -63,56 +61,59 @@ var requestAsync = function(options, data, requestEncoding, responseEncoding) {
 	return deferred.promise;
 };
 
+var readRequestBodyAsync = function(request) {
+	var deferred = q.defer();
+	var chunks = [];
+	request.on('data', function(chunk) {
+		chunks.push(chunk);
+	});
+	request.on('end', function() {
+		deferred.resolve(chunks.join(''));
+	});
+	return deferred.promise;
+};
+
 http.createServer(function(req, res) {
 	if (req.method === 'POST') {
-		var chunks = [];
-		req.on('data', function(chunk) {
-			chunks.push(chunk);
-		});
-		req.on('end', function() {
-			var rawBody = chunks.join('');
+		readRequestBodyAsync(req)
+		.then(function(rawBody) {
 			var body = JSON.parse(rawBody);
-			var uri = body.uri;
+			var uploadUri = body.uri;
 			var file1 = body.file1;
-			requestAsync(file1, null, null, 'binary').spread(function(response, body) {
-				var fileSize = body.length;
-				
-				console.log(fileSize);
-				var boundryBegin = multipart.getBoundryBegin('file1', 'image.jpg', fileSize, 'image/jpeg');
-				var boundryEnd = multipart.getBoundryEnd();
-				var parsedUri = url.parse(uri);
-				//console.log(parsedUri);
-				var options = {
-					hostname: parsedUri.hostname,
-					path: parsedUri.path,
-					method: 'POST',
-					port: 80,
-					headers: {
-						'Content-Type': multipart.getContentType(),
-						'Content-Length': multipart.getContentLength(boundryBegin, boundryEnd, fileSize),
-					}
-				};
-				var data = [boundryBegin, body, '\r\n', boundryEnd];
-				console.log('upload');
-				console.log(options);
-				return requestAsync(options, data, 'binary');
-				
-			}).spread(function(response, body) {
-				console.log('uploaded');
-				console.log(body);
-				res.writeHead(200, {
-					'Content-Type': 'plain/text',
-					'Access-Control-Allow-Origin': '*'
-				});
-				res.end(body);
-			}).fail(function(error) {
-				console.log(error);
-				res.writeHead(200, {
-					'Content-Type': 'plain/text',
-					'Access-Control-Allow-Origin': '*'
-				});
-				res.end('fail');
+			return requestAsync(file1, null, null, 'binary')
+			.spread(function(response, body) {
+				return [uploadUri, response, body];	
 			});
+		}).spread(function(uploadUri, response, body) {
+			var fileSize = body.length;
+			var boundryBegin = multipart.getBoundryBegin('file1', 'image.jpg', fileSize, 'image/jpeg');
+			var boundryEnd = multipart.getBoundryEnd();
+			var parsedUri = url.parse(uploadUri);
+			var options = {
+				hostname: parsedUri.hostname,
+				path: parsedUri.path,
+				method: 'POST',
+				port: 80,
+				headers: {
+					'Content-Type': multipart.getContentType(),
+					'Content-Length': multipart.getContentLength(boundryBegin, boundryEnd, fileSize),
+				}
+			};
+			var data = [boundryBegin, body, '\r\n', boundryEnd];
+			return requestAsync(options, data, 'binary');
+		}).spread(function(response, body) {
+			res.writeHead(200, {
+				'Content-Type': 'plain/text',
+				'Access-Control-Allow-Origin': '*'
+			});
+			res.end(body);
+		}).fail(function(error) {
+			console.log(error);
+			res.writeHead(500, {
+				'Content-Type': 'plain/text',
+				'Access-Control-Allow-Origin': '*'
+			});
+			res.end('fail');
 		});
 	} else {
 		res.writeHead(200, {
