@@ -1,6 +1,35 @@
 var http = require('http');
 var q = require('q');
 var url = require('url');
+var path = require('path');
+
+var imageMimes = {
+	'.jpeg': 'image/jpeg',
+	'.jpg': 'image/jpg',
+	'.png': 'image/png',
+	'.gif': 'image/gif'
+};
+
+var getImageMime = function(extname) {
+	extname = extname.toLowerCase();
+	var mime = imageMimes[extname];
+	if (mime) {
+		return mime;
+	} else {
+		throw new Error('unknown image mime');
+	}
+};
+
+var getImageInfo = function(imageUri) {
+	var fileName = path.basename(imageUri);
+	var extName = path.extname(fileName);
+	var fileMime = getImageMime(extName);
+	
+	return {
+		fileName: fileName,
+		fileMime: fileMime
+	};
+};
 
 var multipart = {
 	boundry: 'WebKitFormBoundarym0vCJKBpUYdCIWQG',
@@ -80,13 +109,20 @@ http.createServer(function(req, res) {
 			var body = JSON.parse(rawBody);
 			var uploadUri = body.uri;
 			var file1 = body.file1;
+			var imageInfo = getImageInfo(file1);
+			var uploadInfo = {
+				uploadUri: uploadUri,
+				imageInfo: imageInfo
+			};
 			return requestAsync(file1, null, null, 'binary')
 			.spread(function(response, body) {
-				return [uploadUri, response, body];	
+				return [uploadInfo, response, body];	
 			});
-		}).spread(function(uploadUri, response, body) {
+		}).spread(function(uploadInfo, response, body) {
+			var uploadUri = uploadInfo.uploadUri;
+			var imageInfo = uploadInfo.imageInfo;
 			var fileSize = body.length;
-			var boundryBegin = multipart.getBoundryBegin('file1', 'image.jpg', fileSize, 'image/jpeg');
+			var boundryBegin = multipart.getBoundryBegin('file1', imageInfo.fileName, fileSize, imageInfo.fileMime);
 			var boundryEnd = multipart.getBoundryEnd();
 			var parsedUri = url.parse(uploadUri);
 			var options = {
