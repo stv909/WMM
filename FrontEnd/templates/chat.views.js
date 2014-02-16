@@ -881,9 +881,34 @@ var chat = chat || {};
 			throw new Error('couldn\'t login');
 		})
 		.then(function(userId) {
-			
+			return VK.Api.callAsync('photos.getWallUploadServer', { v: 5.9 });
+		})
+		.then(function(data) {
+			if (data.error) {
+				throw new Error('couldn\'t get upload server');
+			} else {
+				var response = data.response;
+				var uploadUrl = response.upload_url;
+				return Promise.all([uploadUrl, self.generatePreview(shareUrl)]);
+			}
+		}).then(function(values) {
+			var uploadUrl = values[0];
+			var generatedPreview = values[1];
+
+			if (generatedPreview.result === 'ok') {
+				var baseUrl = 'https://www.bazelevscontent.net:8583/';
+				//var imageUrl = baseUrl + generatedPreview.image;
+				var imageUrl = 'http://i.imgur.com/bTxkC0v.jpg';
+				console.log(imageUrl);
+				return self.uploadImage(uploadUrl, imageUrl);
+			} else {
+				throw new Error('couldn\'t generate a preview');
+			}
+		}).then(function(response) {
+			alert(JSON.stringify(response));
 		})
 		.catch(function(error) {
+			self.close();
 			alert(error.message);
 		});
 	};
@@ -897,6 +922,54 @@ var chat = chat || {};
 		}, function(error) {
 			return VK.Auth.loginAsync(VK.access.FRIENDS | VK.access.WALL | VK.access.PHOTOS);
 		});
+	};
+	WallPublicationView.prototype.generatePreview = function(shareUrl) {
+		var generatorUrl = "https://www.bazelevscontent.net:8893";
+		var data = {
+			url: shareUrl,
+			imageFormat: "png",
+			scale: 1,
+			contentType: 'share',
+		};	
+		var rawData = JSON.stringify(data);
+		var payLoad = "type=render&data=" + encodeURIComponent(rawData);
+		var deferred = defer();
+		var request = new XMLHttpRequest();
+		request.open('POST', generatorUrl);
+		request.onload = function() {
+			var response = JSON.parse(request.responseText);
+			deferred.resolve(response);
+		};
+		request.onerror = function() {
+			throw new Error('couldn\'t generate a preview');
+		};
+		request.onabort = function() {
+			throw new Error('request aborted');	
+		};
+		request.send(payLoad);
+		return deferred.promise;
+	};
+	WallPublicationView.prototype.uploadImage = function(uploadUri, imageUri) {
+		var requestData = {
+			uri: uploadUri,
+			file1: imageUri
+		};
+		var serviceUrl = 'https://wmm-c9-stv909.c9.io';
+		var deferred = defer();
+		var request = new XMLHttpRequest();
+		request.open('POST', serviceUrl);
+		request.onload = function() {
+			var response = JSON.parse(request.responseText);
+			deferred.resolve(response);
+		};
+		request.onerror = function() {
+			throw new Error('couldn\'t upload a preview');
+		};
+		request.onabort = function() {
+			throw new Error('request aborted');	
+		};
+		request.send(JSON.stringify(requestData));
+		return deferred.promise;
 	};
 	
 	chat.views = {

@@ -1,4 +1,5 @@
 var http = require('http');
+var https = require('https');
 var q = require('q');
 var url = require('url');
 var path = require('path');
@@ -62,9 +63,16 @@ var multipart = {
 	}
 };
 
+var getRequestProtocol = function(options) {
+	var uri = (typeof options === 'string') ? options : options.hostname;
+	var parsedUri = url.parse(uri);
+	return parsedUri.protocol === 'https' ? https : http;
+};
+
 var requestAsync = function(options, data, requestEncoding, responseEncoding) {
 	var deferred = q.defer();
-	var request = http.request(options, function(response) {
+	var protocol = getRequestProtocol(options);
+	var request = protocol.request(options, function(response) {
 		if (responseEncoding) {
 			response.setEncoding(responseEncoding);
 		}
