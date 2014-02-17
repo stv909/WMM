@@ -919,7 +919,7 @@ var chat = chat || {};
 			}
 		}).then(function(values) {
 			var uploadUrl = values[0];
-			var generatedPreview = values[1];
+			var generatedPreview = JSON.parse(values[1]);
 			if (generatedPreview.result === 'ok') {
 				var baseUrl = 'http://www.bazelevscontent.net:8582/';
 				var imageUrl = baseUrl + generatedPreview.image;
@@ -928,8 +928,9 @@ var chat = chat || {};
 			} else {
 				throw new Error('couldn\'t generate a preview');
 			}
-		}).then(function(data) {
+		}).then(function(rawData) {
 			self.statusElem.textContent = 'Saving preview to wall album...';
+			var data = JSON.parse(rawData);
 			return VK.Api.callAsync('photos.saveWallPhoto', data);
 		}).then(function(data) {
 			if (data.error) {
@@ -970,52 +971,31 @@ var chat = chat || {};
 		});
 	};
 	WallPublicationView.prototype.generatePreview = function(shareUrl) {
-		var generatorUrl = "https://www.bazelevscontent.net:8893";
-		var data = {
+		var requestData = {
 			url: shareUrl,
 			imageFormat: 'png',
 			scale: 1,
-			contentType: 'share',
-		};	
-		var rawData = JSON.stringify(data);
-		var payLoad = "type=render&data=" + encodeURIComponent(rawData);
-		var deferred = defer();
-		var request = new XMLHttpRequest();
-		request.open('POST', generatorUrl);
-		request.onload = function() {
-			var response = JSON.parse(request.responseText);
-			deferred.resolve(response);
+			contentType: 'share'
 		};
-		request.onerror = function() {
-			throw new Error('couldn\'t generate a preview');
+		var rawRequestData = JSON.stringify(requestData);
+		var options = {
+			url: 'https://www.bazelevscontent.net:8893',
+			method: 'POST',
+			data: 'type=render&data=' + encodeURIComponent(rawRequestData)
 		};
-		request.onabort = function() {
-			throw new Error('request aborted');	
-		};
-		request.send(payLoad);
-		return deferred.promise;
+		return requestAsync(options);
 	};
 	WallPublicationView.prototype.uploadImage = function(uploadUri, imageUri) {
 		var requestData = {
 			uri: uploadUri,
 			file1: imageUri
 		};
-		var serviceUrl = 'https://wmm-c9-stv909.c9.io';
-		var deferred = defer();
-		var request = new XMLHttpRequest();
-		request.open('POST', serviceUrl);
-		request.onload = function() {
-			var response = JSON.parse(request.responseText);
-			deferred.resolve(response);
+		var options = {
+			url: 'https://wmm-c9-stv909.c9.io',
+			method: 'POST',
+			data: JSON.stringify(requestData)
 		};
-		request.onerror = function() {
-			throw new Error('couldn\'t upload a preview');
-		};
-		request.onabort = function() {
-			throw new Error('request aborted');	
-		};
-		request.send(JSON.stringify(requestData));
-		return deferred.promise;
+		return requestAsync(options);
 	};
 	
 	var MessageIntervalView = function() {
