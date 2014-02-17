@@ -532,10 +532,18 @@ message =
 		display table-cell
 		text-align center
 		vertical-align middle
-		.cancel
+		.box
 			display inline-block
-			color white
-			cursor pointer
-			text-decoration underline
-			&:hover
-				text-shadow 0 0 0.25em white
+			width 35em
+			.status
+				display block
+				color white
+				margin-bottom 1.5em
+			.cancel
+				margin-top 1em
+				display block
+				color white
+				cursor pointer
+				text-decoration underline
+				&:hover
+					text-shadow 0 0 0.25em white

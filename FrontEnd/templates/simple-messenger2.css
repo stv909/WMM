@@ -627,12 +627,22 @@ input[type="text"] {
   text-align: center;
   vertical-align: middle;
 }
-#wall-publication .container .cancel {
+#wall-publication .container .box {
   display: inline-block;
+  width: 35em;
+}
+#wall-publication .container .box .status {
+  display: block;
+  color: #fff;
+  margin-bottom: 1.5em;
+}
+#wall-publication .container .box .cancel {
+  margin-top: 1em;
+  display: block;
   color: #fff;
   cursor: pointer;
   text-decoration: underline;
 }
-#wall-publication .container .cancel:hover {
+#wall-publication .container .box .cancel:hover {
   text-shadow: 0 0 0.25em #fff;
 }

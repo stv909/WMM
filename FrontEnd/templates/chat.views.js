@@ -855,6 +855,7 @@ var chat = chat || {};
 		
 		this.elem = document.getElementById('wall-publication');
 		this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
+		this.statusElem = this.elem.getElementsByClassName('status')[0];
 		
 		var cancelElemClickListener = function(event) {
 			self.close();
@@ -878,6 +879,7 @@ var chat = chat || {};
 		}, function(error) {
 			throw new Error('couldn\'t login');
 		}).then(function(userId) {
+			self.statusElem.textContent = 'Getting a VK upload server...';
 			return VK.Api.callAsync('photos.getWallUploadServer', { v: 5.9 });
 		}).then(function(data) {
 			if (data.error) {
@@ -885,21 +887,22 @@ var chat = chat || {};
 			} else {
 				var response = data.response;
 				var uploadUrl = response.upload_url;
+				self.statusElem.textContent = 'Generating preview...';
 				return Promise.all([uploadUrl, self.generatePreview(shareUrl)]);
 			}
 		}).then(function(values) {
 			var uploadUrl = values[0];
 			var generatedPreview = values[1];
-
 			if (generatedPreview.result === 'ok') {
 				var baseUrl = 'http://www.bazelevscontent.net:8582/';
 				var imageUrl = baseUrl + generatedPreview.image;
+				self.statusElem.textContent = 'Uploading preview to VK server...';
 				return self.uploadImage(uploadUrl, imageUrl);
 			} else {
 				throw new Error('couldn\'t generate a preview');
 			}
 		}).then(function(data) {
-			self.close();
+			self.statusElem.textContent = 'Saving preview to wall album...';
 			return VK.Api.callAsync('photos.saveWallPhoto', data);
 		}).then(function(data) {
 			if (data.error) {
@@ -908,6 +911,8 @@ var chat = chat || {};
 				var response = data.response;
 				var savedImage = response[0];
 				var savedImageId = savedImage.id;
+				self.statusElem.textContent = '';
+				self.close();
 				return VK.Api.callAsync('wall.post', { 
 					message: 'Message preview',
 					attachments: [
@@ -926,6 +931,7 @@ var chat = chat || {};
 		});
 	};
 	WallPublicationView.prototype.close = function() {
+		this.statusElem.textContent = '';
 		this.elem.classList.add('hidden');
 	};
 	WallPublicationView.prototype.authorizeVK = function() {
