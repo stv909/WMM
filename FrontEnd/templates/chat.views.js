@@ -48,7 +48,7 @@ var chat = chat || {};
 			if (response.session) {
 				deferred.resolve(response.session);
 			} else {
-				deferred.reject();
+				deferred.reject(new Error('user is not authorized'));
 			}
 		});
 		return deferred.promise;
@@ -59,7 +59,7 @@ var chat = chat || {};
 			if (response.session) {
 				deferred.resolve(response.session);
 			} else {
-				deferred.reject();
+				deferred.reject(new Error('user is not authorized'));
 			}
 		}, settings);
 		return deferred.promise;
@@ -900,14 +900,12 @@ var chat = chat || {};
 	WallPublicationView.prototype.constructor = WallPublicationView;
 	WallPublicationView.prototype.show = function(shareUrl) {
 		var self = this;
+		var currentSession = null;
 		this.authorizeVK().then(function(session) {
-			if (session.mid) {
-				self.elem.classList.remove('hidden');
-				self.statusElem.textContent = 'Getting a VK upload server...';
-				return VK.Api.callAsync('photos.getWallUploadServer', { v: 5.9 });
-			} else {
-				throw new Error('auth failed');
-			}
+			currentSession = session;
+			self.elem.classList.remove('hidden');
+			self.statusElem.textContent = 'Getting a VK upload server...';
+			return VK.Api.callAsync('photos.getWallUploadServer', { v: 5.9 });
 		}).then(function(data) {
 			if (data.error) {
 				throw new Error('couldn\'t get an upload server');
@@ -963,11 +961,8 @@ var chat = chat || {};
 		this.elem.classList.add('hidden');
 	};
 	WallPublicationView.prototype.authorizeVK = function() {
-		return VK.Auth.getLoginStatusAsync()
-		.then(function(session) {
-			return session;
-		}, function(error) {
-			return VK.Auth.loginAsync(VK.access.FRIENDS | VK.access.WALL | VK.access.PHOTOS);
+		return VK.Auth.getLoginStatusAsync().catch(function(error) {
+			return VK.Auth.loginAsync(VK.access.FRIENDS | VK.access.PHOTOS);
 		});
 	};
 	WallPublicationView.prototype.generatePreview = function(shareUrl) {
