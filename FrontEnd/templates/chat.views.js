@@ -885,6 +885,7 @@ var chat = chat || {};
 		this.statusElem = this.elem.getElementsByClassName('status')[0];
 		
 		var cancelElemClickListener = function(event) {
+			self.cancel = true;
 			self.close();
 		};
 		
@@ -902,11 +903,13 @@ var chat = chat || {};
 		var self = this;
 		var currentSession = null;
 		this.authorizeVK().then(function(session) {
+			self.checkCancelation();
 			currentSession = session;
 			self.elem.classList.remove('hidden');
 			self.statusElem.textContent = 'Getting a VK upload server...';
 			return VK.Api.callAsync('photos.getWallUploadServer', { v: 5.9 });
 		}).then(function(data) {
+			self.checkCancelation();
 			if (data.error) {
 				throw new Error('couldn\'t get an upload server');
 			} else {
@@ -916,6 +919,7 @@ var chat = chat || {};
 				return Promise.all([uploadUrl, self.generatePreview(shareUrl)]);
 			}
 		}).then(function(values) {
+			self.checkCancelation();
 			var uploadUrl = values[0];
 			var generatedPreview = JSON.parse(values[1]);
 			if (generatedPreview.result === 'ok') {
@@ -927,10 +931,12 @@ var chat = chat || {};
 				throw new Error('couldn\'t generate a preview');
 			}
 		}).then(function(rawData) {
+			self.checkCancelation();
 			self.statusElem.textContent = 'Saving preview to wall album...';
 			var data = JSON.parse(rawData);
 			return VK.Api.callAsync('photos.saveWallPhoto', data);
 		}).then(function(data) {
+			self.checkCancelation();
 			if (data.error) {
 				throw new Error('couldn\'t save a preview');
 			} else {
@@ -948,6 +954,7 @@ var chat = chat || {};
 				});
 			}
 		}).then(function(data) {
+			self.checkCancelation();
 			if (data.error) {
 				throw new Error('could\'t save a post');
 			}
@@ -991,6 +998,12 @@ var chat = chat || {};
 			data: JSON.stringify(requestData)
 		};
 		return requestAsync(options);
+	};
+	WallPublicationView.prototype.checkCancelation = function() {
+		if (this.cancel) {
+			this.cancel = false;
+			throw new Error('canceled');
+		}
 	};
 	
 	var MessageIntervalView = function() {
