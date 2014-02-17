@@ -67,6 +67,19 @@ mixin total-messages-template
 		span.messages-info.hidden
 			span.count
 			span.text unread messages
+
+mixin message-interval-template
+	template#message-interval-template(style="display:none")
+		span.text Display for:
+		select.interval-select
+			option(value=1) 1 day
+			option(value=2) 2 days
+			option(value=3) 3 days
+			option(value=5) 5 days
+			option(value=10) 10 days
+			option(value=20) 20 days
+			option(value=30) 30 days
+			option(value=0) All time
 			
 mixin chatbox-template
 	template#chatbox-template(style="display:none")
@@ -105,6 +118,7 @@ html
 		+account-template
 		+chatbox-template
 		+total-messages-template
+		+message-interval-template
 		audio#new-message-sound(src="newMessageSpace.wav", preload="auto", style="controls: none")
 		#page
 			.wrap

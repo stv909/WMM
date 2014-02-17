@@ -874,13 +874,13 @@ var chat = chat || {};
 	WallPublicationView.prototype.show = function(shareUrl) {
 		var self = this;
 		this.authorizeVK().then(function(session) {
-			self.elem.classList.remove('hidden');
-			return session.mid;
-		}, function(error) {
-			throw new Error('couldn\'t login');
-		}).then(function(userId) {
-			self.statusElem.textContent = 'Getting a VK upload server...';
-			return VK.Api.callAsync('photos.getWallUploadServer', { v: 5.9 });
+			if (session.mid) {
+				self.elem.classList.remove('hidden');
+				self.statusElem.textContent = 'Getting a VK upload server...';
+				return VK.Api.callAsync('photos.getWallUploadServer', { v: 5.9 });
+			} else {
+				throw new Error('auth failed');
+			}
 		}).then(function(data) {
 			if (data.error) {
 				throw new Error('couldn\'t get an upload server');
@@ -903,12 +903,14 @@ var chat = chat || {};
 			}
 		}).then(function(data) {
 			self.statusElem.textContent = 'Saving preview to wall album...';
+			console.log(data);
 			return VK.Api.callAsync('photos.saveWallPhoto', data);
 		}).then(function(data) {
 			if (data.error) {
 				throw new Error('couldn\'t save a preview');
 			} else {
 				var response = data.response;
+				console.log(response);
 				var savedImage = response[0];
 				var savedImageId = savedImage.id;
 				self.statusElem.textContent = '';
@@ -922,11 +924,12 @@ var chat = chat || {};
 				});
 			}
 		}).then(function(data) {
+			console.log(data);
 			if (data.error) {
 				throw new Error('could\'t save a post');
 			}
 		}).catch(function(error) {
-			console.error(error);
+			console.log(error);
 			self.close();
 		});
 	};
@@ -991,6 +994,39 @@ var chat = chat || {};
 		return deferred.promise;
 	};
 	
+	var MessageIntervalView = function() {
+		MessageIntervalView.super.apply(this);
+		var self = this;
+		
+		this.elem = template.create('message-interval-template', { className: 'message-interval', tagName: 'span' });
+		this.elem.classList.add('hidden');
+		this.intervalSelectElem = this.elem.getElementsByClassName('interval-select')[0];
+		
+		var intervalSelectElemListener = function(event) {
+			var index = self.intervalSelectElem.selectedIndex;
+			var option = self.intervalSelectElem[index];
+			self.trigger({
+				type: 'change:interval',
+				value: parseInt(option.value, 10)
+			});
+		};
+		
+		this.intervalSelectElem.addEventListener('change', intervalSelectElemListener);
+		
+		var disposeListener = function(event) {
+			self.off('dispose', disposeListener);
+			self.intervalSelectElem.removeEventListener('change', intervalSelectElemListener);
+		};
+	};
+	MessageIntervalView.super = View;
+	MessageIntervalView.prototype = Object.create(View.prototype);
+	MessageIntervalView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+	};
+	MessageIntervalView.prototype.hide = function() {
+		this.elem.classList.add('hidden');
+	};
+	
 	chat.views = {
 		ContactView: ContactView,
 		AccountView: AccountView,
@@ -1000,7 +1036,8 @@ var chat = chat || {};
 		DialogView: DialogView,
 		ShareDialogView: ShareDialogView,
 		MessageCounterView: MessageCounterView,
-		WallPublicationView: WallPublicationView
+		WallPublicationView: WallPublicationView,
+		MessageIntervalView: MessageIntervalView
 	};
 	
 })(chat, mvp, template, html);

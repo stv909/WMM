@@ -16,6 +16,7 @@ window.onload = function() {
 	var DialogView = chat.views.DialogView;
 	var ShareDialogView = chat.views.ShareDialogView;
 	var MessageCounterView = chat.views.MessageCounterView;
+	var MessageIntervalView = chat.views.MessageIntervalView;
 	var WallPublicationView = chat.views.WallPublicationView;
 	
 	var ChatApplication = function() {
@@ -42,6 +43,7 @@ window.onload = function() {
 		this.dialogView = new DialogView();
 		this.shareDialogView = new ShareDialogView();
 		this.messageCounterView = new MessageCounterView();
+		this.messageIntervalView = new MessageIntervalView();
 		this.wallPublicationView = new WallPublicationView();
 
 		this.contactViews = {};
@@ -50,6 +52,7 @@ window.onload = function() {
 
 		this.initialize = function() {
 			this.messageCounterView.attachTo(this.chatHeadElem);
+			this.messageIntervalView.attachTo(this.chatHeadElem);
 			this.chatboxView.attachTo(this.chatWrapElem);
 			this.accountView.attachTo(this.menuElem);
 			this.initializeDocumentListeners();
@@ -401,6 +404,17 @@ window.onload = function() {
 				self.currentMessageView.endEditing();
 			}
 		});
+		this.messageIntervalView.on('change:interval', function(event) {
+			var value = event.value;
+			console.log(value);
+			if (value === 0) {
+				self.storage.setLatestMessageTimestamp(null);
+			} else {
+				var date = new Date();
+				var timestamp = date.setDate(date.getDate() - value);
+				self.storage.setLatestMessageTimestamp(timestamp);
+			}
+		});
 	};
 	ChatApplication.prototype.initializeStorageListeners = function() {
 		var self = this;
@@ -417,6 +431,7 @@ window.onload = function() {
 		var setCompanionListener = function(event) {
 			self.chatboxView.showConversationTitle(true);
 			self.updateConversationTitle();
+			self.messageIntervalView.show();
 
 			var oldMessages = event.oldMessages;
 			var messages = event.messages;
@@ -457,6 +472,7 @@ window.onload = function() {
 			self.chatboxView.enableMessageComposer(false);
 			self.chatboxView.showConversationTitle(false);
 			self.chatboxView.setConverstationTitle('');
+			self.messageIntervalView.hide();
 		};
 		var addContactListener = function(event) {
 			var contact = event.contact;

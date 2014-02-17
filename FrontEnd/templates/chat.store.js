@@ -16,6 +16,10 @@ var chat = chat || {};
 		this.messages = {};
 
 		this.companionMessages = [];
+		
+		var date = new Date();
+		var timestamp = date.setDate(date.getDate() - 1);
+		this.latestMessageTimestamp = timestamp;
 	};
 	inherit(Storage, EventTrigger);
 	extend(Storage.prototype, {
@@ -31,8 +35,10 @@ var chat = chat || {};
 				var authorId = message.getAttribute('authorId');
 				var receiverId = message.getAttribute('receiverId');
 				var type = message.getAttribute('type');
-				return (authorId === companionId && type === 'user') ||
-					(receiverId === companionId);
+				var timestamp = message.getAttribute('timestamp');
+				var isActual = self.latestMessageTimestamp ? (timestamp - self.latestMessageTimestamp >= 0) : true;
+				return ((authorId === companionId && type === 'user') ||
+					(receiverId === companionId)) && isActual;
 			}).sort(function(message1, message2) {
 				var timestamp1 = message1.getAttribute('timestamp');
 				var timestamp2 = message2.getAttribute('timestamp');
@@ -68,6 +74,19 @@ var chat = chat || {};
 			}
 			this.trigger({
 				type: 'unset:account'
+			});
+		},
+		setLatestMessageTimestamp: function(timestamp) {
+			this.latestMessageTimestamp = timestamp;
+			console.log(timestamp);
+			
+			var result = this.calculateCompanionMessages();
+			
+			this.trigger({
+				type: 'set:companion',
+				companion: this.companion,
+				oldMessages: result.oldMessages,
+				messages: result.messages
 			});
 		},
 		setCompanion: function(companion) {

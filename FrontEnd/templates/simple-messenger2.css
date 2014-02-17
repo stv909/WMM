@@ -51,6 +51,19 @@ input[type="text"] {
   padding-right: 0.5em;
   padding-left: 0.5em;
 }
+#chat-head .message-interval {
+  margin-left: 1em;
+  float: right;
+}
+#chat-head .message-interval span {
+  margin-right: 0.25em;
+}
+#chat-head .message-interval .interval-select {
+  clear: left;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
 #page {
   position: relative;
   width: 70em;
