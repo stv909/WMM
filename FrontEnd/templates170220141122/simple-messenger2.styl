@@ -1,0 +1,541 @@
+scroll-width = 0.5em
+scroll-height = 0.5em
+real-scroll-width = scroll-width //- 0.05em
+real-scroll-height = scroll-height //- 0.05em
+
+page-width = 70em
+contacts-width = 11em
+chat-width = 38em
+tools-width = page-width - (contacts-width + chat-width)
+avatar-width = 6em
+content-width = 26em
+message-width = 403px
+message-height = 403px
+message-scroll-width = 8px
+message-scroll-height = 8px
+controls-width = chat-width - (avatar-width + content-width + 4 * scroll-width)
+
+main-border-color = #ddd
+second-border-color = #eee
+thumb-color = #eee
+second-thumb-color = #999
+main-menu-color = rgb(21, 112, 166)
+titles-color = rgb(238, 238, 238)
+
+inv(num)
+	1 / num
+
+::-webkit-scrollbar
+	width real-scroll-width
+	height real-scroll-height
+	margin 0 auto
+::-webkit-scrollbar-thumb
+	background-color thumb-color
+
+body, html
+	width 100%
+	height 100%
+	font-family "Segoe UI", Helvetica
+	background url(dots.svg)
+
+.super-hidden
+	display none !important
+.hidden
+	display none !important
+.offline
+	opacity 0.4
+	font-weight normal !important
+.overflow
+	border 2px solid #fffc63 !important
+	
+input[type="text"]
+	background-color white
+	border 1px solid main-border-color
+	color black
+	padding 0
+	font-family 'Segoe UI'
+	font-size 1em
+
+contact =
+	.user:hover
+		background-color #55bb55
+	.public:hover
+		background-color #5555bb
+	.theme:hover
+		background-color #bb55bb
+	
+	.contact
+		font-size 0.8em
+		font-weight bold
+		color black
+		background-color white
+		padding-left 0.75em
+		padding-top 0.75em
+		padding-bottom 0.75em
+		border-bottom 1px solid second-border-color
+		transition all 200ms ease
+		&:hover
+			color white
+		.info-block, .messages-block
+			display inline-block
+			vertical-align top
+		.info-block
+			.avatar-wrap
+				width 2.5em
+				height 2.5em
+				.avatar
+					background-color white
+					border 1px solid white
+					width 100%
+					height 100%
+					box-shadow 0 0 0.5em #aaa
+			.name
+				display inline-block
+				position absolute
+				margin-left 0.5em
+				margin-top 0.6em
+				white-space nowrap
+		.message-block
+			float right
+			margin-right 1.5em
+			position relative
+			z-index 1
+			.count
+				position relative
+				color white
+				background-color red
+				margin-top 0.1em
+				padding 0.5em
+
+message =
+	.static
+		background-color white
+	.dynamic
+		background-color #ebf5ff
+	.unshown
+		background-color #f0fff0
+		
+	.message
+		padding-top 0.5em
+		padding-bottom 0.5em
+		width chat-width - scroll-width
+		border-bottom 1px solid main-border-color
+		.name, .time
+			display inline-block
+			color #888
+			font-size 0.9em
+			vertical-align top
+			&:hover
+				color black
+		.name
+			margin-left inv(0.9) * 0.85em
+			margin-bottom inv(0.9) * 0.5em
+		.time
+			float right
+			padding-right inv(0.9) * 0.5em
+		.avatar-block, .content-block, .controls-block
+			display inline-block
+			vertical-align top
+		.avatar-block
+			width avatar-width
+			.avatar-wrap
+				background-color white
+				margin 0 auto
+				width 4em
+				height 4em
+				border 2px solid white
+				box-shadow 0 0 0.5em #aaa
+				overflow hidden
+				.avatar
+					width 100%
+					height 100%
+		.content-block
+			width content-width
+			.static
+				width message-width
+				overflow hidden
+				border 2px solid white
+				max-height message-height
+			.dynamic
+				width message-width + message-scroll-width
+				overflow scroll
+				border 2px solid main-border-color
+				max-height message-height + message-scroll-height
+			.container
+				background-color white
+				position relative
+				display inline-block
+				min-height 5em
+				box-shadow 0 0 0.5em #aaa
+				&::-webkit-scrollbar
+					width message-scroll-width
+					height message-scroll-height
+				&::-webkit-scrollbar-track
+					&:vertical
+						border-left 1px solid main-border-color
+					&:horizontal
+						border-top 1px solid main-border-color
+				&::-webkit-scrollbar-thumb
+					background-color second-thumb-color
+					&:vertical
+						border-left 1px solid main-border-color
+					&:horizontal
+						border-top 1px solid main-border-color
+				.editor
+					width message-height
+					min-height 4em
+		.controls-block
+			width controls-width
+			text-align center
+			padding-left 0.25em
+			.more
+				margin-bottom 0.75em !important
+			.simple-button
+				background-color white
+				cursor pointer
+				font-size 0.75em
+				color #888
+				border 1px solid #eee
+				padding-top 0.25em
+				padding-bottom 0.255em
+				margin-bottom 0.25em
+				transition all 200ms ease
+				&:hover
+					background-color #55BB55
+					border 1px solid #55BB55
+					box-shadow 0 0 0.5em #aaa
+					color #fff
+				&.negative
+					&:hover
+						background-color #dd2222
+						border 1px solid #dd2222
+
+#chat-head
+	.message-counter
+		.messages-info
+			opacity 0.6
+			margin-left 1em
+			font-size 0.9em
+			&:hover
+				opacity 1
+			span
+				margin-right 0.25em
+			.count
+				background-color red
+				color white
+				padding-right 0.5em
+				padding-left 0.5em
+
+
+#page
+	position relative
+	width page-width
+	margin 0 auto
+	box-shadow 0 0 0.5em #aaa
+	height 100%
+	background-color white
+	>.wrap
+		position absolute
+		top 0
+		bottom 0
+		right 0
+		left 0
+		overflow hidden
+#application
+	display table
+	width 100%
+	height 100%
+#menu, #workspace
+	display table-row
+#menu
+	color white
+	height 1%
+	background-color main-menu-color
+	>.content
+		display inline-block
+		font-size 1.1em
+		margin-top 0.75em
+		margin-bottom 0.75em
+		margin-left 1em
+	>.account
+		color main-border-color
+		margin-top 0.9em
+		float right
+		font-size 0.9em
+		margin-right 0.5em
+		.login-controls, .logout-controls
+			display inline-block
+		.name, .settings, .logout-button, .login-button, .cancel-login-button, .status, .login-input
+			display inline-block
+			padding-right 0.75em
+			padding-left 0.75em
+			height 100%
+			vertical-align middle
+		.name
+			color white
+			padding-left 0.25em
+		.name, .settings, .status
+			border-right 1px dotted main-border-color
+		.login-button
+			border-left 1px dotted main-border-color
+		.settings, .logout-button, .login-button, .cancel-login-button
+			text-decoration underline
+			cursor pointer
+			&:hover
+				color white
+		.login-input 
+			padding 0.2em
+			margin-right 0.75em
+		.avatar
+			display inline-block
+			width 1.5em
+			height 1.5em
+			vertical-align middle
+			>img
+				background-color white
+				outline 1px solid main-border-color
+				width 100%
+#workspace
+	height 99%
+	>.content
+		display table
+		width 100%
+		height 100%
+		.row
+			display table-row
+		.cell
+			display table-cell
+		.titles
+			height 1%
+			background-color titles-color
+			.title
+				padding-top 0.5em
+				padding-bottom 0.5em
+				width 100%
+				text-align center
+				font-size 0.95em
+				border-bottom 1px solid #ddd
+#contacts, #chat, #tools
+	position relative
+	>.prewrap
+		position relative
+		width 100%
+		height 100%
+		>.wrap
+			position absolute
+			//width 100%
+			//height 100%
+			top 0
+			bottom 0
+			left 0
+			right 0
+#contacts
+	width contacts-width
+	>.prewrap
+		>.wrap
+			overflow-y scroll
+			overflow-x hidden
+			&::-webkit-scrollbar-track
+				&:vertical
+					border-left 1px solid main-border-color
+					border-right 1px solid main-border-color
+			&::-webkit-scrollbar-thumb
+				&:vertical
+					border-left 1px solid main-border-color
+					border-right 1px solid main-border-color
+			>.list
+				width contacts-width
+				{contact}
+#chat
+	width chat-width
+	{message}
+	>.prewrap
+		>.wrap
+			overflow hidden
+			border-right 1px solid main-border-color
+	.chatbox
+		position relative
+		height 100%
+		>.wrap
+			position absolute
+			top 0
+			bottom 0
+			right 0
+			left 0
+			overflow hidden
+		.board
+			display table
+			width 100%
+			height 100%
+			.conversation, .stream, .composer
+				display table-row
+			.conversation
+				text-align center
+				min-height 1%
+				>.wrap
+					font-size 0.8em
+					padding-top 0.5em
+					padding-bottom 0.5em
+					background-color #fffcf1
+					border-bottom 1px solid main-border-color
+			.stream
+				height 98%
+				>.wrap
+					height 100%
+					overflow-y scroll
+					&::-webkit-scrollbar-track
+						&:vertical
+							border-left 1px solid main-border-color
+					&::-webkit-scrollbar-thumb
+						&:vertical
+							border-left 1px solid main-border-color
+			.composer
+				height 1%
+				&.static
+					background-color #fff
+				&.dynamic
+					background-color #ebf5ff
+				>.wrap
+					border-top 1px solid main-border-color
+					overflow hidden
+					min-height 1em
+					max-height 22em
+#tools
+	.tool
+		.title
+			text-align center
+			padding-top 0.5em
+			padding-bottom 0.5em
+			font-size 0.8em
+			background-color #ebf5ff
+			border-bottom 1px solid main-border-color
+		.controls
+			border-bottom 1px solid main-border-color
+			padding  0.5em
+#dialog
+	position fixed
+	top 0
+	bottom 0
+	left 0
+	right 0
+	z-index 10
+	background-color white
+	.title
+		font-size 1.2em
+		z-index 100
+		box-shadow 0 0 0.5em #aaa
+		position abosolute
+		top 0
+		left 0
+		right 0
+		height 2em
+		line-height 2em
+		background-color #55BB55
+		color white
+	.container
+		z-index 0
+		position absolute
+		background-color white
+		top 3.5em
+		left 2em
+		right 2em
+		bottom 1em
+		overflow auto
+		box-shadow 0 0 0.5em #aaa
+		outline 2px solid white
+		.content
+			width 100%
+			height 100%
+			overflow auto
+			&::-webkit-scrollbar-thumb
+				background-color second-thumb-color
+	.close
+		margin-right 1em
+		float right
+		cursor pointer
+
+#share-dialog
+	position fixed
+	top 0
+	bottom 0
+	left 0
+	right 0
+	width 100%
+	height 100%
+	z-index 10
+	background-color rgba(0, 0, 0, 0.5)
+	display table
+	.container
+		display table-cell
+		text-align center
+		vertical-align middle
+		.box
+			display inline-block
+			width 35em
+			height 15em
+			background-color white
+			box-shadow 0 0 3em #111
+			.title
+				background-color main-menu-color
+				color white
+				font-size 1.1em
+				padding-top 0.5em
+				padding-bottom 0.5em
+			.link-place
+				margin-top 3em
+				width 100%
+				.link-text
+					display inline-block
+				.link
+					margin-left 1em
+					padding 0.5em
+					font-size 1em
+					width 23em
+					&:hover, &:focus
+						border 1px solid #666
+			.controls-place
+				margin-top 1.5em
+			.simple-button
+				background-color white
+				cursor pointer
+				font-size 1em
+				border 1px solid main-border-color
+				transition all 200ms ease
+				padding-top 0.5em
+				padding-bottom 0.5em
+				padding-left 1em
+				padding-right 1em
+				display inline-block
+				margin-right 0.5em
+				margin-top 0.5em
+				&:hover
+					background-color #55BB55
+					border 1px solid #55BB55
+					color #fff
+				&.negative
+					margin-top 1em
+					&:hover
+						background-color #dd2222
+						border 1px solid #dd2222
+#wall-publication
+	position fixed
+	top 0
+	bottom 0
+	left 0
+	right 0
+	width 100%
+	height 100%
+	z-index 10
+	background-color rgba(0, 0, 0, 0.5)
+	display table
+	.container
+		display table-cell
+		text-align center
+		vertical-align middle
+		.cancel
+			display inline-block
+			color white
+			cursor pointer
+			text-decoration underline
+			&:hover
+				text-shadow 0 0 0.25em white

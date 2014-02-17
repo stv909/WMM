@@ -1,0 +1,151 @@
+mixin message-body(composer)
+	if (!composer)
+		.info-block
+			.name
+			.time
+	.info-block
+		.avatar-block
+			.avatar-wrap
+				img.avatar
+		.content-block
+			.container
+				.editor(contenteditable="false", spellcheck="false")
+		.controls-block
+			if composer
+				.simple-button.send send
+				.simple-button.negative.clear clear
+			else
+				.simple-button.more more...
+				.buttons-holder.hidden
+					.simple-button.share share
+					.simple-button.wall on wall
+					.simple-button.borrow borrow
+					.simple-button.edit edit
+					.simple-button.clear.hidden clear
+					.simple-button.negative.cancel.hidden cancel
+					.simple-button.negative.hide hide
+					.simple-button.negative.delete delete
+					.simple-button.fullscreen fullscreen
+				.simple-button.overflow-fullscreen.super-hidden fullscreen
+
+mixin message-composer-template
+	template#message-composer-template(style="display:none")
+		+message-body(true)
+
+mixin message-stream-template(composer)
+	template#message-stream-template(style="display:none")
+		+message-body(false)
+
+mixin contact-template
+	template#contact-template(style="display:none")
+		.info-block
+			.avatar-wrap
+				img.avatar
+		.info-block
+			.name
+		.message-block
+			.count
+			
+mixin account-template
+	template#account-template(style="display:none")
+		.login-controls
+			form#login-form
+				input.login-input(type="text", size=16)
+				input(type="text", style="display: none")
+				.login-button Login
+				.status
+				.cancel-login-button Cancel
+		.logout-controls
+			.avatar
+				img
+			.name
+			.settings Settings
+			.logout-button Logout
+
+mixin total-messages-template
+	template#message-counter-template(style="display:none")
+		span.messages-info.hidden
+			span.count
+			span.text unread messages
+			
+mixin chatbox-template
+	template#chatbox-template(style="display:none")
+		.wrap
+			.board
+				.conversation.hidden
+					.wrap
+				.stream
+					.wrap
+				.composer.dynamic.hidden
+					.wrap
+
+doctype html
+html
+	head
+		title Messenger
+		link(rel="stylesheet", href="styles/reset.css")
+		link(rel="stylesheet", href="styles/fonts.css")
+		link(rel="stylesheet", href="simple-messenger2.css")
+		script(type="application/javascript", src="https://vkontakte.ru/js/api/openapi.js")
+		script(type="application/javascript", src="uuid.js")
+		script(type="application/javascript", src="base64.js")
+		script(type="application/javascript", src="html.js")
+		script(type="application/javascript", src="template.js")
+		script(type="application/javascript", src="mvp.js")
+		script(type="application/javascript", src="chat.js")
+		script(type="application/javascript", src="chat.models.js")
+		script(type="application/javascript", src="chat.store.js")
+		script(type="application/javascript", src="chat.views.js")
+		script(type="application/javascript", src="simple-messenger2.js")
+	body
+		+message-composer-template
+		+message-stream-template
+		+contact-template
+		+account-template
+		+chatbox-template
+		+total-messages-template
+		audio#new-message-sound(src="newMessageSpace.wav", preload="auto", style="controls: none")
+		#page
+			.wrap
+				#application
+					#menu
+						.content Messenger
+					#workspace
+						.content
+							.row.titles
+								.cell
+									.title Contacts
+								.cell
+									#chat-head.title Chat
+								.cell
+									.title Tools
+							.row
+								#contacts.cell
+									.prewrap
+										.wrap
+											.list
+								#chat.cell
+									.prewrap
+										.wrap
+								#tools.cell
+									.prewrap
+										.wrap
+		#dialog.hidden
+			.container
+				.content
+			.title
+				span(style="margin-left: 1em") Message
+				.close Close
+		#share-dialog.hidden
+			.container
+				.box
+					.title Share Message
+					.link-place
+						.link-text Link:
+						input.link(type="text", readonly, value="www.test.com")
+					.controls-place
+						.close.simple-button.negative close
+		#wall-publication.hidden
+			.container
+				.cancel Cancel
+			
