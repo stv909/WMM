@@ -15,6 +15,33 @@ var chat = chat || {};
 		return result;
 	};
 	
+	var requestAsync = function(options) {
+		var url = options.url;
+		var method = options.method;
+		var data = options.data;
+		var request = new XMLHttpRequest();
+		var deferred = defer();
+		var promise = deferred.promise;
+		
+		promise.cancel = function() {
+			request.abort();
+		};
+		
+		request.open(method, url, true);
+		request.onload = function() {
+			deferred.resolve(request.responseText);
+		};
+		request.abort = function() {
+			deferred.reject(new Error('request aborted'));
+		};
+		request.onerror = function(error) {
+			deferred.reject(new Error(error));
+		};
+		request.send(data);
+		
+		return promise;
+	};
+	
 	VK.Auth.getLoginStatusAsync = function() {
 		var deferred = defer();
 		VK.Auth.getLoginStatus(function(response) {
@@ -903,20 +930,18 @@ var chat = chat || {};
 			}
 		}).then(function(data) {
 			self.statusElem.textContent = 'Saving preview to wall album...';
-			console.log(data);
 			return VK.Api.callAsync('photos.saveWallPhoto', data);
 		}).then(function(data) {
 			if (data.error) {
 				throw new Error('couldn\'t save a preview');
 			} else {
 				var response = data.response;
-				console.log(response);
 				var savedImage = response[0];
 				var savedImageId = savedImage.id;
 				self.statusElem.textContent = '';
 				self.close();
 				return VK.Api.callAsync('wall.post', { 
-					message: 'Message preview',
+					message: 'My mult-status',
 					attachments: [
 						savedImageId,
 						shareUrl
@@ -924,7 +949,6 @@ var chat = chat || {};
 				});
 			}
 		}).then(function(data) {
-			console.log(data);
 			if (data.error) {
 				throw new Error('could\'t save a post');
 			}
