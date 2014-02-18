@@ -977,9 +977,10 @@ var chat = chat || {};
 			if (self.userId === self.session.mid) {
 				message = 'My mult-status';
 			} else {
-				message = 'sends you message';
+				message = 'sends you a message';
 			}
 			return VK.Api.callAsync('wall.post', { 
+				user_id: self.userId,
 				message: message,
 				attachments: [
 					savedImageId,
