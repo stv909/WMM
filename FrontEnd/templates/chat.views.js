@@ -1020,6 +1020,7 @@ var chat = chat || {};
 			if ((response & needFlags) !== needFlags) {
 				throw new Error('invalid permissions');
 			}
+			return session;
 		}).catch(function(error) {
 			return VK.Auth.loginAsync(VK.access.FRIENDS | VK.access.PHOTOS);
 		});
