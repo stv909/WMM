@@ -1008,7 +1008,19 @@ var chat = chat || {};
 		this.elem.classList.add('hidden');
 	};
 	WallPublicationView.prototype.authorizeVK = function() {
-		return VK.Auth.getLoginStatusAsync().catch(function(error) {
+		var self = this;
+		return VK.Auth.getLoginStatusAsync().then(function(session) {
+			return Promise.all([session, VK.Api.callAsync('getUserSettings', { v: 5.9 })]);
+		}).then(function(values) {
+			var session = values[0];
+			var data = values[1];
+			self.checkVKResponseError(data, 'couldn\'t get user settings');
+			var response = data.response;
+			var needFlags = VK.access.FRIENDS | VK.access.PHOTOS;
+			if ((response & needFlags) !== needFlags) {
+				throw new Error('invalid permissions');
+			}
+		}).catch(function(error) {
 			return VK.Auth.loginAsync(VK.access.FRIENDS | VK.access.PHOTOS);
 		});
 	};
@@ -1047,6 +1059,7 @@ var chat = chat || {};
 	};
 	WallPublicationView.prototype.checkVKResponseError = function(data, errorMessage) {
 		if (data.error) {
+			console.log(data.error);
 			throw new Error(errorMessage);
 		}	
 	};
