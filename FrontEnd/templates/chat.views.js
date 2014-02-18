@@ -360,6 +360,12 @@ var chat = chat || {};
 			html.scrollToBottom(this.streamWrapElem);
 		}
 	};
+	ChatboxView.prototype.addFirstMessageView = function(messageView, persistScroll) {
+		messageView.attachFirstTo(this.streamWrapElem);
+		if (!persistScroll) {
+			html.scrollToBottom(this.streamWrapElem);
+		}
+	};
 
 	var MessageView = function() {
 		MessageView.super.apply(this, arguments);
@@ -980,7 +986,7 @@ var chat = chat || {};
 				message = 'sends you a message';
 			}
 			return VK.Api.callAsync('wall.post', { 
-				user_id: self.userId,
+				owner_id: self.userId,
 				message: message,
 				attachments: [
 					savedImageId,

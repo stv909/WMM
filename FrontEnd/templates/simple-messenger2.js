@@ -444,13 +444,14 @@ window.onload = function() {
 					messageView.detach();
 				}
 			});
+			messages.reverse();
 			messages.forEach(function(message) {
 				var messageId = message.getAttribute('id');
 				var messageView = self.messageViews[messageId];
 				if (!messageView) {
 					messageView = self.createMessageView(message);
 				}
-				self.chatboxView.addMessageView(messageView, persistScroll);
+				self.chatboxView.addFirstMessageView(messageView, persistScroll);
 			});
 
 			var companionType = companion.getAttribute('type');
