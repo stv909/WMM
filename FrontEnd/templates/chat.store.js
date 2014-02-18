@@ -78,7 +78,6 @@ var chat = chat || {};
 		},
 		setLatestMessageTimestamp: function(timestamp) {
 			this.latestMessageTimestamp = timestamp;
-			console.log(timestamp);
 			
 			var result = this.calculateCompanionMessages();
 			

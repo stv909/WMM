@@ -406,7 +406,6 @@ window.onload = function() {
 		});
 		this.messageIntervalView.on('change:interval', function(event) {
 			var value = event.value;
-			console.log(value);
 			if (value === 0) {
 				self.storage.setLatestMessageTimestamp(null);
 			} else {

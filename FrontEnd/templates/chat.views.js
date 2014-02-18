@@ -883,19 +883,33 @@ var chat = chat || {};
 		var self = this;
 		
 		this.elem = document.getElementById('wall-publication');
+		this.okElem = this.elem.getElementsByClassName('ok')[0];
 		this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
 		this.statusElem = this.elem.getElementsByClassName('status')[0];
+		this.progressElem = document.getElementById('fadingBarsG');
+		this.friendsElem = this.elem.getElementsByClassName('friends')[0];
+		this.session = null;
+		this.friends = null;
+		this.userId = null;
 		
 		var cancelElemClickListener = function(event) {
 			self.cancel = true;
 			self.close();
 		};
-		
+		var friendsElemChangeListener = function(event) {
+			var index = self.friendsElem.selectedIndex;
+			var option = self.friendsElem[index];
+			self.userId = option.value;
+			console.log('userId ' + self.userId);
+		};
+
 		this.cancelElem.addEventListener('click', cancelElemClickListener);
+		this.friendsElem.addEventListener('change', friendsElemChangeListener);
 		
 		var disposeListener = function(event) {
 			self.off('dispose', disposeListener);
 			self.cancelElem.removeEventListener('click', cancelElemClickListener);
+			self.friendsElem.removeEventListener('click', friendsElemChangeListener);
 		};
 	};
 	WallPublicationView.super = View;
@@ -903,23 +917,37 @@ var chat = chat || {};
 	WallPublicationView.prototype.constructor = WallPublicationView;
 	WallPublicationView.prototype.show = function(shareUrl) {
 		var self = this;
-		var currentSession = null;
+		this.session = null;
+		this.friends = null;
+		this.userId = null;
 		this.authorizeVK().then(function(session) {
 			self.checkCancelation();
-			currentSession = session;
 			self.elem.classList.remove('hidden');
+			self.session = session;
+			self.userId = session.mid;
+			self.statusElem.textContent = 'Getting friend list...'
+			return VK.Api.callAsync('friends.get', { v: 5.9, fields: 'domain', count: 50, user_id: self.userId });
+		}).then(function(data) {
+			self.checkCancelation();
+			self.checkVKResponseError(data, 'couldn\'t get friend list');
+			self.friends = data.response.items;
+			self.statusElem.textContent = 'Select a friend to post';
+			return self.selectFriendAsync();
+		}).then(function(userId) {
+			self.progressElem.classList.remove('hidden');
+			self.okElem.classList.add('hidden');
+			self.friendsElem.classList.add('hidden');
+			self.checkCancelation();
+			self.userId = userId;
 			self.statusElem.textContent = 'Getting a VK upload server...';
 			return VK.Api.callAsync('photos.getWallUploadServer', { v: 5.9 });
 		}).then(function(data) {
 			self.checkCancelation();
-			if (data.error) {
-				throw new Error('couldn\'t get an upload server');
-			} else {
-				var response = data.response;
-				var uploadUrl = response.upload_url;
-				self.statusElem.textContent = 'Generating preview...';
-				return Promise.all([uploadUrl, self.generatePreview(shareUrl)]);
-			}
+			self.checkVKResponseError(data, 'couldn\'t get an upload server');
+			var response = data.response;
+			var uploadUrl = response.upload_url;
+			self.statusElem.textContent = 'Generating preview...';
+			return Promise.all([uploadUrl, self.generatePreview(shareUrl)]);
 		}).then(function(values) {
 			self.checkCancelation();
 			var uploadUrl = values[0];
@@ -939,22 +967,25 @@ var chat = chat || {};
 			return VK.Api.callAsync('photos.saveWallPhoto', data);
 		}).then(function(data) {
 			self.checkCancelation();
-			if (data.error) {
-				throw new Error('couldn\'t save a preview');
+			self.checkVKResponseError(data, 'couldn\'t save a preview');
+			var response = data.response;
+			var savedImage = response[0];
+			var savedImageId = savedImage.id;
+			self.statusElem.textContent = '';
+			self.close();
+			var message = null;
+			if (self.userId === self.session.mid) {
+				message = 'My mult-status';
 			} else {
-				var response = data.response;
-				var savedImage = response[0];
-				var savedImageId = savedImage.id;
-				self.statusElem.textContent = '';
-				self.close();
-				return VK.Api.callAsync('wall.post', { 
-					message: 'My mult-status',
-					attachments: [
-						savedImageId,
-						shareUrl
-					]
-				});
+				message = 'sends you message';
 			}
+			return VK.Api.callAsync('wall.post', { 
+				message: message,
+				attachments: [
+					savedImageId,
+					shareUrl
+				]
+			});
 		}).then(function(data) {
 			self.checkCancelation();
 			if (data.error) {
@@ -1006,6 +1037,54 @@ var chat = chat || {};
 			this.cancel = false;
 			throw new Error('canceled');
 		}
+	};
+	WallPublicationView.prototype.checkVKResponseError = function(data, errorMessage) {
+		if (data.error) {
+			throw new Error(errorMessage);
+		}	
+	};
+	WallPublicationView.prototype.selectFriendAsync = function() {
+		var deferred = defer();
+		var self = this;
+		
+		this.progressElem.classList.add('hidden');
+		this.okElem.classList.remove('hidden');
+		this.friendsElem.classList.remove('hidden');
+		
+		this.friendsElem.innerHTML = '';
+		
+		var createOptionNode = function(id, name) {
+			var optionNode = document.createElement('option');
+			optionNode.value = id;
+			optionNode.textContent = name;
+			return optionNode;
+		};
+		this.friendsElem.appendChild(createOptionNode(self.session.mid, 'Me'));
+		this.friends.forEach(function(friend) {
+			var id = friend.id;
+			var firstName = friend.first_name;
+			var lastName = friend.last_name;
+			var fullName = [firstName, lastName].join(' ');
+			self.friendsElem.appendChild(createOptionNode(id, fullName));
+		});
+		
+		var okElemClickListener = function() {
+			self.okElem.removeEventListener('click', okElemClickListener);
+			self.cancelElem.removeEventListener('click', cancelElemClickListener);
+			
+			deferred.resolve(self.userId);
+		};
+		var cancelElemClickListener = function() {
+			self.okElem.removeEventListener('click', okElemClickListener);
+			self.cancelElem.removeEventListener('click', cancelElemClickListener);
+			
+			deferred.resolve();
+		};
+		
+		this.okElem.addEventListener('click', okElemClickListener);
+		this.cancelElem.addEventListener('click', cancelElemClickListener);
+		
+		return deferred.promise;
 	};
 	
 	var MessageIntervalView = function() {

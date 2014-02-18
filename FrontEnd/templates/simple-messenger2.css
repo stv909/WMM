@@ -643,19 +643,26 @@ input[type="text"] {
 #wall-publication .container .box {
   display: inline-block;
   width: 35em;
+  text-align: center;
 }
 #wall-publication .container .box .status {
   display: block;
   color: #fff;
   margin-bottom: 1.5em;
 }
-#wall-publication .container .box .cancel {
+#wall-publication .container .box .friends {
+  margin: 0 auto;
+  display: block;
+}
+#wall-publication .container .box .cancel,
+#wall-publication .container .box .ok {
   margin-top: 1em;
   display: block;
   color: #fff;
   cursor: pointer;
   text-decoration: underline;
 }
-#wall-publication .container .box .cancel:hover {
+#wall-publication .container .box .cancel:hover,
+#wall-publication .container .box .ok:hover {
   text-shadow: 0 0 0.25em #fff;
 }
