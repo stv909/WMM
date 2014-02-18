@@ -354,9 +354,11 @@ var chat = chat || {};
 		}
 		this.messageComposerView.enable(isEnable);	
 	};
-	ChatboxView.prototype.addMessageView = function(messageView) {
+	ChatboxView.prototype.addMessageView = function(messageView, persistScroll) {
 		messageView.attachTo(this.streamWrapElem);
-		html.scrollToBottom(this.streamWrapElem);
+		if (!persistScroll) {
+			html.scrollToBottom(this.streamWrapElem);
+		}
 	};
 
 	var MessageView = function() {

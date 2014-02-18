@@ -436,6 +436,7 @@ window.onload = function() {
 			var oldMessages = event.oldMessages;
 			var messages = event.messages;
 			var companion = event.companion;
+			var persistScroll = event.persistScroll;
 
 			oldMessages.forEach(function(message) {
 				var messageId = message.getAttribute('id');
@@ -450,7 +451,7 @@ window.onload = function() {
 				if (!messageView) {
 					messageView = self.createMessageView(message);
 				}
-				self.chatboxView.addMessageView(messageView);
+				self.chatboxView.addMessageView(messageView, persistScroll);
 			});
 
 			var companionType = companion.getAttribute('type');

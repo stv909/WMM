@@ -84,6 +84,7 @@ var chat = chat || {};
 			
 			this.trigger({
 				type: 'set:companion',
+				persistScroll: true,
 				companion: this.companion,
 				oldMessages: result.oldMessages,
 				messages: result.messages
