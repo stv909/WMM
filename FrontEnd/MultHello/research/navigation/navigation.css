@@ -1,0 +1,49 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Verdana';
+    color: #888;
+}
+#menu {
+    top: 0;
+    font-size: 0.8em;
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 1em;
+    padding-right: 1em;
+    height: 3em;
+    line-height: 3em;
+    vertical-align: middle;
+    position: absolute;
+    border-bottom: 1px solid #ddd;
+}
+#menu-container {
+    position: relative;
+    width: 100%;
+}
+#logo {
+    color: #333;
+}
+#logo, #breadcrumbs {
+    display: inline-block;
+}
+#breadcrumbs {
+    position: absolute;
+    right: 0;
+}
+#breadcrumbs .chosen {
+    color: red;
+}
+#breadcrumbs .normal:hover {
+    color: #fc0;
+}
+#select, #edit, #post {
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 0.5em;
+}
+#page {
+    font-size: 0.8em;
+    margin-top: 3em;
+    padding: 1em;
+}
