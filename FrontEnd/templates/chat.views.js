@@ -981,7 +981,7 @@ var chat = chat || {};
 			self.close();
 			var message = null;
 			if (self.userId === self.session.mid) {
-				message = 'My mult-status';
+				message = 'Мой мульт-статус';
 			} else {
 				message = 'sends you a message';
 			}
