@@ -4,7 +4,10 @@ window.onload = function() {
 	var selectElem = document.getElementById('select');
 	var editElem = document.getElementById('edit');
 	var postElem = document.getElementById('post');
-	var menuElemCollection = [selectElem, editElem, postElem];
+
+	var selectPageElem = document.getElementById('select-page');
+	var editPageElem = document.getElementById('edit-page');
+	var postPageElem = document.getElementById('post-page');
 
 	var Navigation = function() {
 		Navigation.super.apply(this);
@@ -40,6 +43,10 @@ window.onload = function() {
 		postElem.classList.add('normal');
 		postElem.classList.remove('chosen');
 		postElem.addEventListener('click', postElemClickListener);
+
+		selectPageElem.classList.remove('hidden');
+		editPageElem.classList.add('hidden');
+		postPageElem.classList.add('hidden');
 	});
 
 	navigation.on('mode:edit', function(event) {
@@ -54,6 +61,10 @@ window.onload = function() {
 		postElem.classList.add('normal');
 		postElem.classList.remove('chosen');
 		postElem.addEventListener('click', postElemClickListener);
+
+		selectPageElem.classList.add('hidden');
+		editPageElem.classList.remove('hidden');
+		postPageElem.classList.add('hidden');
 	});
 
 	navigation.on('mode:post', function(event) {
@@ -68,6 +79,10 @@ window.onload = function() {
 		postElem.classList.remove('normal');
 		postElem.classList.add('chosen');
 		postElem.removeEventListener('click', postElemClickListener);
+
+		selectPageElem.classList.add('hidden');
+		editPageElem.classList.add('hidden');
+		postPageElem.classList.remove('hidden');
 	});
 
 	var selectElemClickListener = function(event) {
@@ -81,6 +96,10 @@ window.onload = function() {
 	};
 
 	navigation.setMode('select');
+	var hash = window.location.hash;
+	if (hash) {
+		alert(hash);
+	}
 };
 
 

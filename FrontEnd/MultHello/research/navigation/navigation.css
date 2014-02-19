@@ -4,7 +4,12 @@ html, body {
     font-family: 'Verdana';
     color: #888;
 }
+.hidden {
+    display: none !important;
+}
 #menu {
+    -webkit-user-select: none;
+    user-select: none;
     top: 0;
     font-size: 0.8em;
     width: 100%;
@@ -23,6 +28,7 @@ html, body {
 }
 #logo {
     color: #333;
+    cursor: default;
 }
 #logo, #breadcrumbs {
     display: inline-block;
