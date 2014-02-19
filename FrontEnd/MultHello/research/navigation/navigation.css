@@ -22,13 +22,13 @@ body {
     -webkit-user-select: none;
     user-select: none;
     top: 0;
-    font-size: 0.8em;
+    font-size: 12px;
     width: 920px;
     box-sizing: border-box;
-    padding-left: 1em;
-    padding-right: 1em;
-    height: 3em;
-    line-height: 3em;
+    padding-left: 12px;
+    padding-right: 12px;
+    height: 36px;
+    line-height: 36px;
     vertical-align: middle;
     position: fixed;
     border-bottom: 1px solid #ddd;
@@ -122,14 +122,16 @@ body {
 }
 .controls .button {
     font-size: 12px;
-    margin: 8px 2px;
+    margin: 8px 4px;
+    /*border: 1px solid #fff;*/
 }
 .button {
     -webkit-user-select: none;
     user-select: none;
-    border: 1px solid #fff;
+    border: 1px solid #ddd;
     display: inline-block;
     padding: 8px;
+    cursor: pointer;
 }
 .button:hover {
     border: 1px solid #28f;
@@ -137,7 +139,16 @@ body {
 }
 .button:active {
     color: #fff;
-    /*border: 1px solid #28f;*/
+    border: 1px solid #28f;
     background-color: #28f;
     box-shadow: 0 0 1px #28f;
+}
+.load-holder {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 12px;
+}
+.load-holder .button {
+    padding-left: 12px;
+    padding-right: 12px;
 }
