@@ -174,26 +174,46 @@ window.onload = function() {
 	var messagePatternView2 = new MessagePatternView();
 	var messagePatternView3 = new MessagePatternView();
 	var messagePatternView4 = new MessagePatternView();
+	var messagePatternView5 = new MessagePatternView();
+	var messagePatternView6 = new MessagePatternView();
+	var messagePatternView7 = new MessagePatternView();
+	var messagePatternView8 = new MessagePatternView();
 
 	messagePatternView1.on('select', messagePatternSelectListener);
 	messagePatternView2.on('select', messagePatternSelectListener);
 	messagePatternView3.on('select', messagePatternSelectListener);
 	messagePatternView4.on('select', messagePatternSelectListener);
+	messagePatternView5.on('select', messagePatternSelectListener);
+	messagePatternView6.on('select', messagePatternSelectListener);
+	messagePatternView7.on('select', messagePatternSelectListener);
+	messagePatternView8.on('select', messagePatternSelectListener);
 
 	messagePatternView1.on('edit', messagePatternEditListener);
 	messagePatternView2.on('edit', messagePatternEditListener);
 	messagePatternView3.on('edit', messagePatternEditListener);
 	messagePatternView4.on('edit', messagePatternEditListener);
+	messagePatternView5.on('edit', messagePatternEditListener);
+	messagePatternView6.on('edit', messagePatternEditListener);
+	messagePatternView7.on('edit', messagePatternEditListener);
+	messagePatternView8.on('edit', messagePatternEditListener);
 
 	messagePatternView1.on('post', messagePatternPostListener);
 	messagePatternView2.on('post', messagePatternPostListener);
 	messagePatternView3.on('post', messagePatternPostListener);
 	messagePatternView4.on('post', messagePatternPostListener);
+	messagePatternView5.on('post', messagePatternPostListener);
+	messagePatternView6.on('post', messagePatternPostListener);
+	messagePatternView7.on('post', messagePatternPostListener);
+	messagePatternView8.on('post', messagePatternPostListener);
 
 	messagePatternView1.attachTo(patternsElem);
 	messagePatternView2.attachTo(patternsElem);
 	messagePatternView3.attachTo(patternsElem);
 	messagePatternView4.attachTo(patternsElem);
+	messagePatternView5.attachTo(patternsElem);
+	messagePatternView6.attachTo(patternsElem);
+	messagePatternView7.attachTo(patternsElem);
+	messagePatternView8.attachTo(patternsElem);
 
 	messagePatternView1.select();
 	selectedPatternView = messagePatternView1;
