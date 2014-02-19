@@ -80,21 +80,20 @@ body {
 }
 #page-container {
     margin: 0 auto;
-    text-align: left;
 }
 #select-page {
+    text-align: center;
     font-size: 0;
 }
 #select-page .title {
     font-weight: bold;
     color: #333;
     font-size: 14px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 6px;
+    padding-bottom: 6px;
     text-align: center;
 }
-.template {
-    cursor: pointer;
+.message-pattern {
     box-sizing: border-box;
     vertical-align: top;
     white-space: nowrap;
@@ -106,7 +105,13 @@ body {
     margin: 10px;
     background-color: #fff;
 }
-.template:hover {
+.message-pattern.normal {
+    cursor: pointer;
+}
+.message-pattern.normal:hover {
+    border: 1px solid #28f;
+}
+.message-pattern.chosen {
     border: 1px solid #28f;
     box-shadow: 0 0 2px #28f;
 }

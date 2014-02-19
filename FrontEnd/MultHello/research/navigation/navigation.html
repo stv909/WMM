@@ -11,9 +11,13 @@
   <script src="navigation.js"></script>
 </head>
 <body>
-  <template id="template-template" style="display:none">
+  <template id="message-pattern-template" style="display:none">
     <div class="preview">
-      <img>
+      <img class="image" src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn2/t1/p403x403/1560404_636674403035347_325664108_n.png">
+    </div>
+    <div class="controls">
+      <div class="button edit">Редактировать</div>
+      <div class="button post">Отправит сразу!</div>
     </div>
   </template>
   <div id="menu">
@@ -30,37 +34,37 @@
     <div id="page-container">
       <div id="select-page" class="hidden">
         <div class="title">Выберите шаблон сообщения!</div>
-        <div>
-          <div class="template">
-            <div class="preview">
-              <img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn2/t1/p403x403/1560404_636674403035347_325664108_n.png">
-            </div>
-            <div class="controls">
-              <div class="button">Редактировать</div>
-              <div class="button">Отправить сразу!</div>
-            </div>
-          </div>
-          <div class="template">
-            <div class="preview"></div>
-          </div>
-          <div class="template">
-            <div class="preview"></div>
-          </div>
-          <div class="template">
-            <div class="preview"></div>
-          </div>
-          <div class="template">
-            <div class="preview"></div>
-          </div>
-          <div class="template">
-            <div class="preview"></div>
-          </div>
-          <div class="template">
-            <div class="preview"></div>
-          </div>
-          <div class="template">
-            <div class="preview"></div>
-          </div>
+        <div id="patterns">
+          <!--<div class="template">-->
+            <!--<div class="preview">-->
+              <!--<img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn2/t1/p403x403/1560404_636674403035347_325664108_n.png">-->
+            <!--</div>-->
+            <!--<div class="controls">-->
+              <!--<div class="button">Редактировать</div>-->
+              <!--<div class="button">Отправить сразу!</div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="template">-->
+            <!--<div class="preview"></div>-->
+          <!--</div>-->
+          <!--<div class="template">-->
+            <!--<div class="preview"></div>-->
+          <!--</div>-->
+          <!--<div class="template">-->
+            <!--<div class="preview"></div>-->
+          <!--</div>-->
+          <!--<div class="template">-->
+            <!--<div class="preview"></div>-->
+          <!--</div>-->
+          <!--<div class="template">-->
+            <!--<div class="preview"></div>-->
+          <!--</div>-->
+          <!--<div class="template">-->
+            <!--<div class="preview"></div>-->
+          <!--</div>-->
+          <!--<div class="template">-->
+            <!--<div class="preview"></div>-->
+          <!--</div>-->
         </div>
         <div class="load-holder">
           <div class="button">Загрузить еще...</div>
