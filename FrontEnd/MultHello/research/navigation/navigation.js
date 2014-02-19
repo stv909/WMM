@@ -8,6 +8,7 @@ window.onload = function() {
 	var selectPageElem = document.getElementById('select-page');
 	var editPageElem = document.getElementById('edit-page');
 	var postPageElem = document.getElementById('post-page');
+	var logoElem = document.getElementById('logo');
 
 	var Navigation = function() {
 		Navigation.super.apply(this);
@@ -85,6 +86,9 @@ window.onload = function() {
 		postPageElem.classList.remove('hidden');
 	});
 
+	var logoElemClickListener = function(event) {
+		navigation.setMode('select');
+	};
 	var selectElemClickListener = function(event) {
 		navigation.setMode('select');
 	};
@@ -96,6 +100,7 @@ window.onload = function() {
 	};
 
 	navigation.setMode('select');
+	logoElem.addEventListener('click', logoElemClickListener);
 	var hash = window.location.hash;
 	if (hash) {
 		alert(hash);

@@ -33,7 +33,7 @@ body {
     position: fixed;
     border-bottom: 1px solid #ddd;
     z-index: 10;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.95);
     box-shadow: 0 0 0.5em #eee;
 }
 #menu-container {
@@ -41,7 +41,7 @@ body {
     width: 100%;
 }
 #logo {
-    font-size: 1.1em !important;
+    font-size: 14px !important;
     font-weight: bold;
     color: #333;
     cursor: pointer;
@@ -62,7 +62,7 @@ body {
 #breadcrumbs .chosen {
     color: #fff;
     background-color: #28f;
-    box-shadow: 0 0 0.5em #28f;
+    box-shadow: 0 0 1px #28f;
 }
 #breadcrumbs .normal:hover {
     color: #28f;
@@ -85,7 +85,16 @@ body {
 #select-page {
     font-size: 0;
 }
+#select-page .title {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    text-align: center;
+}
 .template {
+    cursor: pointer;
     box-sizing: border-box;
     vertical-align: top;
     white-space: nowrap;
@@ -95,11 +104,16 @@ body {
     width: 423px;
     height: 423px;
     margin: 10px;
+    background-color: #fff;
+}
+.template:hover {
+    border: 1px solid #28f;
+    box-shadow: 0 0 2px #28f;
 }
 .preview {
+    background-color: #fff;
     margin-top: 8px;
     display: inline-block;
-    border: 1px solid #ddd;
     width: 403px;
     height: 403px;
 }
