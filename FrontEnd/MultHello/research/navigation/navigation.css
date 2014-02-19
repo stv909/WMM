@@ -1,12 +1,13 @@
 html, body {
     margin: 0;
     padding: 0;
-    font-family: 'Verdana';
-    color: #888;
+    font-family: 'Open Sans', Verdana;
+    color: #666;
     width: 920px;
     overflow-x: hidden;
     display: block !important;
     position: relative;
+    text-rendering: optimizeLegibility;
 }
 html {
     background-color: #888;
@@ -32,33 +33,45 @@ body {
     position: fixed;
     border-bottom: 1px solid #ddd;
     z-index: 10;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0.5em #eee;
 }
 #menu-container {
     position: relative;
     width: 100%;
 }
 #logo {
+    font-size: 1.1em !important;
+    font-weight: bold;
     color: #333;
-    cursor: default;
+    cursor: pointer;
+}
+#logo:hover {
+    color: #28f;
 }
 #logo, #breadcrumbs {
     display: inline-block;
+}
+#logo .first-word {
+    color: #28f;
 }
 #breadcrumbs {
     position: absolute;
     right: 0;
 }
 #breadcrumbs .chosen {
-    color: red;
+    color: #fff;
+    background-color: #28f;
+    box-shadow: 0 0 0.5em #28f;
 }
 #breadcrumbs .normal:hover {
-    color: #fc0;
+    color: #28f;
 }
 #select, #edit, #post {
     cursor: pointer;
     display: inline-block;
-    margin-right: 0.5em;
+    padding-right: 1em;
+    padding-left: 1em;
 }
 #page {
     font-size: 0.8em;
