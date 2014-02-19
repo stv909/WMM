@@ -3,6 +3,16 @@ html, body {
     padding: 0;
     font-family: 'Verdana';
     color: #888;
+    width: 920px;
+    overflow-x: hidden;
+    display: block !important;
+    position: relative;
+}
+html {
+    background-color: #888;
+}
+body {
+    background-color: #fff;
 }
 .hidden {
     display: none !important;
@@ -12,15 +22,17 @@ html, body {
     user-select: none;
     top: 0;
     font-size: 0.8em;
-    width: 100%;
+    width: 920px;
     box-sizing: border-box;
     padding-left: 1em;
     padding-right: 1em;
     height: 3em;
     line-height: 3em;
     vertical-align: middle;
-    position: absolute;
+    position: fixed;
     border-bottom: 1px solid #ddd;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 #menu-container {
     position: relative;
@@ -52,4 +64,29 @@ html, body {
     font-size: 0.8em;
     margin-top: 3em;
     padding: 1em;
+}
+#page-container {
+    margin: 0 auto;
+    text-align: left;
+}
+#select-page {
+    font-size: 0;
+}
+.template {
+    box-sizing: border-box;
+    vertical-align: top;
+    white-space: nowrap;
+    display: inline-block;
+    border: 1px solid #ddd;
+    text-align: center;
+    width: 423px;
+    height: 423px;
+    margin: 10px;
+}
+.preview {
+    margin-top: 8px;
+    display: inline-block;
+    border: 1px solid #ddd;
+    width: 403px;
+    height: 403px;
 }
