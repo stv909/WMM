@@ -73,7 +73,7 @@ body {
 }
 #logo-pic {
     top: 3px;
-    width: 24px;
+    width: 22px;
     height: 16px;
     border-radius: 4px;
     background-color: #28f;
@@ -84,18 +84,18 @@ body {
     content: "";
     position: absolute;
     top: 16px;
-    left: 6px;
+    left: 4px;
     border-top: 5px solid #28f;
     border-right: 5px solid transparent;
 }
 #arrow {
     position: absolute;
     top: 3px;
-    left: 10px;
+    left: 8px;
     display: inline-block;
     width: 0;
     background-color: white;
-    border-left: 6px solid #fff;
+    border-left: 8px solid #fff;
     border-top: 5px solid #28f;
     border-bottom: 5px solid #28f;
 }
