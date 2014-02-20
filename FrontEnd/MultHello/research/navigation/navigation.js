@@ -87,6 +87,17 @@ window.onload = function() {
 
 		this.elem = template.create('select-page-template', { id: 'select-page' });
 		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
+		this.selectedMessagePatternView = null;
+
+		this.messagePatternSelectListener = function(event) {
+			var target = event.target;
+			if (target !== self.selectedMessagePatternView) {
+				if (self.selectedMessagePatternView) {
+					self.selectedMessagePatternView.deselect();
+				}
+				self.selectedMessagePatternView = target;
+			}
+		};
 
 		this.hide();
 	};
@@ -101,6 +112,11 @@ window.onload = function() {
 	};
 	SelectPageView.prototype.addMessagePatternView = function(messagePatternView) {
 		messagePatternView.attachTo(this.patternsElem);
+		messagePatternView.on('select', this.messagePatternSelectListener);
+		if (!this.selectedMessagePatternView) {
+			this.selectedMessagePatternView = messagePatternView;
+			this.selectedMessagePatternView.select();
+		}
 	};
 
 	var EditPageView = function() {
@@ -168,13 +184,13 @@ window.onload = function() {
 		this.elem.classList.add('hidden');
 	};
 
-	var VkontakteUserModel = function() {
-		VkontakteUserModel.super.apply(this);
+	var ContactModel = function() {
+		ContactModel.super.apply(this);
 	};
-	VkontakteUserModel.super = Model;
-	VkontakteUserModel.prototype = Object.create(Model.prototype);
-	VkontakteUserModel.prototype.constructor = VkontakteUserModel;
-	VkontakteUserModel.fromRawData = function(rawData) {
+	ContactModel.super = Model;
+	ContactModel.prototype = Object.create(Model.prototype);
+	ContactModel.prototype.constructor = ContactModel;
+	ContactModel.fromVkData = function(rawData) {
 		var firstName = rawData.first_name;
 		var lastName = rawData.last_name;
 		var photo = rawData.photo_50;
@@ -185,6 +201,23 @@ window.onload = function() {
 			photo: photo
 		});
 		return user;
+	};
+
+	var ContactView = function(model) {
+		ContactView.super.apply(this);
+		var self = this;
+
+		this.model = model;
+		this.elem = template.create('contact-template', { className: 'contact' });
+	};
+	ContactView.super = View;
+	ContactView.prototype = Object.create(View.prototype);
+	ContactView.prototype.constructor = ContactView;
+	ContactView.prototype.select = function() {
+
+	};
+	ContactView.prototype.deselect = function() {
+
 	};
 
 	var selectPageView = new SelectPageView();
@@ -221,8 +254,8 @@ window.onload = function() {
 
 		nextElem.textContent = 'Далее';
 		nextElem.removeEventListener('click', currentNextElemClickListener);
-		nextElem.addEventListener('click', nextElemStandartClickListener);
-		currentNextElemClickListener = nextElemStandartClickListener;
+		nextElem.addEventListener('click', nextElemStandardClickListener);
+		currentNextElemClickListener = nextElemStandardClickListener;
 	});
 
 	navigation.on('mode:edit', function(event) {
@@ -244,8 +277,8 @@ window.onload = function() {
 
 		nextElem.textContent = 'Далее';
 		nextElem.removeEventListener('click', currentNextElemClickListener);
-		nextElem.addEventListener('click', nextElemStandartClickListener);
-		currentNextElemClickListener = nextElemStandartClickListener;
+		nextElem.addEventListener('click', nextElemStandardClickListener);
+		currentNextElemClickListener = nextElemStandardClickListener;
 	});
 
 	navigation.on('mode:post', function(event) {
@@ -284,19 +317,8 @@ window.onload = function() {
 		navigation.setMode('post');
 	};
 
-	var selectedPatternView = null;
-	var messagePatternSelectListener = function(event) {
-		var target = event.target;
-		console.log(target);
-		if (target !== selectedPatternView) {
-			if (selectedPatternView) {
-				selectedPatternView.deselect();
-			}
-			selectedPatternView = target;
-		}
-	};
 	var currentNextElemClickListener = null;
-	var nextElemStandartClickListener = function(event) {
+	var nextElemStandardClickListener = function(event) {
 		navigation.setMode(navigation.getNextMode());
 	};
 	var nextElemPostClickListener = function(event) {
@@ -312,15 +334,6 @@ window.onload = function() {
 	var messagePatternView7 = new MessagePatternView();
 	var messagePatternView8 = new MessagePatternView();
 
-	messagePatternView1.on('select', messagePatternSelectListener);
-	messagePatternView2.on('select', messagePatternSelectListener);
-	messagePatternView3.on('select', messagePatternSelectListener);
-	messagePatternView4.on('select', messagePatternSelectListener);
-	messagePatternView5.on('select', messagePatternSelectListener);
-	messagePatternView6.on('select', messagePatternSelectListener);
-	messagePatternView7.on('select', messagePatternSelectListener);
-	messagePatternView8.on('select', messagePatternSelectListener);
-
 	selectPageView.addMessagePatternView(messagePatternView1);
 	selectPageView.addMessagePatternView(messagePatternView2);
 	selectPageView.addMessagePatternView(messagePatternView3);
@@ -330,9 +343,6 @@ window.onload = function() {
 	selectPageView.addMessagePatternView(messagePatternView7);
 	selectPageView.addMessagePatternView(messagePatternView8);
 
-	messagePatternView1.select();
-	selectedPatternView = messagePatternView1;
-
 	navigation.setMode('select');
 	logoElem.addEventListener('click', logoElemClickListener);
 //	var hash = window.location.hash;
@@ -340,5 +350,3 @@ window.onload = function() {
 //		alert(hash);
 //	}
 };
-
-
