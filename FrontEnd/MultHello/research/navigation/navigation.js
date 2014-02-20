@@ -1,6 +1,7 @@
 window.onload = function() {
 	var EventEmitter = eve.EventEmitter;
 	var View = abyss.View;
+	var Model = abyss.Model;
 
 	var selectElem = document.getElementById('select');
 	var editElem = document.getElementById('edit');
@@ -11,6 +12,7 @@ window.onload = function() {
 	var postPageElem = document.getElementById('post-page');
 	var logoElem = document.getElementById('logo');
 	var patternsElem = document.getElementById('patterns');
+	var nextElem = document.getElementById('next');
 
 	var Navigation = function() {
 		Navigation.super.apply(this);
@@ -29,6 +31,15 @@ window.onload = function() {
 			this.trigger({
 				type: ['mode', mode].join(':')
 			});
+		}
+	};
+	Navigation.prototype.getNextMode = function() {
+		if (this.mode === 'select') {
+			return 'edit';
+		} else if (this.mode === 'edit') {
+			return 'post';
+		} else if (this.mode === 'post') {
+			return 'select';
 		}
 	};
 
@@ -50,21 +61,11 @@ window.onload = function() {
 				self.select();
 			}
 		};
-		var editElemClickListener = function(event) {
-			self.trigger('edit');
-		};
-		var postElemClickListener = function(event) {
-			self.trigger('post');
-		};
 
 		this.elem.addEventListener('click', elemClickListener, this);
-		this.editElem.addEventListener('click', editElemClickListener);
-		this.postElem.addEventListener('click', postElemClickListener);
 
 		this.once('dispose', function() {
 			self.elem.removeEventListener('click', elemClickListener);
-			self.editElem.removeEventListener('click', editElemClickListener);
-			self.postElem.removeEventListener('click', postElemClickListener);
 		});
 	};
 	MessagePatternView.super = View;
@@ -74,14 +75,19 @@ window.onload = function() {
 		this.selected = true;
 		this.elem.classList.add('chosen');
 		this.elem.classList.remove('normal');
-		this.controlsElem.classList.remove('hidden');
 	};
 	MessagePatternView.prototype.deselect = function() {
 		this.selected = false;
 		this.elem.classList.remove('chosen');
 		this.elem.classList.add('normal');
-		this.controlsElem.classList.add('hidden');
 	};
+
+	var VkontakteUserModel = function() {
+		VkontakteUserModel.super.apply(this);
+	};
+	VkontakteUserModel.super = Model;
+	VkontakteUserModel.prototype = Object.create(Model.prototype);
+	VkontakteUserModel.prototype.constructor = VkontakteUserModel;
 
 	var navigation = new Navigation();
 
@@ -163,11 +169,8 @@ window.onload = function() {
 			selectedPatternView = target;
 		}
 	};
-	var messagePatternEditListener = function(event) {
-		navigation.setMode('edit');
-	};
-	var messagePatternPostListener = function() {
-		navigation.setMode('post');
+	var nextElemClickListener = function(event) {
+		navigation.setMode(navigation.getNextMode());
 	};
 
 	var messagePatternView1 = new MessagePatternView();
@@ -188,24 +191,6 @@ window.onload = function() {
 	messagePatternView7.on('select', messagePatternSelectListener);
 	messagePatternView8.on('select', messagePatternSelectListener);
 
-	messagePatternView1.on('edit', messagePatternEditListener);
-	messagePatternView2.on('edit', messagePatternEditListener);
-	messagePatternView3.on('edit', messagePatternEditListener);
-	messagePatternView4.on('edit', messagePatternEditListener);
-	messagePatternView5.on('edit', messagePatternEditListener);
-	messagePatternView6.on('edit', messagePatternEditListener);
-	messagePatternView7.on('edit', messagePatternEditListener);
-	messagePatternView8.on('edit', messagePatternEditListener);
-
-	messagePatternView1.on('post', messagePatternPostListener);
-	messagePatternView2.on('post', messagePatternPostListener);
-	messagePatternView3.on('post', messagePatternPostListener);
-	messagePatternView4.on('post', messagePatternPostListener);
-	messagePatternView5.on('post', messagePatternPostListener);
-	messagePatternView6.on('post', messagePatternPostListener);
-	messagePatternView7.on('post', messagePatternPostListener);
-	messagePatternView8.on('post', messagePatternPostListener);
-
 	messagePatternView1.attachTo(patternsElem);
 	messagePatternView2.attachTo(patternsElem);
 	messagePatternView3.attachTo(patternsElem);
@@ -220,6 +205,7 @@ window.onload = function() {
 
 	navigation.setMode('select');
 	logoElem.addEventListener('click', logoElemClickListener);
+	nextElem.addEventListener('click', nextElemClickListener);
 	var hash = window.location.hash;
 	if (hash) {
 		alert(hash);
