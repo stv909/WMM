@@ -71,6 +71,34 @@ body {
 #logo .first-word {
     color: #28f;
 }
+#logo-pic {
+    top: 3px;
+    width: 24px;
+    height: 16px;
+    border-radius: 4px;
+    background-color: #28f;
+    position: relative;
+    display: inline-block;
+}
+#logo-pic:after {
+    content: "";
+    position: absolute;
+    top: 16px;
+    left: 6px;
+    border-top: 5px solid #28f;
+    border-right: 5px solid transparent;
+}
+#arrow {
+    position: absolute;
+    top: 3px;
+    left: 10px;
+    display: inline-block;
+    width: 0;
+    background-color: white;
+    border-left: 6px solid #fff;
+    border-top: 5px solid #28f;
+    border-bottom: 5px solid #28f;
+}
 #breadcrumbs {
     display: inline-block;
     font-size: 0;
