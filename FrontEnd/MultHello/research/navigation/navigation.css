@@ -41,6 +41,7 @@ body {
     height: 36px;
     line-height: 36px;
     vertical-align: middle;
+
     position: fixed;
     border-bottom: 1px solid #ddd;
     z-index: 10;
@@ -48,10 +49,14 @@ body {
     box-shadow: 0 0 0.5em #ccc;
 }
 #menu-container {
+    vertical-align: top;
     position: relative;
+    text-align: center;
     width: 100%;
 }
 #logo {
+    position: absolute;
+    left: 0px;
     font-size: 14px !important;
     font-weight: bold;
     color: #333;
@@ -67,8 +72,7 @@ body {
     color: #28f;
 }
 #breadcrumbs {
-    position: absolute;
-    right: 0;
+    display: inline-block;
     font-size: 0;
 }
 #breadcrumbs .chosen {
@@ -86,16 +90,16 @@ body {
     padding-left: 1em;
     position: relative;
 }
-/*#select.chosen:before {*/
-    /*content: "";*/
-    /*top: 0;*/
-    /*left: 0;*/
-    /*position: absolute;*/
-    /*margin-left: -12px;*/
-    /*border-left: 12px solid transparent;*/
-    /*border-top: 18px solid #28f;*/
-    /*border-bottom: 18px solid #28f;*/
-/*}*/
+#select.chosen:before {
+    content: "";
+    top: 0;
+    left: 0;
+    position: absolute;
+    margin-left: -12px;
+    border-left: 12px solid transparent;
+    border-top: 18px solid #28f;
+    border-bottom: 18px solid #28f;
+}
 #select.chosen:after {
     content: "";
     top: 0;
