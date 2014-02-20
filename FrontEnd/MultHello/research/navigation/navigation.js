@@ -7,6 +7,7 @@ window.onload = function() {
 	var editElem = document.getElementById('edit');
 	var postElem = document.getElementById('post');
 
+	var pageContainerElem = document.getElementById('page-container');
 	var selectPageElem = document.getElementById('select-page');
 	var editPageElem = document.getElementById('edit-page');
 	var postPageElem = document.getElementById('post-page');
@@ -82,12 +83,90 @@ window.onload = function() {
 		this.elem.classList.add('normal');
 	};
 
+	var SelectPageView = function() {
+		SelectPageView.super.apply(this);
+		var self = this;
+
+		this.elem = template.create('select-page-template', { id: 'select-page' });
+		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
+
+		this.hide();
+	};
+	SelectPageView.super = View;
+	SelectPageView.prototype = Object.create(View.prototype);
+	SelectPageView.prototype.constructor = SelectPageView;
+	SelectPageView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+	};
+	SelectPageView.prototype.hide = function() {
+		this.elem.classList.add('hidden');
+	};
+	SelectPageView.prototype.addMessagePatternView = function(messagePatternView) {
+		messagePatternView.attachTo(this.patternsElem);
+	};
+
+	var EditPageView = function() {
+		EditPageView.super.apply(this);
+		var self = this;
+
+		this.elem = template.create('edit-page-template', { id: 'edit-page' });
+
+		this.hide();
+	};
+	EditPageView.super = View;
+	EditPageView.prototype = Object.create(View.prototype);
+	EditPageView.prototype.constructor = EditPageView;
+	EditPageView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+	};
+	EditPageView.prototype.hide = function() {
+		this.elem.classList.add('hidden');
+	};
+
+	var PostPageView = function() {
+		PostPageView.super.apply(this);
+		var self = this;
+
+		this.elem = template.create('post-page-template', { id: 'post-page' });
+
+		this.hide();
+	};
+	PostPageView.super = View;
+	PostPageView.prototype = Object.create(View.prototype);
+	PostPageView.prototype.constructor = PostPageView;
+	PostPageView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+	};
+	PostPageView.prototype.hide = function() {
+		this.elem.classList.add('hidden');
+	};
+
 	var VkontakteUserModel = function() {
 		VkontakteUserModel.super.apply(this);
 	};
 	VkontakteUserModel.super = Model;
 	VkontakteUserModel.prototype = Object.create(Model.prototype);
 	VkontakteUserModel.prototype.constructor = VkontakteUserModel;
+	VkontakteUserModel.fromRawData = function(rawData) {
+		var firstName = rawData.first_name;
+		var lastName = rawData.last_name;
+		var photo = rawData.photo_50;
+		var user = new VkontakteUserModel();
+		user.set({
+			firstName: firstName,
+			lastName: lastName,
+			photo: photo
+		});
+		return user;
+	};
+
+	var selectPageView = new SelectPageView();
+	var editPageView = new EditPageView();
+	var postPageView = new PostPageView();
+
+	selectPageView.attachTo(pageContainerElem);
+	editPageView.attachTo(pageContainerElem);
+	postPageView.attachTo(pageContainerElem);
 
 	var navigation = new Navigation();
 
@@ -104,9 +183,9 @@ window.onload = function() {
 		postElem.classList.remove('chosen');
 		postElem.addEventListener('click', postElemClickListener);
 
-		selectPageElem.classList.remove('hidden');
-		editPageElem.classList.add('hidden');
-		postPageElem.classList.add('hidden');
+		selectPageView.show();
+		editPageView.hide();
+		postPageView.hide();
 	});
 
 	navigation.on('mode:edit', function(event) {
@@ -122,9 +201,9 @@ window.onload = function() {
 		postElem.classList.remove('chosen');
 		postElem.addEventListener('click', postElemClickListener);
 
-		selectPageElem.classList.add('hidden');
-		editPageElem.classList.remove('hidden');
-		postPageElem.classList.add('hidden');
+		selectPageView.hide();
+		editPageView.show();
+		postPageView.hide();
 	});
 
 	navigation.on('mode:post', function(event) {
@@ -140,9 +219,9 @@ window.onload = function() {
 		postElem.classList.add('chosen');
 		postElem.removeEventListener('click', postElemClickListener);
 
-		selectPageElem.classList.add('hidden');
-		editPageElem.classList.add('hidden');
-		postPageElem.classList.remove('hidden');
+		selectPageView.hide();
+		editPageView.hide();
+		postPageView.show();
 	});
 
 	var logoElemClickListener = function(event) {
@@ -191,14 +270,14 @@ window.onload = function() {
 	messagePatternView7.on('select', messagePatternSelectListener);
 	messagePatternView8.on('select', messagePatternSelectListener);
 
-	messagePatternView1.attachTo(patternsElem);
-	messagePatternView2.attachTo(patternsElem);
-	messagePatternView3.attachTo(patternsElem);
-	messagePatternView4.attachTo(patternsElem);
-	messagePatternView5.attachTo(patternsElem);
-	messagePatternView6.attachTo(patternsElem);
-	messagePatternView7.attachTo(patternsElem);
-	messagePatternView8.attachTo(patternsElem);
+	selectPageView.addMessagePatternView(messagePatternView1);
+	selectPageView.addMessagePatternView(messagePatternView2);
+	selectPageView.addMessagePatternView(messagePatternView3);
+	selectPageView.addMessagePatternView(messagePatternView4);
+	selectPageView.addMessagePatternView(messagePatternView5);
+	selectPageView.addMessagePatternView(messagePatternView6);
+	selectPageView.addMessagePatternView(messagePatternView7);
+	selectPageView.addMessagePatternView(messagePatternView8);
 
 	messagePatternView1.select();
 	selectedPatternView = messagePatternView1;
@@ -206,10 +285,10 @@ window.onload = function() {
 	navigation.setMode('select');
 	logoElem.addEventListener('click', logoElemClickListener);
 	nextElem.addEventListener('click', nextElemClickListener);
-	var hash = window.location.hash;
-	if (hash) {
-		alert(hash);
-	}
+//	var hash = window.location.hash;
+//	if (hash) {
+//		alert(hash);
+//	}
 };
 
 

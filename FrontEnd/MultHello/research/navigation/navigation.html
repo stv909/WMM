@@ -5,6 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin,latin-ext">
 	<link rel="stylesheet" href="navigation.css">
+	<script src="https://vkontakte.ru/js/api/openapi.js" type="text/javascript"></script>
 	<script src="eve.js"></script>
 	<script src="template.js"></script>
 	<script src="abyss.js"></script>
@@ -15,6 +16,20 @@
 	<div class="preview">
 		<img class="image" src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn2/t1/p403x403/1560404_636674403035347_325664108_n.png">
 	</div>
+</template>
+<template id="select-page-template" style="display: none">
+	<div class="title">Выберите шаблон сообщения!</div>
+	<div class="patterns">
+	</div>
+	<div class="load-holder">
+		<div class="button">Загрузить еще...</div>
+	</div>
+</template>
+<template id="edit-page-template" style="display: none">
+	<div>edit page</div>
+</template>
+<template id="post-page-template" style="display: none">
+	<div>post page</div>
 </template>
 <div id="menu">
 	<div id="menu-container">
@@ -34,20 +49,6 @@
 </div>
 <div id="page">
 	<div id="page-container">
-		<div id="select-page" class="hidden">
-			<div class="title">Выберите шаблон сообщения!</div>
-			<div id="patterns">
-			</div>
-			<div class="load-holder">
-				<div class="button">Загрузить еще...</div>
-			</div>
-		</div>
-		<div id="edit-page" class="hidden">
-			editor page
-		</div>
-		<div id="post-page" class="hidden">
-			post page
-		</div>
 	</div>
 </div>
 <div id="footer">
