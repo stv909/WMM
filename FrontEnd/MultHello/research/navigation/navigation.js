@@ -8,11 +8,7 @@ window.onload = function() {
 	var postElem = document.getElementById('post');
 
 	var pageContainerElem = document.getElementById('page-container');
-	var selectPageElem = document.getElementById('select-page');
-	var editPageElem = document.getElementById('edit-page');
-	var postPageElem = document.getElementById('post-page');
 	var logoElem = document.getElementById('logo');
-	var patternsElem = document.getElementById('patterns');
 	var nextElem = document.getElementById('next');
 
 	var Navigation = function() {
@@ -143,6 +139,35 @@ window.onload = function() {
 		this.elem.classList.add('hidden');
 	};
 
+	var PostDialogView = function() {
+		PostDialogView.super.apply(this);
+		var self = this;
+
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = this.elem.getElementsByClassName('dialog-window')[0];
+		this.readyElem = this.elem.getElementsByClassName('ready')[0];
+
+		var readyElemClickListener = function(event) {
+			self.hide();
+			self.trigger('click:close');
+		};
+
+		this.readyElem.addEventListener('click', readyElemClickListener);
+
+		this.once('dispose', function() {
+			self.readyElem.removeEventListener('click', readyElemClickListener);
+		});
+	};
+	PostDialogView.super = View;
+	PostDialogView.prototype = Object.create(View.prototype);
+	PostDialogView.prototype.constructor = PostDialogView;
+	PostDialogView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+	};
+	PostDialogView.prototype.hide = function() {
+		this.elem.classList.add('hidden');
+	};
+
 	var VkontakteUserModel = function() {
 		VkontakteUserModel.super.apply(this);
 	};
@@ -165,12 +190,17 @@ window.onload = function() {
 	var selectPageView = new SelectPageView();
 	var editPageView = new EditPageView();
 	var postPageView = new PostPageView();
+	var postDialogView = new PostDialogView();
 
 	selectPageView.attachTo(pageContainerElem);
 	editPageView.attachTo(pageContainerElem);
 	postPageView.attachTo(pageContainerElem);
 
 	var navigation = new Navigation();
+
+	postDialogView.on('click:close', function(event) {
+		navigation.setMode('select');
+	});
 
 	navigation.on('mode:select', function(event) {
 		selectElem.classList.remove('normal');
@@ -188,6 +218,11 @@ window.onload = function() {
 		selectPageView.show();
 		editPageView.hide();
 		postPageView.hide();
+
+		nextElem.textContent = 'Далее';
+		nextElem.removeEventListener('click', currentNextElemClickListener);
+		nextElem.addEventListener('click', nextElemStandartClickListener);
+		currentNextElemClickListener = nextElemStandartClickListener;
 	});
 
 	navigation.on('mode:edit', function(event) {
@@ -206,6 +241,11 @@ window.onload = function() {
 		selectPageView.hide();
 		editPageView.show();
 		postPageView.hide();
+
+		nextElem.textContent = 'Далее';
+		nextElem.removeEventListener('click', currentNextElemClickListener);
+		nextElem.addEventListener('click', nextElemStandartClickListener);
+		currentNextElemClickListener = nextElemStandartClickListener;
 	});
 
 	navigation.on('mode:post', function(event) {
@@ -224,6 +264,11 @@ window.onload = function() {
 		selectPageView.hide();
 		editPageView.hide();
 		postPageView.show();
+
+		nextElem.textContent = 'Отправить сообщение';
+		nextElem.removeEventListener('click', currentNextElemClickListener);
+		nextElem.addEventListener('click', nextElemPostClickListener);
+		currentNextElemClickListener = nextElemPostClickListener;
 	});
 
 	var logoElemClickListener = function(event) {
@@ -250,8 +295,12 @@ window.onload = function() {
 			selectedPatternView = target;
 		}
 	};
-	var nextElemClickListener = function(event) {
+	var currentNextElemClickListener = null;
+	var nextElemStandartClickListener = function(event) {
 		navigation.setMode(navigation.getNextMode());
+	};
+	var nextElemPostClickListener = function(event) {
+		postDialogView.show();
 	};
 
 	var messagePatternView1 = new MessagePatternView();
@@ -286,7 +335,6 @@ window.onload = function() {
 
 	navigation.setMode('select');
 	logoElem.addEventListener('click', logoElemClickListener);
-	nextElem.addEventListener('click', nextElemClickListener);
 //	var hash = window.location.hash;
 //	if (hash) {
 //		alert(hash);

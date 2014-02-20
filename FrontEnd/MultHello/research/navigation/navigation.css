@@ -291,3 +291,42 @@ body {
     padding-left: 12px;
     padding-right: 12px;
 }
+#dialog-background {
+    display: table;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 920px;
+    z-index: 100;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+#dialog-background .dialog-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+#dialog-background .dialog-wrapper .dialog-window {
+    display: inline-block;
+    background-color: white;
+    border: 1px solid #28f;
+    box-shadow: 0 0 5px #28f;
+}
+#dialog-background .dialog-wrapper .dialog-window .title-holder {
+    height: 36px;
+    font-weight: bold;
+    line-height: 36px;
+    color: #333;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+}
+#post-dialog {
+    font-size: 12px;
+    width: 360px;
+    height: 220px;
+}
+#post-dialog .content {
+    height: 140px;
+    line-height: 140px;
+}
