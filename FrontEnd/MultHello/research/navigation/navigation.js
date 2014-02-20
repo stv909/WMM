@@ -48,10 +48,10 @@ window.onload = function() {
 		MessagePatternView.super.apply(this);
 		var self = this;
 
+		this.activeImageUrl = 'giphy.gif';
+		this.passiveImageUrl = 'giphy.jpg';
 		this.elem = template.create('message-pattern-template', { className: 'message-pattern' });
-		this.controlsElem = this.elem.getElementsByClassName('controls')[0];
-		this.editElem = this.elem.getElementsByClassName('edit')[0];
-		this.postElem = this.elem.getElementsByClassName('post')[0];
+		this.imageElem = this.elem.getElementsByClassName('image')[0];
 
 		this.selected = false;
 		this.deselect();
@@ -76,11 +76,13 @@ window.onload = function() {
 		this.selected = true;
 		this.elem.classList.add('chosen');
 		this.elem.classList.remove('normal');
+		this.imageElem.src = this.activeImageUrl;
 	};
 	MessagePatternView.prototype.deselect = function() {
 		this.selected = false;
 		this.elem.classList.remove('chosen');
 		this.elem.classList.add('normal');
+		this.imageElem.src = this.passiveImageUrl;
 	};
 
 	var SelectPageView = function() {
