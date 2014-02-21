@@ -408,7 +408,7 @@ window.onload = function() {
 	for (var i = 2; i < 52; i++) {
 		var contactModel = new ContactModel();
 		contactModel.set('id', i);
-		contactModel.set('firstName', 'Уолтер');
+		contactModel.set('firstName', 'Walter');
 		contactModel.set('lastName', 'White');
 		contactModel.set('photo', 'http://cs412123.vk.me/v412123262/7e84/g42XLZAjpac.jpg');
 		var contactView = new ContactView(contactModel);
