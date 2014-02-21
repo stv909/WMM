@@ -12,6 +12,9 @@ html, body {
     left: 0;
     bottom: 0;
 }
+* {
+    outline: none;
+}
 html {
     background-color: #888;
 }
@@ -404,11 +407,55 @@ body {
     margin-left: 16px;
     text-align: left;
 }
+.characters {
+    margin-bottom: 24px;
+}
 .tools .section {
     display: inline-block;
     color: white;
     background-color: #28f;
-    font-size: 14px;
+    font-size: 12px;
     padding: 8px;
     margin-bottom: 16px;
+}
+.text {
+    color: #666;
+    font-size: 12px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    width: 100%;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+.text:hover {
+    color: #333;
+    border: 1px solid #888;
+}
+.text:focus {
+    color: #333;
+    border: 1px solid #28f;
+    box-shadow: 0 0 2px #28f;
+}
+.character {
+    display: block;
+    margin-bottom: 12px;
+    padding: 8px;
+    font-size: 12px;
+    -webkit-appearance: none;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    color: #666;
+    width: 35%;
+    border-radius: 0;
+    background: url('arrow2.png') no-repeat right;
+    background-size: 32px 32px;
+}
+.character:hover {
+    color: #333;
+    border: 1px solid #888;
+}
+.character:focus {
+    color: #333;
+    border: 1px solid #28f;
+    box-shadow: 0 0 2px #28f;
 }
