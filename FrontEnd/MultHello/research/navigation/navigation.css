@@ -264,6 +264,10 @@ body {
     display: inline-block;
     width: 403px;
     height: 403px;
+    overflow: hidden;
+}
+.preview .image {
+    height: 100%;
 }
 .controls {
 
