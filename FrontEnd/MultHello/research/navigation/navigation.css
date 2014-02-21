@@ -223,12 +223,15 @@ body {
     font-weight: bold;
     color: #333;
     font-size: 14px;
-    padding-top: 12px;
+    padding-top: 18px;
     padding-bottom: 6px;
     text-align: center;
 }
 #post-page {
     text-align: center;
+}
+.patterns {
+    margin-top: 8px;
 }
 .message-pattern {
     box-sizing: border-box;
@@ -333,7 +336,6 @@ body {
     height: 140px;
     line-height: 140px;
 }
-
 .contacts {
     text-align: left;
     margin-left: 19px;
@@ -372,4 +374,41 @@ body {
 .contact .first-name, .last-name {
     font-size: 11px;
     display: inline-block;
+}
+.message-editor {
+    text-align: center;
+    margin-top: 18px;
+}
+.message-editor .container {
+    display: inline-block;
+    vertical-align: top;
+}
+.message-wrapper {
+    display: inline-block;
+    text-align: center;
+    width: 423px;
+    min-height: 423px;
+    border: 1px solid #28f;
+    box-shadow: 0 0 2px #28f;
+}
+.message-container {
+    margin-top: 10px;
+    display: inline-block;
+    width: 403px;
+    height: 403px;
+}
+.tools {
+    display: inline-block;
+    width: 370px;
+    vertical-align: top;
+    margin-left: 16px;
+    text-align: left;
+}
+.tools .section {
+    display: inline-block;
+    color: white;
+    background-color: #28f;
+    font-size: 14px;
+    padding: 8px;
+    margin-bottom: 16px;
 }
