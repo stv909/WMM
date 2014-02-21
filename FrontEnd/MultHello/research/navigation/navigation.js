@@ -54,7 +54,7 @@ window.onload = function() {
 		var self = this;
 
 		this.model = model;
-		this.elem = template.create('message-pattern-template', { className: 'message-pattern' });
+		this.elem = template.create('message-template', { className: 'message' });
 		this.imageElem = this.elem.getElementsByClassName('image')[0];
 
 		this.selected = false;
@@ -62,10 +62,6 @@ window.onload = function() {
 
 		var elemClickListener = function(event) {
 			if (!self.selected) {
-				self.trigger({
-					type: 'select',
-					message: self.model
-				});
 				self.select();
 			}
 		};
@@ -84,6 +80,10 @@ window.onload = function() {
 		this.elem.classList.add('chosen');
 		this.elem.classList.remove('normal');
 		this.imageElem.innerHTML = this.model.get('content');
+		this.trigger({
+			type: 'select',
+			message: this.model
+		});
 	};
 	MessageView.prototype.deselect = function() {
 		this.selected = false;
@@ -98,15 +98,20 @@ window.onload = function() {
 
 		this.elem = template.create('select-page-template', { id: 'select-page' });
 		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
-		this.selectedMessagePatternView = null;
+		this.selectedMessageView = null;
 
 		this.messagePatternSelectListener = function(event) {
 			var target = event.target;
-			if (target !== self.selectedMessagePatternView) {
-				if (self.selectedMessagePatternView) {
-					self.selectedMessagePatternView.deselect();
+			var message = event.message;
+			if (target !== self.selectedMessageView) {
+				if (self.selectedMessageView) {
+					self.selectedMessageView.deselect();
 				}
-				self.selectedMessagePatternView = target;
+				self.selectedMessageView = target;
+				self.trigger({
+					type: 'select:message',
+					message: message
+				});
 			}
 		};
 
@@ -124,9 +129,8 @@ window.onload = function() {
 	SelectPageView.prototype.addMessageView = function(messageView) {
 		messageView.attachTo(this.patternsElem);
 		messageView.on('select', this.messagePatternSelectListener);
-		if (!this.selectedMessagePatternView) {
-			this.selectedMessagePatternView = messageView;
-			this.selectedMessagePatternView.select();
+		if (!this.selectedMessageView) {
+			messageView.select();
 		}
 	};
 
@@ -317,6 +321,7 @@ window.onload = function() {
 	var Storage = function() {
 		Storage.super.apply(this);
 		this.messages = {};
+		this.currentMessage = null;
 	};
 	Storage.super = EventEmitter;
 	Storage.prototype = Object.create(EventEmitter.prototype);
@@ -338,7 +343,15 @@ window.onload = function() {
 			});
 		}
 	};
+	Storage.prototype.selectMessage = function(message) {
+		this.currentMessage = message;
+		this.trigger({
+			type: 'select:message',
+			message: this.currentMessage
+		});
+	};
 
+	var storage = new Storage();
 	var selectPageView = new SelectPageView();
 	var editPageView = new EditPageView();
 	var postPageView = new PostPageView();
@@ -350,11 +363,19 @@ window.onload = function() {
 	postPageView.attachTo(pageContainerElem);
 	answerPageView.attachTo(pageContainerElem);
 
-	var storage = new Storage();
+	selectPageView.on('select:message', function(event) {
+		var message = event.message;
+		storage.selectMessage(message);
+	});
+
 	storage.on('add:message', function(event) {
 		var message = event.message;
-		var messagePatternView = new MessageView(message);
-		selectPageView.addMessageView(messagePatternView);
+		var messageView = new MessageView(message);
+		selectPageView.addMessageView(messageView);
+	});
+	storage.on('select:message', function(event) {
+		var message = event.message;
+		console.log(message);
 	});
 
 	var message1 = new MessageModel();

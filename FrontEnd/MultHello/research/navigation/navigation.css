@@ -236,22 +236,20 @@ body {
 .patterns {
     margin-top: 8px;
 }
-.message-pattern {
-    box-sizing: border-box;
+.message {
     display: inline-block;
-    border: 1px solid #ddd;
-    width: 423px;
-    height: 423px;
     margin: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
     background-color: #fff;
 }
-.message-pattern.normal {
+.message.normal {
     cursor: pointer;
 }
-.message-pattern.normal:hover {
+.message.normal:hover {
     border: 1px solid #888;
 }
-.message-pattern.chosen {
+.message.chosen {
     border: 1px solid #28f;
     box-shadow: 0 0 2px #28f;
 }
@@ -261,7 +259,7 @@ body {
     width: 403px;
     height: 403px;
     overflow: hidden;
-    margin-top: 9px;
+    margin: 10px;
 }
 .preview .image {
     height: 100%;
@@ -272,7 +270,6 @@ body {
 .controls .button {
     font-size: 12px;
     margin: 8px 4px;
-    /*border: 1px solid #fff;*/
 }
 .button {
     -webkit-user-select: none;
