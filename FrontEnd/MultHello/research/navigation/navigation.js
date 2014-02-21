@@ -37,6 +37,8 @@ window.onload = function() {
 			return 'post';
 		} else if (this.mode === 'post') {
 			return 'select';
+		} else if (this.mode === 'answer') {
+			return 'select';
 		}
 	};
 
@@ -286,14 +288,33 @@ window.onload = function() {
 		this.elem.classList.remove('chosen');
 	};
 
+	var AnswerPageView = function() {
+		AnswerPageView.super.apply(this);
+		var self = this;
+
+		this.elem = template.create('answer-page-template', { id: 'answer-page' });
+		this.hide();
+	};
+	AnswerPageView.super = View;
+	AnswerPageView.prototype = Object.create(View.prototype);
+	AnswerPageView.prototype.constructor = AnswerPageView;
+	AnswerPageView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+	};
+	AnswerPageView.prototype.hide = function() {
+		this.elem.classList.add('hidden');
+	};
+
 	var selectPageView = new SelectPageView();
 	var editPageView = new EditPageView();
 	var postPageView = new PostPageView();
+	var answerPageView = new AnswerPageView();
 	var postDialogView = new PostDialogView();
 
 	selectPageView.attachTo(pageContainerElem);
 	editPageView.attachTo(pageContainerElem);
 	postPageView.attachTo(pageContainerElem);
+	answerPageView.attachTo(pageContainerElem);
 
 	var navigation = new Navigation();
 
@@ -301,6 +322,17 @@ window.onload = function() {
 		navigation.setMode('select');
 	});
 
+	navigation.on('mode:answer', function(event) {
+		selectPageView.hide();
+		editPageView.hide();
+		postPageView.hide();
+		answerPageView.show();
+
+		nextElem.textContent = 'Ответить';
+		nextElem.removeEventListener('click', currentNextElemClickListener);
+		nextElem.addEventListener('click', nextElemStandardClickListener);
+		currentNextElemClickListener = nextElemStandardClickListener;
+	});
 	navigation.on('mode:select', function(event) {
 		selectElem.classList.remove('normal');
 		selectElem.classList.add('chosen');
@@ -317,13 +349,13 @@ window.onload = function() {
 		selectPageView.show();
 		editPageView.hide();
 		postPageView.hide();
+		answerPageView.hide();
 
 		nextElem.textContent = 'Далее';
 		nextElem.removeEventListener('click', currentNextElemClickListener);
 		nextElem.addEventListener('click', nextElemStandardClickListener);
 		currentNextElemClickListener = nextElemStandardClickListener;
 	});
-
 	navigation.on('mode:edit', function(event) {
 		selectElem.classList.add('normal');
 		selectElem.classList.remove('chosen');
@@ -340,13 +372,13 @@ window.onload = function() {
 		selectPageView.hide();
 		editPageView.show();
 		postPageView.hide();
+		answerPageView.hide();
 
 		nextElem.textContent = 'Далее';
 		nextElem.removeEventListener('click', currentNextElemClickListener);
 		nextElem.addEventListener('click', nextElemStandardClickListener);
 		currentNextElemClickListener = nextElemStandardClickListener;
 	});
-
 	navigation.on('mode:post', function(event) {
 		selectElem.classList.add('normal');
 		selectElem.classList.remove('chosen');
@@ -363,6 +395,7 @@ window.onload = function() {
 		selectPageView.hide();
 		editPageView.hide();
 		postPageView.show();
+		answerPageView.hide();
 
 		nextElem.textContent = 'Отправить сообщение';
 		nextElem.removeEventListener('click', currentNextElemClickListener);
@@ -429,10 +462,12 @@ window.onload = function() {
 
 	editPageView.setMessageContent('<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(http://bm.img.com.ua/img/prikol/images/large/0/7/116670_182525.jpg); background-size: cover; width: 403px; height: 403px; background-position: 0% 21%; background-repeat: no-repeat no-repeat;"><div class="tool_layerItem_ece920e7-b59b-4c00-9cc5-b4d093fd8a1a layerType_text" draggable="true" style="font-size: 3em; color: white; background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 1; -webkit-transform: rotate(0deg); left: 6px; top: 1px;">где-то в глубинке...</div><div class="tool_layerItem_cdd13bc9-151d-463a-bff7-f8f6f1f978a5 layerType_text" draggable="true" style="font-size: 1.7em; color: rgb(244, 164, 96); background-color: transparent; text-shadow: black -1.5px 0px ...f&quot;}" class="tool_layerItem_c262c846-3ff0-44db-914d-4ae1067f07a5 layerType_actor" draggable="true" style="position: absolute; z-index: 3; -webkit-transform: scale(0.5403600876626364) rotate(0deg); left: -28px; top: -19px;"><img src="https://www.bazelevscontent.net:8583/08b6e413-ff75-4625-b7e3-e7b936f469d9_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;joe&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;mood&gt;happy&lt;/mood&gt; &lt;action&gt;hi&lt;/action&gt; привет! &lt;action&gt;sucks&lt;/action&gt; грустишь? &lt;gag&gt;laugh&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/08b6e413-ff75-4625-b7e3-e7b936f469d9_1.gif&quot;}" class="tool_layerItem_5025a450-13c9-40a4-8410-94a1a1d30628 layerType_actor" draggable="true" style="position: absolute; z-index: 4; -webkit-transform: scale(0.44012666865176525) rotate(0deg); left: 153px; top: -46px;"></div>');
 
-	navigation.setMode('select');
+
 	logoElem.addEventListener('click', logoElemClickListener);
-//	var hash = window.location.hash;
-//	if (hash) {
-//		alert(hash);
-//	}
+	var hash = window.location.hash;
+	if (hash) {
+		navigation.setMode('answer');
+	} else {
+		navigation.setMode('select');
+	}
 };
