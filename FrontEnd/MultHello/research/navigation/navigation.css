@@ -336,10 +336,15 @@ body {
 
 .contacts {
     text-align: left;
-    margin-left: 24px;
+    margin-left: 19px;
+}
+.special-contact {
     margin-top: 6px;
+    text-align: center;
 }
 .contact {
+    margin-right: 1px;
+    margin-bottom: 1px;
     width: 120px;
     height: 140px;
     display: inline-block;
@@ -347,12 +352,20 @@ body {
     cursor: pointer;
     border: 1px solid #fff;
 }
-.contact:hover {
-    border: 1px solid #28f;
+.contact.normal {
+    cursor: pointer;
+}
+.contact.normal:hover {
+    border: 1px solid #888;
     color: #28f;
 }
+.contact.chosen {
+    color: #28f;
+    border: 1px solid #28f;
+    box-shadow: 0 0 1px #28f;
+}
 .contact .photo {
-    padding-top: 10px;
+    padding-top: 12px;
     width: 100px;
     height: 100px;
 }

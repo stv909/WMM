@@ -143,6 +143,18 @@ window.onload = function() {
 
 		this.elem = template.create('post-page-template', { id: 'post-page' });
 		this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
+		this.specialContactElem = this.elem.getElementsByClassName('special-contact')[0];
+		this.selectedContactView = null;
+
+		this.contactViewSelectListener = function(event) {
+			var target = event.target;
+			if (target !== self.selectedContactView) {
+				if (self.selectedContactView) {
+					self.selectedContactView.deselect();
+				}
+				self.selectedContactView = target;
+			}
+		};
 
 		this.hide();
 	};
@@ -155,8 +167,17 @@ window.onload = function() {
 	PostPageView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
 	};
-	PostPageView.prototype.addContactView = function(contactView) {
-		contactView.attachTo(this.contactsElem);
+	PostPageView.prototype.addContactView = function(contactView, special) {
+		if (special) {
+			contactView.attachTo(this.specialContactElem);
+		} else {
+			contactView.attachTo(this.contactsElem);
+		}
+		contactView.on('select', this.contactViewSelectListener);
+		if (!this.selectedContactView) {
+			this.selectedContactView = contactView;
+			this.selectedContactView.select();
+		}
 	};
 
 	var PostDialogView = function() {
@@ -198,7 +219,7 @@ window.onload = function() {
 		var id = rawData.id;
 		var firstName = rawData.first_name;
 		var lastName = rawData.last_name;
-		var photo = rawData.photo_50;
+		var photo = rawData.photo_200;
 		var contact = new ContactModel();
 		contact.set({
 			id: id,
@@ -222,15 +243,35 @@ window.onload = function() {
 		this.photoElem.src = this.model.get('photo');
 		this.firstNameElem.textContent = this.model.get('firstName');
 		this.lastNameElem.textContent = this.model.get('lastName');
+
+		this.selected = false;
+		this.deselect();
+
+		var elemClickListener = function(event) {
+			if (!self.selected) {
+				self.trigger('select');
+				self.select();
+			}
+		};
+
+		this.elem.addEventListener('click', elemClickListener, this);
+
+		this.once('dispose', function() {
+			self.elem.removeEventListener('click', elemClickListener);
+		});
 	};
 	ContactView.super = View;
 	ContactView.prototype = Object.create(View.prototype);
 	ContactView.prototype.constructor = ContactView;
 	ContactView.prototype.select = function() {
-
+		this.selected = true;
+		this.elem.classList.remove('normal');
+		this.elem.classList.add('chosen');
 	};
 	ContactView.prototype.deselect = function() {
-
+		this.selected = false;
+		this.elem.classList.add('normal');
+		this.elem.classList.remove('chosen');
 	};
 
 	var selectPageView = new SelectPageView();
@@ -356,15 +397,21 @@ window.onload = function() {
 	selectPageView.addMessagePatternView(messagePatternView7);
 	selectPageView.addMessagePatternView(messagePatternView8);
 
-	for (var i = 0; i < 50; i++) {
+	var specialContactModel = new ContactModel();
+	specialContactModel.set('id', 1);
+	specialContactModel.set('firstName', 'Я');
+	specialContactModel.set('lastName', '');
+	specialContactModel.set('photo', 'http://cs312916.vk.me/v312916973/6bb0/AlCfNObM--0.jpg');
+	var specialContactView = new ContactView(specialContactModel);
+	postPageView.addContactView(specialContactView, true);
+
+	for (var i = 2; i < 52; i++) {
 		var contactModel = new ContactModel();
-		contactModel.set('id', 1);
-		contactModel.set('firstName', 'Walter');
+		contactModel.set('id', i);
+		contactModel.set('firstName', 'Уолтер');
 		contactModel.set('lastName', 'White');
 		contactModel.set('photo', 'http://cs412123.vk.me/v412123262/7e84/g42XLZAjpac.jpg');
-
 		var contactView = new ContactView(contactModel);
-
 		postPageView.addContactView(contactView);
 	}
 
