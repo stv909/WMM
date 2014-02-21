@@ -1,7 +1,16 @@
 window.onload = function() {
 	var EventEmitter = eve.EventEmitter;
-	var View = abyss.View;
-	var Model = abyss.Model;
+
+	var MessageModel = messenger.models.MessageModel;
+	var ContactModel = messenger.models.ContactModel;
+
+	var SelectPageView = messenger.views.SelectPageView;
+	var EditPageView = messenger.views.EditPageView;
+	var PostPageView = messenger.views.PostPageView;
+	var AnswerPageView = messenger.views.AnswerPageView;
+	var PostDialogView = messenger.views.PostDialogView;
+	var MessageView = messenger.views.MessageView;
+	var ContactView = messenger.views.ContactView;
 
 	var selectElem = document.getElementById('select');
 	var editElem = document.getElementById('edit');
@@ -40,282 +49,6 @@ window.onload = function() {
 		} else if (this.mode === 'answer') {
 			return 'select';
 		}
-	};
-
-	var MessageModel = function() {
-		MessageModel.super.apply(this);
-	};
-	MessageModel.super = Model;
-	MessageModel.prototype = Object.create(Model.prototype);
-	MessageModel.prototype.constructor = MessageModel;
-
-	var MessageView = function(model) {
-		MessageView.super.apply(this);
-		var self = this;
-
-		this.model = model;
-		this.elem = template.create('message-template', { className: 'message' });
-		this.imageElem = this.elem.getElementsByClassName('image')[0];
-
-		this.selected = false;
-		this.deselect();
-
-		var elemClickListener = function(event) {
-			if (!self.selected) {
-				self.select();
-			}
-		};
-
-		this.elem.addEventListener('click', elemClickListener, this);
-
-		this.once('dispose', function() {
-			self.elem.removeEventListener('click', elemClickListener);
-		});
-	};
-	MessageView.super = View;
-	MessageView.prototype = Object.create(View.prototype);
-	MessageView.prototype.constructor = MessageView;
-	MessageView.prototype.select = function() {
-		this.selected = true;
-		this.elem.classList.add('chosen');
-		this.elem.classList.remove('normal');
-		this.imageElem.innerHTML = this.model.get('content');
-		this.trigger({
-			type: 'select',
-			message: this.model
-		});
-	};
-	MessageView.prototype.deselect = function() {
-		this.selected = false;
-		this.elem.classList.remove('chosen');
-		this.elem.classList.add('normal');
-		this.imageElem.innerHTML = this.model.get('preview');
-	};
-
-	var SelectPageView = function() {
-		SelectPageView.super.apply(this);
-		var self = this;
-
-		this.elem = template.create('select-page-template', { id: 'select-page' });
-		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
-		this.selectedMessageView = null;
-
-		this.messagePatternSelectListener = function(event) {
-			var target = event.target;
-			var message = event.message;
-			if (target !== self.selectedMessageView) {
-				if (self.selectedMessageView) {
-					self.selectedMessageView.deselect();
-				}
-				self.selectedMessageView = target;
-				self.trigger({
-					type: 'select:message',
-					message: message
-				});
-			}
-		};
-
-		this.hide();
-	};
-	SelectPageView.super = View;
-	SelectPageView.prototype = Object.create(View.prototype);
-	SelectPageView.prototype.constructor = SelectPageView;
-	SelectPageView.prototype.show = function() {
-		this.elem.classList.remove('hidden');
-	};
-	SelectPageView.prototype.hide = function() {
-		this.elem.classList.add('hidden');
-	};
-	SelectPageView.prototype.addMessageView = function(messageView) {
-		messageView.attachTo(this.patternsElem);
-		messageView.on('select', this.messagePatternSelectListener);
-		if (!this.selectedMessageView) {
-			messageView.select();
-		}
-	};
-
-	var EditPageView = function() {
-		EditPageView.super.apply(this);
-		var self = this;
-
-		this.elem = template.create('edit-page-template', { id: 'edit-page' });
-		this.messageContainer = this.elem.getElementsByClassName('message-container')[0];
-
-		this.hide();
-	};
-	EditPageView.super = View;
-	EditPageView.prototype = Object.create(View.prototype);
-	EditPageView.prototype.constructor = EditPageView;
-	EditPageView.prototype.show = function() {
-		this.elem.classList.remove('hidden');
-	};
-	EditPageView.prototype.hide = function() {
-		this.elem.classList.add('hidden');
-	};
-	EditPageView.prototype.setMessageContent = function(messageContent) {
-		this.messageContainer.innerHTML = messageContent;
-	};
-
-	var PostPageView = function() {
-		PostPageView.super.apply(this);
-		var self = this;
-
-		this.elem = template.create('post-page-template', { id: 'post-page' });
-		this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
-		this.specialContactElem = this.elem.getElementsByClassName('special-contact')[0];
-		this.selectedContactView = null;
-
-		this.contactViewSelectListener = function(event) {
-			var target = event.target;
-			if (target !== self.selectedContactView) {
-				if (self.selectedContactView) {
-					self.selectedContactView.deselect();
-				}
-				self.selectedContactView = target;
-			}
-		};
-
-		this.hide();
-	};
-	PostPageView.super = View;
-	PostPageView.prototype = Object.create(View.prototype);
-	PostPageView.prototype.constructor = PostPageView;
-	PostPageView.prototype.show = function() {
-		this.elem.classList.remove('hidden');
-	};
-	PostPageView.prototype.hide = function() {
-		this.elem.classList.add('hidden');
-	};
-	PostPageView.prototype.addContactView = function(contactView, special) {
-		if (special) {
-			contactView.attachTo(this.specialContactElem);
-		} else {
-			contactView.attachTo(this.contactsElem);
-		}
-		contactView.on('select', this.contactViewSelectListener);
-		if (!this.selectedContactView) {
-			this.selectedContactView = contactView;
-			this.selectedContactView.select();
-		}
-	};
-
-	var PostDialogView = function() {
-		PostDialogView.super.apply(this);
-		var self = this;
-
-		this.elem = document.getElementById('dialog-background');
-		this.dialogWindowElem = this.elem.getElementsByClassName('dialog-window')[0];
-		this.readyElem = this.elem.getElementsByClassName('ready')[0];
-
-		var readyElemClickListener = function(event) {
-			self.hide();
-			self.trigger('click:close');
-		};
-
-		this.readyElem.addEventListener('click', readyElemClickListener);
-
-		this.once('dispose', function() {
-			self.readyElem.removeEventListener('click', readyElemClickListener);
-		});
-	};
-	PostDialogView.super = View;
-	PostDialogView.prototype = Object.create(View.prototype);
-	PostDialogView.prototype.constructor = PostDialogView;
-	PostDialogView.prototype.show = function() {
-		this.elem.classList.remove('hidden');
-	};
-	PostDialogView.prototype.hide = function() {
-		this.elem.classList.add('hidden');
-	};
-
-	var MessageModel = function() {
-		MessageModel.super.apply(this);
-		var self = this;
-	};
-	MessageModel.super = Model;
-	MessageModel.prototype = Object.create(Model.prototype);
-	MessageModel.prototype.constructor = MessageModel;
-
-	var ContactModel = function() {
-		ContactModel.super.apply(this);
-	};
-	ContactModel.super = Model;
-	ContactModel.prototype = Object.create(Model.prototype);
-	ContactModel.prototype.constructor = ContactModel;
-	ContactModel.fromVkData = function(rawData) {
-		var id = rawData.id;
-		var firstName = rawData.first_name;
-		var lastName = rawData.last_name;
-		var photo = rawData.photo_200;
-		var contact = new ContactModel();
-		contact.set({
-			id: id,
-			firstName: firstName,
-			lastName: lastName,
-			photo: photo
-		});
-		return contact;
-	};
-
-	var ContactView = function(model) {
-		ContactView.super.apply(this);
-		var self = this;
-
-		this.model = model;
-		this.elem = template.create('contact-template', { className: 'contact' });
-		this.photoElem = this.elem.getElementsByClassName('photo')[0];
-		this.firstNameElem = this.elem.getElementsByClassName('first-name')[0];
-		this.lastNameElem = this.elem.getElementsByClassName('last-name')[0];
-
-		this.photoElem.src = this.model.get('photo');
-		this.firstNameElem.textContent = this.model.get('firstName');
-		this.lastNameElem.textContent = this.model.get('lastName');
-
-		this.selected = false;
-		this.deselect();
-
-		var elemClickListener = function(event) {
-			if (!self.selected) {
-				self.trigger('select');
-				self.select();
-			}
-		};
-
-		this.elem.addEventListener('click', elemClickListener, this);
-
-		this.once('dispose', function() {
-			self.elem.removeEventListener('click', elemClickListener);
-		});
-	};
-	ContactView.super = View;
-	ContactView.prototype = Object.create(View.prototype);
-	ContactView.prototype.constructor = ContactView;
-	ContactView.prototype.select = function() {
-		this.selected = true;
-		this.elem.classList.remove('normal');
-		this.elem.classList.add('chosen');
-	};
-	ContactView.prototype.deselect = function() {
-		this.selected = false;
-		this.elem.classList.add('normal');
-		this.elem.classList.remove('chosen');
-	};
-
-	var AnswerPageView = function() {
-		AnswerPageView.super.apply(this);
-		var self = this;
-
-		this.elem = template.create('answer-page-template', { id: 'answer-page' });
-		this.hide();
-	};
-	AnswerPageView.super = View;
-	AnswerPageView.prototype = Object.create(View.prototype);
-	AnswerPageView.prototype.constructor = AnswerPageView;
-	AnswerPageView.prototype.show = function() {
-		this.elem.classList.remove('hidden');
-	};
-	AnswerPageView.prototype.hide = function() {
-		this.elem.classList.add('hidden');
 	};
 
 	var Storage = function() {
@@ -522,7 +255,6 @@ window.onload = function() {
 	}
 
 	editPageView.setMessageContent('<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(http://bm.img.com.ua/img/prikol/images/large/0/7/116670_182525.jpg); background-size: cover; width: 403px; height: 403px; background-position: 0% 21%; background-repeat: no-repeat no-repeat;"><div class="tool_layerItem_ece920e7-b59b-4c00-9cc5-b4d093fd8a1a layerType_text" draggable="true" style="font-size: 3em; color: white; background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 1; -webkit-transform: rotate(0deg); left: 6px; top: 1px;">где-то в глубинке...</div><div class="tool_layerItem_cdd13bc9-151d-463a-bff7-f8f6f1f978a5 layerType_text" draggable="true" style="font-size: 1.7em; color: rgb(244, 164, 96); background-color: transparent; text-shadow: black -1.5px 0px ...f&quot;}" class="tool_layerItem_c262c846-3ff0-44db-914d-4ae1067f07a5 layerType_actor" draggable="true" style="position: absolute; z-index: 3; -webkit-transform: scale(0.5403600876626364) rotate(0deg); left: -28px; top: -19px;"><img src="https://www.bazelevscontent.net:8583/08b6e413-ff75-4625-b7e3-e7b936f469d9_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;joe&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;mood&gt;happy&lt;/mood&gt; &lt;action&gt;hi&lt;/action&gt; привет! &lt;action&gt;sucks&lt;/action&gt; грустишь? &lt;gag&gt;laugh&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/08b6e413-ff75-4625-b7e3-e7b936f469d9_1.gif&quot;}" class="tool_layerItem_5025a450-13c9-40a4-8410-94a1a1d30628 layerType_actor" draggable="true" style="position: absolute; z-index: 4; -webkit-transform: scale(0.44012666865176525) rotate(0deg); left: 153px; top: -46px;"></div>');
-
 
 	logoElem.addEventListener('click', logoElemClickListener);
 	var hash = window.location.hash;
