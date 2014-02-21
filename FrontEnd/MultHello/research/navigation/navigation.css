@@ -238,13 +238,10 @@ body {
 }
 .message-pattern {
     box-sizing: border-box;
-    vertical-align: top;
-    white-space: nowrap;
     display: inline-block;
     border: 1px solid #ddd;
-    text-align: center;
     width: 423px;
-    min-height: 423px;
+    height: 423px;
     margin: 10px;
     background-color: #fff;
 }
@@ -260,11 +257,11 @@ body {
 }
 .preview {
     background-color: #fff;
-    margin-top: 8px;
     display: inline-block;
     width: 403px;
     height: 403px;
     overflow: hidden;
+    margin-top: 9px;
 }
 .preview .image {
     height: 100%;

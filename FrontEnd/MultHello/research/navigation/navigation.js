@@ -44,14 +44,13 @@ window.onload = function() {
 
 	var MessageModel = function() {
 		MessageModel.super.apply(this);
-		var self = this;
 	};
 	MessageModel.super = Model;
 	MessageModel.prototype = Object.create(Model.prototype);
 	MessageModel.prototype.constructor = MessageModel;
 
-	var MessagePatternView = function(model) {
-		MessagePatternView.super.apply(this);
+	var MessageView = function(model) {
+		MessageView.super.apply(this);
 		var self = this;
 
 		this.model = model;
@@ -63,7 +62,10 @@ window.onload = function() {
 
 		var elemClickListener = function(event) {
 			if (!self.selected) {
-				self.trigger('select');
+				self.trigger({
+					type: 'select',
+					message: self.model
+				});
 				self.select();
 			}
 		};
@@ -74,16 +76,16 @@ window.onload = function() {
 			self.elem.removeEventListener('click', elemClickListener);
 		});
 	};
-	MessagePatternView.super = View;
-	MessagePatternView.prototype = Object.create(View.prototype);
-	MessagePatternView.prototype.constructor = MessagePatternView;
-	MessagePatternView.prototype.select = function() {
+	MessageView.super = View;
+	MessageView.prototype = Object.create(View.prototype);
+	MessageView.prototype.constructor = MessageView;
+	MessageView.prototype.select = function() {
 		this.selected = true;
 		this.elem.classList.add('chosen');
 		this.elem.classList.remove('normal');
 		this.imageElem.innerHTML = this.model.get('content');
 	};
-	MessagePatternView.prototype.deselect = function() {
+	MessageView.prototype.deselect = function() {
 		this.selected = false;
 		this.elem.classList.remove('chosen');
 		this.elem.classList.add('normal');
@@ -119,11 +121,11 @@ window.onload = function() {
 	SelectPageView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
 	};
-	SelectPageView.prototype.addMessagePatternView = function(messagePatternView) {
-		messagePatternView.attachTo(this.patternsElem);
-		messagePatternView.on('select', this.messagePatternSelectListener);
+	SelectPageView.prototype.addMessageView = function(messageView) {
+		messageView.attachTo(this.patternsElem);
+		messageView.on('select', this.messagePatternSelectListener);
 		if (!this.selectedMessagePatternView) {
-			this.selectedMessagePatternView = messagePatternView;
+			this.selectedMessagePatternView = messageView;
 			this.selectedMessagePatternView.select();
 		}
 	};
@@ -351,8 +353,8 @@ window.onload = function() {
 	var storage = new Storage();
 	storage.on('add:message', function(event) {
 		var message = event.message;
-		var messagePatternView = new MessagePatternView(message);
-		selectPageView.addMessagePatternView(messagePatternView);
+		var messagePatternView = new MessageView(message);
+		selectPageView.addMessageView(messagePatternView);
 	});
 
 	var message1 = new MessageModel();
@@ -365,7 +367,7 @@ window.onload = function() {
 	});
 	message2.set({
 		id: 2,
-		preview: '',
+		preview: '<img src="https://www.bazelevscontent.net:8583/1d5271c7-2d16-4e33-a5f0-64ce1a7fb712.png">',
 		content: '<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(http://bm.img.com.ua/img/prikol/images/large/0/7/116670_182525.jpg); background-size: cover; width: 403px; height: 403px; background-position: 0% 0%; background-repeat: no-repeat no-repeat;"><img src="https://www.bazelevscontent.net:8583/cda3b406-3284-4336-9339-72e2780c665b_1.gif" data-meta="&lt;actor&gt;ostap&lt;/actor&gt;&lt;action&gt;point&lt;/action&gt;делай раз&lt;action&gt;rulez&lt;/action&gt;делай два&lt;action&gt;applaud&lt;/action&gt;делай три!&lt;gag&gt;party&lt;/gag&gt;" class="tool_layerItem_0b421ad0-382c-403a-bbed-6060240b9985 layerType_actor" draggable="true" style="position: absolute; z-index: 1; -webkit-transform: scale(0.5) rotate(0deg); left: -30px; top: 0px; -webkit-filter: invert(25%);"><img src="https://www.bazelevscontent.net:8583/5b384968-e77e-4533-a659-931c9edac410_1.gif" data-meta="&lt;actor&gt;joe&lt;/actor&gt;&lt;action&gt;hi&lt;/action&gt;привет!&lt;action&gt;sucks&lt;/action&gt;грустишь?&lt;gag&gt;laugh&lt;/gag&gt;" class="tool_layerItem_46f88be7-c16f-4b5c-90c1-209b004f4f61 layerType_actor" draggable="true" style="position: absolute; z-index: 2; -webkit-transform: scale(0.4) rotate(0deg); left: 150px; top: -50px;"><div class="tool_layerItem_b67357c7-deda-4bf5-956b-1f6b68038e8e layerType_text" draggable="true" style="font-size: 3em; color: white; background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 3; -webkit-transform: rotate(0deg);">где-то в глубинке...</div><div class="tool_layerItem_711ab108-6852-428e-89f7-5c39d46106cb layerType_text" draggable="true" style="font-size: 1.7em; color: rgb(244, 164, 96); background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 4; left: 50px; top: 50px; -webkit-transform: rotate(0deg);">южный парк по-русски</div></div>'
 	});
 
