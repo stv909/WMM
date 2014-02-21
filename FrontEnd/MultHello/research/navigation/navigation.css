@@ -219,12 +219,15 @@ body {
     text-align: center;
     font-size: 0;
 }
-#select-page .title {
+#page .title {
     font-weight: bold;
     color: #333;
     font-size: 14px;
     padding-top: 12px;
     padding-bottom: 6px;
+    text-align: center;
+}
+#post-page {
     text-align: center;
 }
 .message-pattern {
@@ -300,7 +303,7 @@ body {
     width: 920px;
     z-index: 100;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.9);
 }
 #dialog-background .dialog-wrapper {
     display: table-cell;
@@ -329,4 +332,31 @@ body {
 #post-dialog .content {
     height: 140px;
     line-height: 140px;
+}
+
+.contacts {
+    text-align: left;
+    margin-left: 24px;
+    margin-top: 6px;
+}
+.contact {
+    width: 120px;
+    height: 140px;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #fff;
+}
+.contact:hover {
+    border: 1px solid #28f;
+    color: #28f;
+}
+.contact .photo {
+    padding-top: 10px;
+    width: 100px;
+    height: 100px;
+}
+.contact .first-name, .last-name {
+    font-size: 11px;
+    display: inline-block;
 }

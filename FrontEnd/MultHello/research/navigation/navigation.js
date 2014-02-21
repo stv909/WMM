@@ -142,6 +142,7 @@ window.onload = function() {
 		var self = this;
 
 		this.elem = template.create('post-page-template', { id: 'post-page' });
+		this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
 
 		this.hide();
 	};
@@ -153,6 +154,9 @@ window.onload = function() {
 	};
 	PostPageView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
+	};
+	PostPageView.prototype.addContactView = function(contactView) {
+		contactView.attachTo(this.contactsElem);
 	};
 
 	var PostDialogView = function() {
@@ -191,16 +195,18 @@ window.onload = function() {
 	ContactModel.prototype = Object.create(Model.prototype);
 	ContactModel.prototype.constructor = ContactModel;
 	ContactModel.fromVkData = function(rawData) {
+		var id = rawData.id;
 		var firstName = rawData.first_name;
 		var lastName = rawData.last_name;
 		var photo = rawData.photo_50;
-		var user = new VkontakteUserModel();
-		user.set({
+		var contact = new ContactModel();
+		contact.set({
+			id: id,
 			firstName: firstName,
 			lastName: lastName,
 			photo: photo
 		});
-		return user;
+		return contact;
 	};
 
 	var ContactView = function(model) {
@@ -209,6 +215,13 @@ window.onload = function() {
 
 		this.model = model;
 		this.elem = template.create('contact-template', { className: 'contact' });
+		this.photoElem = this.elem.getElementsByClassName('photo')[0];
+		this.firstNameElem = this.elem.getElementsByClassName('first-name')[0];
+		this.lastNameElem = this.elem.getElementsByClassName('last-name')[0];
+
+		this.photoElem.src = this.model.get('photo');
+		this.firstNameElem.textContent = this.model.get('firstName');
+		this.lastNameElem.textContent = this.model.get('lastName');
 	};
 	ContactView.super = View;
 	ContactView.prototype = Object.create(View.prototype);
@@ -342,6 +355,18 @@ window.onload = function() {
 	selectPageView.addMessagePatternView(messagePatternView6);
 	selectPageView.addMessagePatternView(messagePatternView7);
 	selectPageView.addMessagePatternView(messagePatternView8);
+
+	for (var i = 0; i < 50; i++) {
+		var contactModel = new ContactModel();
+		contactModel.set('id', 1);
+		contactModel.set('firstName', 'Walter');
+		contactModel.set('lastName', 'White');
+		contactModel.set('photo', 'http://cs412123.vk.me/v412123262/7e84/g42XLZAjpac.jpg');
+
+		var contactView = new ContactView(contactModel);
+
+		postPageView.addContactView(contactView);
+	}
 
 	navigation.setMode('select');
 	logoElem.addEventListener('click', logoElemClickListener);
