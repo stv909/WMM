@@ -253,23 +253,13 @@ body {
     border: 1px solid #28f;
     box-shadow: 0 0 2px #28f;
 }
-.preview {
+.message .content {
     background-color: #fff;
     display: inline-block;
     width: 403px;
     height: 403px;
     overflow: hidden;
     margin: 10px;
-}
-.preview .image {
-    height: 100%;
-}
-.controls {
-
-}
-.controls .button {
-    font-size: 12px;
-    margin: 8px 4px;
 }
 .button {
     -webkit-user-select: none;

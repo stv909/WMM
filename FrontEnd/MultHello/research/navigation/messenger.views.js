@@ -38,7 +38,7 @@ var messenger = messenger || {};
 	SelectPageView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
 	};
-	SelectPageView.prototype.addMessageView = function(messageView) {
+	SelectPageView.prototype.addMessagePatternView = function(messageView) {
 		messageView.attachTo(this.patternsElem);
 		messageView.on('select', this.messagePatternSelectListener);
 		if (!this.selectedMessageView) {
@@ -159,13 +159,61 @@ var messenger = messenger || {};
 
 	var MessageView = function(model) {
 		MessageView.super.apply(this);
-		var self = this;
 
 		this.model = model;
 		this.elem = template.create('message-template', { className: 'message' });
-		this.imageElem = this.elem.getElementsByClassName('image')[0];
+		this.contentElem = this.elem.getElementsByClassName('content')[0];
 
 		this.selected = false;
+
+		this.prepareCachedPreviewElem();
+		this.prepareCachedFullElem();
+	};
+	MessageView.super = View;
+	MessageView.prototype = Object.create(View.prototype);
+	MessageView.prototype.constructor = MessageView;
+	MessageView.prototype.select = function() {
+		this.selected = true;
+		this.elem.classList.add('chosen');
+		this.elem.classList.remove('normal');
+		this.removeCachedElem();
+		this.addCachedElem(this.cachedFullElem);
+		this.trigger({
+			type: 'select',
+			message: this.model
+		});
+	};
+	MessageView.prototype.deselect = function() {
+		this.selected = false;
+		this.elem.classList.remove('chosen');
+		this.elem.classList.add('normal');
+		this.removeCachedElem();
+		this.addCachedElem(this.cachedPreviewElem);
+	};
+	MessageView.prototype.addCachedElem = function(cachedElem) {
+		this.cachedElem = cachedElem;
+		this.contentElem.appendChild(cachedElem);
+	};
+	MessageView.prototype.removeCachedElem = function() {
+		if (this.cachedElem) {
+			this.contentElem.removeChild(this.cachedElem);
+		}
+	};
+	MessageView.prototype.prepareCachedPreviewElem = function() {
+		this.cachedPreviewElem = document.createElement('div');
+		var imgElem = document.createElement('img');
+		imgElem.src = this.model.get('preview');
+		this.cachedPreviewElem.appendChild(imgElem);
+	};
+	MessageView.prototype.prepareCachedFullElem = function() {
+		this.cachedFullElem = document.createElement('div');
+		this.cachedFullElem.innerHTML = this.model.get('content');
+	};
+
+	var MessagePatternView = function(model) {
+		MessagePatternView.super.apply(this, arguments);
+		var self = this;
+
 		this.deselect();
 
 		var elemClickListener = function(event) {
@@ -180,25 +228,9 @@ var messenger = messenger || {};
 			self.elem.removeEventListener('click', elemClickListener);
 		});
 	};
-	MessageView.super = View;
-	MessageView.prototype = Object.create(View.prototype);
-	MessageView.prototype.constructor = MessageView;
-	MessageView.prototype.select = function() {
-		this.selected = true;
-		this.elem.classList.add('chosen');
-		this.elem.classList.remove('normal');
-		this.imageElem.innerHTML = this.model.get('content');
-		this.trigger({
-			type: 'select',
-			message: this.model
-		});
-	};
-	MessageView.prototype.deselect = function() {
-		this.selected = false;
-		this.elem.classList.remove('chosen');
-		this.elem.classList.add('normal');
-		this.imageElem.innerHTML = this.model.get('preview');
-	};
+	MessagePatternView.super = MessageView;
+	MessagePatternView.prototype = Object.create(MessageView.prototype);
+	MessagePatternView.prototype.constructor = MessagePatternView;
 
 	var ContactView = function(model) {
 		ContactView.super.apply(this);
@@ -251,6 +283,7 @@ var messenger = messenger || {};
 		AnswerPageView: AnswerPageView,
 		PostDialogView: PostDialogView,
 		MessageView: MessageView,
+		MessagePatternView: MessagePatternView,
 		ContactView: ContactView
 	};
 
