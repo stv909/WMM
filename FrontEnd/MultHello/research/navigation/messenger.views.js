@@ -51,7 +51,10 @@ var messenger = messenger || {};
 		var self = this;
 
 		this.elem = template.create('edit-page-template', { id: 'edit-page' });
-		this.messageContainer = this.elem.getElementsByClassName('message-container')[0];
+		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
+
+		this.messageEditorView = new MessageEditorView();
+		this.messageEditorView.attachTo(this.messageWrapperElem);
 
 		this.hide();
 	};
@@ -64,8 +67,8 @@ var messenger = messenger || {};
 	EditPageView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
 	};
-	EditPageView.prototype.setMessageContent = function(messageContent) {
-		this.messageContainer.innerHTML = messageContent;
+	EditPageView.prototype.setMessage = function(message) {
+		this.messageEditorView.setModel(message);
 	};
 
 	var PostPageView = function() {
@@ -165,9 +168,6 @@ var messenger = messenger || {};
 		this.contentElem = this.elem.getElementsByClassName('content')[0];
 
 		this.selected = false;
-
-		this.prepareCachedPreviewElem();
-		this.prepareCachedFullElem();
 	};
 	MessageView.super = View;
 	MessageView.prototype = Object.create(View.prototype);
@@ -209,11 +209,24 @@ var messenger = messenger || {};
 		this.cachedFullElem = document.createElement('div');
 		this.cachedFullElem.innerHTML = this.model.get('content');
 	};
+	MessageView.prototype.setModel = function(model) {
+		this.model = model;
+		this.removeCachedElem();
+		this.prepareCachedPreviewElem();
+		this.prepareCachedFullElem();
+		if (this.selected) {
+			this.addCachedElem(this.cachedFullElem);
+		} else {
+			this.addCachedElem(this.cachedPreviewElem);
+		}
+	};
 
 	var MessagePatternView = function(model) {
 		MessagePatternView.super.apply(this, arguments);
 		var self = this;
 
+		this.prepareCachedPreviewElem();
+		this.prepareCachedFullElem();
 		this.deselect();
 
 		var elemClickListener = function(event) {
@@ -231,6 +244,17 @@ var messenger = messenger || {};
 	MessagePatternView.super = MessageView;
 	MessagePatternView.prototype = Object.create(MessageView.prototype);
 	MessagePatternView.prototype.constructor = MessagePatternView;
+
+	var MessageEditorView = function() {
+		MessageEditorView.super.apply(this);
+
+		this.selected = true;
+		this.elem.classList.add('chosen');
+		this.elem.classList.remove('normal');
+	};
+	MessageEditorView.super = MessageView;
+	MessageEditorView.prototype = Object.create(MessageView.prototype);
+	MessageEditorView.prototype.constructor = MessageEditorView;
 
 	var ContactView = function(model) {
 		ContactView.super.apply(this);

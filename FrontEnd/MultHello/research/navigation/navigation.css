@@ -222,6 +222,9 @@ body {
     text-align: center;
     font-size: 0;
 }
+#edit-page {
+    font-size: 0;
+}
 #page .title {
     font-weight: bold;
     color: #333;
@@ -260,6 +263,7 @@ body {
     height: 403px;
     overflow: hidden;
     margin: 10px;
+    font-size: 16px;
 }
 .button {
     -webkit-user-select: none;
@@ -376,17 +380,6 @@ body {
 }
 .message-wrapper {
     display: inline-block;
-    text-align: center;
-    width: 423px;
-    min-height: 423px;
-    border: 1px solid #28f;
-    box-shadow: 0 0 2px #28f;
-}
-.message-container {
-    margin-top: 10px;
-    display: inline-block;
-    width: 403px;
-    height: 403px;
 }
 .tools {
     display: inline-block;
