@@ -135,6 +135,18 @@ window.onload = function() {
 	});
 
 	navigation.on('mode:answer', function(event) {
+		selectElem.classList.add('normal');
+		selectElem.classList.remove('chosen');
+		selectElem.addEventListener('click', selectElemClickListener);
+
+		editElem.classList.add('normal');
+		editElem.classList.remove('chosen');
+		editElem.addEventListener('click', editElemClickListener);
+
+		postElem.classList.add('normal');
+		postElem.classList.remove('chosen');
+		postElem.addEventListener('click', postElemClickListener);
+
 		selectPageView.hide();
 		editPageView.hide();
 		postPageView.hide();
@@ -253,6 +265,9 @@ window.onload = function() {
 		var contactView = new ContactView(contactModel);
 		postPageView.addContactView(contactView);
 	}
+
+	answerPageView.setContact(specialContactModel);
+	answerPageView.setMessage(message1);
 
 	logoElem.addEventListener('click', logoElemClickListener);
 	var hash = window.location.hash;

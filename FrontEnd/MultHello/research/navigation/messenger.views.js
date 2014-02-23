@@ -119,6 +119,17 @@ var messenger = messenger || {};
 		var self = this;
 
 		this.elem = template.create('answer-page-template', { id: 'answer-page' });
+		//this.containerElem = this.elem.getElementsByClassName('container')[0];
+		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
+		this.contactWrapElem = this.elem.getElementsByClassName('contact-wrapper')[0];
+
+		this.messageEditorView = new MessageEditorView();
+		this.messageEditorView.attachTo(this.messageWrapperElem);
+
+		this.contactView = new ContactView();
+		this.contactView.attachTo(this.contactWrapElem);
+		this.contactView.select();
+
 		this.hide();
 	};
 	AnswerPageView.super = View;
@@ -129,6 +140,12 @@ var messenger = messenger || {};
 	};
 	AnswerPageView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
+	};
+	AnswerPageView.prototype.setContact = function(contact) {
+		this.contactView.setModel(contact);
+	};
+	AnswerPageView.prototype.setMessage = function(message) {
+		this.messageEditorView.setModel(message);
 	};
 
 	var PostDialogView = function() {
@@ -260,17 +277,13 @@ var messenger = messenger || {};
 		ContactView.super.apply(this);
 		var self = this;
 
-		this.model = model;
 		this.elem = template.create('contact-template', { className: 'contact' });
 		this.photoElem = this.elem.getElementsByClassName('photo')[0];
 		this.firstNameElem = this.elem.getElementsByClassName('first-name')[0];
 		this.lastNameElem = this.elem.getElementsByClassName('last-name')[0];
 
-		this.photoElem.src = this.model.get('photo');
-		this.firstNameElem.textContent = this.model.get('firstName');
-		this.lastNameElem.textContent = this.model.get('lastName');
-
 		this.selected = false;
+		this.setModel(model);
 		this.deselect();
 
 		var elemClickListener = function(event) {
@@ -298,6 +311,14 @@ var messenger = messenger || {};
 		this.selected = false;
 		this.elem.classList.add('normal');
 		this.elem.classList.remove('chosen');
+	};
+	ContactView.prototype.setModel = function(model) {
+		if (model) {
+			this.model = model;
+			this.photoElem.src = this.model.get('photo');
+			this.firstNameElem.textContent = this.model.get('firstName');
+			this.lastNameElem.textContent = this.model.get('lastName');
+		}
 	};
 
 	messenger.views = {
