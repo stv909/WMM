@@ -211,15 +211,12 @@ body {
     top: 36px;
     bottom: 48px;
     width: 100%;
-    font-size: 0.8em;
-    padding: 0.5em;
-    padding-bottom: 2em;
+    padding: 8px 8px 32px;
 }
 #page-container {
     margin: 0 auto;
 }
 #select-page {
-    text-align: center;
     font-size: 0;
 }
 #edit-page {
@@ -371,7 +368,6 @@ body {
     display: inline-block;
 }
 .message-editor {
-    text-align: center;
     margin-top: 18px;
 }
 .message-editor .container {
@@ -381,11 +377,14 @@ body {
 .message-wrapper {
     display: inline-block;
 }
+.message-wrapper .message {
+    margin-top: 0;
+}
 .tools {
     display: inline-block;
-    width: 370px;
+    width: 430px;
     vertical-align: top;
-    margin-left: 16px;
+    margin-left: 10px;
     text-align: left;
 }
 .characters {
@@ -397,7 +396,7 @@ body {
     background-color: #28f;
     font-size: 12px;
     padding: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
 }
 .text {
     color: #666;
@@ -405,7 +404,7 @@ body {
     padding: 8px;
     border: 1px solid #ddd;
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     box-sizing: border-box;
 }
 .text:hover {
@@ -417,16 +416,19 @@ body {
     border: 1px solid #28f;
     box-shadow: 0 0 2px #28f;
 }
+.memos {
+    margin-bottom: 20px;
+}
 .character {
     display: block;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     padding: 8px;
     font-size: 12px;
     -webkit-appearance: none;
     overflow: hidden;
     border: 1px solid #ddd;
     color: #666;
-    width: 35%;
+    width: 100px;
     border-radius: 0;
     background: url('arrow2.png') no-repeat right;
     background-size: 32px 32px;
