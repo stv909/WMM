@@ -354,7 +354,6 @@ body {
 }
 .contact.normal:hover {
     border: 1px solid #888;
-    color: #28f;
 }
 .contact.chosen {
     color: #28f;
@@ -362,12 +361,14 @@ body {
     box-shadow: 0 0 1px #28f;
 }
 .contact .photo {
-    padding-top: 12px;
-    padding-bottom: 6px;
+    padding-top: 10px;
+    padding-bottom: 7px;
     width: 100px;
     height: 100px;
 }
 .contact .first-name, .last-name {
+    margin-left: 1px;
+    margin-right: 1px;
     font-size: 11px;
     display: inline-block;
 }
