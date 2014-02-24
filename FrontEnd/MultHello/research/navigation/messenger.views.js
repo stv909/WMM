@@ -155,14 +155,15 @@ var messenger = messenger || {};
 		this.messageEditorView.setModel(message);
 	};
 
-	var SkipAnswerDialogView = function() {
-		SkipAnswerDialogView.super.apply(this);
+	var SkipDialogView = function() {
+		SkipDialogView.super.apply(this);
 		var self = this;
 
 		this.elem = document.getElementById('dialog-background');
 		this.dialogWindowElem = document.getElementById('skip-answer-dialog');
 		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
 		this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
+		this.answerTextElem = this.dialogWindowElem.getElementsByClassName('answer-text')[0];
 
 		var okElemClickListener = function(event) {
 			self.hide();
@@ -181,16 +182,19 @@ var messenger = messenger || {};
 			this.cancelElem.removeEventListener('click', cancelElemClickListener);
 		});
 	};
-	SkipAnswerDialogView.super = View;
-	SkipAnswerDialogView.prototype = Object.create(View.prototype);
-	SkipAnswerDialogView.prototype.constructor = SkipAnswerDialogView;
-	SkipAnswerDialogView.prototype.show = function() {
+	SkipDialogView.super = View;
+	SkipDialogView.prototype = Object.create(View.prototype);
+	SkipDialogView.prototype.constructor = SkipDialogView;
+	SkipDialogView.prototype.show = function() {
 		this.dialogWindowElem.classList.remove('hidden');
 		this.elem.classList.remove('hidden');
 	};
-	SkipAnswerDialogView.prototype.hide = function() {
+	SkipDialogView.prototype.hide = function() {
 		this.dialogWindowElem.classList.add('hidden');
 		this.elem.classList.add('hidden');
+	};
+	SkipDialogView.prototype.setText = function(text) {
+		this.answerTextElem.textContent = text;
 	};
 
 	var PostDialogView = function() {
@@ -374,7 +378,7 @@ var messenger = messenger || {};
 		PostPageView: PostPageView,
 		AnswerPageView: AnswerPageView,
 		PostDialogView: PostDialogView,
-		SkipAnswerDialogView: SkipAnswerDialogView,
+		SkipDialogView: SkipDialogView,
 		MessageView: MessageView,
 		MessagePatternView: MessagePatternView,
 		ContactView: ContactView

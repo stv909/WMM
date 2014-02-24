@@ -9,7 +9,7 @@ window.onload = function() {
 	var PostPageView = messenger.views.PostPageView;
 	var AnswerPageView = messenger.views.AnswerPageView;
 	var PostDialogView = messenger.views.PostDialogView;
-	var SkipAnswerDialogView = messenger.views.SkipAnswerDialogView;
+	var SkipDialogView = messenger.views.SkipDialogView;
 	var MessagePatternView = messenger.views.MessagePatternView;
 	var ContactView = messenger.views.ContactView;
 
@@ -127,7 +127,7 @@ window.onload = function() {
 	var postPageView = new PostPageView();
 	var answerPageView = new AnswerPageView();
 	var postDialogView = new PostDialogView();
-	var skipAnswerDialogView = new SkipAnswerDialogView();
+	var skipDialogView = new SkipDialogView();
 
 	selectPageView.attachTo(pageContainerElem);
 	editPageView.attachTo(pageContainerElem);
@@ -169,11 +169,19 @@ window.onload = function() {
 	var navigation = new Navigation();
 
 	postDialogView.on('click:close', function(event) {
+		if (currentLogoElemClickListener === logoElemAnswerClickListener) {
+			logoElem.removeEventListener('click', logoElemAnswerClickListener);
+			logoElem.addEventListener('click', logoElemStandardClickListener);
+			currentLogoElemClickListener = logoElemStandardClickListener;
+			window.location.hash = '';
+		}
 		navigation.setMode('select');
 	});
-	skipAnswerDialogView.on('click:ok', function(event) {
+	skipDialogView.on('click:ok', function(event) {
 		logoElem.removeEventListener('click', logoElemAnswerClickListener);
 		logoElem.addEventListener('click', logoElemStandardClickListener);
+		currentLogoElemClickListener = logoElemStandardClickListener;
+		window.location.hash = '';
 		navigation.setMode('select');
 	});
 
@@ -197,6 +205,8 @@ window.onload = function() {
 		editPageView.hide();
 		postPageView.hide();
 		answerPageView.show();
+
+		skipDialogView.setText('Вы уверены, что не хотите ответить на сообщение?');
 
 		nextElem.textContent = 'Ответить';
 		nextElem.removeEventListener('click', currentNextElemClickListener);
@@ -276,11 +286,12 @@ window.onload = function() {
 		currentNextElemClickListener = nextElemPostClickListener;
 	});
 
+	var currentLogoElemClickListener = null;
 	var logoElemStandardClickListener = function(event) {
 		navigation.setMode('select');
 	};
 	var logoElemAnswerClickListener = function(event) {
-		skipAnswerDialogView.show();
+		skipDialogView.show();
 	};
 
 	var selectElemClickListener = function(event) {
@@ -301,10 +312,8 @@ window.onload = function() {
 		postDialogView.show();
 	};
 	var nextElemAnswerClickListener = function(event) {
-		logoElem.removeEventListener('click', logoElemAnswerClickListener);
-		logoElem.addEventListener('click', logoElemStandardClickListener);
 		navigation.setMode('select');
-	}
+	};
 
 	var specialContactModel = new ContactModel();
 	specialContactModel.set('id', 1);
@@ -331,8 +340,10 @@ window.onload = function() {
 	if (hash) {
 		navigation.setMode('answer');
 		logoElem.addEventListener('click', logoElemAnswerClickListener);
+		currentLogoElemClickListener = logoElemAnswerClickListener;
 	} else {
 		navigation.setMode('select');
 		logoElem.addEventListener('click', logoElemStandardClickListener);
+		currentLogoElemClickListener = logoElemStandardClickListener;
 	}
 };
