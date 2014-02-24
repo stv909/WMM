@@ -123,6 +123,43 @@ var messenger = messenger || {};
 		var rawMeta = layerActorElem.dataset.meta;
 		var meta = JSON.parse(rawMeta);
 		console.log(meta);
+
+		var layerId = layerActorElem.className.split(' ')[0];
+		var phrases = [];
+		var hints = [];
+		var commands = meta.commands;
+
+		var startPos = commands.indexOf('</', startPos);
+		var endPos = 0;
+		while(startPos >= 0)
+		{
+			startPos = commands.indexOf('>', startPos) + 1;
+			if (startPos > 0)
+			{
+				var end = commands.indexOf('<', startPos);
+				if (end === -1)
+					end = commands.length;
+				if (startPos > 0 && end > startPos)
+				{
+					hints.push(commands.substring(endPos, startPos));
+					phrases.push(commands.substring(startPos, end));
+					endPos = end;
+				}
+			}
+			startPos = commands.indexOf('</', startPos);
+		}
+		hints.push(commands.substring(endPos, commands.length));
+
+		var characterData = {
+			layerId: layerId,
+			actors: meta.actors,
+			phrases: phrases,
+			hints: hints,
+			type: meta.type
+		};
+		
+		console.log(characterData);
+
 		var characterView = new CharacterView(this.characters);
 		characterView.attachTo(this.characterCollectionElem);
 		this.characterViewCollection.push(characterView);
