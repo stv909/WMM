@@ -101,12 +101,15 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype._createTextElem = function(layerTextElem) {
 		var elem = document.createElement('input');
+
 		elem.className = 'text';
 		elem.type = 'text';
 		elem.value = layerTextElem.textContent;
+
 		elem.addEventListener('input', function() {
 			layerTextElem.textContent = elem.value;
 		});
+
 		this.memosElem.appendChild(elem);
 	};
 	EditPageView.prototype._parseLayerTypeActor = function(rootElem) {

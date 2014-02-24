@@ -51,10 +51,34 @@ window.onload = function() {
 		this.currentMessage = null;
 
 		this.contacts = {};
+		this.characters = [];
+
+		this.loadCharacters();
 	};
 	Storage.super = EventEmitter;
 	Storage.prototype = Object.create(EventEmitter.prototype);
 	Storage.prototype.constructor = Storage;
+	Storage.prototype.loadCharacters = function() {
+		var httpGet = function(url)
+		{
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.open('GET', url, false);
+			xmlHttp.send(null);
+			return xmlHttp.responseText;
+		};
+		var result = httpGet('https://bazelevshosting.net/MCM/characters_resources.json');
+		try
+		{
+			var charactersDict = JSON.parse(result).characters;
+			for (var name in charactersDict) {
+				this.characters.push(name);
+			}
+		}
+		catch (e)
+		{
+			console.error('Loading character list failed');
+		}
+	};
 	Storage.prototype.hasMessage = function(messageId) {
 		return this.messages.hasOwnProperty(messageId);
 	};
