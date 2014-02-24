@@ -11,6 +11,7 @@ var messenger = messenger || {};
 		this.elem = template.create('select-page-template', { id: 'select-page' });
 		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
 		this.selectedMessageView = null;
+		this.messageViews = {};
 
 		this.messagePatternSelectListener = function(event) {
 			var target = event.target;
@@ -40,6 +41,9 @@ var messenger = messenger || {};
 	};
 	SelectPageView.prototype.addMessagePatternView = function(messageView) {
 		messageView.attachTo(this.patternsElem);
+		var message = messageView.model;
+		var messageId = message.get('id');
+		this.messageViews[messageId] = messageView;
 		messageView.on('select', this.messagePatternSelectListener);
 		if (!this.selectedMessageView) {
 			messageView.select();
@@ -79,6 +83,7 @@ var messenger = messenger || {};
 		this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
 		this.specialContactElem = this.elem.getElementsByClassName('special-contact')[0];
 		this.selectedContactView = null;
+		this.contactViews = {};
 
 		this.contactViewSelectListener = function(event) {
 			var target = event.target;
@@ -107,6 +112,9 @@ var messenger = messenger || {};
 		} else {
 			contactView.attachTo(this.contactsElem);
 		}
+		var contact = contactView.model;
+		var contactId = contact.get('id');
+		this.contactViews[contactId] = contactView;
 		contactView.on('select', this.contactViewSelectListener);
 		if (!this.selectedContactView) {
 			this.selectedContactView = contactView;
@@ -147,13 +155,51 @@ var messenger = messenger || {};
 		this.messageEditorView.setModel(message);
 	};
 
+	var SkipAnswerDialogView = function() {
+		SkipAnswerDialogView.super.apply(this);
+		var self = this;
+
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('skip-answer-dialog');
+		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
+		this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
+
+		var okElemClickListener = function(event) {
+			self.hide();
+			self.trigger('click:ok');
+		};
+		var cancelElemClickListener = function(event) {
+			self.hide();
+			self.trigger('click:cancel');
+		};
+
+		this.okElem.addEventListener('click', okElemClickListener);
+		this.cancelElem.addEventListener('click', cancelElemClickListener);
+
+		this.once('dispose', function(event) {
+			this.okElem.removeEventListener('click', okElemClickListener);
+			this.cancelElem.removeEventListener('click', cancelElemClickListener);
+		});
+	};
+	SkipAnswerDialogView.super = View;
+	SkipAnswerDialogView.prototype = Object.create(View.prototype);
+	SkipAnswerDialogView.prototype.constructor = SkipAnswerDialogView;
+	SkipAnswerDialogView.prototype.show = function() {
+		this.dialogWindowElem.classList.remove('hidden');
+		this.elem.classList.remove('hidden');
+	};
+	SkipAnswerDialogView.prototype.hide = function() {
+		this.dialogWindowElem.classList.add('hidden');
+		this.elem.classList.add('hidden');
+	};
+
 	var PostDialogView = function() {
 		PostDialogView.super.apply(this);
 		var self = this;
 
 		this.elem = document.getElementById('dialog-background');
-		this.dialogWindowElem = this.elem.getElementsByClassName('dialog-window')[0];
-		this.readyElem = this.elem.getElementsByClassName('ready')[0];
+		this.dialogWindowElem = document.getElementById('post-dialog');
+		this.readyElem = this.dialogWindowElem.getElementsByClassName('ready')[0];
 
 		var readyElemClickListener = function(event) {
 			self.hide();
@@ -170,9 +216,11 @@ var messenger = messenger || {};
 	PostDialogView.prototype = Object.create(View.prototype);
 	PostDialogView.prototype.constructor = PostDialogView;
 	PostDialogView.prototype.show = function() {
+		this.dialogWindowElem.classList.remove('hidden');
 		this.elem.classList.remove('hidden');
 	};
 	PostDialogView.prototype.hide = function() {
+		this.dialogWindowElem.classList.add('hidden');
 		this.elem.classList.add('hidden');
 	};
 
@@ -326,6 +374,7 @@ var messenger = messenger || {};
 		PostPageView: PostPageView,
 		AnswerPageView: AnswerPageView,
 		PostDialogView: PostDialogView,
+		SkipAnswerDialogView: SkipAnswerDialogView,
 		MessageView: MessageView,
 		MessagePatternView: MessagePatternView,
 		ContactView: ContactView

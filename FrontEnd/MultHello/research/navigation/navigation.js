@@ -9,16 +9,9 @@ window.onload = function() {
 	var PostPageView = messenger.views.PostPageView;
 	var AnswerPageView = messenger.views.AnswerPageView;
 	var PostDialogView = messenger.views.PostDialogView;
+	var SkipAnswerDialogView = messenger.views.SkipAnswerDialogView;
 	var MessagePatternView = messenger.views.MessagePatternView;
 	var ContactView = messenger.views.ContactView;
-
-	var selectElem = document.getElementById('select');
-	var editElem = document.getElementById('edit');
-	var postElem = document.getElementById('post');
-
-	var pageContainerElem = document.getElementById('page-container');
-	var logoElem = document.getElementById('logo');
-	var nextElem = document.getElementById('next');
 
 	var Navigation = function() {
 		Navigation.super.apply(this);
@@ -53,22 +46,30 @@ window.onload = function() {
 
 	var Storage = function() {
 		Storage.super.apply(this);
+
 		this.messages = {};
 		this.currentMessage = null;
+
+		this.contacts = {};
 	};
 	Storage.super = EventEmitter;
 	Storage.prototype = Object.create(EventEmitter.prototype);
 	Storage.prototype.constructor = Storage;
+	Storage.prototype.hasMessage = function(messageId) {
+		return this.messages.hasOwnProperty(messageId);
+	};
 	Storage.prototype.addMessage = function(message) {
-		this.messages[message.get('id')] = message;
-		this.trigger({
-			type: 'add:message',
-			message: message
-		});
+		if (!this.hasMessage(message.get('id'))) {
+			this.messages[message.get('id')] = message;
+			this.trigger({
+				type: 'add:message',
+				message: message
+			});
+		}
 	};
 	Storage.prototype.removeMessage = function(messageId) {
-		var message = this.messages[messageId];
-		if (message) {
+		if (this.hasMessage(messageId)) {
+			var message = this.messages[messageId];
 			delete this.messages[messageId];
 			this.trigger({
 				type: 'remove:message',
@@ -83,6 +84,42 @@ window.onload = function() {
 			message: this.currentMessage
 		});
 	};
+	Storage.prototype.getMessageById = function(messageId) {
+		return this.messages[messageId];
+	};
+	Storage.prototype.hasContact = function(contactId) {
+		return this.contacts.hasOwnProperty(contactId);
+	};
+	Storage.prototype.addContact = function(contact) {
+		if (!this.hasContact(contact.get('id'))) {
+			this.contacts[contact.get('id')] = contact;
+			this.trigger({
+				type: 'add:contact',
+				contact: contact
+			});
+		}
+	};
+	Storage.prototype.removeContact = function(contactId) {
+		if (this.hasContact(contactId)) {
+			var contact = this.messages[contactId];
+			delete this.contacts[contactId];
+			this.trigger({
+				type: 'remove:contact',
+				contact: contact
+			});
+		}
+	};
+	Storage.prototype.getContactById = function(contactId) {
+		return this.contacts[contactId];
+	};
+
+	var selectElem = document.getElementById('select');
+	var editElem = document.getElementById('edit');
+	var postElem = document.getElementById('post');
+
+	var pageContainerElem = document.getElementById('page-container');
+	var logoElem = document.getElementById('logo');
+	var nextElem = document.getElementById('next');
 
 	var storage = new Storage();
 	var selectPageView = new SelectPageView();
@@ -90,6 +127,7 @@ window.onload = function() {
 	var postPageView = new PostPageView();
 	var answerPageView = new AnswerPageView();
 	var postDialogView = new PostDialogView();
+	var skipAnswerDialogView = new SkipAnswerDialogView();
 
 	selectPageView.attachTo(pageContainerElem);
 	editPageView.attachTo(pageContainerElem);
@@ -133,16 +171,24 @@ window.onload = function() {
 	postDialogView.on('click:close', function(event) {
 		navigation.setMode('select');
 	});
+	skipAnswerDialogView.on('click:ok', function(event) {
+		logoElem.removeEventListener('click', logoElemAnswerClickListener);
+		logoElem.addEventListener('click', logoElemStandardClickListener);
+		navigation.setMode('select');
+	});
 
 	navigation.on('mode:answer', function(event) {
+		selectElem.classList.add('hidden');
 		selectElem.classList.add('normal');
 		selectElem.classList.remove('chosen');
 		selectElem.addEventListener('click', selectElemClickListener);
 
+		editElem.classList.add('hidden');
 		editElem.classList.add('normal');
 		editElem.classList.remove('chosen');
 		editElem.addEventListener('click', editElemClickListener);
 
+		postElem.classList.add('hidden');
 		postElem.classList.add('normal');
 		postElem.classList.remove('chosen');
 		postElem.addEventListener('click', postElemClickListener);
@@ -154,18 +200,21 @@ window.onload = function() {
 
 		nextElem.textContent = 'Ответить';
 		nextElem.removeEventListener('click', currentNextElemClickListener);
-		nextElem.addEventListener('click', nextElemStandardClickListener);
-		currentNextElemClickListener = nextElemStandardClickListener;
+		nextElem.addEventListener('click', nextElemAnswerClickListener);
+		currentNextElemClickListener = nextElemAnswerClickListener;
 	});
 	navigation.on('mode:select', function(event) {
+		selectElem.classList.remove('hidden');
 		selectElem.classList.remove('normal');
 		selectElem.classList.add('chosen');
 		selectElem.removeEventListener('click', selectElemClickListener);
 
+		editElem.classList.remove('hidden');
 		editElem.classList.add('normal');
 		editElem.classList.remove('chosen');
 		editElem.addEventListener('click', editElemClickListener);
 
+		postElem.classList.remove('hidden');
 		postElem.classList.add('normal');
 		postElem.classList.remove('chosen');
 		postElem.addEventListener('click', postElemClickListener);
@@ -227,9 +276,13 @@ window.onload = function() {
 		currentNextElemClickListener = nextElemPostClickListener;
 	});
 
-	var logoElemClickListener = function(event) {
+	var logoElemStandardClickListener = function(event) {
 		navigation.setMode('select');
 	};
+	var logoElemAnswerClickListener = function(event) {
+		skipAnswerDialogView.show();
+	};
+
 	var selectElemClickListener = function(event) {
 		navigation.setMode('select');
 	};
@@ -247,6 +300,11 @@ window.onload = function() {
 	var nextElemPostClickListener = function(event) {
 		postDialogView.show();
 	};
+	var nextElemAnswerClickListener = function(event) {
+		logoElem.removeEventListener('click', logoElemAnswerClickListener);
+		logoElem.addEventListener('click', logoElemStandardClickListener);
+		navigation.setMode('select');
+	}
 
 	var specialContactModel = new ContactModel();
 	specialContactModel.set('id', 1);
@@ -269,11 +327,12 @@ window.onload = function() {
 	answerPageView.setContact(specialContactModel);
 	answerPageView.setMessage(message1);
 
-	logoElem.addEventListener('click', logoElemClickListener);
 	var hash = window.location.hash;
 	if (hash) {
 		navigation.setMode('answer');
+		logoElem.addEventListener('click', logoElemAnswerClickListener);
 	} else {
 		navigation.setMode('select');
+		logoElem.addEventListener('click', logoElemStandardClickListener);
 	}
 };
