@@ -212,11 +212,12 @@ body {
     top: 36px;
     bottom: 48px;
     width: 100%;
-    padding: 8px 8px 32px;
 }
 #page-container {
-    font-size: 0;
+    font-size: 0 !important;
     margin: 0 auto;
+    height: 100%;
+    position: relative;
 }
 #answer-page .container {
     display: inline-block;
@@ -242,9 +243,28 @@ body {
 }
 #select-page {
     font-size: 0;
+    padding: 8px;
 }
 #edit-page {
     font-size: 0;
+    position: absolute;
+    overflow: hidden;
+    padding-top: 8px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#edit-page .message-editor {
+    position: absolute;
+    top: 66px;
+    bottom: 0;
+    left: 8px;
+    right: 0;
+}
+#edit-page .container {
+    width: 100%;
+    box-sizing: border-box;
 }
 #page .title {
     font-weight: bold;
@@ -252,10 +272,12 @@ body {
     font-size: 14px;
     padding-top: 18px;
     padding-bottom: 6px;
+    height: 16px;
     text-align: center;
 }
 #post-page {
     text-align: center;
+    padding: 8px;
 }
 .patterns {
     margin-top: 8px;
@@ -417,25 +439,28 @@ body {
     font-size: 11px;
     display: inline-block;
 }
-.message-editor {
-    margin-top: 18px;
-}
 .message-editor .container {
     display: inline-block;
     vertical-align: top;
 }
 .message-wrapper {
     display: inline-block;
+    height: 100%;
 }
 .message-wrapper .message {
     margin-top: 0;
 }
 .tools {
     display: inline-block;
-    width: 430px;
+    width: 440px;
+    padding-right: 15px;
     vertical-align: top;
     margin-left: 10px;
     text-align: left;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    overflow-y: auto;
 }
 .section {
     display: inline-block;
@@ -474,6 +499,7 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
+    margin-bottom: 10px;
     border-collapse: collapse;
 }
 .characters td {
