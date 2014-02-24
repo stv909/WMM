@@ -62,6 +62,7 @@ var messenger = messenger || {};
 		this.messageEditorView = new MessageEditorView();
 		this.messageEditorView.attachTo(this.messageWrapperElem);
 
+		this.characters = null;
 		this.characterViewCollection = [];
 
 		this.messageEditorView.on('change:content', function(event) {
@@ -122,9 +123,12 @@ var messenger = messenger || {};
 		var rawMeta = layerActorElem.dataset.meta;
 		var meta = JSON.parse(rawMeta);
 		console.log(meta);
-		var characterView = new CharacterView();
+		var characterView = new CharacterView(this.characters);
 		characterView.attachTo(this.characterCollectionElem);
 		this.characterViewCollection.push(characterView);
+	};
+	EditPageView.prototype.setCharacters = function(characters) {
+		this.characters = characters;
 	};
 
 	var PostPageView = function() {
@@ -383,16 +387,37 @@ var messenger = messenger || {};
 		});
 	};
 
-	var CharacterView = function() {
+	var CharacterView = function(characters) {
 		CharacterView.super.apply(this);
+		var self = this;
 
 		this.elem = template.create('character-template', { tagName: 'tr' });
-		this.characterElem = this.elem.getElementsByClassName('character')[0];
+		this.actorElem = this.elem.getElementsByClassName('actor')[0];
 		this.replyElem = this.elem.getElementsByClassName('reply')[0];
+
+		characters.forEach(function(character) {
+			self.addActorOption(character, character);
+		});
+
+		var actorElemChangeListener = function(event) {
+			console.log(event.target.value);
+		};
+
+		this.actorElem.addEventListener('change', actorElemChangeListener);
+
+		this.once('dispose', function(event) {
+			this.actorElem.removeEventListener('change', actorElemChangeListener);
+		});
 	};
 	CharacterView.super = View;
 	CharacterView.prototype = Object.create(View.prototype);
 	CharacterView.prototype.constructor = CharacterView;
+	CharacterView.prototype.addActorOption = function(value, text) {
+		var optionElem = document.createElement('option');
+		optionElem.textContent = text;
+		optionElem.value = value;
+		this.actorElem.appendChild(optionElem);
+	};
 
 	var ContactView = function(model) {
 		ContactView.super.apply(this);

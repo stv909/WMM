@@ -157,6 +157,7 @@ window.onload = function() {
 	editPageView.attachTo(pageContainerElem);
 	postPageView.attachTo(pageContainerElem);
 	answerPageView.attachTo(pageContainerElem);
+	editPageView.setCharacters(storage.characters);
 
 	selectPageView.on('select:message', function(event) {
 		var message = event.message;
