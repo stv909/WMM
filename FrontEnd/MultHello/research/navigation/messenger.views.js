@@ -56,9 +56,21 @@ var messenger = messenger || {};
 
 		this.elem = template.create('edit-page-template', { id: 'edit-page' });
 		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
+		this.memosElem = this.elem.getElementsByClassName('memos')[0];
 
 		this.messageEditorView = new MessageEditorView();
 		this.messageEditorView.attachTo(this.messageWrapperElem);
+
+
+		this.messageEditorView.on('change:content', function(event) {
+			self.clear();
+
+			var elem = event.elem;
+			var textElements = elem.getElementsByClassName('layerType_text');
+			for (var i = 0; i < textElements.length; i++) {
+				self.createTextElem(textElements[i]);
+			}
+		});
 
 		this.hide();
 	};
@@ -73,6 +85,19 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype.setMessage = function(message) {
 		this.messageEditorView.setModel(message);
+	};
+	EditPageView.prototype.clear = function() {
+		this.memosElem.innerHTML = '';
+	};
+	EditPageView.prototype.createTextElem = function(layerElem) {
+		var elem = document.createElement('input');
+		elem.className = 'text';
+		elem.type = 'text';
+		elem.value = layerElem.textContent;
+		elem.addEventListener('input', function() {
+			layerElem.textContent = elem.value;
+		});
+		this.memosElem.appendChild(elem);
 	};
 
 	var PostPageView = function() {
@@ -323,6 +348,13 @@ var messenger = messenger || {};
 	MessageEditorView.super = MessageView;
 	MessageEditorView.prototype = Object.create(MessageView.prototype);
 	MessageEditorView.prototype.constructor = MessageEditorView;
+	MessageEditorView.prototype.setModel = function(model) {
+		MessageEditorView.super.prototype.setModel.apply(this, arguments);
+		this.trigger({
+			type: 'change:content',
+			elem: this.cachedFullElem
+		});
+	};
 
 	var ContactView = function(model) {
 		ContactView.super.apply(this);
