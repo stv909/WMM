@@ -119,7 +119,6 @@ var messenger = messenger || {};
 		var self = this;
 
 		this.elem = template.create('answer-page-template', { id: 'answer-page' });
-		//this.containerElem = this.elem.getElementsByClassName('container')[0];
 		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
 		this.contactWrapElem = this.elem.getElementsByClassName('contact-wrapper')[0];
 

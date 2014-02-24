@@ -265,6 +265,7 @@ body {
     margin: 10px;
     box-sizing: border-box;
     border: 1px solid #ddd;
+    border-radius: 2px;
     background-color: #fff;
 }
 .message.normal {
@@ -293,16 +294,18 @@ body {
     display: inline-block;
     padding: 8px;
     cursor: pointer;
+    border-radius: 2px;
 }
 .button:hover {
     border: 1px solid #28f;
+    box-shadow: 0 0 1px #28f;
     color: #28f;
 }
 .button:active {
     color: #fff;
     border: 1px solid #28f;
     background-color: #28f;
-    box-shadow: 0 0 1px #28f;
+    box-shadow: 0 0 2px #28f;
     text-shadow: 0 0 2px #666;
 }
 .load-holder {
@@ -335,6 +338,7 @@ body {
     background-color: white;
     border: 1px solid #28f;
     box-shadow: 0 0 5px #28f;
+    border-radius: 2px;
 }
 #dialog-background .dialog-wrapper .dialog-window .title-holder {
     height: 36px;
@@ -372,6 +376,7 @@ body {
     text-align: center;
     cursor: pointer;
     border: 1px solid #fff;
+    border-radius: 2px;
 }
 .contact.normal {
     cursor: pointer;
@@ -426,6 +431,7 @@ body {
     padding: 8px;
     margin-bottom: 10px;
     text-shadow: 0 0 2px #666;
+    border-radius: 2px;
 }
 .text {
     color: #666;
@@ -435,6 +441,7 @@ body {
     width: 100%;
     margin-bottom: 10px;
     box-sizing: border-box;
+    border-radius: 2px;
 }
 .text:hover {
     color: #333;
@@ -474,9 +481,9 @@ body {
     border: 1px solid #ddd;
     color: #666;
     width: 100%;
-    border-radius: 0;
     background: url('arrow2.png') no-repeat right;
     background-size: 32px 32px;
+    border-radius: 2px;
 }
 .character select:hover {
     color: #333;
