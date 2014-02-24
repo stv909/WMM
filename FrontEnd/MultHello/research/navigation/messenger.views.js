@@ -57,19 +57,18 @@ var messenger = messenger || {};
 		this.elem = template.create('edit-page-template', { id: 'edit-page' });
 		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
 		this.memosElem = this.elem.getElementsByClassName('memos')[0];
+		this.characterCollectionElem = this.elem.getElementsByClassName('character-collection')[0];
 
 		this.messageEditorView = new MessageEditorView();
 		this.messageEditorView.attachTo(this.messageWrapperElem);
 
+		this.characterViewCollection = [];
 
 		this.messageEditorView.on('change:content', function(event) {
-			self.clear();
-
 			var elem = event.elem;
-			var textElements = elem.getElementsByClassName('layerType_text');
-			for (var i = 0; i < textElements.length; i++) {
-				self.createTextElem(textElements[i]);
-			}
+			self.clear();
+			self._parseLayerTypeText(elem);
+			self._parseLayerTypeActor(elem);
 		});
 
 		this.hide();
@@ -87,17 +86,42 @@ var messenger = messenger || {};
 		this.messageEditorView.setModel(message);
 	};
 	EditPageView.prototype.clear = function() {
+		this.characterViewCollection.forEach(function(view) {
+			view.dispose();
+		});
 		this.memosElem.innerHTML = '';
+		this.characterCollectionElem.innerHTML = '';
+		this.characterViewCollection = [];
 	};
-	EditPageView.prototype.createTextElem = function(layerElem) {
+	EditPageView.prototype._parseLayerTypeText = function(rootElem) {
+		var textElements = rootElem.getElementsByClassName('layerType_text');
+		for (var i = 0; i < textElements.length; i++) {
+			this._createTextElem(textElements[i]);
+		}
+	};
+	EditPageView.prototype._createTextElem = function(layerTextElem) {
 		var elem = document.createElement('input');
 		elem.className = 'text';
 		elem.type = 'text';
-		elem.value = layerElem.textContent;
+		elem.value = layerTextElem.textContent;
 		elem.addEventListener('input', function() {
-			layerElem.textContent = elem.value;
+			layerTextElem.textContent = elem.value;
 		});
 		this.memosElem.appendChild(elem);
+	};
+	EditPageView.prototype._parseLayerTypeActor = function(rootElem) {
+		var actorElements = rootElem.getElementsByClassName('layerType_actor');
+		for (var i = 0; i < actorElements.length; i++) {
+			this._createCharacterView(actorElements[i]);
+		}
+	};
+	EditPageView.prototype._createCharacterView = function(layerActorElem) {
+		var rawMeta = layerActorElem.dataset.meta;
+		var meta = JSON.parse(rawMeta);
+		console.log(meta);
+		var characterView = new CharacterView();
+		characterView.attachTo(this.characterCollectionElem);
+		this.characterViewCollection.push(characterView);
 	};
 
 	var PostPageView = function() {
@@ -355,6 +379,17 @@ var messenger = messenger || {};
 			elem: this.cachedFullElem
 		});
 	};
+
+	var CharacterView = function() {
+		CharacterView.super.apply(this);
+
+		this.elem = template.create('character-template', { tagName: 'tr' });
+		this.characterElem = this.elem.getElementsByClassName('character')[0];
+		this.replyElem = this.elem.getElementsByClassName('reply')[0];
+	};
+	CharacterView.super = View;
+	CharacterView.prototype = Object.create(View.prototype);
+	CharacterView.prototype.constructor = CharacterView;
 
 	var ContactView = function(model) {
 		ContactView.super.apply(this);

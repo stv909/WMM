@@ -46,16 +46,6 @@
 			<div class="tools">
 				<div class="section">Надписи</div>
 				<div class="memos">
-					<!--<input class="text" type="text" value="Где-то в глубинке">-->
-					<!--<input class="text" type="text" value="Еще текст">-->
-					<!--<input class="text" type="text" value="Еще немного текста">-->
-					<!--<input class="text" type="text" value="Еще немного текста">-->
-					<!--<input class="text" type="text" value="Еще немного текста">-->
-					<!--<input class="text" type="text" value="Еще немного текста">-->
-					<!--<input class="text" type="text" value="Еще немного текста">-->
-					<!--<input class="text" type="text" value="Еще немного текста">-->
-					<!--<input class="text" type="text" value="Еще немного текста">-->
-					<!--<input class="text" type="text" value="Еще немного текста">-->
 				</div>
 				<table class="characters">
 					<thead>
@@ -68,37 +58,37 @@
 							</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<td class="character">
-								<select class="character">
-									<option>Duke</option>
-									<option>Ostap</option>
-									<option>Joe</option>
-								</select>
-							</td>
-							<td class="reply">
-								<input class="text" type="text">
-								<input class="text" type="text">
-								<input class="text" type="text">
-								<input class="text" type="text">
-								<input class="text" type="text">
-								<input class="text" type="text">
-							</td>
-						</tr>
-						<tr>
-							<td class="character">
-								<select class="character">
-									<option>Ostap</option>
-									<option>Duke</option>
-									<option>Joe</option>
-								</select>
-							</td>
-							<td class="reply">
-								<input class="text" type="text">
-								<input class="text" type="text">
-							</td>
-						</tr>
+					<tbody class="character-collection">
+						<!--<tr>-->
+							<!--<td class="character">-->
+								<!--<select class="character">-->
+									<!--<option>Duke</option>-->
+									<!--<option>Ostap</option>-->
+									<!--<option>Joe</option>-->
+								<!--</select>-->
+							<!--</td>-->
+							<!--<td class="reply">-->
+								<!--<input class="text" type="text">-->
+								<!--<input class="text" type="text">-->
+								<!--<input class="text" type="text">-->
+								<!--<input class="text" type="text">-->
+								<!--<input class="text" type="text">-->
+								<!--<input class="text" type="text">-->
+							<!--</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<td class="character">-->
+								<!--<select class="character">-->
+									<!--<option>Ostap</option>-->
+									<!--<option>Duke</option>-->
+									<!--<option>Joe</option>-->
+								<!--</select>-->
+							<!--</td>-->
+							<!--<td class="reply">-->
+								<!--<input class="text" type="text">-->
+								<!--<input class="text" type="text">-->
+							<!--</td>-->
+						<!--</tr>-->
 					</tbody>
 				</table>
 			</div>
@@ -116,6 +106,16 @@
 	</div>
 	<div class="first-name"></div>
 	<div class="last-name"></div>
+</template>
+<template id="character-template">
+	<td class="character">
+		<select class="character">
+			<option>Duke</option>
+			<option>Ostap</option>
+			<option>Joe</option>
+		</select>
+	</td>
+	<td class="reply"></td>
 </template>
 <div id="menu">
 	<div id="menu-container">
