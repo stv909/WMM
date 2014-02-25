@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template) {
+(function(messenger, abyss, template, async) {
 
 	var View = abyss.View;
 
@@ -84,6 +84,8 @@ var messenger = messenger || {};
 			})
 		});
 		this.updateElem.addEventListener('click', function() {
+			var data = self.getData();
+			var metas = data.map(self.formatMeta);
 			self.updateMessageDialogView.show();
 		});
 
@@ -168,6 +170,7 @@ var messenger = messenger || {};
 		hints.push(commands.substring(endPos, commands.length));
 
 		var characterData = {
+			layer: layerActorElem,
 			layerId: layerId,
 			actors: meta.actors,
 			phrases: phrases,
@@ -221,6 +224,38 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype.setCharacters = function(characters) {
 		this.characters = characters;
+	};
+	EditPageView.prototype.getData = function() {
+		var data = [];
+		this.characterViewCollection.forEach(function(view) {
+			data.push(view.getData());
+		});
+		return data;
+	};
+	EditPageView.prototype.formatMeta = function(dataItem) {
+		var commandChunks = [];
+//		commandChunks.push('<?xml version="1.0"?><commands version="1.0.0"><');
+//		commandChunks.push(dataItem.type);
+//		commandChunks.push('>');
+		var replies = dataItem.replies;
+		replies.forEach(function(reply) {
+			commandChunks.push(reply.hint);
+			commandChunks.push(reply.phrase);
+		});
+		commandChunks.push(dataItem.const);
+//		commandChunks.push('</');
+//		commandChunks.push(dataItem.type);
+//		commandChunks.push('></commands>');
+
+		var meta = {
+			actors: dataItem.actors,
+			commands: commandChunks.join(''),
+			type: dataItem.type,
+			url: dataItem.layer.src
+		};
+
+		console.log(JSON.stringify(meta, null, 4));
+		return meta;
 	};
 
 	var PostPageView = function() {
@@ -515,8 +550,12 @@ var messenger = messenger || {};
 		var self = this;
 
 		this.elem = template.create('character-template', { tagName: 'tr' });
+		this.elem.id = characterData.layerId;
+		this.elem.dataset.const = characterData.hints[characterData.hints.length - 1];
+		this.elem.dataset.type = characterData.type;
 		this.actorWrapperElem = this.elem.getElementsByClassName('actor-wrapper')[0];
 		this.replyWrapperElem = this.elem.getElementsByClassName('reply-wrapper')[0];
+		this.layer = characterData.layer;
 
 		this.views = [];
 
@@ -573,6 +612,20 @@ var messenger = messenger || {};
 		this.views.forEach(function(view) {
 			view.validate();
 		});
+	};
+	CharacterView.prototype.getData = function() {
+		var data = {
+			layer: this.layer,
+			layerId: this.elem.id,
+			const: this.elem.dataset.const,
+			type: this.elem.dataset.type,
+			actors: [this.actorSelectView.getData()],
+			replies: []
+		};
+		for (var i = 1; i < this.views.length; i++) {
+			data.replies.push(this.views[i].getData());
+		}
+		return data;
 	};
 
 	var ActorSelectView = function(characters, characterData) {
@@ -655,7 +708,7 @@ var messenger = messenger || {};
 	ActorSelectView.prototype.getData = function() {
 		return {
 			name: this.elem.dataset.name,
-			character: this.select.value
+			character: this.elem.value
 		};
 	};
 
@@ -796,4 +849,4 @@ var messenger = messenger || {};
 		ContactView: ContactView
 	};
 
-})(messenger, abyss, template);
+})(messenger, abyss, template, async);
