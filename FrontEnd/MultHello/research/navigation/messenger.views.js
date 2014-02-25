@@ -434,30 +434,60 @@ var messenger = messenger || {};
 		this.actorWrapperElem = this.elem.getElementsByClassName('actor-wrapper')[0];
 		this.replyWrapperElem = this.elem.getElementsByClassName('reply-wrapper')[0];
 
+		this.views = [];
+
+		var validChangeListener = function() {
+			if (self.isValid()) {
+				self.resetElem.classList.add('hidden');
+				self.updateElem.classList.add('hidden');
+			} else {
+				self.resetElem.classList.remove('hidden');
+				self.updateElem.classList.remove('hidden');
+			}
+		};
+		var resetElemClickListener = function() {
+			self.views.forEach(function(view) {
+				view.reset();
+			});
+		};
+
 		this.actorSelectView = new ActorSelectView(characters, 'duke');
 		this.actorSelectView.attachTo(this.actorWrapperElem);
-		this.actorSelectView.on('invalidate', function(event) {
-			self.resetElem.classList.remove('hidden');
-			self.updateElem.classList.remove('hidden');
-			console.log(event);
-		});
-		this.actorSelectView.on('validate', function(event) {
-			self.resetElem.classList.add('hidden');
-			self.updateElem.classList.add('hidden');
-			console.log(event);
-		});
+		this.views.push(this.actorSelectView);
+		this.actorSelectView.on('invalidate', validChangeListener);
+		this.actorSelectView.on('validate', validChangeListener);
+
 		for (var i = 0; i < 5; i++) {
 			var replyView = new ReplyView('тестовый текст');
 			replyView.attachTo(this.replyWrapperElem);
+			replyView.on('invalidate', validChangeListener);
+			replyView.on('validate', validChangeListener);
+			self.views.push(replyView);
 		}
 
+		this.resetElem.addEventListener('click', resetElemClickListener);
+
 		this.once('dispose', function(event) {
-			self.actorSelectView.dispose();
+			this.resetElem.removeEventListener('click', resetElemClickListener);
+			self.views.forEach(function(view) {
+				view.dispose();
+			});
+			self.views = [];
 		});
 	};
 	CharacterView.super = View;
 	CharacterView.prototype = Object.create(View.prototype);
 	CharacterView.prototype.constructor = CharacterView;
+	CharacterView.prototype.isValid = function() {
+		var valid = true;
+		for (var i = 0; i < this.views.length; i++) {
+			valid = this.views[i].isValid();
+			if (!valid) {
+				break;
+			}
+		}
+		return valid;
+	};
 
 	var ActorSelectView = function(characters, selectedCharacter) {
 		ActorSelectView.super.apply(this);
@@ -524,6 +554,9 @@ var messenger = messenger || {};
 			});
 		}
 	};
+	ActorSelectView.prototype.isValid = function() {
+		return this.valid;
+	};
 
 	var ReplyView = function(text) {
 		ReplyView.super.apply(this);
@@ -584,6 +617,9 @@ var messenger = messenger || {};
 				value: this.elem.value
 			});
 		}
+	};
+	ReplyView.prototype.isValid = function() {
+		return this.valid;
 	};
 
 	var ContactView = function(model) {
