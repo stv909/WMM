@@ -55,12 +55,14 @@ var messenger = messenger || {};
 		var self = this;
 
 		this.elem = template.create('edit-page-template', { id: 'edit-page' });
+		this.resetElem = this.elem.getElementsByClassName('reset')[0];
+		this.updateElem = this.elem.getElementsByClassName('update')[0];
 		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
 		this.memosElem = this.elem.getElementsByClassName('memos')[0];
 		this.characterCollectionElem = this.elem.getElementsByClassName('character-collection')[0];
 
 		this.messageEditorView = new MessageEditorView();
-		this.messageEditorView.attachTo(this.messageWrapperElem);
+		this.messageEditorView.attachFirstTo(this.messageWrapperElem);
 
 		this.characters = null;
 		this.characterViewCollection = [];
@@ -70,6 +72,11 @@ var messenger = messenger || {};
 			self.clear();
 			self._parseLayerTypeText(elem);
 			self._parseLayerTypeActor(elem);
+		});
+		this.resetElem.addEventListener('click', function() {
+			self.characterViewCollection.forEach(function(view) {
+				view.reset();
+			})
 		});
 
 		this.hide();
@@ -122,6 +129,7 @@ var messenger = messenger || {};
 	EditPageView.prototype._createCharacterView = function(layerActorElem) {
 		var rawMeta = layerActorElem.dataset.meta;
 		var meta = JSON.parse(rawMeta);
+		var self = this;
 		console.log(meta);
 
 		var layerId = layerActorElem.className.split(' ')[0];
@@ -162,7 +170,45 @@ var messenger = messenger || {};
 
 		var characterView = new CharacterView(this.characters);
 		characterView.attachTo(this.characterCollectionElem);
+		characterView.on('validate', function() {
+			if (self.isValid()) {
+				self.updateElem.classList.add('hidden');
+				self.resetElem.classList.add('hidden');
+			} else {
+				self.updateElem.classList.remove('hidden');
+				self.resetElem.classList.remove('hidden');
+			}
+		});
+		characterView.on('invalidate', function() {
+			if (self.isValid()) {
+				self.updateElem.classList.add('hidden');
+				self.resetElem.classList.add('hidden');
+			} else {
+				self.updateElem.classList.remove('hidden');
+				self.resetElem.classList.remove('hidden');
+			}
+		});
 		this.characterViewCollection.push(characterView);
+	};
+	EditPageView.prototype.isValid = function() {
+		var valid = true;
+		for (var i = 0; i < this.characterViewCollection.length; i++) {
+			valid = this.characterViewCollection[i].isValid();
+			if (!valid) {
+				break;
+			}
+		}
+		return valid;
+	};
+	EditPageView.prototype.validate = function() {
+		this.characterViewCollection.forEach(function(view) {
+			view.validate();
+		});
+	};
+	EditPageView.prototype.reset = function() {
+		this.characterViewCollection.forEach(function(view) {
+			view.reset();
+		})
 	};
 	EditPageView.prototype.setCharacters = function(characters) {
 		this.characters = characters;
@@ -429,8 +475,6 @@ var messenger = messenger || {};
 		var self = this;
 
 		this.elem = template.create('character-template', { tagName: 'tr' });
-		this.resetElem = this.elem.getElementsByClassName('reset')[0];
-		this.updateElem = this.elem.getElementsByClassName('update')[0];
 		this.actorWrapperElem = this.elem.getElementsByClassName('actor-wrapper')[0];
 		this.replyWrapperElem = this.elem.getElementsByClassName('reply-wrapper')[0];
 
@@ -438,17 +482,10 @@ var messenger = messenger || {};
 
 		var validChangeListener = function() {
 			if (self.isValid()) {
-				self.resetElem.classList.add('hidden');
-				self.updateElem.classList.add('hidden');
+				self.trigger('validate');
 			} else {
-				self.resetElem.classList.remove('hidden');
-				self.updateElem.classList.remove('hidden');
+				self.trigger('invalidate');
 			}
-		};
-		var resetElemClickListener = function() {
-			self.views.forEach(function(view) {
-				view.reset();
-			});
 		};
 
 		this.actorSelectView = new ActorSelectView(characters, 'duke');
@@ -465,10 +502,7 @@ var messenger = messenger || {};
 			self.views.push(replyView);
 		}
 
-		this.resetElem.addEventListener('click', resetElemClickListener);
-
 		this.once('dispose', function(event) {
-			this.resetElem.removeEventListener('click', resetElemClickListener);
 			self.views.forEach(function(view) {
 				view.dispose();
 			});
@@ -487,6 +521,16 @@ var messenger = messenger || {};
 			}
 		}
 		return valid;
+	};
+	CharacterView.prototype.reset = function() {
+		this.views.forEach(function(view) {
+			view.reset();
+		});
+	};
+	CharacterView.prototype.validate = function() {
+		this.views.forEach(function(view) {
+			view.validate();
+		});
 	};
 
 	var ActorSelectView = function(characters, selectedCharacter) {

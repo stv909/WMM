@@ -539,7 +539,9 @@ body {
     box-shadow: 0 0 2px #28f;
 }
 .controls {
-    margin-top: 0;
+    margin-top: 5px;
+    width: 100%;
+    text-align: center;
 }
 .controls .button {
     margin-right: 10px;

@@ -90,6 +90,12 @@ var abyss = abyss || {};
 			this.parentElem.appendChild(this.elem);
 		}
 	};
+	View.prototype.attachFirstTo = function(parentElem) {
+		if (!this.parentElem) {
+			this.parentElem = parentElem;
+			this.parentElem.insertBefore(this.elem, this.parentElem.childNodes[0]);
+		}
+	};
 	View.prototype.detach = function() {
 		if (this.parentElem) {
 			this.parentElem.removeChild(this.elem);
