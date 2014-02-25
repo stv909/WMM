@@ -106,6 +106,8 @@ var messenger = messenger || {};
 			view.dispose();
 		});
 		this.memosElem.innerHTML = '';
+		this.resetElem.classList.add('hidden');
+		this.updateElem.classList.add('hidden');
 		this.characterCollectionElem.innerHTML = '';
 		this.characterViewCollection = [];
 	};
@@ -138,7 +140,6 @@ var messenger = messenger || {};
 		var rawMeta = layerActorElem.dataset.meta;
 		var meta = JSON.parse(rawMeta);
 		var self = this;
-		console.log(meta);
 
 		var layerId = layerActorElem.className.split(' ')[0];
 		var phrases = [];
@@ -176,7 +177,7 @@ var messenger = messenger || {};
 
 		console.log(characterData);
 
-		var characterView = new CharacterView(this.characters);
+		var characterView = new CharacterView(this.characters, characterData);
 		characterView.attachTo(this.characterCollectionElem);
 		characterView.on('validate', function() {
 			if (self.isValid()) {
@@ -509,7 +510,7 @@ var messenger = messenger || {};
 		});
 	};
 
-	var CharacterView = function(characters) {
+	var CharacterView = function(characters, characterData) {
 		CharacterView.super.apply(this);
 		var self = this;
 
@@ -527,18 +528,20 @@ var messenger = messenger || {};
 			}
 		};
 
-		this.actorSelectView = new ActorSelectView(characters, 'duke');
+		this.actorSelectView = new ActorSelectView(characters, characterData);
 		this.actorSelectView.attachTo(this.actorWrapperElem);
 		this.views.push(this.actorSelectView);
 		this.actorSelectView.on('invalidate', validChangeListener);
 		this.actorSelectView.on('validate', validChangeListener);
 
-		for (var i = 0; i < 5; i++) {
-			var replyView = new ReplyView('тестовый текст');
+		var phrases = characterData.phrases;
+		var hints = characterData.hints;
+		for (var i = 0; i < phrases.length; i++) {
+			var replyView = new ReplyView(phrases[i], hints[i]);
 			replyView.attachTo(this.replyWrapperElem);
 			replyView.on('invalidate', validChangeListener);
 			replyView.on('validate', validChangeListener);
-			self.views.push(replyView);
+			this.views.push(replyView);
 		}
 
 		this.once('dispose', function(event) {
@@ -572,14 +575,17 @@ var messenger = messenger || {};
 		});
 	};
 
-	var ActorSelectView = function(characters, selectedCharacter) {
+	var ActorSelectView = function(characters, characterData) {
 		ActorSelectView.super.apply(this);
 		var self = this;
 
+		var actor = characterData.actors[0];
+
 		this.elem = document.createElement('select');
 		this.elem.classList.add('actor');
+		this.elem.setAttribute('data-name', actor.name)
 		this.valid = true;
-		this.lastValue = selectedCharacter;
+		this.lastValue = actor.character;
 
 		characters.forEach(function(character) {
 			var option = document.createElement('option');
@@ -646,18 +652,25 @@ var messenger = messenger || {};
 	ActorSelectView.prototype.isValid = function() {
 		return this.valid;
 	};
+	ActorSelectView.prototype.getData = function() {
+		return {
+			name: this.elem.dataset.name,
+			character: this.select.value
+		};
+	};
 
-	var ReplyView = function(text) {
+	var ReplyView = function(phrase, hint) {
 		ReplyView.super.apply(this);
 		var self = this;
 
 		this.elem = document.createElement('input');
 		this.elem.type = 'text';
 		this.elem.classList.add('text');
-		this.elem.value = text;
+		this.elem.dataset.const = hint;
+		this.elem.value = phrase;
 
 		this.valid = true;
-		this.lastValue = text;
+		this.lastValue = phrase;
 
 		var elemInputListener = function(event) {
 			self.invalidate();
@@ -715,6 +728,12 @@ var messenger = messenger || {};
 	};
 	ReplyView.prototype.isValid = function() {
 		return this.valid;
+	};
+	ReplyView.prototype.getData = function() {
+		return {
+			hint: this.elem.dataset.const,
+			phrase: this.elem.value
+		};
 	};
 
 	var ContactView = function(model) {
