@@ -81,22 +81,31 @@ var messenger = messenger || {};
 		this.resetElem.addEventListener('click', function() {
 			self.characterViewCollection.forEach(function(view) {
 				view.reset();
-			})
+			});
 		});
 		this.updateElem.addEventListener('click', function() {
 			var data = self.getData();
 			var metas = data.map(self.formatMeta);
-			metas.forEach(function(meta) {
-				self.requestAnimationAsync(meta).then(function(response) {
+			var requests = metas.map(function(meta) {
+				return Promise.all([meta, self.requestAnimationAsync(meta)]);
+			});
+			Promise.all(requests).then(function(values) {
+				values.forEach(function(value) {
+					var meta = value[0];
+					var response = value[1];
 					var data = JSON.parse(response);
 					var layer = meta.layer;
 					delete meta.layer;
 					layer.src = 'https://www.bazelevscontent.net:8583/' + data.output.images[0];
 					meta.url = layer.src;
-					delete meta.layer;
 					layer.dataset.meta= JSON.stringify(meta);
-//					layer.dataset.meta = metaString;
 				});
+				self.characterViewCollection.forEach(function(view) {
+					view.validate();
+				});
+				self.updateMessageDialogView.setMode('complete');
+			}).catch(function() {
+				self.updateMessageDialogView.setMode('fail');
 			});
 			self.updateMessageDialogView.show();
 		});
@@ -240,7 +249,9 @@ var messenger = messenger || {};
 	EditPageView.prototype.getData = function() {
 		var data = [];
 		this.characterViewCollection.forEach(function(view) {
-			data.push(view.getData());
+			if (!view.isValid()) {
+				data.push(view.getData());
+			}
 		});
 		return data;
 	};
@@ -273,6 +284,8 @@ var messenger = messenger || {};
 		commandChunks.push('</');
 		commandChunks.push(meta.type);
 		commandChunks.push('></commands>');
+
+		meta.layer.src = '';
 
 		var requestData = {
 			input: {
@@ -456,6 +469,7 @@ var messenger = messenger || {};
 
 		this.elem = document.getElementById('dialog-background');
 		this.dialogWindowElem = document.getElementById('update-message-dialog');
+		this.statusElem = this.dialogWindowElem.getElementsByClassName('status')[0];
 		this.readyElem = this.dialogWindowElem.getElementsByClassName('ready')[0];
 
 		var readyElemClickListener = function(event) {
@@ -475,10 +489,27 @@ var messenger = messenger || {};
 	UpdateMessageDialogView.prototype.show = function() {
 		this.dialogWindowElem.classList.remove('hidden');
 		this.elem.classList.remove('hidden');
+		this.setMode('wait');
 	};
 	UpdateMessageDialogView.prototype.hide = function() {
 		this.dialogWindowElem.classList.add('hidden');
 		this.elem.classList.add('hidden');
+	};
+	UpdateMessageDialogView.prototype.setMode = function(mode) {
+		switch (mode) {
+			case 'wait':
+				this.statusElem.textContent = 'Идет обновление персонажей...';
+				this.readyElem.classList.add('hidden');
+				break;
+			case 'complete':
+				this.statusElem.textContent = 'Персонажи обновлены!';
+				this.readyElem.classList.remove('hidden');
+				break;
+			case 'fail':
+				this.statusElem.textContent = 'Ошибка обновления!';
+				this.readyElem.classList.remove('hidden');
+				break;
+		}
 	};
 
 	var MessageView = function(model) {
