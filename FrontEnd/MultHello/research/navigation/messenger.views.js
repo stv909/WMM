@@ -446,6 +446,10 @@ var messenger = messenger || {};
 			self.updateElem.classList.add('hidden');
 			console.log(event);
 		});
+		for (var i = 0; i < 5; i++) {
+			var replyView = new ReplyView('тестовый текст');
+			replyView.attachTo(this.replyWrapperElem);
+		}
 
 		this.once('dispose', function(event) {
 			self.actorSelectView.dispose();
