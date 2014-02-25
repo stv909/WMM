@@ -59,36 +59,6 @@
 						</tr>
 					</thead>
 					<tbody class="character-collection">
-						<!--<tr>-->
-							<!--<td class="character">-->
-								<!--<select class="character">-->
-									<!--<option>Duke</option>-->
-									<!--<option>Ostap</option>-->
-									<!--<option>Joe</option>-->
-								<!--</select>-->
-							<!--</td>-->
-							<!--<td class="reply">-->
-								<!--<input class="text" type="text">-->
-								<!--<input class="text" type="text">-->
-								<!--<input class="text" type="text">-->
-								<!--<input class="text" type="text">-->
-								<!--<input class="text" type="text">-->
-								<!--<input class="text" type="text">-->
-							<!--</td>-->
-						<!--</tr>-->
-						<!--<tr>-->
-							<!--<td class="character">-->
-								<!--<select class="character">-->
-									<!--<option>Ostap</option>-->
-									<!--<option>Duke</option>-->
-									<!--<option>Joe</option>-->
-								<!--</select>-->
-							<!--</td>-->
-							<!--<td class="reply">-->
-								<!--<input class="text" type="text">-->
-								<!--<input class="text" type="text">-->
-							<!--</td>-->
-						<!--</tr>-->
 					</tbody>
 				</table>
 			</div>
@@ -108,14 +78,18 @@
 	<div class="last-name"></div>
 </template>
 <template id="character-template">
-	<td class="character">
-		<select class="actor">
-		</select>
+	<td class="actor-wrapper">
 	</td>
-	<td class="reply">
-		<input class="text" type="text">
-		<input class="text" type="text">
-		<input class="text" type="text">
+	<td>
+		<div class="reply-wrapper">
+			<input class="text" type="text">
+			<input class="text" type="text">
+			<input class="text" type="text">
+		</div>
+		<div class="controls">
+			<div class="button hidden update">Обновить</div>
+			<div class="button hidden reset">Отменить</div>
+		</div>
 	</td>
 </template>
 <div id="menu">

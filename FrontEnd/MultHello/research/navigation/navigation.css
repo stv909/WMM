@@ -317,6 +317,7 @@ body {
     padding: 8px;
     cursor: pointer;
     border-radius: 2px;
+    font-size: 12px;
 }
 .button:hover {
     border: 1px solid #28f;
@@ -474,12 +475,13 @@ body {
     border-radius: 2px;
 }
 .text {
+    margin-top: 0;
     color: #666;
     font-size: 12px;
     padding: 8px;
     border: 1px solid #ddd;
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     box-sizing: border-box;
     border-radius: 2px;
 }
@@ -507,13 +509,14 @@ body {
 .characters tr {
     vertical-align: top;
 }
-.characters .character {
+.characters .actor-wrapper {
     width: 100px;
     padding-right: 8px;
 }
-.character select {
+.actor-wrapper select {
     display: block;
     margin-bottom: 10px;
+    margin-top: 0;
     padding: 8px;
     font-size: 12px;
     margin-right: 10px;
@@ -526,12 +529,18 @@ body {
     background-size: 32px 32px;
     border-radius: 2px;
 }
-.character select:hover {
+.actor-wrapper select:hover {
     color: #333;
     border: 1px solid #888;
 }
-.character select:focus {
+.actor-wrapper select:focus {
     color: #333;
     border: 1px solid #28f;
     box-shadow: 0 0 2px #28f;
+}
+.controls {
+    margin-top: 0;
+}
+.controls .button {
+    margin-right: 10px;
 }

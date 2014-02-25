@@ -157,7 +157,7 @@ var messenger = messenger || {};
 			hints: hints,
 			type: meta.type
 		};
-		
+
 		console.log(characterData);
 
 		var characterView = new CharacterView(this.characters);
@@ -429,31 +429,157 @@ var messenger = messenger || {};
 		var self = this;
 
 		this.elem = template.create('character-template', { tagName: 'tr' });
-		this.actorElem = this.elem.getElementsByClassName('actor')[0];
-		this.replyElem = this.elem.getElementsByClassName('reply')[0];
+		this.resetElem = this.elem.getElementsByClassName('reset')[0];
+		this.updateElem = this.elem.getElementsByClassName('update')[0];
+		this.actorWrapperElem = this.elem.getElementsByClassName('actor-wrapper')[0];
+		this.replyWrapperElem = this.elem.getElementsByClassName('reply-wrapper')[0];
 
-		characters.forEach(function(character) {
-			self.addActorOption(character, character);
+		this.actorSelectView = new ActorSelectView(characters, 'duke');
+		this.actorSelectView.attachTo(this.actorWrapperElem);
+		this.actorSelectView.on('invalidate', function(event) {
+			self.resetElem.classList.remove('hidden');
+			self.updateElem.classList.remove('hidden');
+			console.log(event);
+		});
+		this.actorSelectView.on('validate', function(event) {
+			self.resetElem.classList.add('hidden');
+			self.updateElem.classList.add('hidden');
+			console.log(event);
 		});
 
-		var actorElemChangeListener = function(event) {
-			console.log(event.target.value);
-		};
-
-		this.actorElem.addEventListener('change', actorElemChangeListener);
-
 		this.once('dispose', function(event) {
-			this.actorElem.removeEventListener('change', actorElemChangeListener);
+			self.actorSelectView.dispose();
 		});
 	};
 	CharacterView.super = View;
 	CharacterView.prototype = Object.create(View.prototype);
 	CharacterView.prototype.constructor = CharacterView;
-	CharacterView.prototype.addActorOption = function(value, text) {
-		var optionElem = document.createElement('option');
-		optionElem.textContent = text;
-		optionElem.value = value;
-		this.actorElem.appendChild(optionElem);
+
+	var ActorSelectView = function(characters, selectedCharacter) {
+		ActorSelectView.super.apply(this);
+		var self = this;
+
+		this.elem = document.createElement('select');
+		this.elem.classList.add('actor');
+		this.valid = true;
+		this.lastValue = selectedCharacter;
+
+		characters.forEach(function(character) {
+			var option = document.createElement('option');
+			option.value = character;
+			option.textContent = character;
+			self.elem.appendChild(option);
+		});
+
+		var elemChangeListener = function(event) {
+			self.invalidate();
+		};
+
+		this.elem.value = this.lastValue;
+		this.elem.addEventListener('change', elemChangeListener);
+
+		this.once('dispose', function(event) {
+			this.elem.removeEventListener('change', elemChangeListener);
+		});
+	};
+	ActorSelectView.super = View;
+	ActorSelectView.prototype = Object.create(View.prototype);
+	ActorSelectView.prototype.constructor = ActorSelectView;
+	ActorSelectView.prototype.validate = function() {
+		if (!this.valid) {
+			this.valid = true;
+			this.lastValue = this.elem.value;
+			this.trigger({
+				type: 'validate',
+				value: this.lastValue
+			})
+		}
+	};
+	ActorSelectView.prototype.reset = function() {
+		if (!this.valid) {
+			this.valid = true;
+			this.elem.value = this.lastValue;
+			this.trigger({
+				type: 'validate',
+				value: this.lastValue
+			});
+		}
+	};
+	ActorSelectView.prototype.invalidate = function() {
+		if (this.elem.value === this.lastValue) {
+			this.valid = true;
+			this.trigger({
+				type: 'validate',
+				value: this.elem.value
+			});
+		} else {
+			this.valid = false;
+			this.trigger({
+				type: 'invalidate',
+				value: this.elem.value
+			});
+		}
+	};
+
+	var ReplyView = function(text) {
+		ReplyView.super.apply(this);
+		var self = this;
+
+		this.elem = document.createElement('input');
+		this.elem.type = 'text';
+		this.elem.classList.add('text');
+		this.elem.value = text;
+
+		this.valid = true;
+		this.lastValue = text;
+
+		var elemInputListener = function(event) {
+			self.invalidate();
+		};
+
+		this.elem.addEventListener('input', elemInputListener);
+
+		this.once('dispose', function(event) {
+			this.elem.removeEventListener('input', elemInputListener);
+		});
+	};
+	ReplyView.super = View;
+	ReplyView.prototype = Object.create(View.prototype);
+	ReplyView.prototype.constructor = ReplyView;
+	ReplyView.prototype.validate = function() {
+		if (!this.valid) {
+			this.valid = true;
+			this.lastValue = this.elem.value;
+			this.trigger({
+				type: 'validate',
+				value: this.lastValue
+			});
+		}
+	};
+	ReplyView.prototype.reset = function() {
+		if (!this.valid) {
+			this.valid = true;
+			this.elem.value = this.lastValue;
+			this.trigger({
+				type: 'validate',
+				value: this.lastValue
+			});
+		}
+	};
+	ReplyView.prototype.invalidate = function() {
+		if (this.elem.value === this.lastValue) {
+			this.valid = true;
+			this.trigger({
+				type: 'validate',
+				value: this.elem.value
+			});
+		} else {
+			this.valid = false;
+			this.trigger({
+				type: 'invalidate',
+				value: this.elem.value
+			});
+		}
 	};
 
 	var ContactView = function(model) {
