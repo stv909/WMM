@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, async) {
+(function(messenger, abyss, template, async, uuid) {
 
 	var View = abyss.View;
 
@@ -86,6 +86,18 @@ var messenger = messenger || {};
 		this.updateElem.addEventListener('click', function() {
 			var data = self.getData();
 			var metas = data.map(self.formatMeta);
+			metas.forEach(function(meta) {
+				self.requestAnimationAsync(meta).then(function(response) {
+					var data = JSON.parse(response);
+					var layer = meta.layer;
+					delete meta.layer;
+					layer.src = 'https://www.bazelevscontent.net:8583/' + data.output.images[0];
+					meta.url = layer.src;
+					delete meta.layer;
+					layer.dataset.meta= JSON.stringify(meta);
+//					layer.dataset.meta = metaString;
+				});
+			});
 			self.updateMessageDialogView.show();
 		});
 
@@ -234,28 +246,55 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype.formatMeta = function(dataItem) {
 		var commandChunks = [];
-//		commandChunks.push('<?xml version="1.0"?><commands version="1.0.0"><');
-//		commandChunks.push(dataItem.type);
-//		commandChunks.push('>');
 		var replies = dataItem.replies;
 		replies.forEach(function(reply) {
 			commandChunks.push(reply.hint);
 			commandChunks.push(reply.phrase);
 		});
 		commandChunks.push(dataItem.const);
-//		commandChunks.push('</');
-//		commandChunks.push(dataItem.type);
-//		commandChunks.push('></commands>');
 
 		var meta = {
+			layer: dataItem.layer,
 			actors: dataItem.actors,
 			commands: commandChunks.join(''),
 			type: dataItem.type,
 			url: dataItem.layer.src
 		};
 
-		console.log(JSON.stringify(meta, null, 4));
 		return meta;
+	};
+	EditPageView.prototype.requestAnimationAsync = function(meta) {
+		var commandChunks = [];
+
+		commandChunks.push('<?xml version="1.0"?><commands version="1.0.0"><');
+		commandChunks.push(meta.type);
+		commandChunks.push('>');
+		commandChunks.push(meta.commands);
+		commandChunks.push('</');
+		commandChunks.push(meta.type);
+		commandChunks.push('></commands>');
+
+		var requestData = {
+			input: {
+				id: uuid.v4(),
+				destination: 'separate',
+				commands: commandChunks.join(''),
+				actors: meta.actors
+			}
+		};
+
+		var url = 'https://www.bazelevscontent.net:8793';
+		var data = 'type=build&data=' + encodeURIComponent(JSON.stringify(requestData));
+
+		return async.requestAsync({
+			url: url,
+			data: data,
+			method: 'POST',
+			headers: [{
+				key: 'Content-Type',
+				value: 'text/html'
+			}]
+		});
 	};
 
 	var PostPageView = function() {
@@ -849,4 +888,4 @@ var messenger = messenger || {};
 		ContactView: ContactView
 	};
 
-})(messenger, abyss, template, async);
+})(messenger, abyss, template, async, uuid);
