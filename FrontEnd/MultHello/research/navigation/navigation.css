@@ -395,6 +395,15 @@ body {
     margin-left: 3px;
     margin-right: 3px;
 }
+#update-message-dialog {
+    font-size: 12px;
+    width: 360px;
+    height: 220px;
+}
+#update-message-dialog .content {
+    height: 140px;
+    line-height: 140px;
+}
 .contacts {
     text-align: left;
     margin-left: 18px;

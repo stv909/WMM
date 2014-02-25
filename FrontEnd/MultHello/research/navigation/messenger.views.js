@@ -64,6 +64,11 @@ var messenger = messenger || {};
 		this.messageEditorView = new MessageEditorView();
 		this.messageEditorView.attachFirstTo(this.messageWrapperElem);
 
+		this.updateMessageDialogView = new UpdateMessageDialogView();
+		this.updateMessageDialogView.on('click:close', function() {
+
+		});
+
 		this.characters = null;
 		this.characterViewCollection = [];
 
@@ -77,6 +82,9 @@ var messenger = messenger || {};
 			self.characterViewCollection.forEach(function(view) {
 				view.reset();
 			})
+		});
+		this.updateElem.addEventListener('click', function() {
+			self.updateMessageDialogView.show();
 		});
 
 		this.hide();
@@ -363,6 +371,37 @@ var messenger = messenger || {};
 		this.elem.classList.remove('hidden');
 	};
 	PostDialogView.prototype.hide = function() {
+		this.dialogWindowElem.classList.add('hidden');
+		this.elem.classList.add('hidden');
+	};
+
+	var UpdateMessageDialogView = function() {
+		UpdateMessageDialogView.super.apply(this);
+		var self = this;
+
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('update-message-dialog');
+		this.readyElem = this.dialogWindowElem.getElementsByClassName('ready')[0];
+
+		var readyElemClickListener = function(event) {
+			self.hide();
+			self.trigger('click:close');
+		};
+
+		this.readyElem.addEventListener('click', readyElemClickListener);
+
+		this.once('dispose', function() {
+			self.readyElem.removeEventListener('click', readyElemClickListener);
+		});
+	};
+	UpdateMessageDialogView.super = View;
+	UpdateMessageDialogView.prototype = Object.create(View.prototype);
+	UpdateMessageDialogView.prototype.constructor = UpdateMessageDialogView;
+	UpdateMessageDialogView.prototype.show = function() {
+		this.dialogWindowElem.classList.remove('hidden');
+		this.elem.classList.remove('hidden');
+	};
+	UpdateMessageDialogView.prototype.hide = function() {
 		this.dialogWindowElem.classList.add('hidden');
 		this.elem.classList.add('hidden');
 	};
