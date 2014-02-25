@@ -546,3 +546,6 @@ body {
 .controls .button {
     margin-right: 10px;
 }
+.invalid {
+    background-color: #ffffdd !important;
+}

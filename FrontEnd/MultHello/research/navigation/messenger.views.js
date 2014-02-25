@@ -556,6 +556,12 @@ var messenger = messenger || {};
 		this.elem.value = this.lastValue;
 		this.elem.addEventListener('change', elemChangeListener);
 
+		this.on('validate', function() {
+			this.elem.classList.remove('invalid');
+		});
+		this.on('invalidate', function() {
+			this.elem.classList.add('invalid');
+		});
 		this.once('dispose', function(event) {
 			this.elem.removeEventListener('change', elemChangeListener);
 		});
@@ -620,6 +626,12 @@ var messenger = messenger || {};
 
 		this.elem.addEventListener('input', elemInputListener);
 
+		this.on('validate', function() {
+			this.elem.classList.remove('invalid');
+		});
+		this.on('invalidate', function() {
+			this.elem.classList.add('invalid');
+		});
 		this.once('dispose', function(event) {
 			this.elem.removeEventListener('input', elemInputListener);
 		});
