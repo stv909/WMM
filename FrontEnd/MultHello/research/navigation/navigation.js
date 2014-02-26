@@ -224,8 +224,31 @@ window.onload = function() {
 			self.navigation.setMode(self.navigation.getNextMode());
 		};
 		this.nextElemPostClickListener = function(event) {
-			console.log(self.storage.selectedContact);
 			self.postDialogView.show();
+
+			var account = self.storage.owner;
+			var companion = self.storage.selectedContact;
+			var content = self.editPageView.getMessageContent();
+
+			var message = MessageFactory.create(
+				uuid.v4(),
+				content,
+				account.get('id'),
+				companion.get('id')
+			);
+
+			var chatClientNowListener = function(response) {
+				message.timestamp = response.now;
+				self.chatClient.once('message:send', chatClientSendListener);
+				self.chatClient.sendMessage(message);
+			};
+			var chatClientSendListener = function(response) {
+				
+			};
+
+			self.chatClient.once('message:now', chatClientNowListener);
+			self.chatClient.now();
+
 		};
 		this.nextElemAnswerClickListener = function(event) {
 			self.navigation.setMode('select');

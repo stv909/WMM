@@ -124,6 +124,9 @@ var messenger = messenger || {};
 	EditPageView.prototype.setMessage = function(message) {
 		this.messageEditorView.setModel(message);
 	};
+	EditPageView.prototype.getMessageContent = function() {
+		return this.messageEditorView.cachedFullElem.innerHTML;
+	};
 	EditPageView.prototype.clear = function() {
 		this.characterViewCollection.forEach(function(view) {
 			view.dispose();
