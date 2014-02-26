@@ -291,7 +291,6 @@ window.onload = function() {
 		});
 		
 		this.postPageView.on('select:contact', function(event) {
-			console.log(event);
 			self.storage.selectedContact = event.contact;
 		});
 	};
@@ -416,6 +415,7 @@ window.onload = function() {
 		this.preloadDialogView.show();
 		this.storage.initializeAsync().then(function() {
 			self.editPageView.setCharacters(self.storage.characters);
+			self.postPageView.setSpecialContact(self.storage.owner.get('id'));
 
 			var message1 = new MessageModel();
 			var message2 = new MessageModel();
@@ -430,34 +430,13 @@ window.onload = function() {
 				preview: 'https://www.bazelevscontent.net:8583/6f2d89b3-ac7d-42ff-853b-e249e635303f.png',
 				content: '<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(http://bm.img.com.ua/img/prikol/images/large/0/7/116670_182525.jpg); background-size: cover; width: 403px; height: 403px; background-position: 0% 0%; background-repeat: no-repeat no-repeat;"><img src="https://www.bazelevscontent.net:8583/cda3b406-3284-4336-9339-72e2780c665b_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;ostap&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;action&gt;point&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1088;&#1072;&#1079;&lt;action&gt;rulez&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1076;&#1074;&#1072;&lt;action&gt;applaud&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1090;&#1088;&#1080;!&lt;gag&gt;party&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/cda3b406-3284-4336-9339-72e2780c665b_1.gif&quot;}" class="tool_layerItem_0b421ad0-382c-403a-bbed-6060240b9985 layerType_actor" draggable="true" style="position: absolute; z-index: 1; -webkit-transform: scale(0.5) rotate(0deg); left: -30px; top: 0px;"><img src="https://www.bazelevscontent.net:8583/5b384968-e77e-4533-a659-931c9edac410_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;2&quot;,&quot;character&quot;:&quot;joe&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;2&lt;/actor&gt;&lt;action&gt;hi&lt;/action&gt;&#1087;&#1088;&#1080;&#1074;&#1077;&#1090;!&lt;action&gt;sucks&lt;/action&gt;&#1075;&#1088;&#1091;&#1089;&#1090;&#1080;&#1096;&#1100;?&lt;gag&gt;laugh&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/5b384968-e77e-4533-a659-931c9edac410_1.gif&quot;}" class="tool_layerItem_46f88be7-c16f-4b5c-90c1-209b004f4f61 layerType_actor" draggable="true" style="position: absolute; z-index: 2; -webkit-transform: scale(0.4) rotate(0deg); left: 150px; top: -50px;"><div class="tool_layerItem_b67357c7-deda-4bf5-956b-1f6b68038e8e layerType_text" draggable="true" style="font-size: 3em; color: white; background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 3; -webkit-transform: rotate(0deg);">где-то в глубинке...</div><div class="tool_layerItem_711ab108-6852-428e-89f7-5c39d46106cb layerType_text" draggable="true" style="font-size: 1.7em; color: rgb(244, 164, 96); background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 4; left: 50px; top: 50px; -webkit-transform: rotate(0deg);">южный парк по-русски</div></div>'
 			});
-	
+			
 			self.storage.addMessage(message1);
 			self.storage.addMessage(message2);
 			self.preloadDialogView.hide();
 		}).catch(function() {
 			self.preloadDialogView.hide();
 		});
-//
-//		var specialContactModel = new ContactModel();
-//		specialContactModel.set('id', 1);
-//		specialContactModel.set('firstName', 'Я');
-//		specialContactModel.set('lastName', '');
-//		specialContactModel.set('photo', 'http://cs312916.vk.me/v312916973/6bb0/AlCfNObM--0.jpg');
-//		var specialContactView = new ContactView(specialContactModel);
-//		this.postPageView.addContactView(specialContactView, true);
-//
-//		for (var i = 2; i < 52; i++) {
-//			var contactModel = new ContactModel();
-//			contactModel.set('id', i);
-//			contactModel.set('firstName', 'Walter');
-//			contactModel.set('lastName', 'White');
-//			contactModel.set('photo', 'http://cs412123.vk.me/v412123262/7e84/g42XLZAjpac.jpg');
-//			var contactView = new ContactView(contactModel);
-//			this.postPageView.addContactView(contactView);
-//		}
-
-//		this.answerPageView.setContact(specialContactModel);
-//		this.answerPageView.setMessage(message1);
 	};
 
 	var messengerApplication = new MessengerApplication();

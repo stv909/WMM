@@ -316,6 +316,7 @@ var messenger = messenger || {};
 		this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
 		this.specialContactElem = this.elem.getElementsByClassName('special-contact')[0];
 		this.selectedContactView = null;
+		this.currentSpecialContactView = null;
 		this.contactViews = {};
 
 		this.contactViewSelectListener = function(event) {
@@ -355,6 +356,19 @@ var messenger = messenger || {};
 		contactView.on('select', this.contactViewSelectListener);
 		if (!this.selectedContactView) {
 			contactView.select();
+		}
+	};
+	PostPageView.prototype.setSpecialContact = function(contactId) {
+		var contactView = this.contactViews[contactId];
+		if (contactView !== this.currentSpecialContactView) {
+			if (this.currentSpecialContactView) {
+				this.currentSpecialContactView.detach();
+				this.currentSpecialContactView.attachFirstTo(this.contactsElem);
+				this.currentSpecialContactView = null;
+			}
+			this.currentSpecialContactView = contactView;
+			this.currentSpecialContactView.detach();
+			this.currentSpecialContactView.attachTo(this.specialContactElem);
 		}
 	};
 
