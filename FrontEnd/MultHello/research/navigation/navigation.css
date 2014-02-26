@@ -404,9 +404,14 @@ body {
     height: 140px;
     line-height: 140px;
 }
+#preload-dialog {
+    font-size: 12px;
+    width: 360px;
+    height: 220px;
+}
 #preload-dialog .content {
-    height: 140px;
-    line-height: 140px;
+    height: 160px;
+    line-height: 160px;
 }
 .contacts {
     text-align: left;
