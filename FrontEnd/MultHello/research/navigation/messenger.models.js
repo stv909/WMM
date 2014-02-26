@@ -21,7 +21,7 @@ var messenger = messenger || {};
 		var id = rawData.id;
 		var firstName = rawData.first_name;
 		var lastName = rawData.last_name;
-		var photo = rawData.photo_200;
+		var photo = rawData.photo_200 || rawData.photo_100 || rawData.photo_50;
 		var contact = new ContactModel();
 		contact.set({
 			id: id,

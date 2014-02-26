@@ -51,6 +51,8 @@ window.onload = function() {
 		this.messages = {};
 		this.currentMessage = null;
 
+		this.owner = null;
+		this.selectedContact = null;
 		this.contacts = {};
 		this.characters = [];
 	};
@@ -82,22 +84,31 @@ window.onload = function() {
 		var settings = VK.access.FRIENDS | VK.access.PHOTOS;
 		return VK.Auth.loginAsync(settings).then(function(session) {
 			var userId = session.mid;
+			return VK.Api.callAsync('users.get', {
+				user_ids: [ userId ],
+				fields: [ 'photo_200', 'photo_100', 'photo_50' ],
+				name_case: 'nom',
+				v: 5.11
+			});
+		}).then(function(data) {
+			var vkOwner = data.response[0];
+			self.owner = ContactModel.fromVkData(vkOwner);
+			self.addContact(self.owner);
 			return VK.Api.callAsync('friends.get', {
-				user_id: userId,
+				user_id: self.owner.get('id'),
 				v: 5.11
 			});
 		}).then(function(data) {
 			var userIds = data.response.items;
-			console.log(userIds);
+			userIds.length = 100;
 			return VK.Api.callAsync('users.get', {
 				user_ids: userIds,
-				fields: [ 'photo_200' ],
+				fields: [ 'photo_200', 'photo_100', 'photo_50' ],
 				name_case: 'nom',
 				v: 5.11
 			});
 		}).then(function(data) {
 			var vkContacts = data.response;
-			console.log(vkContacts);
 			vkContacts.forEach(function(vkContact) {
 				var contact = ContactModel.fromVkData(vkContact);
 				self.addContact(contact);
@@ -209,6 +220,7 @@ window.onload = function() {
 			self.navigation.setMode(self.navigation.getNextMode());
 		};
 		this.nextElemPostClickListener = function(event) {
+			console.log(self.storage.selectedContact);
 			self.postDialogView.show();
 		};
 		this.nextElemAnswerClickListener = function(event) {
@@ -276,6 +288,11 @@ window.onload = function() {
 			self.currentLogoElemClickListener = self.logoElemStandardClickListener;
 			window.location.hash = '';
 			self.navigation.setMode('select');
+		});
+		
+		this.postPageView.on('select:contact', function(event) {
+			console.log(event);
+			self.storage.selectedContact = event.contact;
 		});
 	};
 	MessengerApplication.prototype.initializeNavigation = function() {
@@ -417,7 +434,7 @@ window.onload = function() {
 			self.storage.addMessage(message1);
 			self.storage.addMessage(message2);
 			self.preloadDialogView.hide();
-		}).fail(function() {
+		}).catch(function() {
 			self.preloadDialogView.hide();
 		});
 //

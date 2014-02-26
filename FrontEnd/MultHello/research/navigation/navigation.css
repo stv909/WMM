@@ -455,7 +455,7 @@ body {
 .contact .first-name, .last-name {
     margin-left: 1px;
     margin-right: 1px;
-    font-size: 11px;
+    font-size: 10px;
     display: inline-block;
 }
 .message-editor .container {

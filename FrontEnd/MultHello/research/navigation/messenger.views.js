@@ -325,6 +325,10 @@ var messenger = messenger || {};
 					self.selectedContactView.deselect();
 				}
 				self.selectedContactView = target;
+				self.trigger({
+					type: 'select:contact',
+					contact: self.selectedContactView.model
+				});
 			}
 		};
 
@@ -350,8 +354,7 @@ var messenger = messenger || {};
 		this.contactViews[contactId] = contactView;
 		contactView.on('select', this.contactViewSelectListener);
 		if (!this.selectedContactView) {
-			this.selectedContactView = contactView;
-			this.selectedContactView.select();
+			contactView.select();
 		}
 	};
 
@@ -890,7 +893,6 @@ var messenger = messenger || {};
 
 		var elemClickListener = function(event) {
 			if (!self.selected) {
-				self.trigger('select');
 				self.select();
 			}
 		};
@@ -908,6 +910,7 @@ var messenger = messenger || {};
 		this.selected = true;
 		this.elem.classList.remove('normal');
 		this.elem.classList.add('chosen');
+		this.trigger('select');
 	};
 	ContactView.prototype.deselect = function() {
 		this.selected = false;
