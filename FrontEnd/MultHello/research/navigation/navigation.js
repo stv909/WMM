@@ -247,7 +247,36 @@ window.onload = function() {
 			var chatClientSendListener = function(event) {
 				self.chatClient.off('message:sent');
 				self.chatClient.off('message:send');
-				self.postDialogView.setMode('complete');
+				self.postDialogView.setText('Генерация превью...');
+
+				VK.Api.callAsync('photos.getWallUploadServer', {
+					v: 5.9
+				}).then(function(data) {
+					var uploadUrl = data.response.upload_url;
+					var shareMessageUrl = self.generateMessageShareUrl(message.id);
+					var values = [uploadUrl, self.generatePreview(shareMessageUrl)];
+					return Promise.all(values);
+				}).then(function(values) {
+					var uploadUrl = values[0];
+					var generatedPreview = values[1];
+					var previewUrl = self.generatePreviewUrl(generatedPreview);
+					self.postDialogView.setText('Загрузка превью изображения...');
+					return self.uploadImageAsync(uploadUrl, previewUrl);
+				}).then(function(rawData) {
+					var data = JSON.parse(rawData);
+					self.postDialogView.setText('Сохранение превью в альбоме...');
+					return VK.Api.callAsync('photos.saveWallPhoto', data);
+				}).then(function(data) {
+					var savedImage = data.response[0];
+					var postData = self.createVkPost(message, savedImage.id, self.generateMessageShareUrl(message.id));
+					postData.owner_id = companion.get('id');
+					self.postDialogView.setText('Отправка сообщения на стену...');
+					return VK.Api.callAsync('wall.post', postData);
+				}).then(function() {
+					return true;
+				}).catch(function(values) {
+					self.postDialogView.setMode('fail');
+				});
 			};
 
 			self.chatClient.once('message:now', chatClientNowListener);
@@ -478,6 +507,53 @@ window.onload = function() {
 		}).catch(function() {
 			self.preloadDialogView.hide();
 		});
+	};
+	MessengerApplication.prototype.generatePreview = function(shareUrl) {
+		var requestData = {
+			url: shareUrl,
+			imageFormat: 'png',
+			scale: 1,
+			contentType: 'share'
+		};
+		var rawRequestData = JSON.stringify(requestData);
+		var options = {
+			url: 'https://www.bazelevscontent.net:8893',
+			method: 'POST',
+			data: 'type=render&data=' + encodeURIComponent(rawRequestData)
+		};
+		return async.requestAsync(options);
+	};
+	MessengerApplication.prototype.generateMessageShareUrl = function(messageId) {
+		return ['https://c9.io/stv909/wmm/workspace/FrontEnd/templates/share.html?ids=msg.', messageId].join('');
+	};
+	MessengerApplication.prototype.generatePreviewUrl = function(generatedPreview) {
+		return ['http://www.bazelevscontent.net:8582/', generatedPreview.image].join('');
+	};
+	MessengerApplication.prototype.uploadImageAsync = function(uploadUri, imageUri) {
+		var requestData = {
+			uri: uploadUri,
+			file1: imageUri
+		};
+		var options = {
+			url: 'https://wmm-c9-stv909.c9.io',
+			method: 'POST',
+			data: JSON.stringify(requestData)
+		};
+		return async.requestAsync(options);
+	};
+	MessengerApplication.prototype.createVkPost = function(message, imageId, shareUrl) {
+		var content = null;
+		if (message.from === message.to) {
+			content = 'Мой мульт-статус';
+		} else {
+			content = 'прислал вам сообщение (полная версия по ссылке ниже)';
+		}
+		return {
+			message: content,
+			attachments: [
+				imageId, shareUrl
+			]
+		};
 	};
 
 	var messengerApplication = new MessengerApplication();
