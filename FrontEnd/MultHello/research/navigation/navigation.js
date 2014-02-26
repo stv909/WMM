@@ -233,15 +233,12 @@ window.onload = function() {
 			var message = MessageFactory.create(
 				uuid.v4(),
 				content,
-				account.get('id').toString(),
-				companion.get('id').toString()
+				['vkid', account.get('id')].join(''),
+				['vkid', companion.get('id')].join('')
 			);
-			
-			console.log(content);
 
 			var chatClientNowListener = function(event) {
 				message.timestamp = event.response.now;
-				console.log(message);
 				self.chatClient.once('message:send', chatClientSendListener);
 				self.chatClient.sendMessage(message);
 			};
@@ -465,7 +462,9 @@ window.onload = function() {
 			self.storage.addMessage(message2);
 
 			self.chatClient.once('connect', function() {
-				self.chatClient.login(self.storage.owner.get('id'));
+				var account = self.storage.owner;
+				var vkId = ['vkid', account.get('id')].join('');
+				self.chatClient.login(vkId);
 			});
 			self.chatClient.once('message:login', function() {
 				self.preloadDialogView.hide();
