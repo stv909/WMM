@@ -199,8 +199,6 @@ var messenger = messenger || {};
 			type: meta.type
 		};
 
-		console.log(characterData);
-
 		var characterView = new CharacterView(this.characters, characterData);
 		characterView.attachTo(this.characterCollectionElem);
 		characterView.on('validate', function() {
