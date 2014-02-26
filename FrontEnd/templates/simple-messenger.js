@@ -86,7 +86,7 @@ window.onload = function() {
 			chatClient.on('disconnect', disconnectChatClient);
 		});
 		logoutButtonElem.addEventListener('click', function() {
-			chatClient.disconnect();	
+			chatClient.disconnect();
 		});
 		
 		accountHolderElem.appendChild(loginControlsElem);
