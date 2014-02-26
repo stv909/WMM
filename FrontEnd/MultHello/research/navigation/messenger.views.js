@@ -242,7 +242,7 @@ var messenger = messenger || {};
 	EditPageView.prototype.reset = function() {
 		this.characterViewCollection.forEach(function(view) {
 			view.reset();
-		})
+		});
 	};
 	EditPageView.prototype.setCharacters = function(characters) {
 		this.characters = characters;
@@ -412,7 +412,6 @@ var messenger = messenger || {};
 		PreloadDialogView.super.apply(this);
 
 		this.elem = document.getElementById('preload-background');
-		//this.dialogWindowElem = document.getElementById('preload-dialog');
 	};
 	PreloadDialogView.super = View;
 	PreloadDialogView.prototype = Object.create(View.prototype);
@@ -424,7 +423,7 @@ var messenger = messenger || {};
 		var self = this;
 		setTimeout(function() {
 			self.elem.classList.add('hidden');
-		}, 4000);
+		}, 2000);
 	};
 
 	var SkipDialogView = function() {
@@ -764,7 +763,7 @@ var messenger = messenger || {};
 
 		this.elem = document.createElement('select');
 		this.elem.classList.add('actor');
-		this.elem.setAttribute('data-name', actor.name)
+		this.elem.setAttribute('data-name', actor.name);
 		this.valid = true;
 		this.lastValue = actor.character;
 
@@ -783,13 +782,13 @@ var messenger = messenger || {};
 		this.elem.addEventListener('change', elemChangeListener);
 
 		this.on('validate', function() {
-			this.elem.classList.remove('invalid');
+			self.elem.classList.remove('invalid');
 		});
 		this.on('invalidate', function() {
-			this.elem.classList.add('invalid');
+			self.elem.classList.add('invalid');
 		});
 		this.once('dispose', function(event) {
-			this.elem.removeEventListener('change', elemChangeListener);
+			self.elem.removeEventListener('change', elemChangeListener);
 		});
 	};
 	ActorSelectView.super = View;
@@ -802,7 +801,7 @@ var messenger = messenger || {};
 			this.trigger({
 				type: 'validate',
 				value: this.lastValue
-			})
+			});
 		}
 	};
 	ActorSelectView.prototype.reset = function() {
@@ -860,13 +859,13 @@ var messenger = messenger || {};
 		this.elem.addEventListener('input', elemInputListener);
 
 		this.on('validate', function() {
-			this.elem.classList.remove('invalid');
+			self.elem.classList.remove('invalid');
 		});
 		this.on('invalidate', function() {
-			this.elem.classList.add('invalid');
+			self.elem.classList.add('invalid');
 		});
 		this.once('dispose', function(event) {
-			this.elem.removeEventListener('input', elemInputListener);
+			self.elem.removeEventListener('input', elemInputListener);
 		});
 	};
 	ReplyView.super = View;
