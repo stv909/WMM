@@ -475,6 +475,7 @@ var messenger = messenger || {};
 		this.elem = document.getElementById('dialog-background');
 		this.dialogWindowElem = document.getElementById('post-dialog');
 		this.readyElem = this.dialogWindowElem.getElementsByClassName('ready')[0];
+		this.statusElem = this.dialogWindowElem.getElementsByClassName('status');
 
 		var readyElemClickListener = function(event) {
 			self.hide();
@@ -493,10 +494,30 @@ var messenger = messenger || {};
 	PostDialogView.prototype.show = function() {
 		this.dialogWindowElem.classList.remove('hidden');
 		this.elem.classList.remove('hidden');
+		this.setMode('wait');
 	};
 	PostDialogView.prototype.hide = function() {
 		this.dialogWindowElem.classList.add('hidden');
 		this.elem.classList.add('hidden');
+		this.statusElem.textContent = '';
+	};
+	PostDialogView.prototype.setText = function(text) {
+		this.statusElem.textContent = text;
+	};
+	PostDialogView.prototype.setMode = function(mode) {
+		switch (mode) {
+			case 'wait':
+				this.statusElem.textContent = 'Отправка сообщения...';
+				this.readyElem.classList.add('hidden');
+				break;
+			case 'complete':
+				this.statusElem.textContent = 'Сообщение отправлено!';
+				this.readyElem.classList.remove('hidden');
+				break;
+			case 'fail':
+				this.statusElem.textContent = 'Не удалось отправить сообщение!';
+				this.readyElem.classList.remove('hidden');
+		}
 	};
 
 	var UpdateMessageDialogView = function() {
