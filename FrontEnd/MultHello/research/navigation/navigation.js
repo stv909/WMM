@@ -258,8 +258,8 @@ window.onload = function() {
 					return Promise.all(values);
 				}).then(function(values) {
 					var uploadUrl = values[0];
-					var generatedPreview = values[1];
-					var previewUrl = self.generatePreviewUrl(generatedPreview);
+					var generatedPreview = JSON.parse(values[1]);
+					var previewUrl = self.generatePreviewUrl(generatedPreview.image);
 					self.postDialogView.setText('Загрузка превью изображения...');
 					return self.uploadImageAsync(uploadUrl, previewUrl);
 				}).then(function(rawData) {
@@ -273,8 +273,9 @@ window.onload = function() {
 					self.postDialogView.setText('Отправка сообщения на стену...');
 					return VK.Api.callAsync('wall.post', postData);
 				}).then(function() {
-					return true;
-				}).catch(function(values) {
+					self.postDialogView.setMode('complete');
+				}).catch(function(error) {
+					console.log(error);
 					self.postDialogView.setMode('fail');
 				});
 			};
@@ -526,14 +527,15 @@ window.onload = function() {
 	MessengerApplication.prototype.generateMessageShareUrl = function(messageId) {
 		return ['https://c9.io/stv909/wmm/workspace/FrontEnd/templates/share.html?ids=msg.', messageId].join('');
 	};
-	MessengerApplication.prototype.generatePreviewUrl = function(generatedPreview) {
-		return ['http://www.bazelevscontent.net:8582/', generatedPreview.image].join('');
+	MessengerApplication.prototype.generatePreviewUrl = function(fileName) {
+		return ['http://www.bazelevscontent.net:8582/', fileName].join('');
 	};
 	MessengerApplication.prototype.uploadImageAsync = function(uploadUri, imageUri) {
 		var requestData = {
 			uri: uploadUri,
 			file1: imageUri
 		};
+		console.log(requestData);
 		var options = {
 			url: 'https://wmm-c9-stv909.c9.io',
 			method: 'POST',
