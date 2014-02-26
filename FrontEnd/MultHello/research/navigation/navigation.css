@@ -102,6 +102,34 @@ body {
     border-top: 5px solid #28f;
     border-bottom: 5px solid #28f;
 }
+#big-logo-pic {
+    top: 4px;
+    width: 44px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: #28f;
+    position: relative;
+    display: inline-block;
+}
+#big-logo-pic:after {
+    content: "";
+    position: absolute;
+    top: 32px;
+    left: 8px;
+    border-top: 10px solid #28f;
+    border-right: 10px solid transparent;
+}
+#big-arrow {
+    position: absolute;
+    top: 6px;
+    left: 16px;
+    display: inline-block;
+    width: 0;
+    background-color: white;
+    border-left: 16px solid #fff;
+    border-top: 10px solid #28f;
+    border-bottom: 10px solid #28f;
+}
 #breadcrumbs {
     display: inline-block;
     font-size: 0;
@@ -404,14 +432,32 @@ body {
     height: 140px;
     line-height: 140px;
 }
-#preload-dialog {
-    font-size: 12px;
-    width: 360px;
-    height: 220px;
+#preload-background {
+    display: table;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 920px;
+    z-index: 100;
+    height: 100%;
+    background-color: #fff;
 }
-#preload-dialog .content {
-    height: 160px;
-    line-height: 160px;
+#preload-background .wrapper {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+#preload-background .info {
+    display: inline-block;
+}
+#preload-background .title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+}
+#preload-background .content {
+    margin-top: 32px;
 }
 .contacts {
     text-align: left;

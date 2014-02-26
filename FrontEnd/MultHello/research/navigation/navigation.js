@@ -288,6 +288,8 @@ window.onload = function() {
 			self.navigation.setMode('select');
 		};
 
+		this.preloadDialogView.show();
+
 		this.initializeVk();
 		this.initializeStorage();
 		this.initializeViews();
@@ -473,7 +475,6 @@ window.onload = function() {
 	};
 	MessengerApplication.prototype.initializeStartupData = function() {
 		var self = this;
-		this.preloadDialogView.show();
 		this.storage.initializeAsync().then(function() {
 			self.editPageView.setCharacters(self.storage.characters);
 			self.postPageView.setSpecialContact(self.storage.owner.get('id'));
@@ -535,7 +536,6 @@ window.onload = function() {
 			uri: uploadUri,
 			file1: imageUri
 		};
-		console.log(requestData);
 		var options = {
 			url: 'https://wmm-c9-stv909.c9.io',
 			method: 'POST',
