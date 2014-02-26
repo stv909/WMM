@@ -437,8 +437,15 @@ window.onload = function() {
 			
 			self.storage.addMessage(message1);
 			self.storage.addMessage(message2);
-			
-			self.preloadDialogView.hide();
+
+			self.chatClient.once('connect', function() {
+				self.chatClient.login(self.storage.owner.get('id'));
+			});
+			self.chatClient.once('message:login', function() {
+				self.preloadDialogView.hide();
+			});
+			self.chatClient.connect();
+
 		}).catch(function() {
 			self.preloadDialogView.hide();
 		});
