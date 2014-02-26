@@ -14,6 +14,9 @@ window.onload = function() {
 	var MessagePatternView = messenger.views.MessagePatternView;
 	var ContactView = messenger.views.ContactView;
 
+	var ChatClient = chat.ChatClient;
+	var MessageFactory = chat.MessageFactory;
+
 	var Navigation = function() {
 		Navigation.super.apply(this);
 		this.mode = null;
@@ -188,6 +191,7 @@ window.onload = function() {
 
 		this.navigation = new Navigation();
 		this.storage = new Storage();
+		this.chatClient = new ChatClient('ws://www.bazelevscontent.net:9009/');
 
 		this.selectPageView = new SelectPageView();
 		this.editPageView = new EditPageView();
@@ -433,6 +437,7 @@ window.onload = function() {
 			
 			self.storage.addMessage(message1);
 			self.storage.addMessage(message2);
+			
 			self.preloadDialogView.hide();
 		}).catch(function() {
 			self.preloadDialogView.hide();
