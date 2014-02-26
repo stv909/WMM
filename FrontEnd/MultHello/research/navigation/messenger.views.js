@@ -388,6 +388,24 @@ var messenger = messenger || {};
 		this.messageEditorView.setModel(message);
 	};
 
+	var PreloadDialogView = function() {
+		PreloadDialogView.super.apply(this);
+
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('preload-dialog');
+	};
+	PreloadDialogView.super = View;
+	PreloadDialogView.prototype = Object.create(View.prototype);
+	PreloadDialogView.prototype.constructor = PreloadDialogView;
+	PreloadDialogView.prototype.show = function() {
+		this.dialogWindowElem.classList.remove('hidden');
+		this.elem.classList.remove('hidden');
+	};
+	PreloadDialogView.prototype.hide = function() {
+		this.dialogWindowElem.classList.add('hidden');
+		this.elem.classList.add('hidden');
+	};
+
 	var SkipDialogView = function() {
 		SkipDialogView.super.apply(this);
 		var self = this;
@@ -912,6 +930,7 @@ var messenger = messenger || {};
 		AnswerPageView: AnswerPageView,
 		PostDialogView: PostDialogView,
 		SkipDialogView: SkipDialogView,
+		PreloadDialogView: PreloadDialogView,
 		MessageView: MessageView,
 		MessagePatternView: MessagePatternView,
 		ContactView: ContactView
