@@ -229,21 +229,24 @@ window.onload = function() {
 			var account = self.storage.owner;
 			var companion = self.storage.selectedContact;
 			var content = self.editPageView.getMessageContent();
-
+			
 			var message = MessageFactory.create(
 				uuid.v4(),
 				content,
-				account.get('id'),
-				companion.get('id')
+				account.get('id').toString(),
+				companion.get('id').toString()
 			);
+			
+			console.log(content);
 
-			var chatClientNowListener = function(response) {
-				message.timestamp = response.now;
+			var chatClientNowListener = function(event) {
+				message.timestamp = event.response.now;
+				console.log(message);
 				self.chatClient.once('message:send', chatClientSendListener);
 				self.chatClient.sendMessage(message);
 			};
-			var chatClientSendListener = function(response) {
-				
+			var chatClientSendListener = function(event) {
+				self.postDialogView.hide();
 			};
 
 			self.chatClient.once('message:now', chatClientNowListener);
