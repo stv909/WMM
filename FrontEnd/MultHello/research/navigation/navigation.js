@@ -58,6 +58,8 @@ window.onload = function() {
 	Storage.prototype.constructor = Storage;
 	Storage.prototype.initializeAsync = function() {
 		var loadCharactersPromise = this.loadCharactersAsync();
+		var loadContactsPromise = this.loadContactsAsync();
+		return Promise.all([loadCharactersPromise, loadContactsPromise]);
 	};
 	Storage.prototype.loadCharactersAsync = function() {
 		var self = this;
@@ -79,8 +81,26 @@ window.onload = function() {
 		var settings = VK.access.FRIENDS | VK.access.PHOTOS;
 		return VK.Auth.loginAsync(settings).then(function(data) {
 			var userId = data.response.session.mid;
-			return VK.Api.callAsync('friends.get', { user_id: userId })
-		})
+			return VK.Api.callAsync('friends.get', {
+				user_id: userId,
+				v: 5.11
+			});
+		}).then(function(data) {
+			var userIds = data.response.items;
+			return VK.Api.callAsync('users.get', {
+				user_ids: userIds,
+				fields: [ 'photo_200' ],
+				name_case: 'nom',
+				v: 5.11
+			});
+		}).then(function(data) {
+			var vkContacts = data.response;
+			vkContacts.forEach(function(vkContact) {
+				var contact = ContactModel.fromVkData(vkContact);
+				self.addContact(contact);
+			});
+			return true;
+		});
 	};
 	Storage.prototype.hasMessage = function(messageId) {
 		return this.messages.hasOwnProperty(messageId);
@@ -195,8 +215,8 @@ window.onload = function() {
 		this.initializeStorage();
 		this.initializeViews();
 		this.initializeNavigation();
-		this.setMockData();
-		this.parseSettings();
+		this.initializeSettings();
+		this.initializeStartupData();
 	};
 	MessengerApplication.super = EventEmitter;
 	MessengerApplication.prototype = Object.create(EventEmitter.prototype);
@@ -225,7 +245,6 @@ window.onload = function() {
 		this.editPageView.attachTo(this.pageContainerElem);
 		this.postPageView.attachTo(this.pageContainerElem);
 		this.answerPageView.attachTo(this.pageContainerElem);
-		this.editPageView.setCharacters(this.storage.characters);
 
 		this.selectPageView.on('select:message', function(event) {
 			var message = event.message;
@@ -354,7 +373,22 @@ window.onload = function() {
 			self.currentNextElemClickListener = self.nextElemPostClickListener;
 		});
 	};
-	MessengerApplication.prototype.setMockData = function() {
+	MessengerApplication.prototype.initializeSettings = function() {
+		var hash = window.location.hash;
+		if (hash) {
+			this.navigation.setMode('answer');
+			this.logoElem.addEventListener('click', this.logoElemAnswerClickListener);
+			this.currentLogoElemClickListener = this.logoElemAnswerClickListener;
+		} else {
+			this.navigation.setMode('select');
+			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
+			this.currentLogoElemClickListener = this.logoElemStandardClickListener;
+		}
+	};
+	MessengerApplication.prototype.initializeStartupData = function() {
+		this.storage.initializeAsync().then(function() {
+			console.log('complete');
+		});
 		var message1 = new MessageModel();
 		var message2 = new MessageModel();
 
@@ -368,42 +402,30 @@ window.onload = function() {
 			preview: 'https://www.bazelevscontent.net:8583/6f2d89b3-ac7d-42ff-853b-e249e635303f.png',
 			content: '<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(http://bm.img.com.ua/img/prikol/images/large/0/7/116670_182525.jpg); background-size: cover; width: 403px; height: 403px; background-position: 0% 0%; background-repeat: no-repeat no-repeat;"><img src="https://www.bazelevscontent.net:8583/cda3b406-3284-4336-9339-72e2780c665b_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;ostap&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;action&gt;point&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1088;&#1072;&#1079;&lt;action&gt;rulez&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1076;&#1074;&#1072;&lt;action&gt;applaud&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1090;&#1088;&#1080;!&lt;gag&gt;party&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/cda3b406-3284-4336-9339-72e2780c665b_1.gif&quot;}" class="tool_layerItem_0b421ad0-382c-403a-bbed-6060240b9985 layerType_actor" draggable="true" style="position: absolute; z-index: 1; -webkit-transform: scale(0.5) rotate(0deg); left: -30px; top: 0px;"><img src="https://www.bazelevscontent.net:8583/5b384968-e77e-4533-a659-931c9edac410_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;2&quot;,&quot;character&quot;:&quot;joe&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;2&lt;/actor&gt;&lt;action&gt;hi&lt;/action&gt;&#1087;&#1088;&#1080;&#1074;&#1077;&#1090;!&lt;action&gt;sucks&lt;/action&gt;&#1075;&#1088;&#1091;&#1089;&#1090;&#1080;&#1096;&#1100;?&lt;gag&gt;laugh&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/5b384968-e77e-4533-a659-931c9edac410_1.gif&quot;}" class="tool_layerItem_46f88be7-c16f-4b5c-90c1-209b004f4f61 layerType_actor" draggable="true" style="position: absolute; z-index: 2; -webkit-transform: scale(0.4) rotate(0deg); left: 150px; top: -50px;"><div class="tool_layerItem_b67357c7-deda-4bf5-956b-1f6b68038e8e layerType_text" draggable="true" style="font-size: 3em; color: white; background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 3; -webkit-transform: rotate(0deg);">где-то в глубинке...</div><div class="tool_layerItem_711ab108-6852-428e-89f7-5c39d46106cb layerType_text" draggable="true" style="font-size: 1.7em; color: rgb(244, 164, 96); background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 4; left: 50px; top: 50px; -webkit-transform: rotate(0deg);">южный парк по-русски</div></div>'
 		});
-
+		this.editPageView.setCharacters(this.storage.characters);
 		this.storage.addMessage(message1);
 		this.storage.addMessage(message2);
+//
+//		var specialContactModel = new ContactModel();
+//		specialContactModel.set('id', 1);
+//		specialContactModel.set('firstName', 'Я');
+//		specialContactModel.set('lastName', '');
+//		specialContactModel.set('photo', 'http://cs312916.vk.me/v312916973/6bb0/AlCfNObM--0.jpg');
+//		var specialContactView = new ContactView(specialContactModel);
+//		this.postPageView.addContactView(specialContactView, true);
+//
+//		for (var i = 2; i < 52; i++) {
+//			var contactModel = new ContactModel();
+//			contactModel.set('id', i);
+//			contactModel.set('firstName', 'Walter');
+//			contactModel.set('lastName', 'White');
+//			contactModel.set('photo', 'http://cs412123.vk.me/v412123262/7e84/g42XLZAjpac.jpg');
+//			var contactView = new ContactView(contactModel);
+//			this.postPageView.addContactView(contactView);
+//		}
 
-		var specialContactModel = new ContactModel();
-		specialContactModel.set('id', 1);
-		specialContactModel.set('firstName', 'Я');
-		specialContactModel.set('lastName', '');
-		specialContactModel.set('photo', 'http://cs312916.vk.me/v312916973/6bb0/AlCfNObM--0.jpg');
-		var specialContactView = new ContactView(specialContactModel);
-		this.postPageView.addContactView(specialContactView, true);
-
-		for (var i = 2; i < 52; i++) {
-			var contactModel = new ContactModel();
-			contactModel.set('id', i);
-			contactModel.set('firstName', 'Walter');
-			contactModel.set('lastName', 'White');
-			contactModel.set('photo', 'http://cs412123.vk.me/v412123262/7e84/g42XLZAjpac.jpg');
-			var contactView = new ContactView(contactModel);
-			this.postPageView.addContactView(contactView);
-		}
-
-		this.answerPageView.setContact(specialContactModel);
-		this.answerPageView.setMessage(message1);
-	};
-	MessengerApplication.prototype.parseSettings = function() {
-		var hash = window.location.hash;
-		if (hash) {
-			this.navigation.setMode('answer');
-			this.logoElem.addEventListener('click', this.logoElemAnswerClickListener);
-			this.currentLogoElemClickListener = this.logoElemAnswerClickListener;
-		} else {
-			this.navigation.setMode('select');
-			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
-			this.currentLogoElemClickListener = this.logoElemStandardClickListener;
-		}
+//		this.answerPageView.setContact(specialContactModel);
+//		this.answerPageView.setMessage(message1);
 	};
 
 	var messengerApplication = new MessengerApplication();
