@@ -424,7 +424,7 @@ var messenger = messenger || {};
 		var self = this;
 		setTimeout(function() {
 			self.elem.classList.add('hidden');
-		}, 2000);
+		}, 4000);
 	};
 
 	var SkipDialogView = function() {
@@ -450,8 +450,8 @@ var messenger = messenger || {};
 		this.cancelElem.addEventListener('click', cancelElemClickListener);
 
 		this.once('dispose', function(event) {
-			this.okElem.removeEventListener('click', okElemClickListener);
-			this.cancelElem.removeEventListener('click', cancelElemClickListener);
+			self.okElem.removeEventListener('click', okElemClickListener);
+			self.cancelElem.removeEventListener('click', cancelElemClickListener);
 		});
 	};
 	SkipDialogView.super = View;
