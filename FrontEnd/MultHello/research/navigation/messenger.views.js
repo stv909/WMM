@@ -475,7 +475,7 @@ var messenger = messenger || {};
 		this.elem = document.getElementById('dialog-background');
 		this.dialogWindowElem = document.getElementById('post-dialog');
 		this.readyElem = this.dialogWindowElem.getElementsByClassName('ready')[0];
-		this.statusElem = this.dialogWindowElem.getElementsByClassName('status');
+		this.statusElem = this.dialogWindowElem.getElementsByClassName('status')[0];
 
 		var readyElemClickListener = function(event) {
 			self.hide();

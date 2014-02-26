@@ -239,11 +239,14 @@ window.onload = function() {
 
 			var chatClientNowListener = function(event) {
 				message.timestamp = event.response.now;
+				self.chatClient.once('message:sent', chatClientSendListener);
 				self.chatClient.once('message:send', chatClientSendListener);
 				self.chatClient.sendMessage(message);
 				self.postDialogView.setText('Сохрание сообщения...');
 			};
 			var chatClientSendListener = function(event) {
+				self.chatClient.off('message:sent');
+				self.chatClient.off('message:send');
 				self.postDialogView.setMode('complete');
 			};
 
