@@ -609,9 +609,12 @@ body {
     box-shadow: 0 0 2px #28f;
 }
 .controls {
-    margin-top: 5px;
-    width: 100%;
+	float: right;
     text-align: center;
+    display: inline-block;
+}
+.controls .reset {
+	margin-right: 0 !important;
 }
 .controls .button {
     margin-right: 10px;
