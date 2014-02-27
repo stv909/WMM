@@ -316,7 +316,6 @@ window.onload = function() {
 		} else {
 			content = 'прислал вам сообщение (можно ответить по ссылке ниже)';
 			attachmentUrl = answerUrl;//[answerUrl, '#', 'senderId=', senderId, '&messageId=', message.id].join('');
-			console.log(attachmentUrl);
 		}
 		return {
 			owner_id: ownerId,

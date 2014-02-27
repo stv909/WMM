@@ -145,6 +145,16 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype._parseLayerTypeText = function(rootElem) {
 		var textElements = rootElem.getElementsByClassName('layerType_text');
+		textElements = Array.prototype.slice.call(textElements, 0);
+		textElements = textElements.sort(function(elem1, elem2) {
+			if (elem1.style.zIndex > elem2.style.zIndex) {
+				return 1;
+			} else if (elem1.style.zIndex <= elem2.style.zIndex) {
+				return -1;
+			} else {
+				return 0;
+			}
+		});
 		for (var i = 0; i < textElements.length; i++) {
 			this._createTextElem(textElements[i]);
 		}
@@ -164,6 +174,16 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype._parseLayerTypeActor = function(rootElem) {
 		var actorElements = rootElem.getElementsByClassName('layerType_actor');
+		// actorElements = Array.prototype.slice.call(actorElements, 0);
+		// actorElements = actorElements.sort(function(elem1, elem2) {
+		// 	if (elem1.style.zIndex > elem2.style.zIndex) {
+		// 		return 1;
+		// 	} else if (elem1.style.zIndex <= elem2.style.zIndex) {
+		// 		return -1;
+		// 	} else {
+		// 		return 0;
+		// 	}
+		// });
 		for (var i = 0; i < actorElements.length; i++) {
 			this._createCharacterView(actorElements[i]);
 		}
@@ -343,7 +363,6 @@ var messenger = messenger || {};
 				});
 			}
 		};
-		
 		
 		var loadElemClickListener = function(event) {
 			if (self.loadElemEnable) {
