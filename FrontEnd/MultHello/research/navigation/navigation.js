@@ -61,6 +61,9 @@ window.onload = function() {
 		
 		this.contactOffset = 0;
 		this.contactCount = 28;
+		
+		this.senderContactId = null;
+		this.senderMessageId = null;
 	};
 	Storage.super = EventEmitter;
 	Storage.prototype = Object.create(EventEmitter.prototype);
@@ -217,6 +220,12 @@ window.onload = function() {
 	};
 	Storage.prototype.getContactById = function(contactId) {
 		return this.contacts[contactId];
+	};
+	Storage.prototype.getSenderContact = function() {
+		return this.contacts[this.senderContactId] || this.owner;
+	};
+	Storage.prototype.getSenderContactId = function() {
+		return this.senderContactId	|| this.owner.get('id');
 	};
 
 	var VKTools = function() {
@@ -463,6 +472,7 @@ window.onload = function() {
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
+				self.postPageView.setContact(self.storage.owner.get('id'));
 				self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 				self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 				self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -471,6 +481,7 @@ window.onload = function() {
 			self.navigation.setMode('select');
 		});
 		this.skipDialogView.on('click:ok', function(event) {
+			self.postPageView.setContact(self.storage.owner.get('id'));
 			self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 			self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 			self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -595,11 +606,27 @@ window.onload = function() {
 		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
+		var parseHash = function(hash) {
+			var settings = {};
+			hash.substring(1).split('&').forEach(function(item) {
+				var pair = item.split('=');
+				var key = pair[0];
+				var value = parseInt(pair[1], 10);
+				settings[key] = value;
+			});
+			return settings;
+		};
+		
 		var hash = window.location.hash;
+
 		if (hash) {
 			this.navigation.setMode('answer');
 			this.logoElem.addEventListener('click', this.logoElemAnswerClickListener);
 			this.currentLogoElemClickListener = this.logoElemAnswerClickListener;
+			
+			var settings = parseHash(hash);
+			this.storage.senderContactId = settings.senderId;
+			this.storage.senderMessageId = settings.messageId;
 		} else {
 			this.navigation.setMode('select');
 			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
@@ -611,6 +638,8 @@ window.onload = function() {
 		this.storage.initializeAsync().then(function() {
 			self.editPageView.setCharacters(self.storage.characters);
 			self.postPageView.setSpecialContact(self.storage.owner.get('id'));
+			self.postPageView.setContact(self.storage.getSenderContactId());
+			self.answerPageView.setContact(self.storage.getSenderContact());
 
 			var message1 = new MessageModel();
 			var message2 = new MessageModel();

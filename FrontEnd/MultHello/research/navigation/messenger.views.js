@@ -389,6 +389,12 @@ var messenger = messenger || {};
 			this.currentSpecialContactView.attachTo(this.specialContactElem);
 		}
 	};
+	PostPageView.prototype.setContact = function(contactId) {
+		var contactView = this.contactViews[contactId];
+		if (contactView) {
+			contactView.select();
+		}
+	};
 	PostPageView.prototype.enableContactLoading = function() {
 		this.loadElemEnable = true;
 		this.loadElem.textContent = 'Загрузить еще...';
@@ -431,7 +437,9 @@ var messenger = messenger || {};
 		this.elem.classList.add('hidden');
 	};
 	AnswerPageView.prototype.setContact = function(contact) {
-		this.contactView.setModel(contact);
+		if (contact) {
+			this.contactView.setModel(contact);
+		}
 	};
 	AnswerPageView.prototype.setMessage = function(message) {
 		this.messageEditorView.setModel(message);
@@ -452,7 +460,7 @@ var messenger = messenger || {};
 		var self = this;
 		setTimeout(function() {
 			self.elem.classList.add('hidden');
-		}, 2000);
+		}, 0);
 	};
 
 	var SkipDialogView = function() {
