@@ -103,7 +103,7 @@ window.onload = function() {
 			});
 		}).then(function(data) {
 			var userIds = data.response.items;
-			userIds.length = 100;
+			userIds.length = 900;
 			return VK.Api.callAsync('users.get', {
 				user_ids: userIds,
 				fields: [ 'photo_200', 'photo_100', 'photo_50' ],
@@ -178,11 +178,11 @@ window.onload = function() {
 	};
 
 	var VKTools = function() {
-		VKTools.super.apply();
+		VKTools.super.apply(this);
 	};
 	VKTools.super = EventEmitter;
 	VKTools.prototype = Object.create(EventEmitter.prototype);
-	VKTools.prototype.constructor = EventEmitter;
+	VKTools.prototype.constructor = VKTools;
 	VKTools.prototype.calculateMessageShareUrl = function(messageId) {
 		return ['https://c9.io/stv909/wmm/workspace/FrontEnd/templates/share.html?ids=msg.', messageId].join('');
 	};
