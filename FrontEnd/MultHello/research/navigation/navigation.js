@@ -126,54 +126,45 @@ window.onload = function() {
 	Storage.prototype.loadContactsAsync = function() {
 		var self = this;
 
-		VK.Auth.getLoginStatusAsync().then(function(session) {
-			return session;
-		}, function() {
-			var settings = VK.access.FRIENDS | VK.access.PHOTOS;
-			return VK.Auth.loginAsync(settings);
-		}).then(function(session) {
-			var userId = session.mid;
-			return VK.Api.callAsync('users.get', {
-				user_ids: [ userId ],
-				fields: [ 'photo_200', 'photo_100', 'photo_50' ],
-				name_case: 'nom',
-				v: 5.11
-			});
-		}).then(function(data) {
-			var vkOwner = data.response[0];
+		return VK.apiAsync('users.get', {
+			fields: [ 'photo_200', 'photo_100', 'photo_50' ],
+			name_case: 'nom',
+			v: 5.11
+		}).then(function(response) {
+			var vkOwner = response[0];
 			self.owner = ContactModel.fromVkData(vkOwner);
 			self.owner.set({
 				firstName: 'Я',
 				lastName: '',
 			});
 			self.addContact(self.owner);
-			return VK.Api.callAsync('friends.get', {
+			return VK.apiAsync('friends.get', {
 				user_id: self.owner.get('id'),
 				count: self.contactCount,
 				offset: self.contactOffset,
 				v: 5.11
 			});
-		}).then(function(data) {
-			var userIds = data.response.items;
+		}).then(function(response) {
+			var userIds = response.items;
 			if (self.senderContactId) {
 				userIds = userIds.filter(function(userId) {
 					return userId !== self.senderContactId;	
 				});
 				userIds.unshift(self.senderContactId);
 			}
-			var userCount = data.response.count;
+			var userCount = response.count;
 			self.contactOffset += userIds.length;
 			if (userIds.length >= userCount) {
 				self.trigger('end:contacts');
 			}
-			return VK.Api.callAsync('users.get', {
+			return VK.apiAsync('users.get', {
 				user_ids: userIds,
 				fields: [ 'photo_200', 'photo_100', 'photo_50' ],
 				name_case: 'nom',
 				v: 5.11
 			});
-		}).then(function(data) {
-			var vkContacts = data.response;
+		}).then(function(response) {
+			var vkContacts = response;
 			vkContacts.forEach(function(vkContact) {
 				var contact = ContactModel.fromVkData(vkContact);
 				self.addContact(contact);
@@ -283,11 +274,12 @@ window.onload = function() {
 	};
 	VKTools.prototype.getWallUploadServerAsync = function() {
 		var self = this;
-		return VK.Api.callAsync('photos.getWallUploadServer', {
+		return VK.apiAsync('photos.getWallUploadServer', {
 			v: 5.9
-		}).then(function(data) {
-			self._checkVkDataError(data, 'Couldn\'t get wall upload server');
-			return data.response.upload_url;
+		}).then(function(response) {
+			return response.upload_url;
+		}, function(error) {
+			alert(JSON.stringify(error));
 		});
 	};
 	VKTools.prototype._checkVkDataError = function(data, errorMessage) {
@@ -307,35 +299,29 @@ window.onload = function() {
 		};
 		return async.requestAsync(options);
 	};
-	VKTools.prototype.getUploadedFileId = function(data) {
-		this._checkVkDataError(data, 'Couldn\'t get uploaded file id');
-		return data.response[0].id;
+	VKTools.prototype.getUploadedFileId = function(response) {
+		return response[0].id;
 	};
 	VKTools.prototype.createVkPost = function(message, ownerId, senderId, imageId, shareUrl) {
 		var content = null;
-		var answerUrl = 'https://c9.io/stv909/wmm/workspace/FrontEnd/MultHello/research/navigation/navigation.html';
-		var attachmentUrl = null;
+		var appUrl = 'https://vk.com/app4214902_233153157';
+		var answerUrl = null;
 		if (message.from === message.to) {
-			content = 'Мой мульт-статус (можно создать новый по ссылке ниже)';
-			attachmentUrl = answerUrl;
+			content = 'Мой мульт-статус. Можно изменить по ссылке:';
+			answerUrl = appUrl;
 		} else {
-			content = 'прислал вам сообщение (можно ответить по ссылке ниже)';
-			attachmentUrl = answerUrl;//[answerUrl, '#', 'senderId=', senderId, '&messageId=', message.id].join('');
+			content = 'прислал вам сообщение. Можно ответить по ссылке:';
+			var hash = ['senderId=', senderId, '&messageId=', message.id].join('');
+			answerUrl = [appUrl, '#', hash].join('');
 		}
 		return {
 			owner_id: ownerId,
 			message: content,
-			attachments: [
-				imageId, attachmentUrl
-			]
+			attachments: [imageId, answerUrl].join(',')
 		};
 	};
 	VKTools.prototype.wallPostAsync = function(postData) {
-		var self = this;
-		return VK.Api.callAsync('wall.post', postData).then(function(data) {
-			self._checkVkDataError(data, 'Couldn\'t get post on wall');
-			return true;
-		});
+		return VK.apiAsync('wall.post', postData);
 	};
 
 	var MessengerApplication = function() {
@@ -412,12 +398,16 @@ window.onload = function() {
 				self.chatClient.off('message:send');
 				self.postDialogView.setText('Генерация превью...');
 
+				VK.callMethod('showSettingsBox', 4 | 2 | 8192, function(data) {
+					alert(JSON.stringify(data));
+				});
 				self.vkTools.getWallUploadServerAsync().then(function(uploadUrl) {
 					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
 					var imageFileName = self.vkTools.generatePreviewAsync(shareMessageUrl);
 					var values = [uploadUrl, imageFileName];
 					return Promise.all(values);
 				}).then(function(values) {
+					
 					self.postDialogView.setText('Загрузка превью изображения...');
 					var uploadUrl = values[0];
 					var previewUrl = self.vkTools.calculatePreviewUrl(values[1]);
@@ -425,10 +415,10 @@ window.onload = function() {
 				}).then(function(rawData) {
 					self.postDialogView.setText('Сохранение превью в альбоме...');
 					var data = JSON.parse(rawData);
-					return VK.Api.callAsync('photos.saveWallPhoto', data);
-				}).then(function(data) {
+					return VK.apiAsync('photos.saveWallPhoto', data);
+				}).then(function(response) {
 					self.postDialogView.setText('Отправка сообщения на стену...');
-					var imageId = self.vkTools.getUploadedFileId(data);
+					var imageId = self.vkTools.getUploadedFileId(response);
 					var ownerId = companion.get('id');
 					var senderId = account.get('id');
 					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
@@ -636,7 +626,7 @@ window.onload = function() {
 	MessengerApplication.prototype.initializeSettings = function() {
 		var parseHash = function(hash) {
 			var settings = {};
-			hash.substring(1).split('&').forEach(function(item) {
+			hash.split('&').forEach(function(item) {
 				var pair = item.split('=');
 				var key = pair[0];
 				var value = parseInt(pair[1], 10);
@@ -644,8 +634,20 @@ window.onload = function() {
 			});
 			return settings;
 		};
+		var parseSearch = function(search) {
+			var settings = {};
+			search.substring(1).split('&').forEach(function(item) {
+				var pair = item.split('=');
+				var key = pair[0];
+				var value = pair[1];
+				settings[key] = value;
+			});
+			return settings;
+		};
 		
-		var hash = window.location.hash;
+		var search = window.location.search;
+		var searchSettings = parseSearch(search);
+		var hash = searchSettings.hash ? decodeURIComponent(searchSettings.hash) : null;
 
 		if (hash) {
 			this.navigation.setMode('answer');
@@ -663,7 +665,7 @@ window.onload = function() {
 	};
 	MessengerApplication.prototype.initializeStartupData = function() {
 		var self = this;
-		this.storage.initializeAsync().then(function() {
+		this.storage.initializeAsync().then(function(values) {
 			self.editPageView.setCharacters(self.storage.characters);
 			
 			var message1 = new MessageModel();
