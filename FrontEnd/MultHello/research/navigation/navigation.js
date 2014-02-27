@@ -125,8 +125,13 @@ window.onload = function() {
 	};
 	Storage.prototype.loadContactsAsync = function() {
 		var self = this;
-		var settings = VK.access.FRIENDS | VK.access.PHOTOS;
-		return VK.Auth.loginAsync(settings).then(function(session) {
+
+		VK.Auth.getLoginStatusAsync().then(function(session) {
+			return session;
+		}, function() {
+			var settings = VK.access.FRIENDS | VK.access.PHOTOS;
+			return VK.Auth.loginAsync(settings);
+		}).then(function(session) {
 			var userId = session.mid;
 			return VK.Api.callAsync('users.get', {
 				user_ids: [ userId ],
