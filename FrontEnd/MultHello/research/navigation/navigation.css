@@ -247,9 +247,12 @@ body {
     height: 100%;
     position: relative;
 }
+#answer-page {
+	padding: 8px;
+}
 #answer-page .container {
     display: inline-block;
-    margin-top: 18px;
+    margin-top: 10px;
 }
 #answer-page .message-wrapper, .contact-wrapper {
     display: inline-block;
@@ -272,6 +275,7 @@ body {
 #select-page {
     font-size: 0;
     padding: 8px;
+    margin-bottom: 16px;
 }
 #edit-page {
     font-size: 0;
