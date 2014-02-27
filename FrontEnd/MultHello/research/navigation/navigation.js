@@ -58,6 +58,9 @@ window.onload = function() {
 		this.selectedContact = null;
 		this.contacts = {};
 		this.characters = [];
+		
+		this.contactOffset = 0;
+		this.contactCount = 28;
 	};
 	Storage.super = EventEmitter;
 	Storage.prototype = Object.create(EventEmitter.prototype);
@@ -82,6 +85,35 @@ window.onload = function() {
 			return true;
 		});
 	};
+	Storage.prototype.loadFriendContactsAsync = function() {
+		var self = this;
+		return VK.Api.callAsync('friends.get', {
+			user_id: self.owner.get('id'),
+			count: self.contactCount,
+			offset: self.contactOffset,
+			v: 5.11
+		}).then(function(data) {
+			var userIds = data.response.items;
+			var userCount = data.response.count;
+			self.contactOffset += userIds.length;
+			if (self.contactOffset === userCount) {
+				self.trigger('end:contacts');
+			}
+			return VK.Api.callAsync('users.get', {
+				user_ids: userIds,
+				fields: [ 'photo_200', 'photo_100', 'photo_50' ],
+				name_case: 'nom',
+				v: 5.11
+			});	
+		}).then(function(data) {
+			var vkContacts = data.response;
+			vkContacts.forEach(function(vkContact) {
+				var contact = ContactModel.fromVkData(vkContact);
+				self.addContact(contact);
+			});
+			return true;
+		});
+	};
 	Storage.prototype.loadContactsAsync = function() {
 		var self = this;
 		var settings = VK.access.FRIENDS | VK.access.PHOTOS;
@@ -99,11 +131,17 @@ window.onload = function() {
 			self.addContact(self.owner);
 			return VK.Api.callAsync('friends.get', {
 				user_id: self.owner.get('id'),
+				count: self.contactCount,
+				offset: self.contactOffset,
 				v: 5.11
 			});
 		}).then(function(data) {
 			var userIds = data.response.items;
-			userIds.length = 900;
+			var userCount = data.response.count;
+			self.contactOffset += self.contactCount;
+			if (userIds.length === userCount) {
+				self.trigger('end:contacts');
+			}
 			return VK.Api.callAsync('users.get', {
 				user_ids: userIds,
 				fields: [ 'photo_200', 'photo_100', 'photo_50' ],
@@ -214,7 +252,7 @@ window.onload = function() {
 		}).then(function(data) {
 			self._checkVkDataError(data, 'Couldn\'t get wall upload server');
 			return data.response.upload_url;
-		})
+		});
 	};
 	VKTools.prototype._checkVkDataError = function(data, errorMessage) {
 		if (data.error) {
@@ -268,6 +306,7 @@ window.onload = function() {
 		this.editElem = document.getElementById('edit');
 		this.postElem = document.getElementById('post');
 
+		this.pageElem = document.getElementById('page');
 		this.pageContainerElem = document.getElementById('page-container');
 		this.logoElem = document.getElementById('logo');
 		this.nextElem = document.getElementById('next');
@@ -402,6 +441,9 @@ window.onload = function() {
 			var contactView = new ContactView(contact);
 			self.postPageView.addContactView(contactView);
 		});
+		this.storage.on('end:contacts', function(event) {
+			self.postPageView.hideContactLoading();	
+		});
 	};
 	MessengerApplication.prototype.initializeViews = function() {
 		var self = this;
@@ -415,7 +457,6 @@ window.onload = function() {
 			var message = event.message;
 			self.storage.selectMessage(message);
 		});
-
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
 				self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
@@ -425,7 +466,6 @@ window.onload = function() {
 			}
 			self.navigation.setMode('select');
 		});
-
 		this.skipDialogView.on('click:ok', function(event) {
 			self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 			self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
@@ -433,9 +473,17 @@ window.onload = function() {
 			window.location.hash = '';
 			self.navigation.setMode('select');
 		});
-		
 		this.postPageView.on('select:contact', function(event) {
 			self.storage.selectedContact = event.contact;
+		});
+		this.postPageView.on('click:load', function() {
+			self.postPageView.disableContactLoading();
+			self.storage.loadFriendContactsAsync().then(function() {
+				self.postPageView.enableContactLoading();
+				html.scrollToBottom(self.pageElem);
+			}).catch(function() {
+				self.postPageView.enableContactLoading();	
+			});
 		});
 	};
 	MessengerApplication.prototype.initializeNavigation = function() {

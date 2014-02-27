@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, async, uuid) {
+(function(messenger, abyss, template, async, uuid, html) {
 
 	var View = abyss.View;
 
@@ -109,7 +109,7 @@ var messenger = messenger || {};
 			});
 			self.updateMessageDialogView.show();
 		});
-
+		
 		this.hide();
 	};
 	EditPageView.super = View;
@@ -318,8 +318,10 @@ var messenger = messenger || {};
 		this.elem = template.create('post-page-template', { id: 'post-page' });
 		this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
 		this.specialContactElem = this.elem.getElementsByClassName('special-contact')[0];
+		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.selectedContactView = null;
 		this.currentSpecialContactView = null;
+		this.loadElemEnable = true;
 		this.contactViews = {};
 
 		this.contactViewSelectListener = function(event) {
@@ -335,6 +337,19 @@ var messenger = messenger || {};
 				});
 			}
 		};
+		
+		
+		var loadElemClickListener = function(event) {
+			if (self.loadElemEnable) {
+				self.trigger('click:load');
+			}
+		};
+		
+		this.loadElem.addEventListener('click', loadElemClickListener);
+		
+		this.once('dispose', function(event) {
+			self.loadElem.removeEventListener('click', loadElemClickListener);	
+		});
 
 		this.hide();
 	};
@@ -373,6 +388,20 @@ var messenger = messenger || {};
 			this.currentSpecialContactView.detach();
 			this.currentSpecialContactView.attachTo(this.specialContactElem);
 		}
+	};
+	PostPageView.prototype.enableContactLoading = function() {
+		this.loadElemEnable = true;
+		this.loadElem.textContent = 'Загрузить еще...';
+	};
+	PostPageView.prototype.disableContactLoading = function() {
+		this.loadElemEnable = false;
+		this.loadElem.textContent = 'Загрузка...';
+	};
+	PostPageView.prototype.hideContactLoading = function() {
+		this.loadElem.classList.add('hidden');
+	};
+	PostPageView.prototype.showContactLoading = function() {
+		this.loadElem.classList.remove('hidden');	
 	};
 
 	var AnswerPageView = function() {
@@ -977,4 +1006,4 @@ var messenger = messenger || {};
 		ContactView: ContactView
 	};
 
-})(messenger, abyss, template, async, uuid);
+})(messenger, abyss, template, async, uuid, html);
