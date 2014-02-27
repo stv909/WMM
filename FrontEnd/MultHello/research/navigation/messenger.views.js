@@ -49,6 +49,12 @@ var messenger = messenger || {};
 			messageView.select();
 		}
 	};
+	SelectPageView.prototype.setMessage = function(messageId) {
+		var messageView = this.messageViews[messageId];
+		if (messageView) {
+			messageView.select();
+		}
+	};
 
 	var EditPageView = function() {
 		EditPageView.super.apply(this);

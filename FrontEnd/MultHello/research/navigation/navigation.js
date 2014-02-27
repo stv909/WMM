@@ -227,6 +227,12 @@ window.onload = function() {
 	Storage.prototype.getSenderContactId = function() {
 		return this.senderContactId	|| this.owner.get('id');
 	};
+	Storage.prototype.getSenderMessage = function() {
+		return this.messages[this.senderMessageId] || this.messages[Object.keys(this.messages)[0]];
+	};
+	Storage.prototype.getSenderMessageId = function() {
+		return this.senderMessageId || Object.keys(this.messages)[0];
+	};
 
 	var VKTools = function() {
 		VKTools.super.apply(this);
@@ -637,10 +643,7 @@ window.onload = function() {
 		var self = this;
 		this.storage.initializeAsync().then(function() {
 			self.editPageView.setCharacters(self.storage.characters);
-			self.postPageView.setSpecialContact(self.storage.owner.get('id'));
-			self.postPageView.setContact(self.storage.getSenderContactId());
-			self.answerPageView.setContact(self.storage.getSenderContact());
-
+			
 			var message1 = new MessageModel();
 			var message2 = new MessageModel();
 	
@@ -657,6 +660,13 @@ window.onload = function() {
 			
 			self.storage.addMessage(message1);
 			self.storage.addMessage(message2);
+			
+
+			self.selectPageView.setMessage(self.storage.getSenderMessageId());
+			self.postPageView.setSpecialContact(self.storage.owner.get('id'));
+			self.postPageView.setContact(self.storage.getSenderContactId());
+			self.answerPageView.setContact(self.storage.getSenderContact());
+			self.answerPageView.setMessage(self.storage.getSenderMessage());
 
 			self.chatClient.once('connect', function() {
 				var account = self.storage.owner;
@@ -669,6 +679,7 @@ window.onload = function() {
 			self.chatClient.connect();
 
 		}).catch(function() {
+			console.log(arguments);
 			self.preloadDialogView.hide();
 		});
 	};
