@@ -473,7 +473,7 @@ body {
     margin-right: 1px;
     margin-bottom: 1px;
     width: 120px;
-    height: 140px;
+    min-height: 140px;
     display: inline-block;
     text-align: center;
     cursor: pointer;
@@ -503,6 +503,7 @@ body {
     margin-right: 1px;
     font-size: 10px;
     display: inline-block;
+    white-space: nowrap;
 }
 .message-editor .container {
     display: inline-block;
