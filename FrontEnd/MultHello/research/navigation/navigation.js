@@ -177,6 +177,89 @@ window.onload = function() {
 		return this.contacts[contactId];
 	};
 
+	var VKTools = function() {
+		VKTools.super.apply();
+	};
+	VKTools.super = EventEmitter;
+	VKTools.prototype = Object.create(EventEmitter.prototype);
+	VKTools.prototype.constructor = EventEmitter;
+	VKTools.prototype.calculateMessageShareUrl = function(messageId) {
+		return ['https://c9.io/stv909/wmm/workspace/FrontEnd/templates/share.html?ids=msg.', messageId].join('');
+	};
+	VKTools.prototype.calculatePreviewUrl = function(fileName) {
+		return ['http://www.bazelevscontent.net:8582/', fileName].join('');
+	};
+	VKTools.prototype.generatePreviewAsync = function(messageShareUrl) {
+		var requestData = {
+			url: messageShareUrl,
+			imageFormat: 'png',
+			scale: 1,
+			contentType: 'share'
+		};
+		var rawRequestData = JSON.stringify(requestData);
+		var options = {
+			url: 'https://www.bazelevscontent.net:8893',
+			method: 'POST',
+			data: 'type=render&data=' + encodeURIComponent(rawRequestData)
+		};
+		return async.requestAsync(options).then(function(rawData) {
+			var response = JSON.parse(rawData);
+			return response.image;
+		});
+	};
+	VKTools.prototype.getWallUploadServerAsync = function() {
+		var self = this;
+		return VK.Api.callAsync('photos.getWallUploadServer', {
+			v: 5.9
+		}).then(function(data) {
+			self._checkVkDataError(data, 'Couldn\'t get wall upload server');
+			return data.response.upload_url;
+		})
+	};
+	VKTools.prototype._checkVkDataError = function(data, errorMessage) {
+		if (data.error) {
+			throw new Error(errorMessage);
+		}
+	};
+	VKTools.prototype.uploadImageAsync = function(uploadUri, imageUri) {
+		var requestData = {
+			uri: uploadUri,
+			file1: imageUri
+		};
+		var options = {
+			url: 'https://wmm-c9-stv909.c9.io',
+			method: 'POST',
+			data: JSON.stringify(requestData)
+		};
+		return async.requestAsync(options);
+	};
+	VKTools.prototype.getUploadedFileId = function(data) {
+		this._checkVkDataError(data, 'Couldn\'t get uploaded file id');
+		return data.response[0].id;
+	};
+	VKTools.prototype.createVkPost = function(message, ownerId, imageId, shareUrl) {
+		var content = null;
+		if (message.from === message.to) {
+			content = 'Мой мульт-статус';
+		} else {
+			content = 'прислал вам сообщение (полная версия по ссылке ниже)';
+		}
+		return {
+			owner_id: ownerId,
+			message: content,
+			attachments: [
+				imageId, shareUrl
+			]
+		};
+	};
+	VKTools.prototype.wallPostAsync = function(postData) {
+		var self = this;
+		return VK.Api.callAsync('wall.post', postData).then(function(data) {
+			self._checkVkDataError(data, 'Couldn\'t get post on wall');
+			return true;
+		});
+	};
+
 	var MessengerApplication = function() {
 		MessengerApplication.super.apply(this);
 		var self = this;
@@ -192,6 +275,7 @@ window.onload = function() {
 		this.navigation = new Navigation();
 		this.storage = new Storage();
 		this.chatClient = new ChatClient('ws://www.bazelevscontent.net:9009/');
+		this.vkTools = new VKTools();
 
 		this.selectPageView = new SelectPageView();
 		this.editPageView = new EditPageView();
@@ -249,29 +333,27 @@ window.onload = function() {
 				self.chatClient.off('message:send');
 				self.postDialogView.setText('Генерация превью...');
 
-				VK.Api.callAsync('photos.getWallUploadServer', {
-					v: 5.9
-				}).then(function(data) {
-					var uploadUrl = data.response.upload_url;
-					var shareMessageUrl = self.generateMessageShareUrl(message.id);
-					var values = [uploadUrl, self.generatePreview(shareMessageUrl)];
+				self.vkTools.getWallUploadServerAsync().then(function(uploadUrl) {
+					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
+					var imageFileName = self.vkTools.generatePreviewAsync(shareMessageUrl);
+					var values = [uploadUrl, imageFileName];
 					return Promise.all(values);
 				}).then(function(values) {
-					var uploadUrl = values[0];
-					var generatedPreview = JSON.parse(values[1]);
-					var previewUrl = self.generatePreviewUrl(generatedPreview.image);
 					self.postDialogView.setText('Загрузка превью изображения...');
-					return self.uploadImageAsync(uploadUrl, previewUrl);
+					var uploadUrl = values[0];
+					var previewUrl = self.vkTools.calculatePreviewUrl(values[1]);
+					return self.vkTools.uploadImageAsync(uploadUrl, previewUrl);
 				}).then(function(rawData) {
-					var data = JSON.parse(rawData);
 					self.postDialogView.setText('Сохранение превью в альбоме...');
+					var data = JSON.parse(rawData);
 					return VK.Api.callAsync('photos.saveWallPhoto', data);
 				}).then(function(data) {
-					var savedImage = data.response[0];
-					var postData = self.createVkPost(message, savedImage.id, self.generateMessageShareUrl(message.id));
-					postData.owner_id = companion.get('id');
 					self.postDialogView.setText('Отправка сообщения на стену...');
-					return VK.Api.callAsync('wall.post', postData);
+					var imageId = self.vkTools.getUploadedFileId(data);
+					var ownerId = companion.get('id');
+					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
+					var postData = self.vkTools.createVkPost(message, ownerId, imageId, shareMessageUrl);
+					return self.vkTools.wallPostAsync(postData);
 				}).then(function() {
 					self.postDialogView.setMode('complete');
 				}).catch(function(error) {
@@ -282,7 +364,6 @@ window.onload = function() {
 
 			self.chatClient.once('message:now', chatClientNowListener);
 			self.chatClient.now();
-
 		};
 		this.nextElemAnswerClickListener = function(event) {
 			self.navigation.setMode('select');
@@ -509,53 +590,6 @@ window.onload = function() {
 		}).catch(function() {
 			self.preloadDialogView.hide();
 		});
-	};
-	MessengerApplication.prototype.generatePreview = function(shareUrl) {
-		var requestData = {
-			url: shareUrl,
-			imageFormat: 'png',
-			scale: 1,
-			contentType: 'share'
-		};
-		var rawRequestData = JSON.stringify(requestData);
-		var options = {
-			url: 'https://www.bazelevscontent.net:8893',
-			method: 'POST',
-			data: 'type=render&data=' + encodeURIComponent(rawRequestData)
-		};
-		return async.requestAsync(options);
-	};
-	MessengerApplication.prototype.generateMessageShareUrl = function(messageId) {
-		return ['https://c9.io/stv909/wmm/workspace/FrontEnd/templates/share.html?ids=msg.', messageId].join('');
-	};
-	MessengerApplication.prototype.generatePreviewUrl = function(fileName) {
-		return ['http://www.bazelevscontent.net:8582/', fileName].join('');
-	};
-	MessengerApplication.prototype.uploadImageAsync = function(uploadUri, imageUri) {
-		var requestData = {
-			uri: uploadUri,
-			file1: imageUri
-		};
-		var options = {
-			url: 'https://wmm-c9-stv909.c9.io',
-			method: 'POST',
-			data: JSON.stringify(requestData)
-		};
-		return async.requestAsync(options);
-	};
-	MessengerApplication.prototype.createVkPost = function(message, imageId, shareUrl) {
-		var content = null;
-		if (message.from === message.to) {
-			content = 'Мой мульт-статус';
-		} else {
-			content = 'прислал вам сообщение (полная версия по ссылке ниже)';
-		}
-		return {
-			message: content,
-			attachments: [
-				imageId, shareUrl
-			]
-		};
 	};
 
 	var messengerApplication = new MessengerApplication();
