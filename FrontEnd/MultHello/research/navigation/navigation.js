@@ -306,18 +306,23 @@ window.onload = function() {
 		this._checkVkDataError(data, 'Couldn\'t get uploaded file id');
 		return data.response[0].id;
 	};
-	VKTools.prototype.createVkPost = function(message, ownerId, imageId, shareUrl) {
+	VKTools.prototype.createVkPost = function(message, ownerId, senderId, imageId, shareUrl) {
 		var content = null;
+		var answerUrl = 'https://c9.io/stv909/wmm/workspace/FrontEnd/MultHello/research/navigation/navigation.html';
+		var attachmentUrl = null;
 		if (message.from === message.to) {
-			content = 'Мой мульт-статус';
+			content = 'Мой мульт-статус (можно создать новый по ссылке ниже)';
+			attachmentUrl = answerUrl;
 		} else {
-			content = 'прислал вам сообщение (полная версия по ссылке ниже)';
+			content = 'прислал вам сообщение (можно ответить по ссылке ниже)';
+			attachmentUrl = answerUrl;//[answerUrl, '#', 'senderId=', senderId, '&messageId=', message.id].join('');
+			console.log(attachmentUrl);
 		}
 		return {
 			owner_id: ownerId,
 			message: content,
 			attachments: [
-				imageId, shareUrl
+				imageId, attachmentUrl
 			]
 		};
 	};
@@ -421,8 +426,9 @@ window.onload = function() {
 					self.postDialogView.setText('Отправка сообщения на стену...');
 					var imageId = self.vkTools.getUploadedFileId(data);
 					var ownerId = companion.get('id');
+					var senderId = account.get('id');
 					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
-					var postData = self.vkTools.createVkPost(message, ownerId, imageId, shareMessageUrl);
+					var postData = self.vkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
 					return self.vkTools.wallPostAsync(postData);
 				}).then(function() {
 					self.postDialogView.setMode('complete');
