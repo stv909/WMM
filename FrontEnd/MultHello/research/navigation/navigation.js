@@ -398,16 +398,12 @@ window.onload = function() {
 				self.chatClient.off('message:send');
 				self.postDialogView.setText('Генерация превью...');
 
-				VK.callMethod('showSettingsBox', 4 | 2 | 8192, function(data) {
-					alert(JSON.stringify(data));
-				});
 				self.vkTools.getWallUploadServerAsync().then(function(uploadUrl) {
 					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
 					var imageFileName = self.vkTools.generatePreviewAsync(shareMessageUrl);
 					var values = [uploadUrl, imageFileName];
 					return Promise.all(values);
 				}).then(function(values) {
-					
 					self.postDialogView.setText('Загрузка превью изображения...');
 					var uploadUrl = values[0];
 					var previewUrl = self.vkTools.calculatePreviewUrl(values[1]);
