@@ -128,6 +128,10 @@ window.onload = function() {
 		}).then(function(data) {
 			var vkOwner = data.response[0];
 			self.owner = ContactModel.fromVkData(vkOwner);
+			self.owner.set({
+				firstName: 'Я',
+				lastName: '',
+			});
 			self.addContact(self.owner);
 			return VK.Api.callAsync('friends.get', {
 				user_id: self.owner.get('id'),
