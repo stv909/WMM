@@ -21,8 +21,8 @@ var getImageMime = function(extname) {
 	}
 };
 
-var getImageInfo = function(imageUri) {
-	var fileName = path.basename(imageUri);
+var getImageInfo = function(imageUrl) {
+	var fileName = path.basename(imageUrl);
 	var extName = path.extname(fileName);
 	var fileMime = getImageMime(extName);
 	
@@ -64,9 +64,9 @@ var multipart = {
 };
 
 var getRequestProtocol = function(options) {
-	var uri = (typeof options === 'string') ? options : options.hostname;
-	var parsedUri = url.parse(uri);
-	return parsedUri.protocol === 'https' ? https : http;
+	var currentUrl = (typeof options === 'string') ? options : options.hostname;
+	var parsedUrl = url.parse(currentUrl);
+	return parsedUrl.protocol === 'https' ? https : http;
 };
 
 var requestAsync = function(options, data, requestEncoding, responseEncoding) {
@@ -115,11 +115,11 @@ http.createServer(function(req, res) {
 		readRequestBodyAsync(req)
 		.then(function(rawBody) {
 			var body = JSON.parse(rawBody);
-			var uploadUri = body.uri;
+			var uploadUrl = body.uploadUrl;
 			var file1 = body.file1;
 			var imageInfo = getImageInfo(file1);
 			var uploadInfo = {
-				uploadUri: uploadUri,
+				uploadUrl: uploadUrl,
 				imageInfo: imageInfo
 			};
 			return requestAsync(file1, null, null, 'binary')
@@ -127,15 +127,15 @@ http.createServer(function(req, res) {
 				return [uploadInfo, response, body];	
 			});
 		}).spread(function(uploadInfo, response, body) {
-			var uploadUri = uploadInfo.uploadUri;
+			var uploadUrl = uploadInfo.uploadUrl;
 			var imageInfo = uploadInfo.imageInfo;
 			var fileSize = body.length;
 			var boundryBegin = multipart.getBoundryBegin('file1', imageInfo.fileName, fileSize, imageInfo.fileMime);
 			var boundryEnd = multipart.getBoundryEnd();
-			var parsedUri = url.parse(uploadUri);
+			var parsedUrl = url.parse(uploadUrl);
 			var options = {
-				hostname: parsedUri.hostname,
-				path: parsedUri.path,
+				hostname: parsedUrl.hostname,
+				path: parsedUrl.path,
 				method: 'POST',
 				port: 80,
 				headers: {

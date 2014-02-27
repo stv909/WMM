@@ -292,7 +292,7 @@ window.onload = function() {
 	};
 	VKTools.prototype.uploadImageAsync = function(uploadUri, imageUri) {
 		var requestData = {
-			uri: uploadUri,
+			uploadUrl: uploadUri,
 			file1: imageUri
 		};
 		var options = {
