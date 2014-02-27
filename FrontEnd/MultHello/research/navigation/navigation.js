@@ -98,8 +98,14 @@ window.onload = function() {
 		}).then(function(data) {
 			var userIds = data.response.items;
 			var userCount = data.response.count;
-			self.contactOffset += userIds.length;
-			if (self.contactOffset === userCount) {
+			var currentUserCount = userIds.length;
+			if (self.senderContactId) {
+				userIds = userIds.filter(function(userId) {
+					return userId !== self.senderContactId;	
+				});
+			}
+			self.contactOffset += currentUserCount;
+			if (self.contactOffset >= userCount) {
 				self.trigger('end:contacts');
 			}
 			return VK.Api.callAsync('users.get', {
@@ -144,9 +150,15 @@ window.onload = function() {
 			});
 		}).then(function(data) {
 			var userIds = data.response.items;
+			if (self.senderContactId) {
+				userIds = userIds.filter(function(userId) {
+					return userId !== self.senderContactId;	
+				});
+				userIds.unshift(self.senderContactId);
+			}
 			var userCount = data.response.count;
-			self.contactOffset += self.contactCount;
-			if (userIds.length === userCount) {
+			self.contactOffset += userIds.length;
+			if (userIds.length >= userCount) {
 				self.trigger('end:contacts');
 			}
 			return VK.Api.callAsync('users.get', {
