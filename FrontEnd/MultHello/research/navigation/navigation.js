@@ -64,7 +64,8 @@ window.onload = function() {
 		this.contactCount = 28;
 		
 		this.senderContactId = null;
-		this.senderMessageId = '7520357e-dbf9-4f58-e934-c86ff7204e96';
+		this.senderMessageId = null;
+		this.defaultMessageId = '7520357e-dbf9-4f58-e934-c86ff7204e96';
 	};
 	Storage.super = EventEmitter;
 	Storage.prototype = Object.create(EventEmitter.prototype);
@@ -672,7 +673,7 @@ window.onload = function() {
 			
 			var settings = parseHash(hash);
 			this.storage.senderContactId = settings.senderId;
-			this.storage.senderMessageId = this.storage.senderMessageId || settings.messageId;
+			this.storage.senderMessageId = settings.messageId;
 		} else {
 			this.navigation.setMode('select');
 			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
@@ -692,37 +693,68 @@ window.onload = function() {
 				self.chatClient.login(vkId);
 			});
 			self.chatClient.once('message:login', function() {
-				var msgId = ['msg', self.storage.senderMessageId].join('.');
-				self.chatClient.retrieve([msgId].join(','));
+				self.chatClient.tape();
+			});
+			self.chatClient.once('message:tape', function(event) {
+				var tape = event.response.tape;
+				var senderMessageId = self.storage.senderMessageId;
+				var defaultMessageId = self.storage.defaultMessageId;
+				var messageId = senderMessageId || defaultMessageId;
+				var msgId = ['msg', messageId].join('.');
+				
+				if (tape.length === 0) {
+					tape.unshift(msgId);
+				} else {
+					if (senderMessageId) {
+						tape = tape.filter(function(item) {
+							return msgId !== item.id;	
+						}).map(function(item) {
+							return item.id;
+						});
+						tape.unshift(msgId);
+					} else {
+						tape = tape.map(function(item) {
+							return item.id;	
+						});
+					}
+				}
+
+				self.chatClient.retrieve(tape.join(','));
 			});
 			self.chatClient.once('message:retrieve', function(event) {
-				var retrieve = event.response.retrieve;
-				var message = MessageModel.fromChatMessage(retrieve[0]);
-				self.storage.addMessage(message);
+				var chatMessages = event.response.retrieve;
+				chatMessages = chatMessages.filter(function(chatMessage) {
+					return chatMessage.value.group === '9205ef2d-4a2c-49dd-8203-f33a3ceac6c9';
+				});
+				//console.log(chatMessages);
+				chatMessages.forEach(function(chatMessage) {
+					var message = MessageModel.fromChatMessage(chatMessage);
+					self.storage.addMessage(message);
+				});
 				
-				var message1 = new MessageModel();
-				var message2 = new MessageModel();
-				var message3 = new MessageModel();
+				// var message1 = new MessageModel();
+				// var message2 = new MessageModel();
+				// var message3 = new MessageModel();
 		
-				message1.set({
-					id: 1,
-					preview: 'https://www.bazelevscontent.net:8583/8b8cdae3-8842-4ecd-a067-ccda2cfe56f8.png',
-					content: '<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(https://lh6.googleusercontent.com/-pDyo6bISP5s/UwXAANbCjXI/AAAAAAAAFus/rbcJ2tUev7g/w448-h328-no/office_dresscode_2_back.png); background-size: auto; width: 403px; height: 403px; background-position: 0% 21%; background-repeat: no-repeat no-repeat;"><div class="tool_layerItem_ece920e7-b59b-4c00-9cc5-b4d093fd8a1a layerType_text" draggable="true" style="font-family: Impact; font-size: 1.9em; color: black; background-color: transparent; text-shadow: none; pointer-events: auto; position: absolute; z-index: 5; left: 9px; top: 339px; -webkit-transform: rotate(0deg);">И НЕ НАДЕЛ ГАЛСТУК НА РАБОТУ</div><div class="tool_layerItem_cdd13bc9-151d-463a-bff7-f8f6f1f978a5 layerType_text" draggable="true" style="font-family: Impact; font-size: 1.5em; color: black; background-color: transparent; text-shadow: none; pointer-events: auto; position: absolute; z-index: 4; left: 60px; top: 11px; -webkit-transform: rotate(0deg);">РЕШИЛ БЫТЬ САМИМ СОБОЙ</div><img src="https://www.bazelevscontent.net:8583/12fa62f1-8492-4d33-bb88-bc0914501aeb_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;borac&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;mood&gt;happy&lt;/mood&gt;&lt;action&gt;point&lt;/action&gt;Ай эм секси энд ай ноу ит!&lt;gag&gt;party&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/12fa62f1-8492-4d33-bb88-bc0914501aeb_1.gif&quot;}" class="tool_layerItem_5025a450-13c9-40a4-8410-94a1a1d30628 layerType_actor" draggable="true" style="position: absolute; z-index: 1; -webkit-transform: scale(0.5133420832795046) rotate(0deg); left: 96px; top: -87px; pointer-events: auto;"><img src="https://lh5.googleusercontent.com/-eI04EqemiLY/UwXAC7AICAI/AAAAAAAAFvU/_2AnZWHqjvs/w448-h328-no/office_dresscode_2_front.png" class="tool_layerItem_ff203327-3bd4-46a8-a0bc-98c5e38b342e layerType_img" draggable="true" style="position: absolute; z-index: 2; -webkit-transform: scale(1) rotate(0deg); left: -25px; top: 16px;"><img src="https://lh3.googleusercontent.com/--kaLl9jd890/UwXfgRqfPGI/AAAAAAAAFx0/qACqaTb0MjA/s403-no/7.png" class="tool_layerItem_312b95b5-4b85-4fea-b464-29510fc69ee9 layerType_img" draggable="true" style="position: absolute; z-index: 3; -webkit-transform: scale(1) rotate(0deg); left: 0px; top: 0px;"><div class="tool_layerItem_0cfd1126-2616-4977-808d-01e2201f258f layerType_text" draggable="true" style="font-family: Impact; font-size: 1em; color: black; background-color: transparent; text-shadow: none; pointer-events: auto; position: absolute; z-index: 6; -webkit-transform: rotate(0deg); left: 107px; top: 376px;">НУ МОЖЕТ НЕ ТОЛЬКО ГАЛСТУК</div></div>'
-				});
-				message2.set({
-					id: 2,
-					preview: 'https://www.bazelevscontent.net:8583/6f2d89b3-ac7d-42ff-853b-e249e635303f.png',
-					content: '<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(http://bm.img.com.ua/img/prikol/images/large/0/7/116670_182525.jpg); background-size: cover; width: 403px; height: 403px; background-position: 0% 0%; background-repeat: no-repeat no-repeat;"><img src="https://www.bazelevscontent.net:8583/cda3b406-3284-4336-9339-72e2780c665b_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;ostap&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;action&gt;point&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1088;&#1072;&#1079;&lt;action&gt;rulez&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1076;&#1074;&#1072;&lt;action&gt;applaud&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1090;&#1088;&#1080;!&lt;gag&gt;party&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/cda3b406-3284-4336-9339-72e2780c665b_1.gif&quot;}" class="tool_layerItem_0b421ad0-382c-403a-bbed-6060240b9985 layerType_actor" draggable="true" style="position: absolute; z-index: 1; -webkit-transform: scale(0.5) rotate(0deg); left: -30px; top: 0px;"><img src="https://www.bazelevscontent.net:8583/5b384968-e77e-4533-a659-931c9edac410_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;2&quot;,&quot;character&quot;:&quot;joe&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;2&lt;/actor&gt;&lt;action&gt;hi&lt;/action&gt;&#1087;&#1088;&#1080;&#1074;&#1077;&#1090;!&lt;action&gt;sucks&lt;/action&gt;&#1075;&#1088;&#1091;&#1089;&#1090;&#1080;&#1096;&#1100;?&lt;gag&gt;laugh&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/5b384968-e77e-4533-a659-931c9edac410_1.gif&quot;}" class="tool_layerItem_46f88be7-c16f-4b5c-90c1-209b004f4f61 layerType_actor" draggable="true" style="position: absolute; z-index: 2; -webkit-transform: scale(0.4) rotate(0deg); left: 150px; top: -50px;"><div class="tool_layerItem_b67357c7-deda-4bf5-956b-1f6b68038e8e layerType_text" draggable="true" style="font-size: 3em; color: white; background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 3; -webkit-transform: rotate(0deg);">где-то в глубинке...</div><div class="tool_layerItem_711ab108-6852-428e-89f7-5c39d46106cb layerType_text" draggable="true" style="font-size: 1.7em; color: rgb(244, 164, 96); background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 4; left: 50px; top: 50px; -webkit-transform: rotate(0deg);">южный парк по-русски</div></div>'
-				});
-				message3.set({
-					id: 3,
-					preview: 'https://www.bazelevscontent.net:8583/47ae760b-582e-4b85-9189-5e352968d1aa.png',
-					content: '<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(http://cs616923.vk.me/v616923054/86/4m-Qeb8onF0.jpg); background-size: auto; width: 403px; height: 403px; background-position: 39% 0%; background-repeat: no-repeat no-repeat;"><div class="tool_layerItem_1afdf61d-4285-4a9f-9799-77f9e0e6bc23 layerType_text" draggable="true" style="font-family: Impact, Charcoal, sans-serif; font-size: 28px; color: black; background-color: transparent; text-shadow: red -1px 0px 2px, red 0px -1px 2px, red 1px 0px 2px, red 0px 1px 2px, red -1px -1px 2px, red 1px 1px 2px, red -1px 1px 2px, red 1px -1px 2px; text-align: center; pointer-events: auto; position: absolute; z-index: 3; left: 162px; top: 177px; -webkit-transform: rotate(0deg);">Всем привет из Дели! Всем привет из Дели! Всем привет из Дели! Всем привет из Дели!</div><img src="http://cs419227.vk.me/u16996461/75628422/s_3370ea06dbx:001.jpg" class="tool_layerItem_504c1a6f-2b62-4282-95b4-9d8eea365261 layerType_img" draggable="true" style="position: absolute; z-index: 1; -webkit-transform: scale(2.0505460456750133) rotate(0deg); left: 258px; top: -17px;"><img src="https://www.bazelevscontent.net:8583/f08251fa-53b4-4ac6-8a21-204e0427de36_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;swann&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;mood&gt;anger&lt;/mood&gt;&lt;action&gt;point&lt;/action&gt;балет уже не тот&lt;gag&gt;facepalm&lt;/gag&gt;&lt;gag&gt;cry&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/f08251fa-53b4-4ac6-8a21-204e0427de36_1.gif&quot;}" class="tool_layerItem_321c8291-e176-45ba-a954-b8faecb27cc9 layerType_actor" draggable="true" style="position: absolute; z-index: 2; -webkit-transform: scale(0.5688000922764596) rotate(0deg); left: -73px; top: -10px;"><div class="tool_layerItem_66540590-88a0-4bd1-bd60-dc0843f61a3d layerType_text" draggable="true" style="font-size: 32px; color: black; background-color: white; text-align: center; pointer-events: auto; position: absolute; z-index: 4; left: 0px; top: -4px; -webkit-transform: rotate(0deg);">Тестовая карточка!</div></div>'
-				});
+				// message1.set({
+				// 	id: 1,
+				// 	preview: 'https://www.bazelevscontent.net:8583/8b8cdae3-8842-4ecd-a067-ccda2cfe56f8.png',
+				// 	content: '<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(https://lh6.googleusercontent.com/-pDyo6bISP5s/UwXAANbCjXI/AAAAAAAAFus/rbcJ2tUev7g/w448-h328-no/office_dresscode_2_back.png); background-size: auto; width: 403px; height: 403px; background-position: 0% 21%; background-repeat: no-repeat no-repeat;"><div class="tool_layerItem_ece920e7-b59b-4c00-9cc5-b4d093fd8a1a layerType_text" draggable="true" style="font-family: Impact; font-size: 1.9em; color: black; background-color: transparent; text-shadow: none; pointer-events: auto; position: absolute; z-index: 5; left: 9px; top: 339px; -webkit-transform: rotate(0deg);">И НЕ НАДЕЛ ГАЛСТУК НА РАБОТУ</div><div class="tool_layerItem_cdd13bc9-151d-463a-bff7-f8f6f1f978a5 layerType_text" draggable="true" style="font-family: Impact; font-size: 1.5em; color: black; background-color: transparent; text-shadow: none; pointer-events: auto; position: absolute; z-index: 4; left: 60px; top: 11px; -webkit-transform: rotate(0deg);">РЕШИЛ БЫТЬ САМИМ СОБОЙ</div><img src="https://www.bazelevscontent.net:8583/12fa62f1-8492-4d33-bb88-bc0914501aeb_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;borac&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;mood&gt;happy&lt;/mood&gt;&lt;action&gt;point&lt;/action&gt;Ай эм секси энд ай ноу ит!&lt;gag&gt;party&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/12fa62f1-8492-4d33-bb88-bc0914501aeb_1.gif&quot;}" class="tool_layerItem_5025a450-13c9-40a4-8410-94a1a1d30628 layerType_actor" draggable="true" style="position: absolute; z-index: 1; -webkit-transform: scale(0.5133420832795046) rotate(0deg); left: 96px; top: -87px; pointer-events: auto;"><img src="https://lh5.googleusercontent.com/-eI04EqemiLY/UwXAC7AICAI/AAAAAAAAFvU/_2AnZWHqjvs/w448-h328-no/office_dresscode_2_front.png" class="tool_layerItem_ff203327-3bd4-46a8-a0bc-98c5e38b342e layerType_img" draggable="true" style="position: absolute; z-index: 2; -webkit-transform: scale(1) rotate(0deg); left: -25px; top: 16px;"><img src="https://lh3.googleusercontent.com/--kaLl9jd890/UwXfgRqfPGI/AAAAAAAAFx0/qACqaTb0MjA/s403-no/7.png" class="tool_layerItem_312b95b5-4b85-4fea-b464-29510fc69ee9 layerType_img" draggable="true" style="position: absolute; z-index: 3; -webkit-transform: scale(1) rotate(0deg); left: 0px; top: 0px;"><div class="tool_layerItem_0cfd1126-2616-4977-808d-01e2201f258f layerType_text" draggable="true" style="font-family: Impact; font-size: 1em; color: black; background-color: transparent; text-shadow: none; pointer-events: auto; position: absolute; z-index: 6; -webkit-transform: rotate(0deg); left: 107px; top: 376px;">НУ МОЖЕТ НЕ ТОЛЬКО ГАЛСТУК</div></div>'
+				// });
+				// message2.set({
+				// 	id: 2,
+				// 	preview: 'https://www.bazelevscontent.net:8583/6f2d89b3-ac7d-42ff-853b-e249e635303f.png',
+				// 	content: '<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(http://bm.img.com.ua/img/prikol/images/large/0/7/116670_182525.jpg); background-size: cover; width: 403px; height: 403px; background-position: 0% 0%; background-repeat: no-repeat no-repeat;"><img src="https://www.bazelevscontent.net:8583/cda3b406-3284-4336-9339-72e2780c665b_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;ostap&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;action&gt;point&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1088;&#1072;&#1079;&lt;action&gt;rulez&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1076;&#1074;&#1072;&lt;action&gt;applaud&lt;/action&gt;&#1076;&#1077;&#1083;&#1072;&#1081; &#1090;&#1088;&#1080;!&lt;gag&gt;party&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/cda3b406-3284-4336-9339-72e2780c665b_1.gif&quot;}" class="tool_layerItem_0b421ad0-382c-403a-bbed-6060240b9985 layerType_actor" draggable="true" style="position: absolute; z-index: 1; -webkit-transform: scale(0.5) rotate(0deg); left: -30px; top: 0px;"><img src="https://www.bazelevscontent.net:8583/5b384968-e77e-4533-a659-931c9edac410_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;2&quot;,&quot;character&quot;:&quot;joe&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;2&lt;/actor&gt;&lt;action&gt;hi&lt;/action&gt;&#1087;&#1088;&#1080;&#1074;&#1077;&#1090;!&lt;action&gt;sucks&lt;/action&gt;&#1075;&#1088;&#1091;&#1089;&#1090;&#1080;&#1096;&#1100;?&lt;gag&gt;laugh&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/5b384968-e77e-4533-a659-931c9edac410_1.gif&quot;}" class="tool_layerItem_46f88be7-c16f-4b5c-90c1-209b004f4f61 layerType_actor" draggable="true" style="position: absolute; z-index: 2; -webkit-transform: scale(0.4) rotate(0deg); left: 150px; top: -50px;"><div class="tool_layerItem_b67357c7-deda-4bf5-956b-1f6b68038e8e layerType_text" draggable="true" style="font-size: 3em; color: white; background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 3; -webkit-transform: rotate(0deg);">где-то в глубинке...</div><div class="tool_layerItem_711ab108-6852-428e-89f7-5c39d46106cb layerType_text" draggable="true" style="font-size: 1.7em; color: rgb(244, 164, 96); background-color: transparent; text-shadow: black -1.5px 0px 3px, black 0px -1.5px 3px, black 1.5px 0px 3px, black 0px 1.5px 3px, black -1.5px -1.5px 3px, black 1.5px 1.5px 3px, black -1.5px 1.5px 3px, black 1.5px -1.5px 3px; pointer-events: auto; position: absolute; z-index: 4; left: 50px; top: 50px; -webkit-transform: rotate(0deg);">южный парк по-русски</div></div>'
+				// });
+				// message3.set({
+				// 	id: 3,
+				// 	preview: 'https://www.bazelevscontent.net:8583/47ae760b-582e-4b85-9189-5e352968d1aa.png',
+				// 	content: '<div class="tool_layerBackground" style="position: relative; overflow: hidden; background-image: url(http://cs616923.vk.me/v616923054/86/4m-Qeb8onF0.jpg); background-size: auto; width: 403px; height: 403px; background-position: 39% 0%; background-repeat: no-repeat no-repeat;"><div class="tool_layerItem_1afdf61d-4285-4a9f-9799-77f9e0e6bc23 layerType_text" draggable="true" style="font-family: Impact, Charcoal, sans-serif; font-size: 28px; color: black; background-color: transparent; text-shadow: red -1px 0px 2px, red 0px -1px 2px, red 1px 0px 2px, red 0px 1px 2px, red -1px -1px 2px, red 1px 1px 2px, red -1px 1px 2px, red 1px -1px 2px; text-align: center; pointer-events: auto; position: absolute; z-index: 3; left: 162px; top: 177px; -webkit-transform: rotate(0deg);">Всем привет из Дели! Всем привет из Дели! Всем привет из Дели! Всем привет из Дели!</div><img src="http://cs419227.vk.me/u16996461/75628422/s_3370ea06dbx:001.jpg" class="tool_layerItem_504c1a6f-2b62-4282-95b4-9d8eea365261 layerType_img" draggable="true" style="position: absolute; z-index: 1; -webkit-transform: scale(2.0505460456750133) rotate(0deg); left: 258px; top: -17px;"><img src="https://www.bazelevscontent.net:8583/f08251fa-53b4-4ac6-8a21-204e0427de36_1.gif" data-meta="{&quot;actors&quot;:[{&quot;name&quot;:&quot;1&quot;,&quot;character&quot;:&quot;swann&quot;}],&quot;commands&quot;:&quot;&lt;actor&gt;1&lt;/actor&gt;&lt;mood&gt;anger&lt;/mood&gt;&lt;action&gt;point&lt;/action&gt;балет уже не тот&lt;gag&gt;facepalm&lt;/gag&gt;&lt;gag&gt;cry&lt;/gag&gt;&quot;,&quot;type&quot;:&quot;dialog&quot;,&quot;url&quot;:&quot;https://www.bazelevscontent.net:8583/f08251fa-53b4-4ac6-8a21-204e0427de36_1.gif&quot;}" class="tool_layerItem_321c8291-e176-45ba-a954-b8faecb27cc9 layerType_actor" draggable="true" style="position: absolute; z-index: 2; -webkit-transform: scale(0.5688000922764596) rotate(0deg); left: -73px; top: -10px;"><div class="tool_layerItem_66540590-88a0-4bd1-bd60-dc0843f61a3d layerType_text" draggable="true" style="font-size: 32px; color: black; background-color: white; text-align: center; pointer-events: auto; position: absolute; z-index: 4; left: 0px; top: -4px; -webkit-transform: rotate(0deg);">Тестовая карточка!</div></div>'
+				// });
 				
-				self.storage.addMessage(message1);
-				self.storage.addMessage(message2);
-				self.storage.addMessage(message3);
+				// self.storage.addMessage(message1);
+				// self.storage.addMessage(message2);
+				// self.storage.addMessage(message3);
 				
 				self.selectPageView.setMessage(self.storage.getSenderMessageId());
 				self.postPageView.setSpecialContact(self.storage.owner.get('id'));
