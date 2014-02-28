@@ -438,6 +438,14 @@ window.onload = function() {
 		this.nextElemAnswerClickListener = function(event) {
 			self.navigation.setMode('select');
 		};
+		
+		this.currentShowAskMessageDialog = null;
+		this.validShowAskMessageDialog = function() {
+			self.askMessageDialogView.trigger('click:ok');
+		};
+		this.invalidShowAskMessageDialog = function() {
+			self.askMessageDialogView.show();
+		};
 
 		this.preloadDialogView.show();
 		this.initializeStorage();
@@ -512,10 +520,38 @@ window.onload = function() {
 			});
 		});
 		this.editPageView.on('status:validate', function() {
-
+			self.currentShowAskMessageDialog = self.validShowAskMessageDialog;
 		});
 		this.editPageView.on('status:invalidate', function() {
+			self.currentShowAskMessageDialog = self.invalidShowAskMessageDialog;
+		});
+		this.askMessageDialogView.on('click:ok', function(event) {
+			self.editPageView.reset();
 			
+			self.selectElem.classList.add('normal');
+			self.selectElem.classList.remove('chosen');
+			self.selectElem.addEventListener('click', self.selectElemClickListener);
+
+			self.editElem.classList.add('normal');
+			self.editElem.classList.remove('chosen');
+			self.editElem.addEventListener('click', self.editElemClickListener);
+
+			self.postElem.classList.remove('normal');
+			self.postElem.classList.add('chosen');
+			self.postElem.removeEventListener('click', self.postElemClickListener);
+
+			self.selectPageView.hide();
+			self.editPageView.hide();
+			self.postPageView.show();
+			self.answerPageView.hide();
+
+			self.nextElem.textContent = 'Отправить сообщение';
+			self.nextElem.removeEventListener('click', self.currentNextElemClickListener);
+			self.nextElem.addEventListener('click', self.nextElemPostClickListener);
+			self.currentNextElemClickListener = self.nextElemPostClickListener;
+		});
+		this.askMessageDialogView.on('click:cancel', function(event) {
+			self.navigation.setMode('edit');
 		});
 	};
 	MessengerApplication.prototype.initializeNavigation = function() {
@@ -599,27 +635,7 @@ window.onload = function() {
 			self.currentNextElemClickListener = self.nextElemStandardClickListener;
 		});
 		this.navigation.on('mode:post', function(event) {
-			self.selectElem.classList.add('normal');
-			self.selectElem.classList.remove('chosen');
-			self.selectElem.addEventListener('click', self.selectElemClickListener);
-
-			self.editElem.classList.add('normal');
-			self.editElem.classList.remove('chosen');
-			self.editElem.addEventListener('click', self.editElemClickListener);
-
-			self.postElem.classList.remove('normal');
-			self.postElem.classList.add('chosen');
-			self.postElem.removeEventListener('click', self.postElemClickListener);
-
-			self.selectPageView.hide();
-			self.editPageView.hide();
-			self.postPageView.show();
-			self.answerPageView.hide();
-
-			self.nextElem.textContent = 'Отправить сообщение';
-			self.nextElem.removeEventListener('click', self.currentNextElemClickListener);
-			self.nextElem.addEventListener('click', self.nextElemPostClickListener);
-			self.currentNextElemClickListener = self.nextElemPostClickListener;
+			self.currentShowAskMessageDialog();
 		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {

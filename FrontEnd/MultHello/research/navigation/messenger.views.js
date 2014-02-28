@@ -129,6 +129,7 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype.setMessage = function(message) {
 		this.messageEditorView.setModel(message);
+		this.trigger('status:validate');
 	};
 	EditPageView.prototype.getMessageContent = function() {
 		return this.messageEditorView.cachedFullElem.innerHTML;
@@ -512,9 +513,11 @@ var messenger = messenger || {};
 	AskMessageDialogView.prototype = Object.create(View.prototype);
 	AskMessageDialogView.prototype.constructor = AskMessageDialogView;
 	AskMessageDialogView.prototype.hide = function() {
+		this.dialogWindowElem.classList.add('hidden');
 		this.elem.classList.add('hidden');	
 	};
 	AskMessageDialogView.prototype.show = function() {
+		this.dialogWindowElem.classList.remove('hidden');
 		this.elem.classList.remove('hidden');
 	};
 
