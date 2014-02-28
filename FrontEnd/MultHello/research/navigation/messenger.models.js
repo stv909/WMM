@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss) {
+(function(messenger, abyss, base64) {
 
 	var Model = abyss.Model;
 
@@ -10,6 +10,16 @@ var messenger = messenger || {};
 	MessageModel.super = Model;
 	MessageModel.prototype = Object.create(Model.prototype);
 	MessageModel.prototype.constructor = MessageModel;
+	MessageModel.fromChatMessage = function(chatMessage) {
+		var value = chatMessage.value || {};
+		var message = new MessageModel();
+		message.set({
+			id: value.id || -1,
+			content: value.content ? base64.decode(value.content) : '',
+			preview: ''
+		});
+		return message;
+	};
 
 	var ContactModel = function() {
 		ContactModel.super.apply(this);
@@ -37,4 +47,4 @@ var messenger = messenger || {};
 		ContactModel: ContactModel
 	};
 
-})(messenger, abyss);
+})(messenger, abyss, base64);
