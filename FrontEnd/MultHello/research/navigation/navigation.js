@@ -10,6 +10,7 @@ window.onload = function() {
 	var AnswerPageView = messenger.views.AnswerPageView;
 	var PostDialogView = messenger.views.PostDialogView;
 	var SkipDialogView = messenger.views.SkipDialogView;
+	var AskMessageDialogView = messenger.views.AskMessageDialogView;
 	var PreloadDialogView = messenger.views.PreloadDialogView;
 	var MessagePatternView = messenger.views.MessagePatternView;
 	var ContactView = messenger.views.ContactView;
@@ -350,6 +351,7 @@ window.onload = function() {
 		this.postDialogView = new PostDialogView();
 		this.skipDialogView = new SkipDialogView();
 		this.preloadDialogView = new PreloadDialogView();
+		this.askMessageDialogView = new AskMessageDialogView();
 
 		this.currentLogoElemClickListener = null;
 		this.logoElemStandardClickListener = function(event) {
@@ -508,6 +510,12 @@ window.onload = function() {
 			}).catch(function() {
 				self.postPageView.enableContactLoading();	
 			});
+		});
+		this.editPageView.on('status:validate', function() {
+
+		});
+		this.editPageView.on('status:invalidate', function() {
+			
 		});
 	};
 	MessengerApplication.prototype.initializeNavigation = function() {

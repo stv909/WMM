@@ -437,6 +437,21 @@ body {
     height: 140px;
     line-height: 140px;
 }
+#ask-message-dialog {
+	font-size: 12px;
+	width: 360px;
+	height: 220px;
+}
+#ask-message-dialog .content {
+    height: 140px;
+    line-height: 140px;
+}
+#ask-message-dialog .button {
+    padding-left: 12px;
+    padding-right: 12px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
 #preload-background {
     display: table;
     position: fixed;

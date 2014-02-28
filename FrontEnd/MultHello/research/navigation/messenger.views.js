@@ -174,16 +174,6 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype._parseLayerTypeActor = function(rootElem) {
 		var actorElements = rootElem.getElementsByClassName('layerType_actor');
-		// actorElements = Array.prototype.slice.call(actorElements, 0);
-		// actorElements = actorElements.sort(function(elem1, elem2) {
-		// 	if (elem1.style.zIndex > elem2.style.zIndex) {
-		// 		return 1;
-		// 	} else if (elem1.style.zIndex <= elem2.style.zIndex) {
-		// 		return -1;
-		// 	} else {
-		// 		return 0;
-		// 	}
-		// });
 		for (var i = 0; i < actorElements.length; i++) {
 			this._createCharacterView(actorElements[i]);
 		}
@@ -234,18 +224,22 @@ var messenger = messenger || {};
 			if (self.isValid()) {
 				self.updateElem.classList.add('hidden');
 				self.resetElem.classList.add('hidden');
+				self.trigger('status:validate');
 			} else {
 				self.updateElem.classList.remove('hidden');
 				self.resetElem.classList.remove('hidden');
+				self.trigger('status:invalidate');
 			}
 		});
 		characterView.on('invalidate', function() {
 			if (self.isValid()) {
 				self.updateElem.classList.add('hidden');
 				self.resetElem.classList.add('hidden');
+				self.trigger('status:validate');
 			} else {
 				self.updateElem.classList.remove('hidden');
 				self.resetElem.classList.remove('hidden');
+				self.trigger('status:invalidate');
 			}
 		});
 		this.characterViewCollection.push(characterView);
@@ -486,6 +480,42 @@ var messenger = messenger || {};
 		setTimeout(function() {
 			self.elem.classList.add('hidden');
 		}, 0);
+	};
+	
+	var AskMessageDialogView = function() {
+		AskMessageDialogView.super.apply(this);
+		var self = this;
+		
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('ask-message-dialog');
+		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
+		this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
+		
+		var okElemClickListener = function(event) {
+			self.hide();
+			self.trigger('click:ok');
+		};
+		var cancelElemClickListener = function() {
+			self.hide();
+			self.trigger('click:cancel');
+		};
+		
+		this.okElem.addEventListener('click', okElemClickListener);
+		this.cancelElem.addEventListener('click', cancelElemClickListener);
+		
+		this.once('dispose', function(event) {
+			self.okElem.removeEventListener('click', okElemClickListener);
+			self.cancelElem.removeEventListener('click', cancelElemClickListener);
+		});
+	};
+	AskMessageDialogView.super = View;
+	AskMessageDialogView.prototype = Object.create(View.prototype);
+	AskMessageDialogView.prototype.constructor = AskMessageDialogView;
+	AskMessageDialogView.prototype.hide = function() {
+		this.elem.classList.add('hidden');	
+	};
+	AskMessageDialogView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
 	};
 
 	var SkipDialogView = function() {
@@ -1034,6 +1064,7 @@ var messenger = messenger || {};
 		PostDialogView: PostDialogView,
 		SkipDialogView: SkipDialogView,
 		PreloadDialogView: PreloadDialogView,
+		AskMessageDialogView: AskMessageDialogView,
 		MessageView: MessageView,
 		MessagePatternView: MessagePatternView,
 		ContactView: ContactView
