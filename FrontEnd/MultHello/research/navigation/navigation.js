@@ -108,14 +108,14 @@ window.onload = function() {
 			if (self.contactOffset >= userCount) {
 				self.trigger('end:contacts');
 			}
-			return VK.Api.callAsync('users.get', {
+			return VK.apiAsync('users.get', {
 				user_ids: userIds.join(','),
-				fields: [ 'photo_200', 'photo_100', 'photo_50' ].join(','),
+				fields: ['photo_200', 'photo_100', 'photo_50'].join(','),
 				name_case: 'nom',
 				v: 5.12
-			});	
-		}).then(function(data) {
-			var vkContacts = data.response;
+			});
+		}).then(function(response) {
+			var vkContacts = response;
 			vkContacts.forEach(function(vkContact) {
 				var contact = ContactModel.fromVkData(vkContact);
 				self.addContact(contact);
@@ -417,8 +417,6 @@ window.onload = function() {
 				}).then(function(response) {
 					self.postDialogView.setText('Отправка сообщения на стену...');
 					var imageId = self.vkTools.getUploadedFileId(response);
-					// console.log(response);
-					// console.log(imageId);
 					var ownerId = companion.get('id');
 					var senderId = account.get('id');
 					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
