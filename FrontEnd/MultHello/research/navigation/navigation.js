@@ -300,17 +300,17 @@ window.onload = function() {
 		return async.requestAsync(options);
 	};
 	VKTools.prototype.getUploadedFileId = function(response) {
-		return response[0].id;
+		return ['photo', response[0].owner_id, '_', response[0].id].join('');
 	};
 	VKTools.prototype.createVkPost = function(message, ownerId, senderId, imageId, shareUrl) {
 		var content = null;
 		var appUrl = 'https://vk.com/app4214902';
 		var answerUrl = null;
 		if (message.from === message.to) {
-			content = 'Мой мульт-статус. Можно изменить по ссылке:';
+			content = 'Мой мульт-статус. Можно изменить по ссылке ниже:';
 			answerUrl = appUrl;
 		} else {
-			content = 'прислал вам сообщение. Можно ответить по ссылке:';
+			content = 'прислал вам сообщение. Можно ответить по ссылке ниже:';
 			var hash = ['senderId=', senderId, '&messageId=', message.id].join('');
 			answerUrl = [appUrl, '#', hash].join('');
 		}
@@ -417,6 +417,8 @@ window.onload = function() {
 				}).then(function(response) {
 					self.postDialogView.setText('Отправка сообщения на стену...');
 					var imageId = self.vkTools.getUploadedFileId(response);
+					// console.log(response);
+					// console.log(imageId);
 					var ownerId = companion.get('id');
 					var senderId = account.get('id');
 					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
