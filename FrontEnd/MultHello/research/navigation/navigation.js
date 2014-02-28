@@ -311,9 +311,9 @@ window.onload = function() {
 		var fullAnswerUrl = ['https://', answerUrl].join('');
 		
 		if (message.from === message.to) {
-			content = 'Мой мульт! Смотреть: ';
+			content = 'Мой мульт! \nСмотреть: ';
 		} else {
-			content = 'Тебе мульт! Смотреть: ';
+			content = 'Тебе мульт! \nСмотреть: ';
 		}
 		
 		return {

@@ -797,12 +797,17 @@ var messenger = messenger || {};
 
 		var phrases = characterData.phrases;
 		var hints = characterData.hints;
-		for (var i = 0; i < phrases.length; i++) {
-			var replyView = new ReplyView(phrases[i], hints[i]);
-			replyView.attachTo(this.replyWrapperElem);
-			replyView.on('invalidate', validChangeListener);
-			replyView.on('validate', validChangeListener);
-			this.views.push(replyView);
+		if (phrases.length !== 0) {
+			for (var i = 0; i < phrases.length; i++) {
+				var replyView = new ReplyView(phrases[i], hints[i]);
+				replyView.attachTo(this.replyWrapperElem);
+				replyView.on('invalidate', validChangeListener);
+				replyView.on('validate', validChangeListener);
+				this.views.push(replyView);
+			}
+		} else {
+			var emptyReplyView = new EmptyReplyView();
+			emptyReplyView.attachTo(this.replyWrapperElem);
 		}
 
 		this.once('dispose', function(event) {
@@ -1010,6 +1015,17 @@ var messenger = messenger || {};
 			phrase: this.elem.value
 		};
 	};
+	
+	var EmptyReplyView = function() {
+		EmptyReplyView.super.apply(this);
+		
+		this.elem = document.createElement('div');
+		this.elem.classList.add('no-reply');
+		this.elem.textContent = 'У персонажа нет реплик';
+	};
+	EmptyReplyView.super = View;
+	EmptyReplyView.prototype = Object.create(View.prototype);
+	EmptyReplyView.prototype.constructor = EmptyReplyView;
 
 	var ContactView = function(model) {
 		ContactView.super.apply(this);
