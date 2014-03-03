@@ -102,7 +102,7 @@ var messenger = messenger || {};
 					var data = JSON.parse(response);
 					var layer = meta.layer;
 					delete meta.layer;
-					layer.src = 'https://www.bazelevscontent.net:8583/' + data.output.images[0];
+					layer.src = settings.layerImageStoreBaseUrl + data.output.images[0];
 					meta.url = layer.src;
 					layer.dataset.meta= JSON.stringify(meta);
 				});
@@ -318,7 +318,7 @@ var messenger = messenger || {};
 			}
 		};
 
-		var url = 'https://www.bazelevscontent.net:8793';
+		var url = settings.animationServiceUrl;
 		var data = 'type=build&data=' + encodeURIComponent(JSON.stringify(requestData));
 
 		return async.requestAsync({

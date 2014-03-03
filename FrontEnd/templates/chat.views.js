@@ -1150,6 +1150,7 @@ var chat = chat || {};
 		this.progressElem.classList.remove('hidden');
 		this.friendsElem.classList.add('hidden');
 		this.cancelElem.classList.add('hidden');
+		this.okElem.classList.add('hidden');
 	};
 	GeneratePreviewView.prototype.close = function() {
 		this.elem.classList.add('hidden');
