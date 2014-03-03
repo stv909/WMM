@@ -16,7 +16,7 @@ var messenger = messenger || {};
 		message.set({
 			id: value.id || -1,
 			content: value.content ? base64.decode(value.content) : '',
-			preview: ''
+			preview: value.preview ? ['http://www.bazelevscontent.net:8582/', value.preview].join('') : null
 		});
 		return message;
 	};

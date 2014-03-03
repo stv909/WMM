@@ -412,6 +412,8 @@ window.onload = function() {
 					self.postDialogView.setText('Загрузка превью изображения...');
 					var uploadUrl = values[0];
 					var previewUrl = self.vkTools.calculatePreviewUrl(values[1]);
+					message.preview = values[1];
+					self.chatClient.notifyMessage(message);
 					return self.vkTools.uploadImageAsync(uploadUrl, previewUrl);
 				}).then(function(rawData) {
 					self.postDialogView.setText('Сохранение превью в альбоме...');
@@ -701,7 +703,7 @@ window.onload = function() {
 				var defaultMessageId = self.storage.defaultMessageId;
 				var messageId = senderMessageId || defaultMessageId;
 				var msgId = ['msg', messageId].join('.');
-				
+
 				if (tape.length === 0) {
 					tape.unshift(msgId);
 				} else {
@@ -724,12 +726,15 @@ window.onload = function() {
 			self.chatClient.once('message:retrieve', function(event) {
 				var chatMessages = event.response.retrieve;
 				chatMessages = chatMessages.filter(function(chatMessage) {
-					return chatMessage.value.group === '9205ef2d-4a2c-49dd-8203-f33a3ceac6c9';
+					return chatMessage.value.group === '9205ef2d-4a2c-49dd-8203-f33a3ceac6c9' ||
+					chatMessage.value.id === self.storage.defaultMessageId ||
+					chatMessage.value.id === self.storage.senderMessageId;
 				});
-				//console.log(chatMessages);
 				chatMessages.forEach(function(chatMessage) {
 					var message = MessageModel.fromChatMessage(chatMessage);
-					self.storage.addMessage(message);
+					if (message.get('preview')) {
+						self.storage.addMessage(message);
+					}
 				});
 				
 				// var message1 = new MessageModel();

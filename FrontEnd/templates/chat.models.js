@@ -102,7 +102,7 @@ var chat = chat || {};
 			rawMessage.group = receiverId;
 			rawMessage.to = '%recipientid%';
 		}
-		console.log(rawMessage);
+
 		return rawMessage;
 	};
 	MessageModel.fromRawMessage = function(rawMessage) {
