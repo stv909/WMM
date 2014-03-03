@@ -94,11 +94,15 @@ var chat = chat || {};
 
 		var rawMessage = chat.MessageFactory.create(id, content, authorId, receiverId, timestamp);
 		
+		if (this.getAttribute('preview')) {
+			rawMessage.preview = this.getAttribute('preview');
+		}
+		
 		if (type !== 'user') {
 			rawMessage.group = receiverId;
 			rawMessage.to = '%recipientid%';
 		}
-		
+		console.log(rawMessage);
 		return rawMessage;
 	};
 	MessageModel.fromRawMessage = function(rawMessage) {
@@ -111,7 +115,8 @@ var chat = chat || {};
 		message.setAttribute('receiverId', value.group || value.to);
 		message.setAttribute('content', base64.decode(value.content));
 		message.setAttribute('timestamp', value.timestamp);
-
+		message.setAttribute('preview', value.preview);
+		
 		return message;
 	};
 

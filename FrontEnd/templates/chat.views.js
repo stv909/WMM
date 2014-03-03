@@ -483,6 +483,7 @@ var chat = chat || {};
 		this.clearElem = this.elem.getElementsByClassName('clear')[0];
 		this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
 		this.borrowElem = this.elem.getElementsByClassName('borrow')[0];
+		this.previewElem = this.elem.getElementsByClassName('preview')[0];
 		this.shareElem = this.elem.getElementsByClassName('share')[0];
 		this.wallElem = this.elem.getElementsByClassName('wall')[0];
 		this.fullscreenElem = this.elem.getElementsByClassName('fullscreen')[0];
@@ -556,6 +557,12 @@ var chat = chat || {};
 				model: self.model
 			});
 		};
+		var previewElemClickListener = function(event) {
+			self.trigger({
+				type: 'click:preview',
+				model: self.model
+			});
+		};
 		var fullscreenElemClickListener = function(event) {
 			self.trigger({
 				type: 'click:fullscreen',
@@ -594,6 +601,10 @@ var chat = chat || {};
 			this.clearElem.classList.add('super-hidden');
 			this.deleteElem.classList.add('super-hidden');
 		}
+		var preview = this.model.getAttribute('preview');
+		if (preview) {
+			this.previewElem.classList.add('super-hidden');
+		}
 		this.editElem.addEventListener('click', editElemClickListener);
 		this.moreElem.addEventListener('click', moreElemClickListener);
 		this.editorElem.addEventListener('keydown', editorElemKeydownListener);
@@ -602,6 +613,7 @@ var chat = chat || {};
 		this.borrowElem.addEventListener('click', borrowElemClickListener);
 		this.shareElem.addEventListener('click', shareElemClickListener);
 		this.wallElem.addEventListener('click', wallElemClickListener);
+		this.previewElem.addEventListener('click', previewElemClickListener);
 		this.fullscreenElem.addEventListener('click', fullscreenElemClickListener);
 		this.overflowFullscreenElem.addEventListener('click', fullscreenElemClickListener);
 		this.deleteElem.addEventListener('click', deleteElemClickListener);
@@ -654,6 +666,7 @@ var chat = chat || {};
 			self.borrowElem.removeEventListener('click', borrowElemClickListener);
 			self.shareElem.removeEventListener('click', shareElemClickListener);
 			self.wallElem.removeEventListener('click', wallElemClickListener);
+			self.previewElem.removeEventListener('click', previewElemClickListener);
 			self.fullscreenElem.removeEventListener('click', fullscreenElemClickListener);
 			self.overflowFullscreenElem.removeEventListener('click', fullscreenElemClickListener);
 			self.hideElem.removeEventListener('click', removeEventListener);
@@ -680,6 +693,7 @@ var chat = chat || {};
 		this.borrowElem.classList.add('hidden');
 		this.shareElem.classList.add('hidden');
 		this.wallElem.classList.add('hidden');
+		this.previewElem.classList.add('hidden');
 		this.fullscreenElem.classList.add('hidden');
 		this.overflowFullscreenElem.classList.add('hidden');
 		this.hideElem.classList.add('hidden');
@@ -709,6 +723,7 @@ var chat = chat || {};
 		this.borrowElem.classList.remove('hidden');
 		this.shareElem.classList.remove('hidden');
 		this.wallElem.classList.remove('hidden');
+		this.previewElem.classList.remove('hidden');
 		this.fullscreenElem.classList.remove('hidden');
 		this.overflowFullscreenElem.classList.remove('hidden');
 		this.hideElem.classList.remove('hidden');
@@ -743,6 +758,7 @@ var chat = chat || {};
 		this.borrowElem.classList.remove('hidden');
 		this.shareElem.classList.remove('hidden');
 		this.wallElem.classList.remove('hidden');
+		this.previewElem.classList.remove('hidden');
 		this.fullscreenElem.classList.remove('hidden');
 		this.overflowFullscreenElem.classList.remove('hidden');
 		this.hideElem.classList.remove('hidden');
@@ -931,7 +947,7 @@ var chat = chat || {};
 			self.elem.classList.remove('hidden');
 			self.session = session;
 			self.userId = session.mid;
-			self.statusElem.textContent = 'Getting friend list...'
+			self.statusElem.textContent = 'Getting friend list...';
 			return VK.Api.callAsync('friends.get', { v: 5.9, fields: 'domain', count: 50, user_id: self.userId });
 		}).then(function(data) {
 			self.checkCancelation();
@@ -1108,6 +1124,56 @@ var chat = chat || {};
 		return deferred.promise;
 	};
 	
+	var GeneratePreviewView = function() {
+		GeneratePreviewView.super.apply(this);
+		var self = this;
+		
+		this.elem = document.getElementById('wall-publication');
+		this.statusElem = this.elem.getElementsByClassName('status')[0];
+		this.progressElem = document.getElementById('fadingBarsG');
+		this.okElem = this.elem.getElementsByClassName('ok')[0];
+		this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
+		this.friendsElem = this.elem.getElementsByClassName('friends')[0];
+		
+		var okElemClickListener = function() {
+			self.close();
+		};
+		
+		this.okElem.addEventListener('click', okElemClickListener);
+	};
+	GeneratePreviewView.super = View;
+	GeneratePreviewView.prototype = Object.create(View.prototype);
+	GeneratePreviewView.prototype.constructor = GeneratePreviewView;
+	GeneratePreviewView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+		this.statusElem.textContent = 'Generate preview...';
+		this.progressElem.classList.remove('hidden');
+		this.friendsElem.classList.add('hidden');
+		this.cancelElem.classList.add('hidden');
+	};
+	GeneratePreviewView.prototype.close = function() {
+		this.elem.classList.add('hidden');
+		this.statusElem.textContent = '';
+		this.progressElem.classList.add('hidden');
+		this.friendsElem.classList.remove('hidden');
+		this.cancelElem.classList.remove('hidden');
+	};
+	GeneratePreviewView.prototype.generatePreview = function(shareUrl) {
+		var requestData = {
+			url: shareUrl,
+			imageFormat: 'png',
+			scale: 1,
+			contentType: 'share'
+		};
+		var rawRequestData = JSON.stringify(requestData);
+		var options = {
+			url: 'https://www.bazelevscontent.net:8893',
+			method: 'POST',
+			data: 'type=render&data=' + encodeURIComponent(rawRequestData)
+		};
+		return requestAsync(options);
+	};
+	
 	var MessageIntervalView = function() {
 		MessageIntervalView.super.apply(this);
 		var self = this;
@@ -1151,7 +1217,8 @@ var chat = chat || {};
 		ShareDialogView: ShareDialogView,
 		MessageCounterView: MessageCounterView,
 		WallPublicationView: WallPublicationView,
-		MessageIntervalView: MessageIntervalView
+		MessageIntervalView: MessageIntervalView,
+		GeneratePreviewView: GeneratePreviewView
 	};
 	
 })(chat, mvp, template, html);

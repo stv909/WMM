@@ -18,6 +18,7 @@ window.onload = function() {
 	var MessageCounterView = chat.views.MessageCounterView;
 	var MessageIntervalView = chat.views.MessageIntervalView;
 	var WallPublicationView = chat.views.WallPublicationView;
+	var GeneratePreviewView = chat.views.GeneratePreviewView;
 	
 	var ChatApplication = function() {
 		ChatApplication.super.apply(this, arguments);
@@ -45,6 +46,7 @@ window.onload = function() {
 		this.messageCounterView = new MessageCounterView();
 		this.messageIntervalView = new MessageIntervalView();
 		this.wallPublicationView = new WallPublicationView();
+		this.generatePreviewView = new GeneratePreviewView();
 
 		this.contactViews = {};
 		this.messageViews = {};
@@ -511,6 +513,7 @@ window.onload = function() {
 
 			message.on('change:shown', shownListener);
 			message.on('change:content', contentListener);
+			message.on('change:preview', contentListener);
 
 			if (!message.getAttribute('shown')) {
 				var count = self.messageCounterView.count;
@@ -596,6 +599,21 @@ window.onload = function() {
 			var shareUrl = self.calculateShareUrl([messageId]);
 			self.wallPublicationView.show(shareUrl);
 		};
+		var previewClickListener = function(event) {
+			var message = event.model;
+			var messageId = message.getAttribute('id');
+			var shareUrl = self.calculateShareUrl([messageId]);
+			self.generatePreviewView.show();
+			self.generatePreviewView.generatePreview(shareUrl)
+			.then(function(rawData) {
+				var data = JSON.parse(rawData);
+				messageView.previewElem.classList.add('super-hidden');
+				self.generatePreviewView.statusElem.textContent = 'Complete';
+				self.generatePreviewView.okElem.classList.remove('hidden');
+				self.generatePreviewView.progressElem.classList.add('hidden');
+				message.setAttribute('preview', data.image);
+			});
+		};
 		var borrowClickListener = function(event) {
 			var message = event.model;
 			var content = message.getAttribute('content');
@@ -627,6 +645,7 @@ window.onload = function() {
 		messageView.on('click:borrow', borrowClickListener);
 		messageView.on('click:share', shareClickListener);
 		messageView.on('click:wall', wallClickListener);
+		messageView.on('click:preview', previewClickListener);
 		messageView.on('editing:begin', editingBeginListener);
 		messageView.on('editing:end', editingEndListener);
 		messageView.on('editing:cancel', editingCancelListener);
