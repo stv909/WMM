@@ -3,6 +3,7 @@ window.onload = function() {
 
 	var MessageModel = messenger.models.MessageModel;
 	var ContactModel = messenger.models.ContactModel;
+	var MessageCollection = messenger.models.MessageCollection;
 
 	var SelectPageView = messenger.views.SelectPageView;
 	var EditPageView = messenger.views.EditPageView;
@@ -243,7 +244,7 @@ window.onload = function() {
 	Storage.prototype.getSenderMessageId = function() {
 		return this.senderMessageId || Object.keys(this.messages)[0];
 	};
-
+	
 	var VKTools = function() {
 		VKTools.super.apply(this);
 	};
@@ -344,6 +345,7 @@ window.onload = function() {
 		this.navigation = new Navigation();
 		this.storage = new Storage();
 		this.chatClient = new ChatClient(settings.chatUrl);
+		this.messageCollection = new MessageCollection(this.chatClient);
 		this.vkTools = new VKTools();
 
 		this.selectPageView = new SelectPageView();
@@ -463,12 +465,12 @@ window.onload = function() {
 	MessengerApplication.prototype.constructor = MessengerApplication;
 	MessengerApplication.prototype.initializeStorage = function() {
 		var self = this;
-		this.storage.on('add:message', function(event) {
+		this.messageCollection.on('add:message', function(event) {
 			var message = event.message;
 			var messagePatternView = new MessagePatternView(message);
 			self.selectPageView.addMessagePatternView(messagePatternView);
 		});
-		this.storage.on('select:message', function(event) {
+		this.messageCollection.on('select:message', function(event) {
 			var message = event.message;
 			self.editPageView.setMessage(message);
 		});
@@ -491,7 +493,7 @@ window.onload = function() {
 
 		this.selectPageView.on('select:message', function(event) {
 			var message = event.message;
-			self.storage.selectMessage(message);
+			self.messageCollection.selectMessage(message);
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
@@ -695,55 +697,66 @@ window.onload = function() {
 				self.chatClient.login(vkId);
 			});
 			self.chatClient.once('message:login', function() {
-				self.chatClient.tape();
-			});
-			self.chatClient.once('message:tape', function(event) {
-				var tape = event.response.tape;
-				var senderMessageId = self.storage.senderMessageId;
-				var defaultMessageId = self.storage.defaultMessageId;
-				var messageId = senderMessageId || defaultMessageId;
-				var msgId = ['msg', messageId].join('.');
-
-				if (tape.length === 0) {
-					tape.unshift(msgId);
-				} else {
-					if (senderMessageId) {
-						tape = tape.filter(function(item) {
-							return msgId !== item.id;	
-						}).map(function(item) {
-							return item.id;
-						});
-						tape.unshift(msgId);
-					} else {
-						tape = tape.map(function(item) {
-							return item.id;	
-						});
-					}
-				}
-
-				self.chatClient.retrieve(tape.join(','));
-			});
-			self.chatClient.once('message:retrieve', function(event) {
-				var chatMessages = event.response.retrieve;
-				chatMessages = chatMessages.filter(function(chatMessage) {
-					return chatMessage.value.group === '9205ef2d-4a2c-49dd-8203-f33a3ceac6c9' ||
-					chatMessage.value.id === self.storage.defaultMessageId ||
-					chatMessage.value.id === self.storage.senderMessageId;
+				self.messageCollection.loadMessagesAsync()
+				.then(function() {
+					self.answerPageView.setContact(self.storage.getSenderContact());
+					self.answerPageView.setMessage(self.messageCollection.getSenderMessage());
+					self.selectPageView.setMessage(self.messageCollection.getSenderMessageId());
+					self.postPageView.setSpecialContact(self.storage.owner.get('id'));
+					self.postPageView.setContact(self.storage.getSenderContactId());
+					self.preloadDialogView.hide();
+				}).catch(function(error) {
+					console.log(error);
+					self.preloadDialogView.hide();
 				});
-				chatMessages.forEach(function(chatMessage) {
-					var message = MessageModel.fromChatMessage(chatMessage);
-					if (message.get('preview')) {
-						self.storage.addMessage(message);
-					}
-				});
+			});
+			// self.chatClient.once('message:tape', function(event) {
+			// 	var tape = event.response.tape;
+			// 	var senderMessageId = self.storage.senderMessageId;
+			// 	var defaultMessageId = self.storage.defaultMessageId;
+			// 	var messageId = senderMessageId || defaultMessageId;
+			// 	var msgId = ['msg', messageId].join('.');
+
+			// 	if (tape.length === 0) {
+			// 		tape.unshift(msgId);
+			// 	} else {
+			// 		if (senderMessageId) {
+			// 			tape = tape.filter(function(item) {
+			// 				return msgId !== item.id;	
+			// 			}).map(function(item) {
+			// 				return item.id;
+			// 			});
+			// 			tape.unshift(msgId);
+			// 		} else {
+			// 			tape = tape.map(function(item) {
+			// 				return item.id;	
+			// 			});
+			// 		}
+			// 	}
+			// 	self.chatClient.retrieve(tape.join(','));
+			// });
+			// self.chatClient.once('message:retrieve', function(event) {
+			// 	var chatMessages = event.response.retrieve;
+			// 	chatMessages = chatMessages.filter(function(chatMessage) {
+			// 		return (!!chatMessage.value) && (
+			// 		chatMessage.value.group === '9205ef2d-4a2c-49dd-8203-f33a3ceac6c9' ||
+			// 		chatMessage.value.id === self.storage.defaultMessageId ||
+			// 		chatMessage.value.id === self.storage.senderMessageId);
+			// 	});
+			// 	chatMessages.forEach(function(chatMessage) {
+			// 		var message = MessageModel.fromChatMessage(chatMessage);
+			// 		if (message.get('preview')) {
+			// 			self.storage.addMessage(message);
+			// 		}
+			// 	});
 				
-				self.selectPageView.setMessage(self.storage.getSenderMessageId());
-				self.postPageView.setSpecialContact(self.storage.owner.get('id'));
-				self.postPageView.setContact(self.storage.getSenderContactId());
-				self.answerPageView.setContact(self.storage.getSenderContact());
-				self.answerPageView.setMessage(self.storage.getSenderMessage());
-				self.preloadDialogView.hide();
-			});
+			// 	self.selectPageView.setMessage(self.storage.getSenderMessageId());
+			// 	self.postPageView.setSpecialContact(self.storage.owner.get('id'));
+			// 	self.postPageView.setContact(self.storage.getSenderContactId());
+			// 	self.answerPageView.setContact(self.storage.getSenderContact());
+			// 	self.answerPageView.setMessage(self.storage.getSenderMessage());
+			// 	self.preloadDialogView.hide();
+			// });
 
 			self.chatClient.connect();
 

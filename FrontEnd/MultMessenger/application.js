@@ -726,9 +726,10 @@ window.onload = function() {
 			self.chatClient.once('message:retrieve', function(event) {
 				var chatMessages = event.response.retrieve;
 				chatMessages = chatMessages.filter(function(chatMessage) {
-					return chatMessage.value.group === '9205ef2d-4a2c-49dd-8203-f33a3ceac6c9' ||
+					return (!!chatMessage.value) && (
+					chatMessage.value.group === '9205ef2d-4a2c-49dd-8203-f33a3ceac6c9' ||
 					chatMessage.value.id === self.storage.defaultMessageId ||
-					chatMessage.value.id === self.storage.senderMessageId;
+					chatMessage.value.id === self.storage.senderMessageId);
 				});
 				chatMessages.forEach(function(chatMessage) {
 					var message = MessageModel.fromChatMessage(chatMessage);

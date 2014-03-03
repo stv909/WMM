@@ -128,6 +128,8 @@ var chat = chat || {};
 			type = 'message:publiclist';
 		} else if (response.ignore) {
 			type = 'message:ignore';
+		} else if (response.grouptape) {
+			type = 'message:grouptape';
 		}
 
 		return type;
@@ -270,6 +272,11 @@ var chat = chat || {};
 	ChatClient.prototype.ignore = function(id) {
 		this.socket.send('ignore');
 		this.socket.send(id);
+	};
+	ChatClient.prototype.grouptape = function(id, count, offset) {
+		this.socket.send('grouptape');
+		this.socket.send(id);
+		this.socket.send([count, offset].join('/'));
 	};
 	//complex protocol operations
 	ChatClient.prototype.sendMessage = function(message, contactMode) {
