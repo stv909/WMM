@@ -149,9 +149,9 @@ var messenger = messenger || {};
 		textElements = Array.prototype.slice.call(textElements, 0);
 		textElements = textElements.sort(function(elem1, elem2) {
 			if (elem1.style.zIndex > elem2.style.zIndex) {
-				return 1;
-			} else if (elem1.style.zIndex <= elem2.style.zIndex) {
 				return -1;
+			} else if (elem1.style.zIndex <= elem2.style.zIndex) {
+				return 1;
 			} else {
 				return 0;
 			}
