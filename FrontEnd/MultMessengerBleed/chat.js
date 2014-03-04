@@ -24,16 +24,16 @@ var chat = chat || {};
 			});
 		};
 		var closeSocketListener = function(socketEvent) {
-			self.trigger({
-				type: 'disconnect',
-				target: self,
-				socketEvent: socketEvent
-			});
 			var socket = socketEvent.srcElement;
 			socket.removeEventListener('open', openSocketListener);
 			socket.removeEventListener('close', closeSocketListener);
 			socket.removeEventListener('message', messageSocketListener);
 			socket.removeEventListener('error', errorSocketListener);
+			self.trigger({
+				type: 'disconnect',
+				target: self,
+				socketEvent: socketEvent
+			});
 		};
 		var messageSocketListener = function(socketEvent) {
 			var result = self._parseSocketMessage(socketEvent);

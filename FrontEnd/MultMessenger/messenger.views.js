@@ -11,7 +11,11 @@ var messenger = messenger || {};
 		this.elem = template.create('select-page-template', { id: 'select-page' });
 		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
 		this.selectedMessageView = null;
+		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
+		this.loadElem = this.elem.getElementsByClassName('load')[0];
+		this.preloadElem = this.elem.getElementsByClassName('preload')[0];
 		this.messageViews = {};
+		this.loadElemEnable = true;
 
 		this.messagePatternSelectListener = function(event) {
 			var target = event.target;
@@ -27,6 +31,27 @@ var messenger = messenger || {};
 				});
 			}
 		};
+		
+		var loadElemClickListener = function(event) {
+			if (self.loadElemEnable) {
+				self.trigger({
+					type: 'click:load'
+				});
+			}
+		};
+		var preloadElemClickListener = function(event) {
+			self.trigger({
+				type: 'click:preload'
+			});
+		};
+		
+		this.loadElem.addEventListener('click', loadElemClickListener);
+		this.preloadElem.addEventListener('click', preloadElemClickListener);
+		
+		this.once('dispose', function(event) {
+			self.loadElem.removeEvent('click', loadElemClickListener);
+			self.preloadElem.removeEventListener('click', preloadElemClickListener);
+		});
 
 		this.hide();
 	};
@@ -39,8 +64,12 @@ var messenger = messenger || {};
 	SelectPageView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
 	};
-	SelectPageView.prototype.addMessagePatternView = function(messageView) {
-		messageView.attachTo(this.patternsElem);
+	SelectPageView.prototype.addMessagePatternView = function(messageView, first) {
+		if (first) {
+			messageView.attachFirstTo(this.patternsElem);
+		} else {
+			messageView.attachTo(this.patternsElem);
+		}
 		var message = messageView.model;
 		var messageId = message.get('id');
 		this.messageViews[messageId] = messageView;
@@ -53,6 +82,28 @@ var messenger = messenger || {};
 		var messageView = this.messageViews[messageId];
 		if (messageView) {
 			messageView.select();
+		}
+	};
+	SelectPageView.prototype.enableMessageLoading = function() {
+		this.loadElemEnable = true;
+		this.loadElem.textContent = 'Загрузить еще...';
+	};
+	SelectPageView.prototype.disableMessageLoading = function() {
+		this.loadElemEnable = false;
+		this.loadElem.textContent = 'Загрузка...';
+	};
+	SelectPageView.prototype.hideMessageLoading = function() {
+		this.loadHolderElem.classList.add('hidden');
+	};
+	SelectPageView.prototype.showMessageLoading = function() {
+		this.loadHolderElem.classList.remove('hidden');	
+	};
+	SelectPageView.prototype.setPreloadedMessageCount = function(count) {
+		if (count === 0) {
+			this.preloadElem.classList.add('hidden');
+		} else {
+			this.preloadElem.classList.remove('hidden');
+			this.preloadElem.textContent = ['Загрузить новые шаблоны (+', count, ')'].join('');
 		}
 	};
 

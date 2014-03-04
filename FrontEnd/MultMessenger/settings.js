@@ -3,7 +3,7 @@ var settings = settings || {};
 (function(settings) {
 	settings.shareMessageBaseUrl = 'https://c9.io/stv909/wmm/workspace/FrontEnd/templates/share.html?ids=msg.';
 	settings.imageUploadServiceUrl = 'https://wmm-c9-stv909.c9.io';
-	settings.vkAppUrl = 'vk.com/app4214902';
+	settings.vkAppUrl = 'vk.com/app4222414';
 	settings.vkAppHttpUrl = ['http://', settings.vkAppUrl].join('');
 	settings.vkAppHttpsUrl = ['https://', settings.vkAppUrl].join('');
 	settings.chatUrl = 'ws://www.bazelevscontent.net:9009/';

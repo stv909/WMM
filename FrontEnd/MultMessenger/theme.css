@@ -210,10 +210,12 @@ body {
 #select-page {
   font-size: 0;
   padding: 8px;
-  margin-bottom: 16px;
 }
 #select-page .patterns {
   margin-top: 8px;
+}
+#select-page .load-holder {
+  margin-bottom: 16px;
 }
 #edit-page {
   font-size: 0;

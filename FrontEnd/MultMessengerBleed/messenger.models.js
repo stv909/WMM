@@ -4,6 +4,74 @@ var messenger = messenger || {};
 
 	var Model = abyss.Model;
 	var EventEmitter = eve.EventEmitter;
+	
+	var ChatWrapper = function(chatClient) {
+		var self = this;
+		self.chatClient = chatClient;
+	};
+	ChatWrapper.prototype.loadMessageIdsAsync = function(groupId, count, offset) {
+		var self = this;
+		var deferred = async.defer();
+	
+		self.chatClient.once('message:grouptape', function(event) {
+			var grouptape = event.response.grouptape;
+			if (grouptape.success) {
+				deferred.resolve({
+					count: grouptape.messagecount,
+					ids: grouptape.data
+				});
+			} else {
+				deferred.reject(new Error(grouptape.error));
+			}
+		});
+		self.chatClient.grouptape(groupId, count, offset);
+	
+		return deferred.promise;
+	};
+	ChatWrapper.prototype.loadMessagesAsync = function(ids) {
+		var self = this;
+		var deferred = async.defer();
+	
+		self.chatClient.once('message:retrieve', function(event) {
+			var rawMessages = event.response.retrieve;
+			deferred.resolve(rawMessages);
+		});
+		self.chatClient.retrieve(ids.join(','));
+	
+		return deferred.promise;
+	};
+	
+	var MessageStorage = function(chatClient) {
+		MessageStorage.super.apply(this);
+		var self = this;
+		
+		self.chatWrapper = new ChatWrapper(chatClient);
+		self.publicId = 'public.9205ef2d-4a2c-49dd-8203-f33a3ceac6c9';
+		
+		self.messages = {};
+		self.preloadedMessages = {};
+		
+		self.currentMessageId = null;
+		self.selectedMessageId = null;
+		
+		self.messageCount = 4;
+		self.messageOffset = 0;
+	};
+	MessageStorage.super = EventEmitter;
+	MessageStorage.prototype = Object.create(EventEmitter.prototype);
+	MessageStorage.prototype.constructor = MessageStorage;
+	MessageStorage.prototype.loadMessagesAsync = function() {
+		var self = this;
+		
+		return self.chatWrapper.loadMessageIdsAsync(
+			self.publicId, 
+			self.messageCount, 
+			self.messageOffset
+		).then(function(data) {
+			var ids = data.ids;
+			return self.chatWrapper.loadMessagesAsync(ids);
+		});
+	};
 
 	var MessageModel = function() {
 		MessageModel.super.apply(this);
@@ -100,7 +168,6 @@ var messenger = messenger || {};
 		this.chatClient.on('message:notify', function(event) {
 			var message = event.response.notify;
 			message.value = message.body;
-			console.log(message);
 			messageRecieveListener(message);
 		});
 	};

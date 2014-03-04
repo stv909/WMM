@@ -3,6 +3,7 @@ window.onload = function() {
 
 	var MessageModel = messenger.models.MessageModel;
 	var ContactModel = messenger.models.ContactModel;
+	var MessageCollection = messenger.models.MessageCollection;
 
 	var SelectPageView = messenger.views.SelectPageView;
 	var EditPageView = messenger.views.EditPageView;
@@ -64,8 +65,6 @@ window.onload = function() {
 		this.contactCount = 28;
 		
 		this.senderContactId = null;
-		this.senderMessageId = null;
-		this.defaultMessageId = '7520357e-dbf9-4f58-e934-c86ff7204e96';
 	};
 	Storage.super = EventEmitter;
 	Storage.prototype = Object.create(EventEmitter.prototype);
@@ -174,38 +173,6 @@ window.onload = function() {
 			return true;
 		});
 	};
-	Storage.prototype.hasMessage = function(messageId) {
-		return this.messages.hasOwnProperty(messageId);
-	};
-	Storage.prototype.addMessage = function(message) {
-		if (!this.hasMessage(message.get('id'))) {
-			this.messages[message.get('id')] = message;
-			this.trigger({
-				type: 'add:message',
-				message: message
-			});
-		}
-	};
-	Storage.prototype.removeMessage = function(messageId) {
-		if (this.hasMessage(messageId)) {
-			var message = this.messages[messageId];
-			delete this.messages[messageId];
-			this.trigger({
-				type: 'remove:message',
-				message: message
-			});
-		}
-	};
-	Storage.prototype.selectMessage = function(message) {
-		this.currentMessage = message;
-		this.trigger({
-			type: 'select:message',
-			message: this.currentMessage
-		});
-	};
-	Storage.prototype.getMessageById = function(messageId) {
-		return this.messages[messageId];
-	};
 	Storage.prototype.hasContact = function(contactId) {
 		return this.contacts.hasOwnProperty(contactId);
 	};
@@ -237,13 +204,7 @@ window.onload = function() {
 	Storage.prototype.getSenderContactId = function() {
 		return this.senderContactId	|| this.owner.get('id');
 	};
-	Storage.prototype.getSenderMessage = function() {
-		return this.messages[this.senderMessageId] || this.messages[Object.keys(this.messages)[0]];
-	};
-	Storage.prototype.getSenderMessageId = function() {
-		return this.senderMessageId || Object.keys(this.messages)[0];
-	};
-
+	
 	var VKTools = function() {
 		VKTools.super.apply(this);
 	};
@@ -344,6 +305,7 @@ window.onload = function() {
 		this.navigation = new Navigation();
 		this.storage = new Storage();
 		this.chatClient = new ChatClient(settings.chatUrl);
+		this.messageCollection = new MessageCollection(this.chatClient);
 		this.vkTools = new VKTools();
 
 		this.selectPageView = new SelectPageView();
@@ -463,14 +425,22 @@ window.onload = function() {
 	MessengerApplication.prototype.constructor = MessengerApplication;
 	MessengerApplication.prototype.initializeStorage = function() {
 		var self = this;
-		this.storage.on('add:message', function(event) {
+		this.messageCollection.on('add:message', function(event) {
 			var message = event.message;
+			var first = event.first;
 			var messagePatternView = new MessagePatternView(message);
-			self.selectPageView.addMessagePatternView(messagePatternView);
+			self.selectPageView.addMessagePatternView(messagePatternView, first);
 		});
-		this.storage.on('select:message', function(event) {
+		this.messageCollection.on('select:message', function(event) {
 			var message = event.message;
 			self.editPageView.setMessage(message);
+		});
+		this.messageCollection.on('preload:update', function(event) {
+			var count = event.count;
+			self.selectPageView.setPreloadedMessageCount(count);
+		});
+		this.messageCollection.on('end:messages', function() {
+			self.selectPageView.hideMessageLoading();	
 		});
 		this.storage.on('add:contact', function(event) {
 			var contact = event.contact;
@@ -491,7 +461,20 @@ window.onload = function() {
 
 		this.selectPageView.on('select:message', function(event) {
 			var message = event.message;
-			self.storage.selectMessage(message);
+			self.messageCollection.selectMessage(message);
+		});
+		this.selectPageView.on('click:load', function(event) {
+			self.selectPageView.disableMessageLoading();
+			self.messageCollection.loadMessagesAsync().then(function() {
+				self.selectPageView.enableMessageLoading();
+				//html.scrollToBottom(self.pageElem);
+			}).catch(function(error) {
+				console.log(error);
+				self.selectPageView.enableMessageLoading();
+			});
+		});
+		this.selectPageView.on('click:preload', function(event) {
+			self.messageCollection.appendPreloadedMessages();	
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
@@ -675,7 +658,7 @@ window.onload = function() {
 			
 			var settings = parseHash(hash);
 			this.storage.senderContactId = settings.senderId;
-			this.storage.senderMessageId = settings.messageId;
+			this.messageCollection.setSenderMessageId(settings.messageId);
 		} else {
 			this.navigation.setMode('select');
 			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
@@ -695,55 +678,18 @@ window.onload = function() {
 				self.chatClient.login(vkId);
 			});
 			self.chatClient.once('message:login', function() {
-				self.chatClient.tape();
-			});
-			self.chatClient.once('message:tape', function(event) {
-				var tape = event.response.tape;
-				var senderMessageId = self.storage.senderMessageId;
-				var defaultMessageId = self.storage.defaultMessageId;
-				var messageId = senderMessageId || defaultMessageId;
-				var msgId = ['msg', messageId].join('.');
-
-				if (tape.length === 0) {
-					tape.unshift(msgId);
-				} else {
-					if (senderMessageId) {
-						tape = tape.filter(function(item) {
-							return msgId !== item.id;	
-						}).map(function(item) {
-							return item.id;
-						});
-						tape.unshift(msgId);
-					} else {
-						tape = tape.map(function(item) {
-							return item.id;	
-						});
-					}
-				}
-
-				self.chatClient.retrieve(tape.join(','));
-			});
-			self.chatClient.once('message:retrieve', function(event) {
-				var chatMessages = event.response.retrieve;
-				chatMessages = chatMessages.filter(function(chatMessage) {
-					return (!!chatMessage.value) && (
-					chatMessage.value.group === '9205ef2d-4a2c-49dd-8203-f33a3ceac6c9' ||
-					chatMessage.value.id === self.storage.defaultMessageId ||
-					chatMessage.value.id === self.storage.senderMessageId);
+				self.messageCollection.loadMessagesAsync()
+				.then(function() {
+					self.answerPageView.setContact(self.storage.getSenderContact());
+					self.answerPageView.setMessage(self.messageCollection.getSenderMessage());
+					self.selectPageView.setMessage(self.messageCollection.getSenderMessageId());
+					self.postPageView.setSpecialContact(self.storage.owner.get('id'));
+					self.postPageView.setContact(self.storage.getSenderContactId());
+					self.preloadDialogView.hide();
+				}).catch(function(error) {
+					console.log(error);
+					self.preloadDialogView.hide();
 				});
-				chatMessages.forEach(function(chatMessage) {
-					var message = MessageModel.fromChatMessage(chatMessage);
-					if (message.get('preview')) {
-						self.storage.addMessage(message);
-					}
-				});
-				
-				self.selectPageView.setMessage(self.storage.getSenderMessageId());
-				self.postPageView.setSpecialContact(self.storage.owner.get('id'));
-				self.postPageView.setContact(self.storage.getSenderContactId());
-				self.answerPageView.setContact(self.storage.getSenderContact());
-				self.answerPageView.setMessage(self.storage.getSenderMessage());
-				self.preloadDialogView.hide();
 			});
 
 			self.chatClient.connect();
