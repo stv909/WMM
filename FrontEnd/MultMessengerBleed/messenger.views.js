@@ -11,6 +11,7 @@ var messenger = messenger || {};
 		this.elem = template.create('select-page-template', { id: 'select-page' });
 		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
 		this.selectedMessageView = null;
+		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.preloadElem = this.elem.getElementsByClassName('preload')[0];
 		this.messageViews = {};
@@ -90,6 +91,12 @@ var messenger = messenger || {};
 	SelectPageView.prototype.disableMessageLoading = function() {
 		this.loadElemEnable = false;
 		this.loadElem.textContent = 'Загрузка...';
+	};
+	SelectPageView.prototype.hideMessageLoading = function() {
+		this.loadHolderElem.classList.add('hidden');
+	};
+	SelectPageView.prototype.showMessageLoading = function() {
+		this.loadHolderElem.classList.remove('hidden');	
 	};
 	SelectPageView.prototype.setPreloadedMessageCount = function(count) {
 		if (count === 0) {

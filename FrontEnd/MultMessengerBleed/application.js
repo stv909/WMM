@@ -439,6 +439,9 @@ window.onload = function() {
 			var count = event.count;
 			self.selectPageView.setPreloadedMessageCount(count);
 		});
+		this.messageCollection.on('end:messages', function() {
+			self.selectPageView.hideMessageLoading();	
+		});
 		this.storage.on('add:contact', function(event) {
 			var contact = event.contact;
 			var contactView = new ContactView(contact);

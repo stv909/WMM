@@ -72,6 +72,7 @@ var messenger = messenger || {};
 		
 		this.messageCount = 4;
 		this.messageOffset = 0;
+		this.totalMessageCount = 0;
 		
 		this._filterMessageIds = this._filterFirstMessageIds;
 		this._addRawMessages = this._addFirstRawMessages;
@@ -189,6 +190,9 @@ var messenger = messenger || {};
 		var self = this;
 		return self._loadMessagesIdsAsync().then(function(ids) {
 			self.messageOffset += ids.length;
+			if (self.messageOffset >= self.totalMessageCount) {
+				self.trigger('end:messages');
+			}
 			ids = self._filterMessageIds(ids);
 			return self._loadRawMessagesAsync(ids);	
 		}).then(function(rawMessages) {
@@ -197,9 +201,11 @@ var messenger = messenger || {};
 	};
 	MessageCollection.prototype._loadMessagesIdsAsync = function() {
 		var deferred = async.defer();
+		var self = this;
 		
 		this.chatClient.once('message:grouptape', function(event) {
 			var grouptape = event.response.grouptape;
+			self.totalMessageCount = self.totalMessageCount || grouptape.messagecount;
 			if (grouptape.success) {
 				deferred.resolve(grouptape.data);
 			} else {
