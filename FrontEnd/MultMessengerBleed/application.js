@@ -4,6 +4,8 @@ window.onload = function() {
 	var MessageModel = messenger.models.MessageModel;
 	var ContactModel = messenger.models.ContactModel;
 	var MessageCollection = messenger.models.MessageCollection;
+	
+	var ContactCollection = messenger.storage.ContactCollection;
 
 	var SelectPageView = messenger.views.SelectPageView;
 	var EditPageView = messenger.views.EditPageView;
@@ -306,6 +308,7 @@ window.onload = function() {
 		this.storage = new Storage();
 		this.chatClient = new ChatClient(settings.chatUrl);
 		this.messageCollection = new MessageCollection(this.chatClient);
+		this.contactCollection = new ContactCollection();
 		this.vkTools = new VKTools();
 
 		this.selectPageView = new SelectPageView();
@@ -668,6 +671,9 @@ window.onload = function() {
 	MessengerApplication.prototype.initializeStartupData = function() {
 		var self = this;
 		VK.initAsync().then(function() {
+			self.contactCollection.initializeAsync().then(function() {
+				console.log(self.contactCollection.friendContacts);
+			});
 			return self.storage.initializeAsync();
 		}).then(function(values) {
 			self.editPageView.setCharacters(self.storage.characters);
