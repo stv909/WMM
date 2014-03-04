@@ -133,10 +133,14 @@ var messenger = messenger || {};
 			data: null
 		}).then(function(rawData) {
 			var response = JSON.parse(rawData);
-			var characters = response.characters;
+			var charactersDict = response.characters;
+			var charactersArray = [];
+			for (var key in charactersDict) {
+				charactersArray.push(key);	
+			}
 			self.trigger({
 				type: 'update:characters',
-				characters: characters
+				characters: charactersArray
 			});
 		});
 	};

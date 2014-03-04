@@ -322,13 +322,13 @@ window.onload = function() {
 		this.postPageView.attachTo(this.pageContainerElem);
 		this.answerPageView.attachTo(this.pageContainerElem);
 
-		// this.selectPageView.on('select:message', function(event) {
-		// 	var message = event.message;
-		// 	self.messageCollection.selectMessage(message);
-		// });
+		this.selectPageView.on('select:message', function(event) {
+			var message = event.message;
+			self.messageStorage.selectMessage(message);
+		});
 		this.selectPageView.on('click:load', function(event) {
 			self.selectPageView.disableMessageLoading();
-			self.messageCollection.loadMessagesAsync().then(function() {
+			self.messageStorage.loadMessagesAsync().then(function() {
 				self.selectPageView.enableMessageLoading();
 				//html.scrollToBottom(self.pageElem);
 			}).catch(function(error) {
@@ -545,7 +545,6 @@ window.onload = function() {
 		}).then(function() {
 			return self.messageStorage.loadMessagesAsync();
 		}).then(function() {
-			self.editPageView.trigger('status:validate');
 			self.preloadDialogView.hide();
 		}).catch(function(error) {
 			self.preloadDialogView.hide();
