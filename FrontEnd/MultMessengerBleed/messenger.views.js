@@ -92,7 +92,12 @@ var messenger = messenger || {};
 		this.loadElem.textContent = 'Загрузка...';
 	};
 	SelectPageView.prototype.setPreloadedMessageCount = function(count) {
-		this.preloadElem.textContent = count;	
+		if (count === 0) {
+			this.preloadElem.classList.add('hidden');
+		} else {
+			this.preloadElem.classList.remove('hidden');
+			this.preloadElem.textContent = ['Загрузить новые шаблоны (+', count, ')'].join('');
+		}
 	};
 
 	var EditPageView = function() {
