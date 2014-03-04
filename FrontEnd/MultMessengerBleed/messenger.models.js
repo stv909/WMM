@@ -57,6 +57,7 @@ var messenger = messenger || {};
 	
 	var MessageCollection = function(chatClient) {
 		MessageCollection.super.apply(this);
+		var self = this;
 		
 		this.chatClient = chatClient;
 		
@@ -74,6 +75,33 @@ var messenger = messenger || {};
 		
 		this._filterMessageIds = this._filterFirstMessageIds;
 		this._addRawMessages = this._addFirstRawMessages;
+		
+		var messageRecieveListener = function(rawMessage) {
+			var value = rawMessage.value || {};
+			var group = value.group || "";
+			var message = MessageModel.fromChatMessage(rawMessage);
+			var messageId = message.get('id');
+			do {
+				if (self.hasMessage(messageId)) break;
+				if (self.publicId.indexOf(group) === -1) break;
+				self.addPreloadedMessage(message);
+			} while (false);
+		};
+		
+		this.chatClient.on('message:send', function(event) {
+			var message = event.response.send;
+			messageRecieveListener(message);
+		});
+		this.chatClient.on('message:sent', function(event) {
+			var message = event.response.sent;
+			messageRecieveListener(message);
+		});
+		this.chatClient.on('message:notify', function(event) {
+			var message = event.response.notify;
+			message.value = message.body;
+			console.log(message);
+			messageRecieveListener(message);
+		});
 	};
 	MessageCollection.super = EventEmitter;
 	MessageCollection.prototype = Object.create(EventEmitter.prototype);
@@ -81,13 +109,54 @@ var messenger = messenger || {};
 	MessageCollection.prototype.hasMessage = function(messageId) {
 		return this.messages.hasOwnProperty(messageId);	
 	};
-	MessageCollection.prototype.addMessage = function(message) {
+	MessageCollection.prototype.addPreloadedMessage = function(message) {
+		var messageId = message.get('id');
+		if (!this.preloadedMessages.hasOwnProperty(messageId)) {
+			this.messageOffset += 1;	
+		}
+		this.preloadedMessages[messageId] = message;
+		this._notifyAboutValidPreloadMessages();
+	};
+	MessageCollection.prototype._notifyAboutValidPreloadMessages = function() {
+		var self = this;
+		var validMessageCount = 0;
+		var keys = Object.keys(this.preloadedMessages);
+		keys.forEach(function(key) {
+			var message = self.preloadedMessages[key];
+			if (message.isValid()) {
+				validMessageCount++;
+			}	
+		});
+		console.log('valid ' + validMessageCount);
+		this.trigger({
+			type: 'preload:update',
+			count: validMessageCount
+		});
+	};
+	MessageCollection.prototype.appendPreloadedMessages = function() {
+		var self = this;
+		var keys = Object.keys(this.preloadedMessages);
+		var validKeys = keys.filter(function(key) {
+			return self.preloadedMessages[key].isValid();
+		});
+		validKeys.forEach(function(key) {
+			var message = self.preloadedMessages[key];
+			self.addMessage(message, true);
+			delete self.preloadedMessages[key];
+		});
+		this.trigger({
+			type: 'preload:update',
+			count: 0	
+		});
+	};
+	MessageCollection.prototype.addMessage = function(message, first) {
 		var messageId = message.get('id');
 		if (!this.hasMessage(messageId)) {
 			this.messages[messageId] = message;
 			this.trigger({
 				type: 'add:message',
-				message: message
+				message: message,
+				first: first
 			});
 		}
 	};
@@ -119,8 +188,8 @@ var messenger = messenger || {};
 	MessageCollection.prototype.loadMessagesAsync = function() {
 		var self = this;
 		return self._loadMessagesIdsAsync().then(function(ids) {
-			ids = self._filterMessageIds(ids);
 			self.messageOffset += ids.length;
+			ids = self._filterMessageIds(ids);
 			return self._loadRawMessagesAsync(ids);	
 		}).then(function(rawMessages) {
 			self._addRawMessages(rawMessages);
