@@ -1,6 +1,6 @@
 var chat = chat || {};
 
-(function(chat, eve, base64) {
+(function(chat, eve, base64, async) {
 
 	var EventEmitter = eve.EventEmitter;
 
@@ -303,6 +303,69 @@ var chat = chat || {};
 	ChatClient.prototype.deleteTool = function(toolId) {
 		this.removetool(toolId);
 	};
+	
+	var ChatWrapper = function(chatClient) {
+		this.chatClient = chatClient;
+	};
+	ChatWrapper.prototype.loadMessageIdsAsync = function(groupId, count, offset) {
+		var self = this;
+		var deferred = async.defer();
+	
+		self.chatClient.once('message:grouptape', function(event) {
+			var grouptape = event.response.grouptape;
+			if (grouptape.success) {
+				deferred.resolve({
+					count: grouptape.messagecount,
+					ids: grouptape.data
+				});
+			} else {
+				deferred.reject(new Error(grouptape.error));
+			}
+		});
+		self.chatClient.grouptape(groupId, count, offset);
+	
+		return deferred.promise;
+	};
+	ChatWrapper.prototype.loadMessagesAsync = function(ids) {
+		var self = this;
+		var deferred = async.defer();
+	
+		self.chatClient.once('message:retrieve', function(event) {
+			var rawMessages = event.response.retrieve;
+			deferred.resolve(rawMessages);
+		});
+		self.chatClient.retrieve(ids.join(','));
+	
+		return deferred.promise;
+	};
+	ChatWrapper.prototype.connectAsync = function() {
+		var self = this;
+		var deferred = async.defer();
+	
+		self.chatClient.once('connect', function() {
+			deferred.resolve();	
+		});
+		self.chatClient.connect();
+		
+		return deferred.promise;	
+	};
+	ChatWrapper.prototype.loginAsync = function(account) {
+		var self = this;
+		var deferred = async.defer();
+	
+		self.chatClient.once('message:login', function() {
+			deferred.resolve();	
+		});
+		self.chatClient.login(account);
+	
+		return deferred.promise;
+	};
+	ChatWrapper.prototype.initializeAsync = function(account) {
+		var self = this;
+		return this.connectAsync().then(function() {
+			return self.loginAsync(account);
+		});
+	};
 
 	var MessageFactory = function() { };
 	MessageFactory.create = function(id, content , fromUserId, toUserId, timestamp) {
@@ -327,5 +390,6 @@ var chat = chat || {};
 	chat.ChatClient = ChatClient;
 	chat.MessageFactory = MessageFactory;
 	chat.ToolFactory = ToolFactory;
+	chat.ChatWrapper = ChatWrapper;
 
-})(chat, eve, base64);
+})(chat, eve, base64, async);
