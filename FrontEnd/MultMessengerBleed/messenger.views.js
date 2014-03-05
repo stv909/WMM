@@ -423,12 +423,23 @@ var messenger = messenger || {};
 				self.trigger('click:load');
 			}
 		};
+		var lastQueryText = this.queryElem.value;
+		var lastQueryTimeout = null;
 		var queryElemInputListener = function(event) {
-			var text = self.queryElem.value;
-			self.trigger({
-				type: 'update:search',
-				text: text
-			});
+			var queryText = self.queryElem.value;
+			if (lastQueryTimeout) {
+				clearTimeout(lastQueryTimeout);
+				lastQueryTimeout = null;
+			}
+			if (lastQueryText !== queryText) {
+				lastQueryTimeout = setTimeout(function() {
+					lastQueryText = queryText;
+					self.trigger({
+						type: 'update:search',
+						text: queryText
+					});
+				}, 800);
+			}
 		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
