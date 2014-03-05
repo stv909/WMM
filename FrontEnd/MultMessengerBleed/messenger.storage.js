@@ -14,9 +14,7 @@ var messenger = messenger || {};
 		this.sender = null;
 		this.selected = null;
 		this.friends = [];
-		
 		this.senderId = null;
-		
 		this.searchCollection = null;
 	};
 	ContactStorage.super = EventEmitter;

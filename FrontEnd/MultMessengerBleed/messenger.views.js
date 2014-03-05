@@ -389,13 +389,18 @@ var messenger = messenger || {};
 
 		this.elem = template.create('post-page-template', { id: 'post-page' });
 		this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
-		this.specialContactElem = this.elem.getElementsByClassName('special-contact')[0];
+		this.receiverHolderElem = this.elem.getElementsByClassName('receiver-holder')[0];
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
-		this.selectedContactView = null;
-		this.currentSpecialContactView = null;
-		this.loadElemEnable = true;
+
+		this.cachedContactViews = {};
 		this.contactViews = {};
+		this.selectedContactView = null;
+		this.receiverContactView = new ContactView();
+		this.receiverContactView.attachTo(this.receiverHolderElem);
+		this.receiverContactView.select();
+		
+		this.loadElemEnable = true;
 		
 		this.contactViewSelectListener = function(event) {
 			var target = event.target;
@@ -404,6 +409,7 @@ var messenger = messenger || {};
 					self.selectedContactView.deselect();
 				}
 				self.selectedContactView = target;
+				self._setReceiver(self.selectedContactView.model);
 				self.trigger({
 					type: 'select:contact',
 					contact: self.selectedContactView.model
@@ -434,39 +440,23 @@ var messenger = messenger || {};
 	PostPageView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
 	};
-	PostPageView.prototype.addContactView = function(contactView, special) {
-		if (special) {
-			contactView.attachTo(this.specialContactElem);
-		} else {
-			console.log('here');
-			contactView.attachTo(this.contactsElem);
-		}
-		var contact = contactView.model;
-		var contactId = contact.get('id');
-		this.contactViews[contactId] = contactView;
+	PostPageView.prototype.showContact = function(contact) {
+		var contactView = this._getOrCreateContactView(contact);
+		contactView.attachTo(this.contactsElem);
 		contactView.on('select', this.contactViewSelectListener);
 		if (!this.selectedContactView) {
 			contactView.select();
 		}
 	};
-	PostPageView.prototype.setSpecialContact = function(contactId) {
-		var contactView = this.contactViews[contactId];
-		if (contactView !== this.currentSpecialContactView) {
-			if (this.currentSpecialContactView) {
-				this.currentSpecialContactView.detach();
-				this.currentSpecialContactView.attachFirstTo(this.contactsElem);
-				this.currentSpecialContactView = null;
-			}
-			this.currentSpecialContactView = contactView;
-			this.currentSpecialContactView.detach();
-			this.currentSpecialContactView.attachTo(this.specialContactElem);
-		}
+	PostPageView.prototype._setReceiver = function(contact) {
+		this.receiverContactView.setModel(contact);
 	};
-	PostPageView.prototype.setContact = function(contactId) {
-		var contactView = this.contactViews[contactId];
-		if (contactView) {
-			contactView.select();
-		}
+	PostPageView.prototype.clear = function() {
+		var self = this;
+		Object.keys(this.contactViews).forEach(function(key) {
+			self.contactViews[key].detach();	
+		});
+		this.contactViews = {};
 	};
 	PostPageView.prototype.enableContactLoading = function() {
 		this.loadElemEnable = true;
@@ -481,6 +471,15 @@ var messenger = messenger || {};
 	};
 	PostPageView.prototype.showContactLoading = function() {
 		this.loadHolderElem.classList.remove('hidden');	
+	};
+	PostPageView.prototype._getOrCreateContactView = function(contact) {
+		var contactId = contact.get('id');
+		var contactView = this.cachedContactViews[contactId];
+		if (!contactView) {
+			contactView = new ContactView(contact);
+			this.cachedContactViews[contactId] = contactView;
+		}
+		return contactView;
 	};
 	
 
