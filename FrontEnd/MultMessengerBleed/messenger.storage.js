@@ -103,8 +103,15 @@ var messenger = messenger || {};
 		return this.sender;
 	};
 	ContactStorage.prototype.search = function(query) {
-		var searchCollection = new PaginationCollection(this.friends);
-		searchCollection.count = 72;
+		var searchCollection;
+		if (!query || query.length === 0) {
+			searchCollection = new PaginationCollection(this.friends);
+			searchCollection.count = 12;
+		} else {
+			searchCollection = new PaginationCollection([]);
+			searchCollection.count = 72;
+		}
+		
 		this._setSearchCollection(searchCollection);
 	};
 	ContactStorage.prototype._search = function(query) {
@@ -154,6 +161,9 @@ var messenger = messenger || {};
 				type: 'paginate:end'	
 			});
 		}
+	};
+	PaginationCollection.prototype.dispose = function() {
+		this.off();	
 	};
 	
 	var CharacterStorage = function() {

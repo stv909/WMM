@@ -392,6 +392,7 @@ var messenger = messenger || {};
 		this.receiverHolderElem = this.elem.getElementsByClassName('receiver-holder')[0];
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
+		this.queryElem = this.elem.getElementsByClassName('query')[0];
 
 		this.cachedContactViews = {};
 		this.contactViews = {};
@@ -422,11 +423,20 @@ var messenger = messenger || {};
 				self.trigger('click:load');
 			}
 		};
+		var queryElemInputListener = function(event) {
+			var text = self.queryElem.value;
+			self.trigger({
+				type: 'update:search',
+				text: text
+			});
+		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
+		this.queryElem.addEventListener('input', queryElemInputListener);
 		
 		this.once('dispose', function(event) {
-			self.loadElem.removeEventListener('click', loadElemClickListener);	
+			self.loadElem.removeEventListener('click', loadElemClickListener);
+			self.queryElem.removeEventListener('input', queryElemInputListener);
 		});
 
 		this.hide();
@@ -441,9 +451,11 @@ var messenger = messenger || {};
 		this.elem.classList.add('hidden');
 	};
 	PostPageView.prototype.showContact = function(contact) {
+		var contactId = contact.get('id');
 		var contactView = this._getOrCreateContactView(contact);
 		contactView.attachTo(this.contactsElem);
 		contactView.on('select', this.contactViewSelectListener);
+		this.contactViews[contactId] = contactView;
 		if (!this.selectedContactView) {
 			contactView.select();
 		}

@@ -363,6 +363,9 @@ window.onload = function() {
 		this.postPageView.on('click:load', function() {
 			self.contactStorage.searchCollection.next();
 		});
+		this.postPageView.on('update:search', function(event) {
+			self.contactStorage.search(event.text);	
+		});
 		this.editPageView.on('status:validate', function() {
 			self.currentShowAskMessageDialog = self.validShowAskMessageDialog;
 		});
@@ -540,7 +543,6 @@ window.onload = function() {
 			return self.messageStorage.loadMessagesAsync();
 		}).then(function() {
 			self.answerPageView.setContact(self.contactStorage.getSender());
-			self.
 			self.preloadDialogView.hide();
 		}).catch(function(error) {
 			self.preloadDialogView.hide();
