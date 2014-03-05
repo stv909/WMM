@@ -448,6 +448,10 @@ var messenger = messenger || {};
 			contactView.select();
 		}
 	};
+	PostPageView.prototype.selectContact = function(contact) {
+		var contactView = this._getOrCreateContactView(contact);
+		contactView.select();
+	};
 	PostPageView.prototype._setReceiver = function(contact) {
 		this.receiverContactView.setModel(contact);
 	};

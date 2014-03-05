@@ -61,7 +61,7 @@ var messenger = messenger || {};
 				var rawSender = response[0];
 				var sender = ContactModel.fromVkData(rawSender);
 				self.sender = sender;
-				self.friends.push(self.sender);
+				self.friends.unshift(self.sender);
 			});
 		} else {
 			this.sender = this.owner;

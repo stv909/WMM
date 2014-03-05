@@ -341,7 +341,7 @@ window.onload = function() {
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
-				self.postPageView.setContact(self.contactStorage.owner.get('id'));
+				self.postPageView.selectContact(self.contactStorage.owner);
 				self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 				self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 				self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -350,7 +350,7 @@ window.onload = function() {
 			self.navigation.setMode('select');
 		});
 		this.skipDialogView.on('click:ok', function(event) {
-			self.postPageView.setContact(self.contactStorage.owner.get('id'));
+			self.postPageView.selectContact(self.contactStorage.owner);
 			self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 			self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 			self.currentLogoElemClickListener = self.logoElemStandardClickListener;
