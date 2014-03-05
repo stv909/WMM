@@ -195,8 +195,8 @@ window.onload = function() {
 		this.nextElemPostClickListener = function(event) {
 			self.postDialogView.show();
 
-			var account = self.storage.owner;
-			var companion = self.storage.selectedContact;
+			var account = self.contactStorage.owner;
+			var companion = self.contactStorage.selected;
 			var content = self.editPageView.getMessageContent();
 			
 			var message = MessageFactory.create(
@@ -299,6 +299,7 @@ window.onload = function() {
 		
 		this.contactStorage.on('update:search', function(event) {
 			var contacts = event.contacts;
+			self.postPageView.showContactLoading();
 			contacts.on('paginate:item', function(event) {
 				var contact = event.item;
 				var contactView = new ContactView(contact);
@@ -341,7 +342,7 @@ window.onload = function() {
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
-				self.postPageView.setContact(self.storage.owner.get('id'));
+				self.postPageView.setContact(self.contactStorage.owner.get('id'));
 				self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 				self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 				self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -350,24 +351,18 @@ window.onload = function() {
 			self.navigation.setMode('select');
 		});
 		this.skipDialogView.on('click:ok', function(event) {
-			self.postPageView.setContact(self.storage.owner.get('id'));
+			self.postPageView.setContact(self.contactStorage.owner.get('id'));
 			self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 			self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 			self.currentLogoElemClickListener = self.logoElemStandardClickListener;
 			window.location.hash = '';
 			self.navigation.setMode('select');
 		});
-		// this.postPageView.on('select:contact', function(event) {
-		// 	self.storage.selectedContact = event.contact;
-		// });
+		this.postPageView.on('select:contact', function(event) {
+			self.contactStorage.selected = event.contact;
+		});
 		this.postPageView.on('click:load', function() {
-			self.postPageView.disableContactLoading();
-			self.storage.loadFriendContactsAsync().then(function() {
-				self.postPageView.enableContactLoading();
-				html.scrollToBottom(self.pageElem);
-			}).catch(function() {
-				self.postPageView.enableContactLoading();	
-			});
+			self.contactStorage.searchCollection.next();
 		});
 		this.editPageView.on('status:validate', function() {
 			self.currentShowAskMessageDialog = self.validShowAskMessageDialog;
@@ -520,8 +515,8 @@ window.onload = function() {
 			this.currentLogoElemClickListener = this.logoElemAnswerClickListener;
 			
 			var settings = parseHash(hash);
-			this.storage.senderContactId = settings.senderId;
-			this.messageCollection.setSenderMessageId(settings.messageId);
+			this.contactStorage.setSenderId(settings.senderId);
+			this.messageStorage.setSenderMessageId(settings.messageId);
 		} else {
 			this.navigation.setMode('select');
 			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
@@ -545,6 +540,7 @@ window.onload = function() {
 		}).then(function() {
 			return self.messageStorage.loadMessagesAsync();
 		}).then(function() {
+			self.answerPageView.setContact(self.contactStorage.getSender());
 			self.preloadDialogView.hide();
 		}).catch(function(error) {
 			self.preloadDialogView.hide();

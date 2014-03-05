@@ -8,22 +8,27 @@ var messenger = messenger || {};
 	
 	var ContactStorage = function() {
 		var self = this;
-		ContactStorage.super.apply(self);
+		ContactStorage.super.apply(this);
 		
-		self.owner = null;
-		self.friends = [];
+		this.owner = null;
+		this.sender = null;
+		this.selected = null;
+		this.friends = [];
 		
-		self.searchCollection = null;
+		this.senderId = null;
+		
+		this.searchCollection = null;
 	};
 	ContactStorage.super = EventEmitter;
 	ContactStorage.prototype = Object.create(EventEmitter.prototype);
 	ContactStorage.prototype.constructor = ContactStorage;
 	ContactStorage.prototype.initializeAsync = function() {
 		var self = this;
-		var loadOwnerTask = self._loadOwnerAsync();
-		var loadFriendsTask = self._loadFriendsAsync(1000, 0);
-		var tasks = [loadOwnerTask, loadFriendsTask];
-		return Promise.all(tasks).then(function() {
+		return self._loadOwnerAsync().then(function() {
+			self._loadSenderAsync();
+		}).then(function() {
+			return self._loadFriendsAsync(1000, 0);
+		}).then(function() {
 			self.search();
 		});
 	};
@@ -41,7 +46,29 @@ var messenger = messenger || {};
 				firstName: 'Я',
 				lastName: '',
 			});
+			self.friends.push(self.owner);
 		});
+	};
+	ContactStorage.prototype._loadSenderAsync = function() {
+		var ownerId = this.owner.get('id');
+		var self = this;
+
+		if (this.senderId && ownerId != this.senderId) {
+			return VK.apiAsync('users.get', {
+				user_ids: self.senderId,
+				fields: [ 'photo_200', 'photo_100', 'photo_50' ].join(','),
+				name_case: 'nom',
+				v: 5.12
+			}).then(function(response) {
+				var rawSender = response[0];
+				var sender = ContactModel.fromVkData(rawSender);
+				self.sender = sender;
+				self.friends.push(self.sender);
+			});
+		} else {
+			this.sender = this.owner;
+			return Promise.cast();
+		}
 	};
 	ContactStorage.prototype._loadFriendsAsync = function(count, offset) {
 		//97383475 - more 1k friends
@@ -58,16 +85,28 @@ var messenger = messenger || {};
 			var friendCount = rawFriends.length;
 			rawFriends.forEach(function(rawFriend) {
 				var friend = ContactModel.fromVkData(rawFriend);
-				self.friends.push(friend);
+				var friendId = friend.get('id');
+				if (friendId != self.senderId) {
+					self.friends.push(friend);
+				}
 			});
 			if (friendCount !== 0) {
 				return self._loadFriendsAsync(count, offset + friendCount);
 			}
 		});
 	};
+	ContactStorage.prototype.setSenderId = function(senderId) {
+		this.senderId = senderId;
+	};
+	ContactStorage.prototype.getSenderId = function() {
+		return this.sender.get('id');	
+	};
+	ContactStorage.prototype.getSender = function() {
+		return this.sender;
+	};
 	ContactStorage.prototype.search = function(query) {
 		var searchCollection = new PaginationCollection(this.friends);
-		searchCollection.count = 21;
+		searchCollection.count = 72;
 		this._setSearchCollection(searchCollection);
 	};
 	ContactStorage.prototype._search = function(query) {

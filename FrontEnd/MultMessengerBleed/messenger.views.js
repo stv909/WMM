@@ -395,6 +395,9 @@ var messenger = messenger || {};
 		this.currentSpecialContactView = null;
 		this.loadElemEnable = true;
 		this.contactViews = {};
+		
+		this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
+		this.searchResultsWrapElem = this.searchResultsElem.getElementsByClassName('wrap')[0];
 
 		this.contactViewSelectListener = function(event) {
 			var target = event.target;
@@ -437,7 +440,8 @@ var messenger = messenger || {};
 		if (special) {
 			contactView.attachTo(this.specialContactElem);
 		} else {
-			contactView.attachTo(this.contactsElem);
+			console.log('here');
+			contactView.attachTo(this.searchResultsWrapElem);
 		}
 		var contact = contactView.model;
 		var contactId = contact.get('id');
@@ -480,6 +484,7 @@ var messenger = messenger || {};
 	PostPageView.prototype.showContactLoading = function() {
 		this.loadElem.classList.remove('hidden');	
 	};
+	
 
 	var AnswerPageView = function() {
 		AnswerPageView.super.apply(this);

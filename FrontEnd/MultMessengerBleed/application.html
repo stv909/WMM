@@ -81,10 +81,32 @@
 </template>
 <template id="post-page-template" style="display: none">
 	<!--<div class="title">Выберите получателя сообщения!</div>-->
-	<div class="special-contact"></div>
-	<div class="contacts"></div>
-	<div class="load-holder">
-		<div class="button load">Загрузить еще...</div>
+	<div class="container">
+		<div class="receiver-wrapper">
+			<div>
+				<div class="section">Получатель</div>
+			</div>
+		</div>
+		<div class="search-wrapper">
+			<div class="wrap">
+				<div class="search">
+					<div class="search-controls">
+						<div class="wrap">
+							<input class="query text" type="text" placeholder="Найти получателя">
+						</div>
+					</div>
+					<div class="search-results">
+						<div class="wrap"></div>
+					</div>
+				</div>
+				
+				<div class="special-contact hidden"></div>
+				<div class="contacts hidden"></div>
+				<div class="load-holder hidden">
+					<div class="button load">Загрузить еще...</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 <template id="contact-template" style="display: none">
