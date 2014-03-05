@@ -391,14 +391,12 @@ var messenger = messenger || {};
 		this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
 		this.specialContactElem = this.elem.getElementsByClassName('special-contact')[0];
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
+		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
 		this.selectedContactView = null;
 		this.currentSpecialContactView = null;
 		this.loadElemEnable = true;
 		this.contactViews = {};
 		
-		this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
-		this.searchResultsWrapElem = this.searchResultsElem.getElementsByClassName('wrap')[0];
-
 		this.contactViewSelectListener = function(event) {
 			var target = event.target;
 			if (target !== self.selectedContactView) {
@@ -441,7 +439,7 @@ var messenger = messenger || {};
 			contactView.attachTo(this.specialContactElem);
 		} else {
 			console.log('here');
-			contactView.attachTo(this.searchResultsWrapElem);
+			contactView.attachTo(this.contactsElem);
 		}
 		var contact = contactView.model;
 		var contactId = contact.get('id');
@@ -479,10 +477,10 @@ var messenger = messenger || {};
 		this.loadElem.textContent = 'Загрузка...';
 	};
 	PostPageView.prototype.hideContactLoading = function() {
-		this.loadElem.classList.add('hidden');
+		this.loadHolderElem.classList.add('hidden');
 	};
 	PostPageView.prototype.showContactLoading = function() {
-		this.loadElem.classList.remove('hidden');	
+		this.loadHolderElem.classList.remove('hidden');	
 	};
 	
 

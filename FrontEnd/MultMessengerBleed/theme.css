@@ -282,31 +282,41 @@ body {
   width: 100%;
   height: 100%;
 }
-#post-page .search-wrapper >.wrap .search {
+#post-page .search-wrapper .search {
   display: table;
   width: 100%;
   height: 100%;
 }
-#post-page .search-wrapper >.wrap .search .search-controls,
-#post-page .search-wrapper >.wrap .search .search-results {
+#post-page .search-wrapper .search .search-controls,
+#post-page .search-wrapper .search .search-results {
   display: table-row;
 }
-#post-page .search-wrapper >.wrap .search .search-controls {
+#post-page .search-wrapper .search .search-controls {
   height: 1%;
   padding-right: 16px;
 }
-#post-page .search-wrapper >.wrap .search .search-controls .query {
-  margin-bottom: 10px;
+#post-page .search-wrapper .search .search-controls .query {
   width: 738px;
+  margin-bottom: 6px;
 }
-#post-page .search-wrapper >.wrap .search .search-results {
+#post-page .search-wrapper .search .search-results {
   height: 99%;
+  position: relative;
 }
-#post-page .search-wrapper >.wrap .search .search-results .wrap {
+#post-page .search-wrapper .search .search-results .shadow {
+  width: 738px;
+  position: absolute;
+  z-index: 10;
+  height: 6px;
+  background-image: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 100%);
+}
+#post-page .search-wrapper .search .search-results .wrap {
+  padding-top: 6px;
+  padding-bottom: 16px;
   width: 100%;
   height: 100%;
-  padding-bottom: 16px;
   overflow: auto;
+  position: relative;
 }
 .message {
   display: inline-block;
@@ -491,10 +501,6 @@ body {
 #preload-background .content {
   margin-top: 32px;
 }
-.contacts {
-  text-align: left;
-  margin-left: 18px;
-}
 .special-contact {
   margin-top: 18px;
   text-align: center;
@@ -505,7 +511,7 @@ body {
   margin-right: 1px;
   margin-bottom: 1px;
   width: 120px;
-  min-height: 140px;
+  min-height: 135px;
   display: inline-block;
   text-align: center;
   cursor: pointer;
@@ -526,7 +532,7 @@ body {
 }
 .contact .photo {
   padding-top: 10px;
-  padding-bottom: 8px;
+  padding-bottom: 5px;
   width: 100px;
   height: 100px;
 }

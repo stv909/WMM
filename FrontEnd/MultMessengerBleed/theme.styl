@@ -235,25 +235,34 @@ html, body
 			position relative
 			width 100%
 			height 100%
-			.search
-				display table
-				width 100%
-				height 100%
-				.search-controls, .search-results
-					display table-row
-				.search-controls
-					height 1%
-					padding-right 16px
-					.query
-						margin-bottom 10px
-						width 738px
-				.search-results
-					height 99%
-					.wrap
-						width 100%
-						height 100%
-						padding-bottom 16px
-						overflow auto
+		.search
+			display table
+			width 100%
+			height 100%
+			.search-controls, .search-results
+				display table-row
+			.search-controls
+				height 1%
+				padding-right 16px
+				.query
+					width 738px
+					margin-bottom 6px
+			.search-results
+				height 99%
+				position relative
+				.shadow
+					width 738px
+					position absolute
+					z-index 10
+					height 6px
+					background-image linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%)
+				.wrap
+					padding-top 6px
+					padding-bottom 16px
+					width 100%
+					height 100%
+					overflow auto
+					position relative
 .message
 	display inline-block
 	margin 10px
@@ -405,9 +414,6 @@ html, body
 		color #333
 	.content
 		margin-top 32px
-.contacts
-	text-align left
-	margin-left 18px
 .special-contact
 	margin-top 18px
 	text-align center
@@ -417,7 +423,7 @@ html, body
 	margin-right 1px
 	margin-bottom 1px
 	width 120px
-	min-height 140px
+	min-height 135px
 	display inline-block
 	text-align center
 	cursor pointer
@@ -434,7 +440,7 @@ html, body
 		cursor default
 	.photo
 		padding-top 10px
-		padding-bottom 8px
+		padding-bottom 5px
 		width 100px
 		height 100px
 	.first-name, .last-name
