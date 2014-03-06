@@ -106,16 +106,124 @@ var messenger = messenger || {};
 		var searchCollection;
 		if (!query || query.length === 0) {
 			searchCollection = new PaginationCollection(this.friends);
-			searchCollection.count = 12;
+			searchCollection.count = 18;
 		} else {
-			searchCollection = new PaginationCollection([]);
-			searchCollection.count = 72;
+			var data = this._search(query);
+			searchCollection = new PaginationCollection(data);
+			searchCollection.count = 18;
 		}
 		
 		this._setSearchCollection(searchCollection);
 	};
 	ContactStorage.prototype._search = function(query) {
-		return [];
+		var keywords = this._prepareKeywords(query);
+		console.log(keywords);
+		var regExps = this._prepareRegExps(keywords);
+		var indicies = this._buildIndicies(regExps);
+		var data = this._buildSeachData(indicies);
+		return data;
+	};
+	ContactStorage.prototype._prepareKeywords = function(query) {
+		query = query.trim();
+		var keywords = query.split(/\s+/);
+		keywords = keywords.map(function(keyword) {
+			return keyword.trim();	
+		});
+		if (keywords.length > 2) {
+			keywords.length = 2;
+		}
+		return keywords;
+	};
+	ContactStorage.prototype._prepareRegExps = function(keywords) {
+		return keywords.map(function(keyword) {
+			return new RegExp(keyword, 'i');	
+		});
+	};
+	ContactStorage.prototype._buildIndicies = function(regExps) {
+		var indicies = [];
+		this.friends.forEach(function(item, pos) {
+			var index = null;
+			regExps.forEach(function(regExp) {
+				var firstMatch = item.get('firstName').search(regExp);
+				var lastMatch = item.get('lastName').search(regExp);
+				if (firstMatch !== -1) {
+					index = index || {};
+					index.pos = pos;
+					index.firstMatch = typeof(index.firstMatch) !== 'number' ? -1 : index.firstMatch;
+					if (index.firstMatch === -1) {
+						index.firstMatch = firstMatch;
+					} else {
+						index.firstMatch = firstMatch < index.firstMatch ? firstMatch : index.firstMatch;
+					}
+				}
+				if (lastMatch !== -1) {
+					index = index || {};
+					index.pos = pos;
+					index.lastMatch = typeof(index.lastMatch) !== 'number' ? -1 : index.lastMatch;
+					if (index.lastMatch === -1) {
+						index.lastMatch = lastMatch;
+					} else {
+						index.lastMatch = lastMatch < index.lastMatch ? lastMatch : index.lastMatch;
+					}
+				}
+			});
+			if (index) {
+				if (regExps.length === 2) {
+					var isFirstMatch = typeof(index.firstMatch) === 'number' && index.firstMatch !== -1;
+					var isLastMatch = typeof(index.lastMatch) === 'number' && index.lastMatch !== -1;
+					if (isFirstMatch && isLastMatch) {
+						indicies.push(index);
+					}
+				} else {
+					indicies.push(index);
+				}
+			}
+		});
+		return indicies;
+	};
+	ContactStorage.prototype._buildSeachData = function(indicies) {
+		var self = this;
+		indicies = indicies.sort(function(index1, index2) {
+			var firstMatch1 = index1.firstMatch;
+			var firstMatch2 = index2.firstMatch;
+			var isFirstMatch1 = typeof(firstMatch1) === 'number' && firstMatch1 !== -1;
+			var isFirstMatch2 = typeof(firstMatch2) === 'number' && firstMatch2 !== -1;
+			var isValid = isFirstMatch1 && isFirstMatch2;
+			
+			if (isValid) {
+				if (index1.firstMatch >= index2.firstMatch) {
+					return 1;
+				} else if (index1.firstMatch < index2.firstMatch) {
+					return -1;
+				} else {
+					return 0;
+				}
+			} else {
+				return 0;
+			}
+		});
+		indicies = indicies.sort(function(index1, index2) {
+			var lastMatch1 = index1.lastMatch;
+			var lastMatch2 = index2.lastMatch;
+			var isLastMatch1 = typeof(lastMatch1) === 'number' && lastMatch1 !== -1;
+			var isLastMatch2 = typeof(lastMatch2) === 'number' && lastMatch2 !== -1;
+			var isValid = isLastMatch1 && isLastMatch2;
+			
+			if (isValid) {
+				if (index1.lastMatch >= index2.lastMatch) {
+					return 1;
+				} else if (index1.lastMatch < index2.lastMatch) {
+					return -1;
+				} else {
+					return 0;
+				}
+			} else {
+				return 0;
+			}
+		});
+		return indicies.map(function(index) {
+			return self.friends[index.pos];
+		});
 	};
 	ContactStorage.prototype._setSearchCollection = function(searchCollection) {
 		if (this.searchCollection) {
