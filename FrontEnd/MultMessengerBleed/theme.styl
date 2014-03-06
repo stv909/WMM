@@ -1,4 +1,5 @@
 aspect-color = #28f
+hover-aspect-color = #f28
 default-font-color = #666
 default-width = 920px
 
@@ -442,13 +443,17 @@ html, body
 		padding-bottom 5px
 		width 100px
 		height 100px
-	.first-name, .last-name
+	.full-name
 		margin-left 1px
 		margin-right 1px
 		font-size 10px
 		display inline-block
 		white-space nowrap
-
+		&.selected
+			text-decoration underline
+			cursor pointer
+			&:hover
+				color hover-aspect-color
 .message-wrapper
 	display inline-block
 	height 100%

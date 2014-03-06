@@ -1113,8 +1113,7 @@ var messenger = messenger || {};
 
 		this.elem = template.create('contact-template', { className: 'contact' });
 		this.photoElem = this.elem.getElementsByClassName('photo')[0];
-		this.firstNameElem = this.elem.getElementsByClassName('first-name')[0];
-		this.lastNameElem = this.elem.getElementsByClassName('last-name')[0];
+		this.fullNameElem = this.elem.getElementsByClassName('full-name')[0]
 
 		this.selected = false;
 		this.setModel(model);
@@ -1125,11 +1124,19 @@ var messenger = messenger || {};
 				self.select();
 			}
 		};
+		var fullNameElemClickListener = function(event) {
+			if (self.selected) {
+				var vkLink = ['https://vk.com/id', self.model.get('id')].join('');
+				window.open(vkLink, '_blank');
+			}
+		};
 
-		this.elem.addEventListener('click', elemClickListener, this);
+		this.elem.addEventListener('click', elemClickListener);
+		this.fullNameElem.addEventListener('click', fullNameElemClickListener);
 
 		this.once('dispose', function() {
 			self.elem.removeEventListener('click', elemClickListener);
+			self.fullNameElem.removeEventListener('click', fullNameElemClickListener);
 		});
 	};
 	ContactView.super = View;
@@ -1139,19 +1146,21 @@ var messenger = messenger || {};
 		this.selected = true;
 		this.elem.classList.remove('normal');
 		this.elem.classList.add('chosen');
+		this.fullNameElem.classList.add('selected');
 		this.trigger('select');
 	};
 	ContactView.prototype.deselect = function() {
 		this.selected = false;
 		this.elem.classList.add('normal');
 		this.elem.classList.remove('chosen');
+		this.fullNameElem.classList.remove('selected');
 	};
 	ContactView.prototype.setModel = function(model) {
 		if (model) {
 			this.model = model;
 			this.photoElem.src = this.model.get('photo');
-			this.firstNameElem.textContent = this.model.get('firstName');
-			this.lastNameElem.textContent = this.model.get('lastName');
+			var fullName = [this.model.get('firstName'), this.model.get('lastName')].join(' ');
+			this.fullNameElem.textContent = fullName;
 		}
 	};
 

@@ -535,13 +535,19 @@ body {
   width: 100px;
   height: 100px;
 }
-.contact .first-name,
-.contact .last-name {
+.contact .full-name {
   margin-left: 1px;
   margin-right: 1px;
   font-size: 10px;
   display: inline-block;
   white-space: nowrap;
+}
+.contact .full-name.selected {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.contact .full-name.selected:hover {
+  color: #f28;
 }
 .message-wrapper {
   display: inline-block;
