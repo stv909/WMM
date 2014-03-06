@@ -579,13 +579,11 @@ body {
   font-size: 10px;
   display: inline-block;
   white-space: nowrap;
-}
-.contact .full-name.selected {
-  text-decoration: underline;
   cursor: pointer;
 }
-.contact .full-name.selected:hover {
+.contact .full-name:hover {
   color: #28f;
+  text-decoration: underline;
 }
 .message-wrapper {
   display: inline-block;

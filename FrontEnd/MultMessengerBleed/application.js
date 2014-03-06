@@ -85,7 +85,7 @@ window.onload = function() {
 		return async.requestAsync(options).then(function(rawData) {
 			var response = JSON.parse(rawData);
 			self._checkVkDataError(response.uploadResult);
-			return response.uploadResult;
+			return response;
 		});
 	};
 	VKTools.prototype.getWallUploadServerAsync = function() {
@@ -228,8 +228,12 @@ window.onload = function() {
 					return self.vkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
 				}).then(function(response) {
 					self.postDialogView.setText('Сохранение превью в альбоме...');
-					response.v = 5.12;
-					return VK.apiAsync('photos.saveWallPhoto', response);
+					var uploadResult = response.uploadResult;
+					var image = response.image;
+					message.preview = image;
+					self.chatClient.notifyMessage(message);
+					uploadResult.v = 5.12;
+					return VK.apiAsync('photos.saveWallPhoto', response.uploadResult);
 				}).then(function(response) {
 					self.postDialogView.setText('Отправка сообщения на стену...');
 					var imageId = self.vkTools.getUploadedFileId(response);

@@ -1141,10 +1141,10 @@ var messenger = messenger || {};
 			}
 		};
 		var fullNameElemClickListener = function(event) {
-			if (self.selected) {
-				var vkLink = ['https://vk.com/id', self.model.get('id')].join('');
-				window.open(vkLink, '_blank');
-			}
+			//if (self.selected) {
+			var vkLink = ['https://vk.com/id', self.model.get('id')].join('');
+			window.open(vkLink, '_blank');
+			//}
 		};
 
 		this.elem.addEventListener('click', elemClickListener);
@@ -1162,14 +1162,14 @@ var messenger = messenger || {};
 		this.selected = true;
 		this.elem.classList.remove('normal');
 		this.elem.classList.add('chosen');
-		this.fullNameElem.classList.add('selected');
+		//this.fullNameElem.classList.add('selected');
 		this.trigger('select');
 	};
 	ContactView.prototype.deselect = function() {
 		this.selected = false;
 		this.elem.classList.add('normal');
 		this.elem.classList.remove('chosen');
-		this.fullNameElem.classList.remove('selected');
+		//this.fullNameElem.classList.remove('selected');
 	};
 	ContactView.prototype.setModel = function(model) {
 		if (model) {

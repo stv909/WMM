@@ -551,7 +551,7 @@ var messenger = messenger || {};
 		var senderMessageId = this.getSenderMessageId();
 		var hasSenderMessage = false;
 		var messages = rawMessages.map(MessageModel.fromChatMessage);
-		
+
 		messages = messages.filter(function(message) {
 			return message.isValid();
 		});
