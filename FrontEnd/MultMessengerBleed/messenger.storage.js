@@ -40,10 +40,6 @@ var messenger = messenger || {};
 			var rawOwner = response[0];
 			var owner = ContactModel.fromVkData(rawOwner);
 			self.owner = owner;
-			self.owner.set({
-				firstName: 'Я',
-				lastName: '',
-			});
 			self.friends.push(self.owner);
 		});
 	};
@@ -117,7 +113,6 @@ var messenger = messenger || {};
 	};
 	ContactStorage.prototype._search = function(query) {
 		var keywords = this._prepareKeywords(query);
-		console.log(keywords);
 		var regExps = this._prepareRegExps(keywords);
 		var indicies = this._buildIndicies(regExps);
 		var data = this._buildSeachData(indicies);
@@ -129,9 +124,6 @@ var messenger = messenger || {};
 		keywords = keywords.map(function(keyword) {
 			return keyword.trim();	
 		});
-		if (keywords.length > 2) {
-			keywords.length = 2;
-		}
 		return keywords;
 	};
 	ContactStorage.prototype._prepareRegExps = function(keywords) {
@@ -141,45 +133,99 @@ var messenger = messenger || {};
 	};
 	ContactStorage.prototype._buildIndicies = function(regExps) {
 		var indicies = [];
+		var self = this;
 		this.friends.forEach(function(item, pos) {
-			var index = null;
-			regExps.forEach(function(regExp) {
-				var firstMatch = item.get('firstName').search(regExp);
-				var lastMatch = item.get('lastName').search(regExp);
-				if (firstMatch !== -1) {
-					index = index || {};
-					index.pos = pos;
-					index.firstMatch = typeof(index.firstMatch) !== 'number' ? -1 : index.firstMatch;
-					if (index.firstMatch === -1) {
-						index.firstMatch = firstMatch;
-					} else {
-						index.firstMatch = firstMatch < index.firstMatch ? firstMatch : index.firstMatch;
-					}
-				}
-				if (lastMatch !== -1) {
-					index = index || {};
-					index.pos = pos;
-					index.lastMatch = typeof(index.lastMatch) !== 'number' ? -1 : index.lastMatch;
-					if (index.lastMatch === -1) {
-						index.lastMatch = lastMatch;
-					} else {
-						index.lastMatch = lastMatch < index.lastMatch ? lastMatch : index.lastMatch;
-					}
-				}
-			});
+			var index = self._buildIndex(item, pos, regExps);
 			if (index) {
-				if (regExps.length === 2) {
-					var isFirstMatch = typeof(index.firstMatch) === 'number' && index.firstMatch !== -1;
-					var isLastMatch = typeof(index.lastMatch) === 'number' && index.lastMatch !== -1;
-					if (isFirstMatch && isLastMatch) {
-						indicies.push(index);
-					}
-				} else {
-					indicies.push(index);
-				}
-			}
+				indicies.push(index);
+			} 
 		});
 		return indicies;
+	};
+	ContactStorage.prototype._buildIndex = function(contact, position, regExps) {
+		regExps = regExps.slice(0);
+
+		var index = null;
+		var firstName = contact.get('firstName');
+		var lastName = contact.get('lastName');
+		
+		var firstNameMatch = 99999;
+		var lastNameMatch = 99999;
+		
+		var isFirstNameMatch = false;
+		var isLastNameMatch = false;
+		var needSecondMatch = false;
+		var needFirstMatch = false;
+		
+		var deleteIndex = -1;
+		var i, match;
+		for (i = 0; i < regExps.length; i++) {
+			match = firstName.search(regExps[i]);
+			if (match !== -1) {
+				isFirstNameMatch = true;
+				if (match < firstNameMatch) {
+					firstNameMatch = match;
+					deleteIndex = i;
+				}
+			}
+		}
+		
+		if (isFirstNameMatch) {
+			regExps.splice(deleteIndex, 1);
+			needSecondMatch = regExps.length > 0;
+		} else {
+			for (i = 0; i < regExps.length; i++) {
+				match = lastName.search(regExps[i]);
+				if (match !== -1) {
+					isLastNameMatch = true;
+					if (match < lastNameMatch) {
+						lastNameMatch = match;
+						deleteIndex = i;
+					}
+				}
+			}
+			if (isLastNameMatch) {
+				regExps.splice(deleteIndex, 1);
+				needFirstMatch = regExps.length > 0;
+			}
+			
+			for (i = 0; i < regExps.length; i++) {
+				match = firstName.search(regExps[i]);
+				if (match !== -1) {
+					isFirstNameMatch = true;
+					if (match < firstNameMatch) {
+						firstNameMatch = match;
+						deleteIndex = i;
+					}
+				}
+			}
+		}
+		
+		for (i = 0; i < regExps.length; i++) {
+			match = lastName.search(regExps[i]);
+			if (match !== -1) {
+				isLastNameMatch = true;
+				if (match < lastNameMatch) {
+					lastNameMatch = match;
+					deleteIndex = i;
+				}
+			}
+		}
+		
+		if (isFirstNameMatch && !needSecondMatch) {
+			index = {};
+			index.pos = position;
+			index.firstMatch = firstNameMatch;
+		} else if (isLastNameMatch && !needFirstMatch) {
+			index = {};
+			index.pos = position;
+			index.isLastNameMatch = isLastNameMatch;
+		} else if (needSecondMatch && isLastNameMatch && firstNameMatch) {
+			index = {};
+			index.firstMatch = firstNameMatch;
+			index.lastMatch = lastNameMatch;
+		}
+		return index;
 	};
 	ContactStorage.prototype._buildSeachData = function(indicies) {
 		var self = this;
