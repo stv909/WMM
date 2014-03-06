@@ -121,6 +121,27 @@ html, body
 		text-shadow 0 0 2px #666
 	.normal:hover
 		color: aspect-arrow
+#status
+	position absolute
+	right 0
+	display inline-block
+#online
+	color white
+	border-radius 2px
+	background-color #55bb55
+	border 1px solid #55bb55
+	height 16px
+	line-height 16px
+	padding 4px 8px 4px 8px
+	margin-top 5px
+	display inline-block
+	margin-left 3px
+	&.invalid
+		background-color #f00 !important
+		border 1px solid #f00
+#disconnect
+	line-height 16px
+	padding 4px 8px 4px 8px
 #select, #edit, #post
 	font-size 12px
 	cursor pointer

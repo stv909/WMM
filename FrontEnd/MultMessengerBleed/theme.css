@@ -134,6 +134,31 @@ body {
 #breadcrumbs .normal:hover {
   color: aspect-arrow;
 }
+#status {
+  position: absolute;
+  right: 0;
+  display: inline-block;
+}
+#online {
+  color: #fff;
+  border-radius: 2px;
+  background-color: #5b5;
+  border: 1px solid #5b5;
+  height: 16px;
+  line-height: 16px;
+  padding: 4px 8px 4px 8px;
+  margin-top: 5px;
+  display: inline-block;
+  margin-left: 3px;
+}
+#online.invalid {
+  background-color: #f00 !important;
+  border: 1px solid #f00;
+}
+#disconnect {
+  line-height: 16px;
+  padding: 4px 8px 4px 8px;
+}
 #select,
 #edit,
 #post {

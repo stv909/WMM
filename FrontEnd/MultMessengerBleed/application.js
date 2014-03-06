@@ -146,6 +146,8 @@ window.onload = function() {
 		this.selectElem = document.getElementById('select');
 		this.editElem = document.getElementById('edit');
 		this.postElem = document.getElementById('post');
+		this.onlineElem = document.getElementById('online');
+		this.disconnectElem = document.getElementById('disconnect');
 
 		this.pageElem = document.getElementById('page');
 		this.pageContainerElem = document.getElementById('page-container');
@@ -268,6 +270,7 @@ window.onload = function() {
 
 		this.preloadDialogView.show();
 		this.initializeStorage();
+		this.initializeChatClient();
 		this.initializeViews();
 		this.initializeNavigation();
 		this.initializeSettings();
@@ -313,6 +316,27 @@ window.onload = function() {
 		this.characterStorage.on('update:characters', function(event) {
 			var characters = event.characters;
 			self.editPageView.setCharacters(characters);
+		});
+	};
+	MessengerApplication.prototype.initializeChatClient = function() {
+		var self = this;
+		this.chatClient.on('disconnect', function() {
+			self.onlineElem.textContent = 'offline';
+			self.onlineElem.classList.add('invalid');
+			self.chatClient.once('connect', function() {
+				var owner = self.contactStorage.owner;
+				var ownerId = owner.get('id');
+				var vkId = ['vkid', ownerId].join('');
+				self.chatClient.login(vkId);
+			});
+			self.chatClient.connect();
+		});
+		this.chatClient.on('connect', function() {
+			self.onlineElem.textContent = 'online';
+			self.onlineElem.classList.remove('invalid');
+		});
+		this.disconnectElem.addEventListener('click', function() {
+			self.chatClient.disconnect();
 		});
 	};
 	MessengerApplication.prototype.initializeViews = function() {
