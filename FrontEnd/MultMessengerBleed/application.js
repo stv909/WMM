@@ -67,12 +67,14 @@ window.onload = function() {
 	VKTools.prototype.calculatePreviewUrl = function(fileName) {
 		return [settings.imageStoreBaseUrl, fileName].join('');
 	};
-	VKTools.prototype.generatePreviewAsync = function(messageShareUrl) {
+	VKTools.prototype.generatePreviewAsync = function(messageShareUrl, uploadUrl) {
+		var self = this;
 		var requestData = {
+			uploadUrl: uploadUrl,
 			url: messageShareUrl,
 			imageFormat: 'png',
 			scale: 1,
-			contentType: 'share'
+			contentType: 'vkUpload'
 		};
 		var rawRequestData = JSON.stringify(requestData);
 		var options = {
@@ -82,7 +84,8 @@ window.onload = function() {
 		};
 		return async.requestAsync(options).then(function(rawData) {
 			var response = JSON.parse(rawData);
-			return response.image;
+			self._checkVkDataError(response.uploadResult);
+			return response.uploadResult;
 		});
 	};
 	VKTools.prototype.getWallUploadServerAsync = function() {
@@ -97,7 +100,7 @@ window.onload = function() {
 	};
 	VKTools.prototype._checkVkDataError = function(data, errorMessage) {
 		if (data.error) {
-			throw new Error(errorMessage);
+			throw new Error(errorMessage || JSON.stringify(data.error, 0, 4));
 		}
 	};
 	VKTools.prototype.uploadImageAsync = function(uploadUri, imageUri) {
@@ -222,21 +225,11 @@ window.onload = function() {
 
 				self.vkTools.getWallUploadServerAsync().then(function(uploadUrl) {
 					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
-					var imageFileName = self.vkTools.generatePreviewAsync(shareMessageUrl);
-					var values = [uploadUrl, imageFileName];
-					return Promise.all(values);
-				}).then(function(values) {
-					self.postDialogView.setText('Загрузка превью изображения...');
-					var uploadUrl = values[0];
-					var previewUrl = self.vkTools.calculatePreviewUrl(values[1]);
-					message.preview = values[1];
-					self.chatClient.notifyMessage(message);
-					return self.vkTools.uploadImageAsync(uploadUrl, previewUrl);
-				}).then(function(rawData) {
+					return self.vkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
+				}).then(function(response) {
 					self.postDialogView.setText('Сохранение превью в альбоме...');
-					var data = JSON.parse(rawData);
-					data.v = 5.12
-					return VK.apiAsync('photos.saveWallPhoto', data);
+					response.v = 5.12;
+					return VK.apiAsync('photos.saveWallPhoto', response);
 				}).then(function(response) {
 					self.postDialogView.setText('Отправка сообщения на стену...');
 					var imageId = self.vkTools.getUploadedFileId(response);
@@ -321,7 +314,7 @@ window.onload = function() {
 	MessengerApplication.prototype.initializeChatClient = function() {
 		var self = this;
 		this.chatClient.on('disconnect', function() {
-			self.onlineElem.textContent = 'offline';
+			self.onlineElem.textContent = 'не в сети';
 			self.onlineElem.classList.add('invalid');
 			self.chatClient.once('connect', function() {
 				var owner = self.contactStorage.owner;
@@ -332,7 +325,7 @@ window.onload = function() {
 			self.chatClient.connect();
 		});
 		this.chatClient.on('connect', function() {
-			self.onlineElem.textContent = 'online';
+			self.onlineElem.textContent = 'в сети';
 			self.onlineElem.classList.remove('invalid');
 		});
 		this.disconnectElem.addEventListener('click', function() {
