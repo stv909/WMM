@@ -337,7 +337,7 @@ window.onload = function() {
 			});
 		});
 		this.selectPageView.on('click:preload', function(event) {
-			self.messageCollection.appendPreloadedMessages();	
+			self.messageStorage.appendPreloadedMessages();	
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
@@ -543,6 +543,7 @@ window.onload = function() {
 			return self.messageStorage.loadMessagesAsync();
 		}).then(function() {
 			self.answerPageView.setContact(self.contactStorage.getSender());
+			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
 			self.preloadDialogView.hide();
 		}).catch(function(error) {
 			self.preloadDialogView.hide();

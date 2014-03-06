@@ -241,7 +241,7 @@ body {
 }
 #edit-page .message-editor {
   position: absolute;
-  top: 26px;
+  top: 24px;
   bottom: 0;
   left: 8px;
   right: 0;
@@ -260,6 +260,9 @@ body {
   padding-bottom: 6px;
   height: 16px;
   text-align: center;
+}
+#edit-page .message {
+  margin-left: 16px;
 }
 #post-page {
   font-size: 0;
@@ -535,7 +538,6 @@ body {
   border: 1px solid #888;
 }
 .contact.chosen {
-  color: #28f;
   border: 1px solid #28f;
   box-shadow: 0 0 1px #28f;
   cursor: default;
@@ -558,7 +560,7 @@ body {
   cursor: pointer;
 }
 .contact .full-name.selected:hover {
-  color: #2a6;
+  color: #28f;
 }
 .message-wrapper {
   display: inline-block;
@@ -569,7 +571,7 @@ body {
 }
 .tools {
   display: inline-block;
-  width: 440px;
+  width: 430px;
   padding-right: 20px;
   vertical-align: top;
   margin-left: 10px;
