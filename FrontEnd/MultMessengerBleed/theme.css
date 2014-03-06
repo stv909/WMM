@@ -209,13 +209,25 @@ body {
 }
 #select-page {
   font-size: 0;
-  padding: 8px;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
-#select-page .patterns {
-  margin-top: 8px;
+#select-page .container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 16px 0 16px 16px;
+}
+#select-page .message {
+  margin: 8px;
 }
 #select-page .load-holder {
-  margin-bottom: 16px;
+  margin-bottom: 4px;
 }
 #edit-page {
   font-size: 0;
@@ -323,7 +335,6 @@ body {
 }
 .message {
   display: inline-block;
-  margin: 10px;
   box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 2px;
@@ -547,7 +558,7 @@ body {
   cursor: pointer;
 }
 .contact .full-name.selected:hover {
-  color: #f28;
+  color: #2a6;
 }
 .message-wrapper {
   display: inline-block;

@@ -10,10 +10,12 @@ var messenger = messenger || {};
 
 		this.elem = template.create('select-page-template', { id: 'select-page' });
 		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
-		this.selectedMessageView = null;
 		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.preloadElem = this.elem.getElementsByClassName('preload')[0];
+		this.containerElem = this.elem.getElementsByClassName('container')[0];
+		
+		this.selectedMessageView = null;
 		this.messageViews = {};
 		this.loadElemEnable = true;
 
@@ -44,13 +46,19 @@ var messenger = messenger || {};
 				type: 'click:preload'
 			});
 		};
+		var wheelListener = function(event) {
+			this.scrollTop -= event.wheelDelta;
+			event.preventDefault();
+		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
 		this.preloadElem.addEventListener('click', preloadElemClickListener);
+		this.containerElem.addEventListener('wheel', wheelListener);
 		
 		this.once('dispose', function(event) {
 			self.loadElem.removeEvent('click', loadElemClickListener);
 			self.preloadElem.removeEventListener('click', preloadElemClickListener);
+			self.containerElem.removeEventListener('wheel', wheelListener);
 		});
 
 		this.hide();
@@ -393,6 +401,8 @@ var messenger = messenger || {};
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
 		this.queryElem = this.elem.getElementsByClassName('query')[0];
+		this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
+		this.searchResultsWrapElem = this.searchResultsElem.getElementsByClassName('wrap')[0];
 
 		this.cachedContactViews = {};
 		this.contactViews = {};
@@ -441,13 +451,19 @@ var messenger = messenger || {};
 				}, 800);
 			}
 		};
+		var wheelListener = function(event) {
+			this.scrollTop -= event.wheelDelta;
+			event.preventDefault();
+		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
 		this.queryElem.addEventListener('input', queryElemInputListener);
+		this.searchResultsWrapElem.addEventListener('wheel', wheelListener);
 		
 		this.once('dispose', function(event) {
 			self.loadElem.removeEventListener('click', loadElemClickListener);
 			self.queryElem.removeEventListener('input', queryElemInputListener);
+			self.searchResultsWrapElem.removeEventListener('wheel', wheelListener);
 		});
 
 		this.hide();
