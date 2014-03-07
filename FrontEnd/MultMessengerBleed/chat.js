@@ -336,19 +336,17 @@ var chat = chat || {};
 		self.chatClient.once('message:grouptape', function(event) {
 			var grouptape = event.response.grouptape;
 			if (grouptape.success) {
-				deferred.resolve(grouptape.data);
 				deferred.resolve({
 					messagecount: grouptape.messagecount,
 					data: grouptape.data
 				});
 			} else {
-				deferred.reject({
-					errorCode: ErrorCodes.API_ERROR,
-					message: JSON.stringify(event.error)
+				deferred.resolve({
+					messagecount: 0,
+					data: []
 				});
 			}
 		});
-
 		self.chatClient.grouptape(groupId, count, offset);
 	
 		return deferred.promise;
@@ -370,7 +368,7 @@ var chat = chat || {};
 		var deferred = async.defer();
 	
 		self.chatClient.once('connect', function() {
-			deferred.resolve();	
+			deferred.resolve();
 		});
 		self.chatClient.connect();
 		

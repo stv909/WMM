@@ -792,7 +792,7 @@ var messenger = messenger || {};
 				message = 'Отсутствует интернет-соединение.\nПопробуйте позже.';
 				break;
 			case ErrorCodes.API_ERROR:
-				message = 'Ошибка вызова интрнет-сервисов.';
+				message = 'Ошибка вызова интернет-сервиса.';
 				break;
 			case ErrorCodes.TIMEOUT:
 				message = 'Не удалось выполнить операцию.\n Проверьте интернет-соединение и \nпопробуйте позже.';

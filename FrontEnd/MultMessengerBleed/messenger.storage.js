@@ -493,15 +493,14 @@ var messenger = messenger || {};
 	};
 	MessageStorage1.prototype._loadMessagesIdsAsync = function() {
 		var self = this;
-		var promise = this.chatWrapper.loadMessageIdsAsync(
+		return this.chatWrapper.loadMessageIdsAsync(
 			this.publicId,
 			this.messageCount, 
-			this.messageOffset);
-		promise.then(function(response) {
+			this.messageOffset
+		).then(function(response) {
 			self.totalMessageCount = self.totalMessageCount || response.messagecount;
 			return response.data;
 		});
-		return promise;
 	};
 	MessageStorage1.prototype._loadRawMessagesAsync = function(ids) {
 		return this.chatWrapper.loadMessagesAsync(ids);
