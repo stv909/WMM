@@ -1,6 +1,7 @@
-(function(async) {
+(function(Q) {
+	
 	VK.apiAsync = function(method, params) {
-		var deferred = async.defer();
+		var deferred = Q.defer();
 		
 		VK.api(method, params, function(data) {
 			if (data.response) {
@@ -13,7 +14,7 @@
 		return deferred.promise;
 	}
 	VK.initAsync = function() {
-		var deferred = async.defer();
+		var deferred = Q.defer();
 		
 		VK.init(function() {
 			deferred.resolve();
@@ -23,4 +24,5 @@
 		
 		return deferred.promise;
 	};
-})(async);
+	
+})(Q);

@@ -22,6 +22,8 @@ window.onload = function() {
 	var ContactView = messenger.views.ContactView;
 	
 	var VKTools = messenger.utils.VKTools;
+	var ChatClientWrapper = messenger.utils.ChatClientWrapper;
+	var Helpers = messenger.utils.Helpers;
 
 	var ChatClient = chat.ChatClient;
 	var ChatWrapper = chat.ChatWrapper;
@@ -75,7 +77,7 @@ window.onload = function() {
 
 		this.navigation = new Navigation();
 		this.chatClient = new ChatClient(settings.chatUrl);
-		this.chatWrapper = new ChatWrapper(this.chatClient);
+		this.chatClientWrapper = new ChatClientWrapper(this.chatClient);
 		
 		this.messageStorage = new MessageStorage(this.chatClient);
 		this.contactStorage = new ContactStorage();
@@ -467,25 +469,23 @@ window.onload = function() {
 		var self = this;
 		
 		VK.initAsync().then(function() {
-			var tasks = [
-				self.contactStorage.initializeAsync(),
-				self.characterStorage.initializeAsync()
-			];
-			return Promise.all(tasks);
+			var contactStoragePromise = self.contactStorage.initializeAsync();
+			var characterStoragePromise = self.characterStorage.initializeAsync();
+			var promises = [contactStoragePromise, characterStoragePromise];
+			return Promise.all(promises);
 		}).then(function() {
 			var owner = self.contactStorage.owner;
-			var ownerId = owner.get('id');
-			var vkId = ['vkid', ownerId].join('');
-			return self.chatWrapper.initializeAsync(vkId);
+			var vkId = Helpers.buildVkId(owner);
+			return self.chatClientWrapper.connectAndLoginAsync(vkId);
 		}).then(function() {
 			return self.messageStorage.loadMessagesAsync();
 		}).then(function() {
 			self.answerPageView.setContact(self.contactStorage.getSender());
 			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
-			self.preloadDialogView.hide();
 		}).catch(function(error) {
+			console.error(error);
+		}).fin(function() {
 			self.preloadDialogView.hide();
-			console.log(error);
 		});
 	};
 

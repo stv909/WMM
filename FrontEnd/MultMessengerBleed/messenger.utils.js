@@ -1,8 +1,9 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, async, settings) {
+(function(messenger, eve, async, settings, errors, Q) {
 	
 	var EventEmitter = eve.EventEmitter;
+	var ErrorCodes = errors.ErrorCodes;
 	
 	var VKTools = function() {
 		VKTools.super.apply(this);
@@ -91,8 +92,93 @@ var messenger = messenger || {};
 		return VK.apiAsync('wall.post', postData);
 	};
 	
-	messenger.utils = {
-		VKTools: VKTools
+	var ChatClientWrapper = function(chatClient) {
+		this.chatClient = chatClient;
+		this.operationTimeout = 7500;
+	};
+	ChatClientWrapper.prototype._createRequestTask = function() {
+		var task = Q.defer();
+		setTimeout(function() {
+			task.reject({
+				errorCode: ErrorCodes.TIMEOUT
+			});
+		}, this.operationTimeout);
+		return task;
+	};
+	ChatClientWrapper.prototype.connectAsync = function() {
+		var task = this._createRequestTask();
+		
+		this.chatClient.once('connect', function(event) {
+			task.resolve();
+		});
+		this.chatClient.connect();
+		
+		return task.promise;
+	};
+	ChatClientWrapper.prototype.loginAsync = function(account) {
+		var task = this._createRequestTask();
+		
+		this.chatClient.once('message:login', function(event) {
+			task.resolve(); 
+		});
+		this.chatClient.login(account);
+		
+		return task.promise;
+	};
+	ChatClientWrapper.prototype.connectAndLoginAsync = function(account) {
+		var self = this;
+		return this.connectAsync().then(function() {
+			return self.loginAsync(account);
+		});
+	};
+	ChatClientWrapper.prototype.getMessageIdsAsync = function(groupId, count, offset) {
+		var task = this._createRequestTask();
+		
+		this.chatClient.once('message:grouptape', function(event) {
+			var grouptape = event.response.grouptape;
+			if (grouptape.success) {
+				task.resolve({
+					messagecount: grouptape.messagecount,
+					data: grouptape.data
+				});
+			} else {
+				task.resolve({
+					messagecount: 0,
+					data: []
+				});
+			}
+		});
+		this.chatClient.grouptape(groupId, count, offset);
+		
+		return task.promise;
+	};
+	ChatClientWrapper.prototype.getMessagesAsync = function(messageIds) {
+		var task = this._createRequestTask();
+		
+		this.chatClient.once('message:retrieve', function(event) {
+			var rawMessages = event.response.retrieve;
+			task.resolve(rawMessages);
+		});
+		this.chatClient.retrieve(messageIds.join(','));
+		
+		return task.promise;
 	};
 	
-})(messenger, eve, async, settings);
+	var Helpers = {
+		buildVkId: function(contact) {
+			var contactId = contact.get('id');
+			return ['vkid', contactId].join('');
+		},
+		buidFbId: function(contact) {
+			var contactId = contact.get('id');
+			return ['fbid', contactId].join('');
+		}
+	};
+	
+	messenger.utils = {
+		VKTools: VKTools,
+		ChatClientWrapper: ChatClientWrapper,
+		Helpers: Helpers
+	};
+	
+})(messenger, eve, async, settings, errors, Q);
