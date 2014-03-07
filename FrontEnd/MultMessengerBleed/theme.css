@@ -516,6 +516,40 @@ body {
   margin-left: 3px;
   margin-right: 3px;
 }
+#error-dialog {
+  font-size: 12px;
+  width: 360px;
+  height: 220px;
+  box-shadow: 0 0 5px #f00 !important;
+  border: 1px solid #f00 !important;
+}
+#error-dialog .content {
+  height: 140px;
+  line-height: 140px;
+}
+#error-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
+}
+#error-dialog .button {
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+#error-dialog .button:hover {
+  border: 1px solid #f00 !important;
+  box-shadow: 0 0 1px #f00 !important;
+  color: #f00 !important;
+}
+#error-dialog .button:active {
+  background-color: #f00 !important;
+  border: 1px solid #f00 !important;
+  box-shadow: 0 0 1px solid #f00 !important;
+  color: #fff !important;
+}
 #preload-background {
   display: table;
   position: fixed;

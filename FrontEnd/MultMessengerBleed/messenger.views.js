@@ -1,8 +1,9 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, async, uuid, html) {
+(function(messenger, abyss, template, async, uuid, html, errors) {
 
 	var View = abyss.View;
+	var ErrorCodes = errors.ErrorCodes;
 
 	var SelectPageView = function() {
 		SelectPageView.super.apply(this);
@@ -759,6 +760,52 @@ var messenger = messenger || {};
 				break;
 		}
 	};
+	
+	var ErrorDialogView = function() {
+		ErrorDialogView.super.apply(this);
+		var self = this;
+		
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('error-dialog');
+		this.statusElem = this.dialogWindowElem.getElementsByClassName('status')[0];
+		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
+
+		var okElemClickListener = function(event) {
+			self.hide();
+			self.trigger('click:close');
+		};
+
+		this.okElem.addEventListener('click', okElemClickListener);
+
+		this.once('dispose', function() {
+			self.readyElem.removeEventListener('click', okElemClickListener);
+		});
+	};
+	ErrorDialogView.super = View;
+	ErrorDialogView.prototype = Object.create(View.prototype);
+	ErrorDialogView.prototype.constructor = ErrorDialogView;
+	ErrorDialogView.prototype.show = function(error) {
+		console.log(error);
+		var message = 'Неизвестная ошибка';
+		switch (error.errorCode) {
+			case ErrorCodes.NO_CONNECTION:
+				message = 'Отсутствует интернет-соединение.\nПопробуйте позже.';
+				break;
+			case ErrorCodes.API_ERROR:
+				message = 'Ошибка вызова интрнет-сервисов.';
+				break;
+			case ErrorCodes.TIMEOUT:
+				message = 'Не удалось выполнить операцию.\n Проверьте интернет-соединение и \nпопробуйте позже.';
+				break;
+		}
+		this.statusElem.textContent = message;
+		this.dialogWindowElem.classList.remove('hidden');
+		this.elem.classList.remove('hidden');	
+	};
+	ErrorDialogView.prototype.hide = function() {
+		this.dialogWindowElem.classList.add('hidden');
+		this.elem.classList.add('hidden');	
+	};
 
 	var MessageView = function(model) {
 		MessageView.super.apply(this);
@@ -1189,9 +1236,10 @@ var messenger = messenger || {};
 		SkipDialogView: SkipDialogView,
 		PreloadDialogView: PreloadDialogView,
 		AskMessageDialogView: AskMessageDialogView,
+		ErrorDialogView: ErrorDialogView,
 		MessageView: MessageView,
 		MessagePatternView: MessagePatternView,
 		ContactView: ContactView
 	};
 
-})(messenger, abyss, template, async, uuid, html);
+})(messenger, abyss, template, async, uuid, html, errors);
