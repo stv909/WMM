@@ -5,7 +5,6 @@ var messenger = messenger || {};
 	var EventEmitter = eve.EventEmitter;
 	var ContactModel = messenger.models.ContactModel;
 	var MessageModel = messenger.models.MessageModel;
-	var ChatWrapper = chat.ChatWrapper;
 	
 	var ContactStorage = function() {
 		var self = this;
@@ -347,12 +346,12 @@ var messenger = messenger || {};
 		});
 	};
 	
-	var MessageStorage1 = function(chatClient) {
+	var MessageStorage1 = function(chatClientWrapper) {
 		MessageStorage1.super.apply(this);
 		var self = this;
 		
-		this.chatClient = chatClient;
-		this.chatWrapper = new ChatWrapper(this.chatClient);
+		this.chatClientWrapper = chatClientWrapper;
+		this.chatClient = this.chatClientWrapper.chatClient;
 		
 		this.publicId = 'public.9205ef2d-4a2c-49dd-8203-f33a3ceac6c9';
 		//this.publicId = 'public.bc53e8d2-d372-49c2-a91b-2d3b0aaffcb6'; //empty
@@ -493,7 +492,7 @@ var messenger = messenger || {};
 	};
 	MessageStorage1.prototype._loadMessagesIdsAsync = function() {
 		var self = this;
-		return this.chatWrapper.loadMessageIdsAsync(
+		return this.chatClientWrapper.getMessageIdsAsync(
 			this.publicId,
 			this.messageCount, 
 			this.messageOffset
@@ -503,7 +502,7 @@ var messenger = messenger || {};
 		});
 	};
 	MessageStorage1.prototype._loadRawMessagesAsync = function(ids) {
-		return this.chatWrapper.loadMessagesAsync(ids);
+		return this.chatClientWrapper.getMessagesAsync(ids);
 	};
 	MessageStorage1.prototype._filterFirstMessageIds = function(ids) {
 		this._filterMessageIds = this._filterNextMessageIds;

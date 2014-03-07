@@ -1,15 +1,6 @@
 var async = async || {};
 
-(function(async) {
-
-	var defer = function() {
-		var result = {};
-		result.promise = new Promise(function(resolve, reject) {
-			result.resolve = resolve;
-			result.reject = reject;
-		});
-		return result;
-	};
+(function(async, Q) {
 
 	var requestAsync = function(options) {
 		var url = options.url;
@@ -17,7 +8,7 @@ var async = async || {};
 		var data = options.data;
 		var headers = options.headers || [];
 		var request = new XMLHttpRequest();
-		var deferred = defer();
+		var deferred = Q.defer();
 		var promise = deferred.promise;
 
 		promise.cancel = function() {
@@ -42,7 +33,6 @@ var async = async || {};
 		return promise;
 	};
 
-	async.defer = defer;
 	async.requestAsync = requestAsync;
 
-})(async);
+})(async, Q);
