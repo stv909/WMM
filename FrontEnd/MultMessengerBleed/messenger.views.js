@@ -757,7 +757,7 @@ var messenger = messenger || {};
 				break;
 			case 'fail':
 				this.dialogWindowElem.classList.add('error');
-				this.statusElem.textContent = 'Ошибка обновления!';
+				this.statusElem.textContent = 'Ошибка обновления!\n Проверьте интернет-подключение и \nпопробуйте позже.';
 				this.readyElem.classList.remove('hidden');
 				break;
 		}
@@ -797,7 +797,7 @@ var messenger = messenger || {};
 				message = 'Ошибка вызова интернет-сервиса.';
 				break;
 			case ErrorCodes.TIMEOUT:
-				message = 'Не удалось выполнить операцию.\n Проверьте интернет-соединение и \nпопробуйте позже.';
+				message = 'Не удалось выполнить операцию.\n Проверьте интернет-подключение и \nпопробуйте позже.';
 				break;
 		}
 		this.statusElem.textContent = message;

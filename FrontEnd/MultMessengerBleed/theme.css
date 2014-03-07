@@ -132,7 +132,7 @@ body {
   text-shadow: 0 0 2px #666;
 }
 #breadcrumbs .normal:hover {
-  color: aspect-arrow;
+  color: #28f !important;
 }
 #status {
   position: absolute;
@@ -168,18 +168,6 @@ body {
   padding-right: 12px;
   padding-left: 12px;
   position: relative;
-}
-#select.chosen:before,
-#edit.chosen:before,
-#post.chosen:before {
-  content: "";
-  top: 0;
-  left: 0;
-  position: absolute;
-  margin-left: -12px;
-  border-left: 12px solid transparent;
-  border-top: 18px solid #28f;
-  border-bottom: 18px solid #28f;
 }
 #select.chosen:after,
 #edit.chosen:after,
@@ -515,6 +503,12 @@ body {
 #update-message-dialog .content {
   height: 140px;
   line-height: 140px;
+}
+#update-message-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
 }
 #ask-message-dialog {
   font-size: 12px;

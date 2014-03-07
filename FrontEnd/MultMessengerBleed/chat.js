@@ -1,6 +1,6 @@
 var chat = chat || {};
 
-(function(chat, eve, base64, async, errors) {
+(function(chat, eve, base64, async, errors, Q) {
 
 	var EventEmitter = eve.EventEmitter;
 	var ErrorCodes = errors.ErrorCodes;
@@ -418,4 +418,4 @@ var chat = chat || {};
 	chat.ChatWrapper = ChatWrapper;
 	chat.ErrorCodes = ErrorCodes;
 
-})(chat, eve, base64, async, errors);
+})(chat, eve, base64, async, errors, Q);
