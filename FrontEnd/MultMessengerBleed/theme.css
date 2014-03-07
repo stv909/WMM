@@ -460,6 +460,21 @@ body {
   box-shadow: 0 0 5px #28f;
   border-radius: 2px;
 }
+#dialog-background .dialog-wrapper .dialog-window.error {
+  box-shadow: 0 0 5px #f00 !important;
+  border: 1px solid #f00 !important;
+}
+#dialog-background .dialog-wrapper .dialog-window.error .button:hover {
+  border: 1px solid #f00 !important;
+  box-shadow: 0 0 1px #f00 !important;
+  color: #f00 !important;
+}
+#dialog-background .dialog-wrapper .dialog-window.error .button:active {
+  background-color: #f00 !important;
+  border: 1px solid #f00 !important;
+  box-shadow: 0 0 1px solid #f00 !important;
+  color: #fff !important;
+}
 #dialog-background .dialog-wrapper .dialog-window .title-holder {
   height: 36px;
   font-weight: bold;

@@ -383,6 +383,19 @@ html, body
 			border 1px solid aspect-color
 			box-shadow 0 0 5px aspect-color
 			border-radius 2px
+			&.error
+				box-shadow 0 0 5px #f00 !important
+				border 1px solid #f00 !important
+				.button
+					&:hover
+						border 1px solid #f00 !important
+						box-shadow 0 0 1px #f00 !important
+						color #f00 !important
+					&:active
+						background-color #f00 !important
+						border 1px solid #f00 !important
+						box-shadow 0 0 1px solid #f00 !important
+						color white !important
 			.title-holder
 				height 36px
 				font-weight bold

@@ -526,7 +526,6 @@ var messenger = messenger || {};
 		return contactView;
 	};
 	
-
 	var AnswerPageView = function() {
 		AnswerPageView.super.apply(this);
 		var self = this;
@@ -747,14 +746,17 @@ var messenger = messenger || {};
 	UpdateMessageDialogView.prototype.setMode = function(mode) {
 		switch (mode) {
 			case 'wait':
+				this.dialogWindowElem.classList.remove('error');
 				this.statusElem.textContent = 'Идет обновление персонажей...';
 				this.readyElem.classList.add('hidden');
 				break;
 			case 'complete':
+				this.dialogWindowElem.classList.remove('error');
 				this.statusElem.textContent = 'Персонажи обновлены!';
 				this.readyElem.classList.remove('hidden');
 				break;
 			case 'fail':
+				this.dialogWindowElem.classList.add('error');
 				this.statusElem.textContent = 'Ошибка обновления!';
 				this.readyElem.classList.remove('hidden');
 				break;
