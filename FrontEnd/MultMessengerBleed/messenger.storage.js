@@ -1,10 +1,11 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, async) {
+(function(messenger, eve, async, chat) {
 	
 	var EventEmitter = eve.EventEmitter;
 	var ContactModel = messenger.models.ContactModel;
 	var MessageModel = messenger.models.MessageModel;
+	var ChatWrapper = chat.ChatWrapper;
 	
 	var ContactStorage = function() {
 		var self = this;
@@ -351,6 +352,7 @@ var messenger = messenger || {};
 		var self = this;
 		
 		this.chatClient = chatClient;
+		this.chatWrapper = new ChatWrapper(this.chatClient);
 		
 		this.publicId = 'public.9205ef2d-4a2c-49dd-8203-f33a3ceac6c9';
 		//this.publicId = 'public.bc53e8d2-d372-49c2-a91b-2d3b0aaffcb6'; //empty
@@ -437,7 +439,7 @@ var messenger = messenger || {};
 		});
 		this.trigger({
 			type: 'preload:update',
-			count: 0	
+			count: 0
 		});
 	};
 	MessageStorage1.prototype.addMessage = function(message, first) {
@@ -490,32 +492,19 @@ var messenger = messenger || {};
 		});
 	};
 	MessageStorage1.prototype._loadMessagesIdsAsync = function() {
-		var deferred = async.defer();
 		var self = this;
-		
-		this.chatClient.once('message:grouptape', function(event) {
-			var grouptape = event.response.grouptape;
-			self.totalMessageCount = self.totalMessageCount || grouptape.messagecount;
-			if (grouptape.success) {
-				deferred.resolve(grouptape.data);
-			} else {
-				deferred.resolve([]);
-			}
+		var promise = this.chatWrapper.loadMessageIdsAsync(
+			this.publicId,
+			this.messageCount, 
+			this.messageOffset);
+		promise.then(function(response) {
+			self.totalMessageCount = self.totalMessageCount || response.messagecount;
+			return response.data;
 		});
-		this.chatClient.grouptape(this.publicId, this.messageCount, this.messageOffset);
-		
-		return deferred.promise;
+		return promise;
 	};
 	MessageStorage1.prototype._loadRawMessagesAsync = function(ids) {
-		var deferred = async.defer();
-		
-		this.chatClient.once('message:retrieve', function(event) {
-			var rawMessages = event.response.retrieve;
-			deferred.resolve(rawMessages);
-		});
-		this.chatClient.retrieve(ids.join(','));
-		
-		return deferred.promise;
+		return this.chatWrapper.loadMessagesAsync(ids);
 	};
 	MessageStorage1.prototype._filterFirstMessageIds = function(ids) {
 		this._filterMessageIds = this._filterNextMessageIds;
@@ -620,4 +609,4 @@ var messenger = messenger || {};
 		MessageStorage: MessageStorage1,
 	};
 	
-})(messenger, eve, async);
+})(messenger, eve, async, chat);

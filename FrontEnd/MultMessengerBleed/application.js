@@ -243,7 +243,7 @@ window.onload = function() {
 			});
 			self.chatClient.connect();
 		});
-		this.chatClient.on('connect', function() {
+		this.chatClient.on('message:login', function() {
 			self.onlineElem.textContent = 'в сети';
 			self.onlineElem.classList.remove('invalid');
 		});

@@ -1,8 +1,9 @@
 var chat = chat || {};
 
-(function(chat, eve, base64, async) {
+(function(chat, eve, base64, async, errors) {
 
 	var EventEmitter = eve.EventEmitter;
+	var ErrorCodes = errors.ErrorCodes;
 
 	var ChatClient = function(serverUrl) {
 		ChatClient.super.apply(this);
@@ -12,6 +13,9 @@ var chat = chat || {};
 	ChatClient.super = EventEmitter;
 	ChatClient.prototype = Object.create(EventEmitter.prototype);
 	ChatClient.prototype.constructor = ChatClient;
+	ChatClient.prototype.readyState = function() {
+		return this.socket.readyState;	
+	};
 	ChatClient.prototype.connect = function() {
 		var self = this;
 		this.socket = new WebSocket(this.serverUrl);
@@ -307,28 +311,51 @@ var chat = chat || {};
 	var ChatWrapper = function(chatClient) {
 		this.chatClient = chatClient;
 	};
-	ChatWrapper.prototype.loadMessageIdsAsync = function(groupId, count, offset) {
+	ChatWrapper.prototype._createRequestTask = function() {
 		var self = this;
 		var deferred = async.defer();
+		setTimeout(function() {
+			if (self.chatClient.readyState() !== 1) {
+				deferred.reject({
+					errorCode: ErrorCodes.NO_CONNECTION,
+				});
+			} else {
+				setTimeout(function() {
+					deferred.reject({
+						errorCode: ErrorCodes.TIMEOUT
+					});
+				}, 7500);
+			}
+		}, 0);
+		return deferred;
+	};
+	ChatWrapper.prototype.loadMessageIdsAsync = function(groupId, count, offset) {
+		var self = this;
+		var deferred = this._createRequestTask();
 	
 		self.chatClient.once('message:grouptape', function(event) {
 			var grouptape = event.response.grouptape;
 			if (grouptape.success) {
+				deferred.resolve(grouptape.data);
 				deferred.resolve({
-					count: grouptape.messagecount,
-					ids: grouptape.data
+					messagecount: grouptape.messagecount,
+					data: grouptape.data
 				});
 			} else {
-				deferred.reject(new Error(grouptape.error));
+				deferred.reject({
+					errorCode: ErrorCodes.API_ERROR,
+					message: JSON.stringify(event.error)
+				});
 			}
 		});
+
 		self.chatClient.grouptape(groupId, count, offset);
 	
 		return deferred.promise;
 	};
 	ChatWrapper.prototype.loadMessagesAsync = function(ids) {
 		var self = this;
-		var deferred = async.defer();
+		var deferred = this._createRequestTask();
 	
 		self.chatClient.once('message:retrieve', function(event) {
 			var rawMessages = event.response.retrieve;
@@ -391,5 +418,6 @@ var chat = chat || {};
 	chat.MessageFactory = MessageFactory;
 	chat.ToolFactory = ToolFactory;
 	chat.ChatWrapper = ChatWrapper;
+	chat.ErrorCodes = ErrorCodes;
 
-})(chat, eve, base64, async);
+})(chat, eve, base64, async, errors);
