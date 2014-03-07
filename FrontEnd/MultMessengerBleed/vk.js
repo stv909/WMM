@@ -1,4 +1,6 @@
-(function(Q) {
+(function(Q, errors) {
+	
+	var ErrorCodes = errors.ErrorCodes;
 	
 	VK.apiAsync = function(method, params) {
 		var deferred = Q.defer();
@@ -7,7 +9,10 @@
 			if (data.response) {
 				deferred.resolve(data.response);
 			} else {
-				deferred.reject(new Error(JSON.stringify(data.error, null, 4)));
+				deferred.reject({
+					errorCode: ErrorCodes.API_ERROR,
+					message: JSON.stringify(data.error, null, 4)
+				});
 			}
 		});
 		
@@ -25,4 +30,4 @@
 		return deferred.promise;
 	};
 	
-})(Q);
+})(Q, errors);

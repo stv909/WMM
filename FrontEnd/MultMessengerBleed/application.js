@@ -21,7 +21,7 @@ window.onload = function() {
 	var MessagePatternView = messenger.views.MessagePatternView;
 	var ContactView = messenger.views.ContactView;
 	
-	var VKTools = messenger.utils.VKTools;
+	var VkTools = messenger.utils.VkTools;
 	var ChatClientWrapper = messenger.utils.ChatClientWrapper;
 	var Helpers = messenger.utils.Helpers;
 
@@ -81,7 +81,6 @@ window.onload = function() {
 		this.messageStorage = new MessageStorage(this.chatClientWrapper);
 		this.contactStorage = new ContactStorage();
 		this.characterStorage = new CharacterStorage();
-		this.vkTools = new VKTools();
 
 		this.selectPageView = new SelectPageView();
 		this.editPageView = new EditPageView();
@@ -121,55 +120,44 @@ window.onload = function() {
 			var account = self.contactStorage.owner;
 			var companion = self.contactStorage.selected;
 			var content = self.editPageView.getMessageContent();
-			
 			var message = MessageFactory.create(
 				uuid.v4(),
 				content,
-				['vkid', account.get('id')].join(''),
-				['vkid', companion.get('id')].join('')
+				Helpers.buildVkId(account),
+				Helpers.buildVkId(companion)
 			);
-
-			var chatClientNowListener = function(event) {
-				message.timestamp = event.response.now;
-				self.chatClient.once('message:sent', chatClientSendListener);
-				self.chatClient.once('message:send', chatClientSendListener);
-				self.chatClient.sendMessage(message);
+			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
+			
+			self.chatClientWrapper.nowAsync().then(function(timestamp) {
 				self.postDialogView.setText('Сохрание сообщения...');
-			};
-			var chatClientSendListener = function(event) {
-				self.chatClient.off('message:sent');
-				self.chatClient.off('message:send');
+				message.timestamp = timestamp;
+				return self.chatClientWrapper.sendMessageAsync(message);
+			}).then(function() {
 				self.postDialogView.setText('Генерация превью...');
-
-				self.vkTools.getWallUploadServerAsync().then(function(uploadUrl) {
-					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
-					return self.vkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
-				}).then(function(response) {
-					self.postDialogView.setText('Сохранение превью в альбоме...');
-					var uploadResult = response.uploadResult;
-					var image = response.image;
-					message.preview = image;
-					self.chatClient.notifyMessage(message);
-					uploadResult.v = 5.12;
-					return VK.apiAsync('photos.saveWallPhoto', response.uploadResult);
-				}).then(function(response) {
-					self.postDialogView.setText('Отправка сообщения на стену...');
-					var imageId = self.vkTools.getUploadedFileId(response);
-					var ownerId = companion.get('id');
-					var senderId = account.get('id');
-					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
-					var postData = self.vkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
-					return self.vkTools.wallPostAsync(postData);
-				}).then(function() {
-					self.postDialogView.setMode('complete');
-				}).catch(function(error) {
-					console.log(error);
-					self.postDialogView.setMode('fail');
-				});
-			};
-
-			self.chatClient.once('message:now', chatClientNowListener);
-			self.chatClient.now();
+				return VkTools.getWallPhotoUploadUrlAsync();
+			}).then(function(uploadUrl) {
+				return VkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
+			}).then(function(response) {
+				self.postDialogView.setText('Сохранение превью в альбоме...');
+				var uploadResult = response.uploadResult;
+				var image = response.image;
+				message.preview = image;
+				self.chatClient.notifyMessage(message);
+				uploadResult.v = 5.12;
+				return VK.apiAsync('photos.saveWallPhoto', uploadResult);
+			}).then(function(response) {
+				self.postDialogView.setText('Отправка сообщения на стену...');
+				var imageId = VkTools.getUploadedFileId(response);
+				var ownerId = companion.get('id');
+				var senderId = account.get('id');
+				var postData = VkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
+				return VK.apiAsync('wall.post', postData);
+			}).then(function() {
+				self.postDialogView.setMode('complete');
+			}).catch(function(error) {
+				self.postDialogView.setMode('fail');
+				console.error(error);
+			});
 		};
 		this.nextElemAnswerClickListener = function(event) {
 			self.navigation.setMode('select');
