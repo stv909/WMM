@@ -3,22 +3,26 @@
 <head>
 	<title></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin,latin-ext">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin,latin-ext">
 	<link rel="stylesheet" href="theme.css">
 	<link rel="stylesheet" href="main-preloader.css">
 	<script src="https://vk.com/js/api/xd_connection.js?2" type="text/javascript"></script>
+	<script src="q.js"></script>
 	<script src="eve.js"></script>
 	<script src="uuid.js"></script>
 	<script src="html.js"></script>
 	<script src="template.js"></script>
 	<script src="abyss.js"></script>
+	<script src="errors.js"></script>
 	<script src="async.js"></script>
 	<script src="vk.js"></script>
 	<script src="base64.js"></script>
 	<script src="chat.js"></script>
 	<script src="settings.js"></script>
 	<script src="messenger.models.js"></script>
+	<script src="messenger.storage.js"></script>
 	<script src="messenger.views.js"></script>
+	<script src="messenger.utils.js"></script>
 	<script src="application.js"></script>
 </head>
 <body>
@@ -27,7 +31,6 @@
 	</div>
 </template>
 <template id="answer-page-template" style="display: none">
-	<!--<div class="title">Получено сообщение!</div>-->
 	<div class="container">
 		<div class="contact-wrapper">
 			<div>
@@ -39,15 +42,15 @@
 	</div>
 </template>
 <template id="select-page-template" style="display: none">
-	<!--<div class="title">Выберите шаблон сообщения!</div>-->
-	<div class="button preload hidden"></div>
-	<div class="patterns"></div>
-	<div class="load-holder">
-		<div class="button load">Загрузить еще...</div>
+	<div class="container">
+		<div class="button preload hidden"></div>
+		<div class="patterns"></div>
+		<div class="load-holder">
+			<div class="button load">Загрузить еще...</div>
+		</div>
 	</div>
 </template>
 <template id="edit-page-template" style="display: none">
-	<!--<div class="title">Настройте сообщение!</div>-->
 	<div class="message-editor">
 		<div class="container">
 			<div class="message-wrapper">
@@ -79,27 +82,49 @@
 	</div>
 </template>
 <template id="post-page-template" style="display: none">
-	<!--<div class="title">Выберите получателя сообщения!</div>-->
-	<div class="special-contact"></div>
-	<div class="contacts"></div>
-	<div class="load-holder">
-		<div class="button load">Загрузить еще...</div>
+	<div class="container">
+		<div class="receiver-wrapper">
+			<div>
+				<div class="section">Получатель</div>
+				<div class="receiver-holder"></div>
+			</div>
+		</div>
+		<div class="search-wrapper">
+			<div class="wrap">
+				<div class="search">
+					<div class="search-controls">
+						<div class="wrap">
+							<input class="query text" type="text" placeholder="Найти получателя" value="">
+						</div>
+					</div>
+					<div class="search-results">
+						<div class="shadow"></div>
+						<div class="wrap">
+							<div class="contacts">
+							</div>
+							<div class="load-holder hidden">
+								<div class="button load">Загрузить еще...</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 <template id="contact-template" style="display: none">
 	<div class="photo-holder">
 		<img class="photo">
 	</div>
-	<div class="first-name"></div>
-	<div class="last-name"></div>
+	<div class="full-name"></div>
 </template>
-<template id="character-template">
-	<td class="actor-wrapper">
-	</td>
-	<td>
+<template id="character-template" style="display: none">
+	<div class="actor-wrapper cell">
+	</div>
+	<div class="cell">
 		<div class="reply-wrapper">
 		</div>
-	</td>
+	</div>
 </template>
 <div id="menu">
 	<div id="menu-container">
@@ -114,6 +139,10 @@
 			<div id="select">1. Лента</div>
 			<div id="edit">2. Редактор</div>
 			<div id="post">3. Отправка</div>
+		</div>
+		<div id="status" class="hidden">
+			<div id="disconnect" class="button">Отключиться</div>
+			<div id="online">в сети</div>
 		</div>
 	</div>
 </div>
@@ -188,6 +217,15 @@
 			</div>
 			<div class="ok button">Да</div>
 			<div class="cancel button">Отмена</div>
+		</div>
+		<div class="dialog-window hidden" id="error-dialog">
+			<div class="title-holder">
+				<div class="title">Мульт-Мессенджер 2.0</div>
+			</div>
+			<div class="content">
+				<div class="status"></div>
+			</div>
+			<div class="ok button">Закрыть</div>
 		</div>
 	</div>
 </div>

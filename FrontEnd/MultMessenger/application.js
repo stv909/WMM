@@ -4,6 +4,10 @@ window.onload = function() {
 	var MessageModel = messenger.models.MessageModel;
 	var ContactModel = messenger.models.ContactModel;
 	var MessageCollection = messenger.models.MessageCollection;
+	
+	var ContactStorage = messenger.storage.ContactStorage;
+	var CharacterStorage = messenger.storage.CharacterStorage;
+	var MessageStorage = messenger.storage.MessageStorage;
 
 	var SelectPageView = messenger.views.SelectPageView;
 	var EditPageView = messenger.views.EditPageView;
@@ -13,8 +17,13 @@ window.onload = function() {
 	var SkipDialogView = messenger.views.SkipDialogView;
 	var AskMessageDialogView = messenger.views.AskMessageDialogView;
 	var PreloadDialogView = messenger.views.PreloadDialogView;
+	var ErrorDialogView = messenger.views.ErrorDialogView;
 	var MessagePatternView = messenger.views.MessagePatternView;
 	var ContactView = messenger.views.ContactView;
+	
+	var VkTools = messenger.utils.VkTools;
+	var ChatClientWrapper = messenger.utils.ChatClientWrapper;
+	var Helpers = messenger.utils.Helpers;
 
 	var ChatClient = chat.ChatClient;
 	var MessageFactory = chat.MessageFactory;
@@ -50,245 +59,6 @@ window.onload = function() {
 		}
 	};
 
-	var Storage = function() {
-		Storage.super.apply(this);
-
-		this.messages = {};
-		this.currentMessage = null;
-
-		this.owner = null;
-		this.selectedContact = null;
-		this.contacts = {};
-		this.characters = [];
-		
-		this.contactOffset = 0;
-		this.contactCount = 28;
-		
-		this.senderContactId = null;
-	};
-	Storage.super = EventEmitter;
-	Storage.prototype = Object.create(EventEmitter.prototype);
-	Storage.prototype.constructor = Storage;
-	Storage.prototype.initializeAsync = function() {
-		var loadCharactersPromise = this.loadCharactersAsync();
-		var loadContactsPromise = this.loadContactsAsync();
-		return Promise.all([loadCharactersPromise, loadContactsPromise]);
-	};
-	Storage.prototype.loadCharactersAsync = function() {
-		var self = this;
-		return async.requestAsync({
-			url: 'https://bazelevshosting.net/MCM/characters_resources.json',
-			method: 'GET',
-			data: null
-		}).then(function(rawData) {
-			var response = JSON.parse(rawData);
-			var characters = response.characters;
-			for (var character in characters) {
-				self.characters.push(character);
-			}
-			return true;
-		});
-	};
-	Storage.prototype.loadFriendContactsAsync = function() {
-		var self = this;
-		return VK.apiAsync('friends.get', {
-			user_id: self.owner.get('id'),
-			count: self.contactCount,
-			offset: self.contactOffset,
-			v: 5.12
-		}).then(function(response) {
-			var userIds = response.items;
-			var userCount = response.count;
-			var currentUserCount = userIds.length;
-			if (self.senderContactId) {
-				userIds = userIds.filter(function(userId) {
-					return userId !== self.senderContactId;	
-				});
-			}
-			self.contactOffset += currentUserCount;
-			if (self.contactOffset >= userCount) {
-				self.trigger('end:contacts');
-			}
-			return VK.apiAsync('users.get', {
-				user_ids: userIds.join(','),
-				fields: ['photo_200', 'photo_100', 'photo_50'].join(','),
-				name_case: 'nom',
-				v: 5.12
-			});
-		}).then(function(response) {
-			var vkContacts = response;
-			vkContacts.forEach(function(vkContact) {
-				var contact = ContactModel.fromVkData(vkContact);
-				self.addContact(contact);
-			});
-			return true;
-		});
-	};
-	Storage.prototype.loadContactsAsync = function() {
-		var self = this;
-
-		return VK.apiAsync('users.get', {
-			fields: [ 'photo_200', 'photo_100', 'photo_50' ].join(','),
-			name_case: 'nom',
-			v: 5.12
-		}).then(function(response) {
-			var vkOwner = response[0];
-			self.owner = ContactModel.fromVkData(vkOwner);
-			self.owner.set({
-				firstName: 'Я',
-				lastName: '',
-			});
-			self.addContact(self.owner);
-			return VK.apiAsync('friends.get', {
-				user_id: self.owner.get('id'),
-				count: self.contactCount,
-				offset: self.contactOffset,
-				v: 5.12
-			});
-		}).then(function(response) {
-			var userIds = response.items;
-			if (self.senderContactId) {
-				userIds = userIds.filter(function(userId) {
-					return userId !== self.senderContactId;	
-				});
-				userIds.unshift(self.senderContactId);
-			}
-			var userCount = response.count;
-			self.contactOffset += userIds.length;
-			if (userIds.length >= userCount) {
-				self.trigger('end:contacts');
-			}
-			return VK.apiAsync('users.get', {
-				user_ids: userIds.join(','),
-				fields: ['photo_200', 'photo_100', 'photo_50'].join(','),
-				name_case: 'nom',
-				v: 5.12
-			});
-		}).then(function(response) {
-			var vkContacts = response;
-			vkContacts.forEach(function(vkContact) {
-				var contact = ContactModel.fromVkData(vkContact);
-				self.addContact(contact);
-			});
-			return true;
-		});
-	};
-	Storage.prototype.hasContact = function(contactId) {
-		return this.contacts.hasOwnProperty(contactId);
-	};
-	Storage.prototype.addContact = function(contact) {
-		if (!this.hasContact(contact.get('id'))) {
-			this.contacts[contact.get('id')] = contact;
-			this.trigger({
-				type: 'add:contact',
-				contact: contact
-			});
-		}
-	};
-	Storage.prototype.removeContact = function(contactId) {
-		if (this.hasContact(contactId)) {
-			var contact = this.messages[contactId];
-			delete this.contacts[contactId];
-			this.trigger({
-				type: 'remove:contact',
-				contact: contact
-			});
-		}
-	};
-	Storage.prototype.getContactById = function(contactId) {
-		return this.contacts[contactId];
-	};
-	Storage.prototype.getSenderContact = function() {
-		return this.contacts[this.senderContactId] || this.owner;
-	};
-	Storage.prototype.getSenderContactId = function() {
-		return this.senderContactId	|| this.owner.get('id');
-	};
-	
-	var VKTools = function() {
-		VKTools.super.apply(this);
-	};
-	VKTools.super = EventEmitter;
-	VKTools.prototype = Object.create(EventEmitter.prototype);
-	VKTools.prototype.constructor = VKTools;
-	VKTools.prototype.calculateMessageShareUrl = function(messageId) {
-		return [settings.shareMessageBaseUrl, messageId].join('');
-	};
-	VKTools.prototype.calculatePreviewUrl = function(fileName) {
-		return [settings.imageStoreBaseUrl, fileName].join('');
-	};
-	VKTools.prototype.generatePreviewAsync = function(messageShareUrl) {
-		var requestData = {
-			url: messageShareUrl,
-			imageFormat: 'png',
-			scale: 1,
-			contentType: 'share'
-		};
-		var rawRequestData = JSON.stringify(requestData);
-		var options = {
-			url: settings.previewGeneratorUrl,
-			method: 'POST',
-			data: 'type=render&data=' + encodeURIComponent(rawRequestData)
-		};
-		return async.requestAsync(options).then(function(rawData) {
-			var response = JSON.parse(rawData);
-			return response.image;
-		});
-	};
-	VKTools.prototype.getWallUploadServerAsync = function() {
-		var self = this;
-		return VK.apiAsync('photos.getWallUploadServer', {
-			v: 5.12
-		}).then(function(response) {
-			return response.upload_url;
-		}, function(error) {
-			alert(JSON.stringify(error));
-		});
-	};
-	VKTools.prototype._checkVkDataError = function(data, errorMessage) {
-		if (data.error) {
-			throw new Error(errorMessage);
-		}
-	};
-	VKTools.prototype.uploadImageAsync = function(uploadUri, imageUri) {
-		var requestData = {
-			uploadUrl: uploadUri,
-			file1: imageUri
-		};
-		var options = {
-			url: settings.imageUploadServiceUrl,
-			method: 'POST',
-			data: JSON.stringify(requestData)
-		};
-		return async.requestAsync(options);
-	};
-	VKTools.prototype.getUploadedFileId = function(response) {
-		return ['photo', response[0].owner_id, '_', response[0].id].join('');
-	};
-	VKTools.prototype.createVkPost = function(message, ownerId, senderId, imageId, shareUrl) {
-		var content = null;
-		var appUrl = settings.vkAppUrl;
-		var hash = ['senderId=', senderId, '&messageId=', message.id].join('');
-		var answerUrl = [appUrl, '#', hash].join('');
-		var fullAnswerUrl = ['https://', answerUrl].join('');
-		
-		if (message.from === message.to) {
-			content = 'Мой мульт! \nСмотреть: ';
-		} else {
-			content = 'Тебе мульт! \nСмотреть: ';
-		}
-		
-		return {
-			owner_id: ownerId,
-			message: [content, answerUrl].join(''),
-			attachments: [imageId, fullAnswerUrl].join(','),
-			v: 5.12
-		};
-	};
-	VKTools.prototype.wallPostAsync = function(postData) {
-		return VK.apiAsync('wall.post', postData);
-	};
-
 	var MessengerApplication = function() {
 		MessengerApplication.super.apply(this);
 		var self = this;
@@ -296,6 +66,8 @@ window.onload = function() {
 		this.selectElem = document.getElementById('select');
 		this.editElem = document.getElementById('edit');
 		this.postElem = document.getElementById('post');
+		this.onlineElem = document.getElementById('online');
+		this.disconnectElem = document.getElementById('disconnect');
 
 		this.pageElem = document.getElementById('page');
 		this.pageContainerElem = document.getElementById('page-container');
@@ -303,10 +75,12 @@ window.onload = function() {
 		this.nextElem = document.getElementById('next');
 
 		this.navigation = new Navigation();
-		this.storage = new Storage();
 		this.chatClient = new ChatClient(settings.chatUrl);
-		this.messageCollection = new MessageCollection(this.chatClient);
-		this.vkTools = new VKTools();
+		this.chatClientWrapper = new ChatClientWrapper(this.chatClient);
+		
+		this.messageStorage = new MessageStorage(this.chatClientWrapper);
+		this.contactStorage = new ContactStorage();
+		this.characterStorage = new CharacterStorage();
 
 		this.selectPageView = new SelectPageView();
 		this.editPageView = new EditPageView();
@@ -316,6 +90,7 @@ window.onload = function() {
 		this.skipDialogView = new SkipDialogView();
 		this.preloadDialogView = new PreloadDialogView();
 		this.askMessageDialogView = new AskMessageDialogView();
+		this.errorDialogView = new ErrorDialogView();
 
 		this.currentLogoElemClickListener = null;
 		this.logoElemStandardClickListener = function(event) {
@@ -342,64 +117,47 @@ window.onload = function() {
 		this.nextElemPostClickListener = function(event) {
 			self.postDialogView.show();
 
-			var account = self.storage.owner;
-			var companion = self.storage.selectedContact;
+			var account = self.contactStorage.owner;
+			var companion = self.contactStorage.selected;
 			var content = self.editPageView.getMessageContent();
-			
 			var message = MessageFactory.create(
 				uuid.v4(),
 				content,
-				['vkid', account.get('id')].join(''),
-				['vkid', companion.get('id')].join('')
+				Helpers.buildVkId(account),
+				Helpers.buildVkId(companion)
 			);
-
-			var chatClientNowListener = function(event) {
-				message.timestamp = event.response.now;
-				self.chatClient.once('message:sent', chatClientSendListener);
-				self.chatClient.once('message:send', chatClientSendListener);
-				self.chatClient.sendMessage(message);
+			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
+			
+			self.chatClientWrapper.nowAsync().then(function(timestamp) {
 				self.postDialogView.setText('Сохрание сообщения...');
-			};
-			var chatClientSendListener = function(event) {
-				self.chatClient.off('message:sent');
-				self.chatClient.off('message:send');
+				message.timestamp = timestamp;
+				return self.chatClientWrapper.sendMessageAsync(message);
+			}).then(function() {
 				self.postDialogView.setText('Генерация превью...');
-
-				self.vkTools.getWallUploadServerAsync().then(function(uploadUrl) {
-					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
-					var imageFileName = self.vkTools.generatePreviewAsync(shareMessageUrl);
-					var values = [uploadUrl, imageFileName];
-					return Promise.all(values);
-				}).then(function(values) {
-					self.postDialogView.setText('Загрузка превью изображения...');
-					var uploadUrl = values[0];
-					var previewUrl = self.vkTools.calculatePreviewUrl(values[1]);
-					message.preview = values[1];
-					self.chatClient.notifyMessage(message);
-					return self.vkTools.uploadImageAsync(uploadUrl, previewUrl);
-				}).then(function(rawData) {
-					self.postDialogView.setText('Сохранение превью в альбоме...');
-					var data = JSON.parse(rawData);
-					data.v = 5.12
-					return VK.apiAsync('photos.saveWallPhoto', data);
-				}).then(function(response) {
-					self.postDialogView.setText('Отправка сообщения на стену...');
-					var imageId = self.vkTools.getUploadedFileId(response);
-					var ownerId = companion.get('id');
-					var senderId = account.get('id');
-					var shareMessageUrl = self.vkTools.calculateMessageShareUrl(message.id);
-					var postData = self.vkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
-					return self.vkTools.wallPostAsync(postData);
-				}).then(function() {
-					self.postDialogView.setMode('complete');
-				}).catch(function(error) {
-					console.log(error);
-					self.postDialogView.setMode('fail');
-				});
-			};
-
-			self.chatClient.once('message:now', chatClientNowListener);
-			self.chatClient.now();
+				return VkTools.getWallPhotoUploadUrlAsync();
+			}).then(function(uploadUrl) {
+				return VkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
+			}).then(function(response) {
+				self.postDialogView.setText('Сохранение превью в альбоме...');
+				var uploadResult = response.uploadResult;
+				var image = response.image;
+				message.preview = image;
+				self.chatClient.notifyMessage(message);
+				uploadResult.v = 5.12;
+				return VK.apiAsync('photos.saveWallPhoto', uploadResult);
+			}).then(function(response) {
+				self.postDialogView.setText('Отправка сообщения на стену...');
+				var imageId = VkTools.getUploadedFileId(response);
+				var ownerId = companion.get('id');
+				var senderId = account.get('id');
+				var postData = VkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
+				return VK.apiAsync('wall.post', postData);
+			}).then(function() {
+				self.postDialogView.setMode('complete');
+			}).catch(function(error) {
+				self.postDialogView.setMode('fail');
+				console.error(error);
+			});
 		};
 		this.nextElemAnswerClickListener = function(event) {
 			self.navigation.setMode('select');
@@ -415,6 +173,7 @@ window.onload = function() {
 
 		this.preloadDialogView.show();
 		this.initializeStorage();
+		this.initializeChatClient();
 		this.initializeViews();
 		this.initializeNavigation();
 		this.initializeSettings();
@@ -425,30 +184,62 @@ window.onload = function() {
 	MessengerApplication.prototype.constructor = MessengerApplication;
 	MessengerApplication.prototype.initializeStorage = function() {
 		var self = this;
-		this.messageCollection.on('add:message', function(event) {
+		
+		this.messageStorage.on('add:message', function(event) {
 			var message = event.message;
 			var first = event.first;
 			var messagePatternView = new MessagePatternView(message);
 			self.selectPageView.addMessagePatternView(messagePatternView, first);
 		});
-		this.messageCollection.on('select:message', function(event) {
+		this.messageStorage.on('select:message', function(event) {
 			var message = event.message;
 			self.editPageView.setMessage(message);
 		});
-		this.messageCollection.on('preload:update', function(event) {
+		this.messageStorage.on('preload:update', function(event) {
 			var count = event.count;
 			self.selectPageView.setPreloadedMessageCount(count);
 		});
-		this.messageCollection.on('end:messages', function() {
+		this.messageStorage.on('end:messages', function() {
 			self.selectPageView.hideMessageLoading();	
 		});
-		this.storage.on('add:contact', function(event) {
-			var contact = event.contact;
-			var contactView = new ContactView(contact);
-			self.postPageView.addContactView(contactView);
+		
+		this.contactStorage.on('update:search', function(event) {
+			self.postPageView.clear();
+			self.postPageView.showContactLoading();
+			var contacts = event.contacts;
+			contacts.on('paginate:item', function(event) {
+				var contact = event.item;
+				self.postPageView.showContact(contact);
+			});
+			contacts.on('paginate:end', function(event) {
+				self.postPageView.hideContactLoading();	
+			});
+			contacts.next();
 		});
-		this.storage.on('end:contacts', function(event) {
-			self.postPageView.hideContactLoading();	
+		this.characterStorage.on('update:characters', function(event) {
+			var characters = event.characters;
+			self.editPageView.setCharacters(characters);
+		});
+	};
+	MessengerApplication.prototype.initializeChatClient = function() {
+		var self = this;
+		this.chatClient.on('disconnect', function() {
+			self.onlineElem.textContent = 'не в сети';
+			self.onlineElem.classList.add('invalid');
+			self.chatClient.once('connect', function() {
+				var owner = self.contactStorage.owner;
+				var ownerId = owner.get('id');
+				var vkId = ['vkid', ownerId].join('');
+				self.chatClient.login(vkId);
+			});
+			self.chatClient.connect();
+		});
+		this.chatClient.on('message:login', function() {
+			self.onlineElem.textContent = 'в сети';
+			self.onlineElem.classList.remove('invalid');
+		});
+		this.disconnectElem.addEventListener('click', function() {
+			self.chatClient.disconnect();
 		});
 	};
 	MessengerApplication.prototype.initializeViews = function() {
@@ -461,24 +252,22 @@ window.onload = function() {
 
 		this.selectPageView.on('select:message', function(event) {
 			var message = event.message;
-			self.messageCollection.selectMessage(message);
+			self.messageStorage.selectMessage(message);
 		});
 		this.selectPageView.on('click:load', function(event) {
 			self.selectPageView.disableMessageLoading();
-			self.messageCollection.loadMessagesAsync().then(function() {
-				self.selectPageView.enableMessageLoading();
-				//html.scrollToBottom(self.pageElem);
-			}).catch(function(error) {
-				console.log(error);
+			self.messageStorage.loadMessagesAsync().catch(function(error) {
+				self.errorDialogView.show(error);
+			}).fin(function() {
 				self.selectPageView.enableMessageLoading();
 			});
 		});
 		this.selectPageView.on('click:preload', function(event) {
-			self.messageCollection.appendPreloadedMessages();	
+			self.messageStorage.appendPreloadedMessages();	
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
-				self.postPageView.setContact(self.storage.owner.get('id'));
+				self.postPageView.selectContact(self.contactStorage.owner);
 				self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 				self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 				self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -487,7 +276,7 @@ window.onload = function() {
 			self.navigation.setMode('select');
 		});
 		this.skipDialogView.on('click:ok', function(event) {
-			self.postPageView.setContact(self.storage.owner.get('id'));
+			self.postPageView.selectContact(self.contactStorage.owner);
 			self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 			self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 			self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -495,16 +284,13 @@ window.onload = function() {
 			self.navigation.setMode('select');
 		});
 		this.postPageView.on('select:contact', function(event) {
-			self.storage.selectedContact = event.contact;
+			self.contactStorage.selected = event.contact;
 		});
 		this.postPageView.on('click:load', function() {
-			self.postPageView.disableContactLoading();
-			self.storage.loadFriendContactsAsync().then(function() {
-				self.postPageView.enableContactLoading();
-				html.scrollToBottom(self.pageElem);
-			}).catch(function() {
-				self.postPageView.enableContactLoading();	
-			});
+			self.contactStorage.searchCollection.next();
+		});
+		this.postPageView.on('update:search', function(event) {
+			self.contactStorage.search(event.text);	
 		});
 		this.editPageView.on('status:validate', function() {
 			self.currentShowAskMessageDialog = self.validShowAskMessageDialog;
@@ -657,8 +443,8 @@ window.onload = function() {
 			this.currentLogoElemClickListener = this.logoElemAnswerClickListener;
 			
 			var settings = parseHash(hash);
-			this.storage.senderContactId = settings.senderId;
-			this.messageCollection.setSenderMessageId(settings.messageId);
+			this.contactStorage.setSenderId(settings.senderId);
+			this.messageStorage.setSenderMessageId(settings.messageId);
 		} else {
 			this.navigation.setMode('select');
 			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
@@ -667,35 +453,24 @@ window.onload = function() {
 	};
 	MessengerApplication.prototype.initializeStartupData = function() {
 		var self = this;
+		
 		VK.initAsync().then(function() {
-			return self.storage.initializeAsync();
-		}).then(function(values) {
-			self.editPageView.setCharacters(self.storage.characters);
-
-			self.chatClient.once('connect', function() {
-				var account = self.storage.owner;
-				var vkId = ['vkid', account.get('id')].join('');
-				self.chatClient.login(vkId);
-			});
-			self.chatClient.once('message:login', function() {
-				self.messageCollection.loadMessagesAsync()
-				.then(function() {
-					self.answerPageView.setContact(self.storage.getSenderContact());
-					self.answerPageView.setMessage(self.messageCollection.getSenderMessage());
-					self.selectPageView.setMessage(self.messageCollection.getSenderMessageId());
-					self.postPageView.setSpecialContact(self.storage.owner.get('id'));
-					self.postPageView.setContact(self.storage.getSenderContactId());
-					self.preloadDialogView.hide();
-				}).catch(function(error) {
-					console.log(error);
-					self.preloadDialogView.hide();
-				});
-			});
-
-			self.chatClient.connect();
-
+			var contactStoragePromise = self.contactStorage.initializeAsync();
+			var characterStoragePromise = self.characterStorage.initializeAsync();
+			var promises = [contactStoragePromise, characterStoragePromise];
+			return Q.all(promises);
+		}).then(function() {
+			var owner = self.contactStorage.owner;
+			var vkId = Helpers.buildVkId(owner);
+			return self.chatClientWrapper.connectAndLoginAsync(vkId);
+		}).then(function() {
+			return self.messageStorage.loadMessagesAsync();
+		}).then(function() {
+			self.answerPageView.setContact(self.contactStorage.getSender());
+			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
 		}).catch(function(error) {
-			console.log(error);
+			console.error(error);
+		}).fin(function() {
 			self.preloadDialogView.hide();
 		});
 	};

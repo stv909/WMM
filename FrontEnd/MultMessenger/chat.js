@@ -1,8 +1,9 @@
 var chat = chat || {};
 
-(function(chat, eve, base64) {
+(function(chat, eve, base64, Q) {
 
 	var EventEmitter = eve.EventEmitter;
+	var ErrorCodes = errors.ErrorCodes;
 
 	var ChatClient = function(serverUrl) {
 		ChatClient.super.apply(this);
@@ -12,6 +13,9 @@ var chat = chat || {};
 	ChatClient.super = EventEmitter;
 	ChatClient.prototype = Object.create(EventEmitter.prototype);
 	ChatClient.prototype.constructor = ChatClient;
+	ChatClient.prototype.readyState = function() {
+		return this.socket.readyState;	
+	};
 	ChatClient.prototype.connect = function() {
 		var self = this;
 		this.socket = new WebSocket(this.serverUrl);
@@ -328,4 +332,4 @@ var chat = chat || {};
 	chat.MessageFactory = MessageFactory;
 	chat.ToolFactory = ToolFactory;
 
-})(chat, eve, base64);
+})(chat, eve, base64, Q);

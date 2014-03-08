@@ -1,19 +1,25 @@
-(function(async) {
+(function(Q, errors) {
+	
+	var ErrorCodes = errors.ErrorCodes;
+	
 	VK.apiAsync = function(method, params) {
-		var deferred = async.defer();
+		var deferred = Q.defer();
 		
 		VK.api(method, params, function(data) {
 			if (data.response) {
 				deferred.resolve(data.response);
 			} else {
-				deferred.reject(new Error(JSON.stringify(data.error, null, 4)));
+				deferred.reject({
+					errorCode: ErrorCodes.API_ERROR,
+					message: JSON.stringify(data.error, null, 4)
+				});
 			}
 		});
 		
 		return deferred.promise;
 	}
 	VK.initAsync = function() {
-		var deferred = async.defer();
+		var deferred = Q.defer();
 		
 		VK.init(function() {
 			deferred.resolve();
@@ -23,4 +29,5 @@
 		
 		return deferred.promise;
 	};
-})(async);
+	
+})(Q, errors);

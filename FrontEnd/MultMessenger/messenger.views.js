@@ -1,8 +1,9 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, async, uuid, html) {
+(function(messenger, abyss, template, async, uuid, html, errors) {
 
 	var View = abyss.View;
+	var ErrorCodes = errors.ErrorCodes;
 
 	var SelectPageView = function() {
 		SelectPageView.super.apply(this);
@@ -10,10 +11,12 @@ var messenger = messenger || {};
 
 		this.elem = template.create('select-page-template', { id: 'select-page' });
 		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
-		this.selectedMessageView = null;
 		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.preloadElem = this.elem.getElementsByClassName('preload')[0];
+		this.containerElem = this.elem.getElementsByClassName('container')[0];
+		
+		this.selectedMessageView = null;
 		this.messageViews = {};
 		this.loadElemEnable = true;
 
@@ -44,13 +47,19 @@ var messenger = messenger || {};
 				type: 'click:preload'
 			});
 		};
+		var wheelListener = function(event) {
+			this.scrollTop -= event.wheelDelta;
+			event.preventDefault();
+		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
 		this.preloadElem.addEventListener('click', preloadElemClickListener);
+		this.containerElem.addEventListener('wheel', wheelListener);
 		
 		this.once('dispose', function(event) {
 			self.loadElem.removeEvent('click', loadElemClickListener);
 			self.preloadElem.removeEventListener('click', preloadElemClickListener);
+			self.containerElem.removeEventListener('wheel', wheelListener);
 		});
 
 		this.hide();
@@ -389,13 +398,22 @@ var messenger = messenger || {};
 
 		this.elem = template.create('post-page-template', { id: 'post-page' });
 		this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
-		this.specialContactElem = this.elem.getElementsByClassName('special-contact')[0];
+		this.receiverHolderElem = this.elem.getElementsByClassName('receiver-holder')[0];
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
-		this.selectedContactView = null;
-		this.currentSpecialContactView = null;
-		this.loadElemEnable = true;
-		this.contactViews = {};
+		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
+		this.queryElem = this.elem.getElementsByClassName('query')[0];
+		this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
+		this.searchResultsWrapElem = this.searchResultsElem.getElementsByClassName('wrap')[0];
 
+		this.cachedContactViews = {};
+		this.contactViews = {};
+		this.selectedContactView = null;
+		this.receiverContactView = new ContactView();
+		this.receiverContactView.attachTo(this.receiverHolderElem);
+		this.receiverContactView.select();
+		
+		this.loadElemEnable = true;
+		
 		this.contactViewSelectListener = function(event) {
 			var target = event.target;
 			if (target !== self.selectedContactView) {
@@ -403,6 +421,7 @@ var messenger = messenger || {};
 					self.selectedContactView.deselect();
 				}
 				self.selectedContactView = target;
+				self._setReceiver(self.selectedContactView.model);
 				self.trigger({
 					type: 'select:contact',
 					contact: self.selectedContactView.model
@@ -415,11 +434,37 @@ var messenger = messenger || {};
 				self.trigger('click:load');
 			}
 		};
+		var lastQueryText = this.queryElem.value;
+		var lastQueryTimeout = null;
+		var queryElemInputListener = function(event) {
+			var queryText = self.queryElem.value;
+			if (lastQueryTimeout) {
+				clearTimeout(lastQueryTimeout);
+				lastQueryTimeout = null;
+			}
+			if (lastQueryText !== queryText) {
+				lastQueryTimeout = setTimeout(function() {
+					lastQueryText = queryText;
+					self.trigger({
+						type: 'update:search',
+						text: queryText
+					});
+				}, 800);
+			}
+		};
+		var wheelListener = function(event) {
+			this.scrollTop -= event.wheelDelta;
+			event.preventDefault();
+		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
+		this.queryElem.addEventListener('input', queryElemInputListener);
+		this.searchResultsWrapElem.addEventListener('wheel', wheelListener);
 		
 		this.once('dispose', function(event) {
-			self.loadElem.removeEventListener('click', loadElemClickListener);	
+			self.loadElem.removeEventListener('click', loadElemClickListener);
+			self.queryElem.removeEventListener('input', queryElemInputListener);
+			self.searchResultsWrapElem.removeEventListener('wheel', wheelListener);
 		});
 
 		this.hide();
@@ -433,38 +478,29 @@ var messenger = messenger || {};
 	PostPageView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
 	};
-	PostPageView.prototype.addContactView = function(contactView, special) {
-		if (special) {
-			contactView.attachTo(this.specialContactElem);
-		} else {
-			contactView.attachTo(this.contactsElem);
-		}
-		var contact = contactView.model;
+	PostPageView.prototype.showContact = function(contact) {
 		var contactId = contact.get('id');
-		this.contactViews[contactId] = contactView;
+		var contactView = this._getOrCreateContactView(contact);
+		contactView.attachTo(this.contactsElem);
 		contactView.on('select', this.contactViewSelectListener);
+		this.contactViews[contactId] = contactView;
 		if (!this.selectedContactView) {
 			contactView.select();
 		}
 	};
-	PostPageView.prototype.setSpecialContact = function(contactId) {
-		var contactView = this.contactViews[contactId];
-		if (contactView !== this.currentSpecialContactView) {
-			if (this.currentSpecialContactView) {
-				this.currentSpecialContactView.detach();
-				this.currentSpecialContactView.attachFirstTo(this.contactsElem);
-				this.currentSpecialContactView = null;
-			}
-			this.currentSpecialContactView = contactView;
-			this.currentSpecialContactView.detach();
-			this.currentSpecialContactView.attachTo(this.specialContactElem);
-		}
+	PostPageView.prototype.selectContact = function(contact) {
+		var contactView = this._getOrCreateContactView(contact);
+		contactView.select();
 	};
-	PostPageView.prototype.setContact = function(contactId) {
-		var contactView = this.contactViews[contactId];
-		if (contactView) {
-			contactView.select();
-		}
+	PostPageView.prototype._setReceiver = function(contact) {
+		this.receiverContactView.setModel(contact);
+	};
+	PostPageView.prototype.clear = function() {
+		var self = this;
+		Object.keys(this.contactViews).forEach(function(key) {
+			self.contactViews[key].detach();	
+		});
+		this.contactViews = {};
 	};
 	PostPageView.prototype.enableContactLoading = function() {
 		this.loadElemEnable = true;
@@ -475,12 +511,21 @@ var messenger = messenger || {};
 		this.loadElem.textContent = 'Загрузка...';
 	};
 	PostPageView.prototype.hideContactLoading = function() {
-		this.loadElem.classList.add('hidden');
+		this.loadHolderElem.classList.add('hidden');
 	};
 	PostPageView.prototype.showContactLoading = function() {
-		this.loadElem.classList.remove('hidden');	
+		this.loadHolderElem.classList.remove('hidden');	
 	};
-
+	PostPageView.prototype._getOrCreateContactView = function(contact) {
+		var contactId = contact.get('id');
+		var contactView = this.cachedContactViews[contactId];
+		if (!contactView) {
+			contactView = new ContactView(contact);
+			this.cachedContactViews[contactId] = contactView;
+		}
+		return contactView;
+	};
+	
 	var AnswerPageView = function() {
 		AnswerPageView.super.apply(this);
 		var self = this;
@@ -701,18 +746,67 @@ var messenger = messenger || {};
 	UpdateMessageDialogView.prototype.setMode = function(mode) {
 		switch (mode) {
 			case 'wait':
+				this.dialogWindowElem.classList.remove('error');
 				this.statusElem.textContent = 'Идет обновление персонажей...';
 				this.readyElem.classList.add('hidden');
 				break;
 			case 'complete':
+				this.dialogWindowElem.classList.remove('error');
 				this.statusElem.textContent = 'Персонажи обновлены!';
 				this.readyElem.classList.remove('hidden');
 				break;
 			case 'fail':
-				this.statusElem.textContent = 'Ошибка обновления!';
+				this.dialogWindowElem.classList.add('error');
+				this.statusElem.textContent = 'Ошибка обновления!\n Проверьте интернет-подключение и \nпопробуйте позже.';
 				this.readyElem.classList.remove('hidden');
 				break;
 		}
+	};
+	
+	var ErrorDialogView = function() {
+		ErrorDialogView.super.apply(this);
+		var self = this;
+		
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('error-dialog');
+		this.statusElem = this.dialogWindowElem.getElementsByClassName('status')[0];
+		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
+
+		var okElemClickListener = function(event) {
+			self.hide();
+			self.trigger('click:close');
+		};
+
+		this.okElem.addEventListener('click', okElemClickListener);
+
+		this.once('dispose', function() {
+			self.readyElem.removeEventListener('click', okElemClickListener);
+		});
+	};
+	ErrorDialogView.super = View;
+	ErrorDialogView.prototype = Object.create(View.prototype);
+	ErrorDialogView.prototype.constructor = ErrorDialogView;
+	ErrorDialogView.prototype.show = function(error) {
+		console.log(error);
+		var message = 'Неизвестная ошибка';
+		switch (error.errorCode) {
+			case ErrorCodes.NO_CONNECTION:
+				message = 'Отсутствует интернет-соединение.\nПопробуйте позже.';
+				break;
+			case ErrorCodes.API_ERROR:
+				message = 'Ошибка вызова интернет-сервиса.';
+				break;
+			case ErrorCodes.TIMEOUT:
+				message = 'Не удалось выполнить операцию.\n Проверьте интернет-подключение и \nпопробуйте позже.';
+				break;
+		}
+		this.statusElem.textContent = message;
+		this.dialogWindowElem.classList.remove('hidden');
+		this.elem.classList.remove('hidden');	
+	};
+	ErrorDialogView.prototype.hide = function() {
+		this.dialogWindowElem.classList.add('hidden');
+		this.elem.classList.add('hidden');	
 	};
 
 	var MessageView = function(model) {
@@ -839,7 +933,8 @@ var messenger = messenger || {};
 				self.trigger('invalidate');
 			}
 		};
-
+		console.log(this.elem);
+		console.log(this.actorWrapperElem);
 		this.actorSelectView = new ActorSelectView(characters, characterData);
 		this.actorSelectView.attachTo(this.actorWrapperElem);
 		this.views.push(this.actorSelectView);
@@ -1084,8 +1179,7 @@ var messenger = messenger || {};
 
 		this.elem = template.create('contact-template', { className: 'contact' });
 		this.photoElem = this.elem.getElementsByClassName('photo')[0];
-		this.firstNameElem = this.elem.getElementsByClassName('first-name')[0];
-		this.lastNameElem = this.elem.getElementsByClassName('last-name')[0];
+		this.fullNameElem = this.elem.getElementsByClassName('full-name')[0]
 
 		this.selected = false;
 		this.setModel(model);
@@ -1096,11 +1190,19 @@ var messenger = messenger || {};
 				self.select();
 			}
 		};
+		var fullNameElemClickListener = function(event) {
+			//if (self.selected) {
+			var vkLink = ['https://vk.com/id', self.model.get('id')].join('');
+			window.open(vkLink, '_blank');
+			//}
+		};
 
-		this.elem.addEventListener('click', elemClickListener, this);
+		this.elem.addEventListener('click', elemClickListener);
+		this.fullNameElem.addEventListener('click', fullNameElemClickListener);
 
 		this.once('dispose', function() {
 			self.elem.removeEventListener('click', elemClickListener);
+			self.fullNameElem.removeEventListener('click', fullNameElemClickListener);
 		});
 	};
 	ContactView.super = View;
@@ -1110,19 +1212,21 @@ var messenger = messenger || {};
 		this.selected = true;
 		this.elem.classList.remove('normal');
 		this.elem.classList.add('chosen');
+		//this.fullNameElem.classList.add('selected');
 		this.trigger('select');
 	};
 	ContactView.prototype.deselect = function() {
 		this.selected = false;
 		this.elem.classList.add('normal');
 		this.elem.classList.remove('chosen');
+		//this.fullNameElem.classList.remove('selected');
 	};
 	ContactView.prototype.setModel = function(model) {
 		if (model) {
 			this.model = model;
 			this.photoElem.src = this.model.get('photo');
-			this.firstNameElem.textContent = this.model.get('firstName');
-			this.lastNameElem.textContent = this.model.get('lastName');
+			var fullName = [this.model.get('firstName'), this.model.get('lastName')].join(' ');
+			this.fullNameElem.textContent = fullName;
 		}
 	};
 
@@ -1135,9 +1239,10 @@ var messenger = messenger || {};
 		SkipDialogView: SkipDialogView,
 		PreloadDialogView: PreloadDialogView,
 		AskMessageDialogView: AskMessageDialogView,
+		ErrorDialogView: ErrorDialogView,
 		MessageView: MessageView,
 		MessagePatternView: MessagePatternView,
 		ContactView: ContactView
 	};
 
-})(messenger, abyss, template, async, uuid, html);
+})(messenger, abyss, template, async, uuid, html, errors);

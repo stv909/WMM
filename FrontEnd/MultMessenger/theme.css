@@ -22,7 +22,7 @@ body {
   height: 8px;
   margin: 0 auto;
 }
-::-webkit-scrollbar-thum {
+::-webkit-scrollbar-thumb {
   background-color: #ddd;
 }
 .hidden {
@@ -43,7 +43,7 @@ body {
   vertical-align: middle;
   z-index: 10;
   background-color: #fff;
-  box-shadow: 0 0 6px #ccc;
+  box-shadow: 0 0 6px #888;
 }
 #menu-container {
   vertical-align: top;
@@ -132,7 +132,32 @@ body {
   text-shadow: 0 0 2px #666;
 }
 #breadcrumbs .normal:hover {
-  color: aspect-arrow;
+  color: #28f !important;
+}
+#status {
+  position: absolute;
+  right: 0;
+  display: inline-block;
+}
+#online {
+  color: #fff;
+  border-radius: 2px;
+  background-color: #5b5;
+  border: 1px solid #5b5;
+  height: 16px;
+  line-height: 16px;
+  padding: 4px 8px 4px 8px;
+  margin-top: 5px;
+  display: inline-block;
+  margin-left: 3px;
+}
+#online.invalid {
+  background-color: #f00 !important;
+  border: 1px solid #f00;
+}
+#disconnect {
+  line-height: 16px;
+  padding: 4px 8px 4px 8px;
 }
 #select,
 #edit,
@@ -143,18 +168,6 @@ body {
   padding-right: 12px;
   padding-left: 12px;
   position: relative;
-}
-#select.chosen:before,
-#edit.chosen:before,
-#post.chosen:before {
-  content: "";
-  top: 0;
-  left: 0;
-  position: absolute;
-  margin-left: -12px;
-  border-left: 12px solid transparent;
-  border-top: 18px solid #28f;
-  border-bottom: 18px solid #28f;
 }
 #select.chosen:after,
 #edit.chosen:after,
@@ -209,13 +222,25 @@ body {
 }
 #select-page {
   font-size: 0;
-  padding: 8px;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
-#select-page .patterns {
-  margin-top: 8px;
+#select-page .container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 16px 0 16px 16px;
+}
+#select-page .message {
+  margin: 8px;
 }
 #select-page .load-holder {
-  margin-bottom: 16px;
+  margin-bottom: 4px;
 }
 #edit-page {
   font-size: 0;
@@ -229,7 +254,7 @@ body {
 }
 #edit-page .message-editor {
   position: absolute;
-  top: 26px;
+  top: 24px;
   bottom: 0;
   left: 8px;
   right: 0;
@@ -249,18 +274,88 @@ body {
   height: 16px;
   text-align: center;
 }
+#edit-page .message {
+  margin-left: 16px;
+}
 #post-page {
-  text-align: center;
-  padding: 8px;
-  margin-bottom: 16px;
+  font-size: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  padding: 16px 0 0 16px;
+}
+#post-page .container {
+  display: table;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+#post-page .receiver-wrapper,
+#post-page .search-wrapper {
+  display: table-cell;
+  vertical-align: top;
+  position: relative;
+}
+#post-page .receiver-wrapper {
+  width: 145px;
+}
+#post-page .receiver-wrapper .section {
+  margin-bottom: 12px;
+}
+#post-page .search-wrapper {
+  font-size: 12px;
+}
+#post-page .search-wrapper >.wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+#post-page .search-wrapper .search {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#post-page .search-wrapper .search .search-controls,
+#post-page .search-wrapper .search .search-results {
+  display: table-row;
+}
+#post-page .search-wrapper .search .search-controls {
+  height: 1%;
+  padding-right: 16px;
+}
+#post-page .search-wrapper .search .search-controls .query {
+  width: 738px;
+  margin-bottom: 6px;
+}
+#post-page .search-wrapper .search .search-results {
+  height: 99%;
+  position: relative;
+}
+#post-page .search-wrapper .search .search-results .shadow {
+  width: 738px;
+  position: absolute;
+  z-index: 10;
+  height: 6px;
+  background-image: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 100%);
+}
+#post-page .search-wrapper .search .search-results .wrap {
+  padding-top: 6px;
+  padding-bottom: 16px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  position: relative;
 }
 .message {
   display: inline-block;
-  margin: 10px;
   box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 2px;
   background-color: #fff;
+  vertical-align: top;
 }
 .message.normal {
   cursor: pointer;
@@ -284,23 +379,26 @@ body {
 .button {
   -webkit-user-select: none;
   user-select: none;
-  border: 1px solid #ddd;
   display: inline-block;
   padding: 8px;
   cursor: pointer;
   border-radius: 2px;
   font-size: 12px;
+  background-color: #28f;
+  border: 1px solid #28f;
+  text-shadow: 0 0 2px #666;
+  color: #fff;
 }
 .button:hover {
   border: 1px solid #28f;
-  box-shadow: 0 0 1px #28f;
-  color: #28f;
+  box-shadow: 0 0 2px #28f;
+  color: #fff;
 }
 .button:active {
   color: #fff;
-  border: 1px solid #28f;
-  background-color: #28f;
-  box-shadow: 0 0 2px #28f;
+  border: 1px solid #27e;
+  background-color: #27e;
+  box-shadow: 0 0 2px #27e;
   text-shadow: 0 0 2px #666;
 }
 .load-holder {
@@ -322,10 +420,9 @@ body {
   padding-bottom: 6px;
   height: 36px;
   background-color: #fff;
-  box-shadow: 0 0 6px #ccc;
+  box-shadow: 0 0 6px #888;
 }
 #footer .button {
-  border: 1px solid #28f;
   box-sizing: border-box;
   line-height: 34px;
   padding-top: 0;
@@ -353,6 +450,21 @@ body {
   border: 1px solid #28f;
   box-shadow: 0 0 5px #28f;
   border-radius: 2px;
+}
+#dialog-background .dialog-wrapper .dialog-window.error {
+  box-shadow: 0 0 5px #f00 !important;
+  border: 1px solid #f00 !important;
+}
+#dialog-background .dialog-wrapper .dialog-window.error .button:hover {
+  border: 1px solid #f00 !important;
+  box-shadow: 0 0 1px #f00 !important;
+  color: #f00 !important;
+}
+#dialog-background .dialog-wrapper .dialog-window.error .button:active {
+  background-color: #f00 !important;
+  border: 1px solid #f00 !important;
+  box-shadow: 0 0 1px solid #f00 !important;
+  color: #fff !important;
 }
 #dialog-background .dialog-wrapper .dialog-window .title-holder {
   height: 36px;
@@ -395,6 +507,12 @@ body {
   height: 140px;
   line-height: 140px;
 }
+#update-message-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
+}
 #ask-message-dialog {
   font-size: 12px;
   width: 360px;
@@ -409,6 +527,40 @@ body {
   padding-right: 12px;
   margin-left: 3px;
   margin-right: 3px;
+}
+#error-dialog {
+  font-size: 12px;
+  width: 360px;
+  height: 220px;
+  box-shadow: 0 0 5px #f00 !important;
+  border: 1px solid #f00 !important;
+}
+#error-dialog .content {
+  height: 140px;
+  line-height: 140px;
+}
+#error-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
+}
+#error-dialog .button {
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+#error-dialog .button:hover {
+  border: 1px solid #f00 !important;
+  box-shadow: 0 0 1px #f00 !important;
+  color: #f00 !important;
+}
+#error-dialog .button:active {
+  background-color: #f00 !important;
+  border: 1px solid #f00 !important;
+  box-shadow: 0 0 1px solid #f00 !important;
+  color: #fff !important;
 }
 #preload-background {
   display: table;
@@ -437,21 +589,13 @@ body {
 #preload-background .content {
   margin-top: 32px;
 }
-.contacts {
-  text-align: left;
-  margin-left: 18px;
-}
-.special-contact {
-  margin-top: 18px;
-  text-align: center;
-}
 .contact {
   vertical-align: top;
   font-size: 0;
-  margin-right: 1px;
+  margin-left: 1px;
   margin-bottom: 1px;
   width: 120px;
-  min-height: 140px;
+  min-height: 135px;
   display: inline-block;
   text-align: center;
   cursor: pointer;
@@ -465,24 +609,27 @@ body {
   border: 1px solid #888;
 }
 .contact.chosen {
-  color: #28f;
   border: 1px solid #28f;
   box-shadow: 0 0 1px #28f;
   cursor: default;
 }
 .contact .photo {
   padding-top: 10px;
-  padding-bottom: 8px;
+  padding-bottom: 5px;
   width: 100px;
   height: 100px;
 }
-.contact .first-name,
-.contact .last-name {
+.contact .full-name {
   margin-left: 1px;
   margin-right: 1px;
   font-size: 10px;
   display: inline-block;
   white-space: nowrap;
+  cursor: pointer;
+}
+.contact .full-name:hover {
+  color: #28f;
+  text-decoration: underline;
 }
 .message-wrapper {
   display: inline-block;
@@ -493,7 +640,7 @@ body {
 }
 .tools {
   display: inline-block;
-  width: 440px;
+  width: 430px;
   padding-right: 20px;
   vertical-align: top;
   margin-left: 10px;
@@ -598,4 +745,7 @@ body {
 }
 .invalid {
   background-color: #ffd !important;
+}
+.cell {
+  display: table-cell;
 }
