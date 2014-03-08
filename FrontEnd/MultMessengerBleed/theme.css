@@ -531,6 +531,12 @@ body {
   height: 140px;
   line-height: 140px;
 }
+#post-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
+}
 #skip-answer-dialog {
   font-size: 12px;
   width: 360px;
@@ -540,11 +546,11 @@ body {
   height: 140px;
   line-height: 140px;
 }
-#skip-answer-dialog .button {
-  padding-left: 12px;
-  padding-right: 12px;
-  margin-left: 3px;
-  margin-right: 3px;
+#skip-answer-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
 }
 #update-message-dialog {
   font-size: 12px;
@@ -570,11 +576,11 @@ body {
   height: 140px;
   line-height: 140px;
 }
-#ask-message-dialog .button {
-  padding-left: 12px;
-  padding-right: 12px;
-  margin-left: 3px;
-  margin-right: 3px;
+#ask-message-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
 }
 #error-dialog {
   font-size: 12px;
