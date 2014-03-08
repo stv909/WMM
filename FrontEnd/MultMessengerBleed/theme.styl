@@ -1,5 +1,5 @@
 aspect-color = #28f
-hover-aspect-color = #2a6
+active-aspect-color = #27e
 default-font-color = #666
 default-width = 920px
 
@@ -307,6 +307,7 @@ html, body
 	border 1px solid #ddd
 	border-radius 2px
 	background-color #fff
+	vertical-align top
 	&.normal
 		cursor pointer
 	&.normal:hover
@@ -324,21 +325,24 @@ html, body
 		font-size 16px
 .button
 	user-select(none)
-	border 1px solid #ddd
 	display inline-block
 	padding 8px
 	cursor pointer
 	border-radius 2px
 	font-size 12px
+	background-color aspect-color
+	border 1px solid aspect-color
+	text-shadow 0 0 2px #666
+	color white
 	&:hover
 		border 1px solid aspect-color
-		box-shadow 0 0 1px aspect-color
-		color aspect-color
+		box-shadow 0 0 2px aspect-color
+		color white
 	&:active
 		color #fff
-		border 1px solid aspect-color
-		background-color aspect-color
-		box-shadow 0 0 2px aspect-color
+		border 1px solid active-aspect-color
+		background-color active-aspect-color
+		box-shadow 0 0 2px active-aspect-color
 		text-shadow 0 0 2px #666
 .load-holder
 	margin-top 12px
@@ -359,7 +363,6 @@ html, body
 	background-color #fff
 	box-shadow 0 0 6px #888
 	.button
-		border 1px solid aspect-color
 		box-sizing border-box
 		line-height 34px
 		padding-top 0
@@ -627,3 +630,5 @@ html, body
 		margin-right 10px
 .invalid
 	background-color #ffffdd !important
+.cell
+	display table-cell

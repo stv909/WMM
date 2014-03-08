@@ -933,7 +933,8 @@ var messenger = messenger || {};
 				self.trigger('invalidate');
 			}
 		};
-
+		console.log(this.elem);
+		console.log(this.actorWrapperElem);
 		this.actorSelectView = new ActorSelectView(characters, characterData);
 		this.actorSelectView.attachTo(this.actorWrapperElem);
 		this.views.push(this.actorSelectView);

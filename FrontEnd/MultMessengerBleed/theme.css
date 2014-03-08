@@ -355,6 +355,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 2px;
   background-color: #fff;
+  vertical-align: top;
 }
 .message.normal {
   cursor: pointer;
@@ -378,23 +379,26 @@ body {
 .button {
   -webkit-user-select: none;
   user-select: none;
-  border: 1px solid #ddd;
   display: inline-block;
   padding: 8px;
   cursor: pointer;
   border-radius: 2px;
   font-size: 12px;
+  background-color: #28f;
+  border: 1px solid #28f;
+  text-shadow: 0 0 2px #666;
+  color: #fff;
 }
 .button:hover {
   border: 1px solid #28f;
-  box-shadow: 0 0 1px #28f;
-  color: #28f;
+  box-shadow: 0 0 2px #28f;
+  color: #fff;
 }
 .button:active {
   color: #fff;
-  border: 1px solid #28f;
-  background-color: #28f;
-  box-shadow: 0 0 2px #28f;
+  border: 1px solid #27e;
+  background-color: #27e;
+  box-shadow: 0 0 2px #27e;
   text-shadow: 0 0 2px #666;
 }
 .load-holder {
@@ -419,7 +423,6 @@ body {
   box-shadow: 0 0 6px #888;
 }
 #footer .button {
-  border: 1px solid #28f;
   box-sizing: border-box;
   line-height: 34px;
   padding-top: 0;
@@ -742,4 +745,7 @@ body {
 }
 .invalid {
   background-color: #ffd !important;
+}
+.cell {
+  display: table-cell;
 }

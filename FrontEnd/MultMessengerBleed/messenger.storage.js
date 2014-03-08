@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, async, chat) {
+(function(messenger, eve, async, chat, Q) {
 	
 	var EventEmitter = eve.EventEmitter;
 	var ContactModel = messenger.models.ContactModel;
@@ -61,7 +61,7 @@ var messenger = messenger || {};
 			});
 		} else {
 			this.sender = this.owner;
-			return Promise.cast();
+			return Q.when();
 		}
 	};
 	ContactStorage.prototype._loadFriendsAsync = function(count, offset) {
@@ -607,4 +607,4 @@ var messenger = messenger || {};
 		MessageStorage: MessageStorage1,
 	};
 	
-})(messenger, eve, async, chat);
+})(messenger, eve, async, chat, Q);

@@ -16,7 +16,7 @@ var template = template || {};
 					var templateElem = templateElemCollection[i];
 					var childNodes = templateElem.childNodes;
 					var content = document.createDocumentFragment();
-
+					
 					while(childNodes[0]) {
 						content.appendChild(childNodes[0]);
 					}
