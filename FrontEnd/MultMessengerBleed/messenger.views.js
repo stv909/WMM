@@ -124,6 +124,7 @@ var messenger = messenger || {};
 		this.resetElem = this.elem.getElementsByClassName('reset')[0];
 		this.updateElem = this.elem.getElementsByClassName('update')[0];
 		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
+		this.wrapElem = this.messageWrapperElem.getElementsByClassName('wrap')[0];
 		this.memosElem = this.elem.getElementsByClassName('memos')[0];
 		this.characterCollectionElem = this.elem.getElementsByClassName('character-collection')[0];
 
@@ -199,8 +200,7 @@ var messenger = messenger || {};
 			view.dispose();
 		});
 		this.memosElem.innerHTML = '';
-		this.resetElem.classList.add('hidden');
-		this.updateElem.classList.add('hidden');
+		this.wrapElem.classList.add('hidden');
 		this.characterCollectionElem.innerHTML = '';
 		this.characterViewCollection = [];
 	};
@@ -283,23 +283,19 @@ var messenger = messenger || {};
 		characterView.attachTo(this.characterCollectionElem);
 		characterView.on('validate', function() {
 			if (self.isValid()) {
-				self.updateElem.classList.add('hidden');
-				self.resetElem.classList.add('hidden');
+				self.wrapElem.classList.add('hidden');
 				self.trigger('status:validate');
 			} else {
-				self.updateElem.classList.remove('hidden');
-				self.resetElem.classList.remove('hidden');
+				self.wrapElem.classList.remove('hidden');
 				self.trigger('status:invalidate');
 			}
 		});
 		characterView.on('invalidate', function() {
 			if (self.isValid()) {
-				self.updateElem.classList.add('hidden');
-				self.resetElem.classList.add('hidden');
+				self.wrapElem.classList.add('hidden');
 				self.trigger('status:validate');
 			} else {
-				self.updateElem.classList.remove('hidden');
-				self.resetElem.classList.remove('hidden');
+				self.wrapElem.classList.remove('hidden');
 				self.trigger('status:invalidate');
 			}
 		});
