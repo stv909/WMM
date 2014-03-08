@@ -127,6 +127,11 @@ var messenger = messenger || {};
 		this.wrapElem = this.messageWrapperElem.getElementsByClassName('wrap')[0];
 		this.memosElem = this.elem.getElementsByClassName('memos')[0];
 		this.characterCollectionElem = this.elem.getElementsByClassName('character-collection')[0];
+		
+		this.charactersButtonElem = this.elem.getElementsByClassName('characters-button')[0];
+		this.charactersButtonElem.addEventListener('click', function() {
+			self.charactersDialogView.show();	
+		});
 
 		this.messageEditorView = new MessageEditorView();
 		this.messageEditorView.attachFirstTo(this.messageWrapperElem);
@@ -135,7 +140,10 @@ var messenger = messenger || {};
 		this.updateMessageDialogView.on('click:close', function() {
 
 		});
+		
+		this.charactersDialogView = new CharactersDialogView();
 
+		this.charactersArray = null;
 		this.characters = null;
 		this.characterViewCollection = [];
 
@@ -279,7 +287,7 @@ var messenger = messenger || {};
 			type: meta.type
 		};
 
-		var characterView = new CharacterView(this.characters, characterData);
+		var characterView = new CharacterView(this.charactersArray, characterData);
 		characterView.attachTo(this.characterCollectionElem);
 		characterView.on('validate', function() {
 			if (self.isValid()) {
@@ -321,8 +329,15 @@ var messenger = messenger || {};
 			view.reset();
 		});
 	};
+	EditPageView.prototype.setCharactersArray = function(characters) {
+		this.charactersArray = characters;
+	};
 	EditPageView.prototype.setCharacters = function(characters) {
-		this.characters = characters;
+		var self = this;
+		this.characters	= characters;
+		this.characters.forEach(function(character) {
+			self.charactersDialogView.addCharacterItem(character);	
+		});
 	};
 	EditPageView.prototype.getData = function() {
 		var data = [];
@@ -811,6 +826,44 @@ var messenger = messenger || {};
 		this.dialogWindowElem.classList.add('hidden');
 		this.elem.classList.add('hidden');	
 	};
+	
+	var CharactersDialogView = function() {
+		CharactersDialogView.super.apply(this);
+		var self = this;
+		
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('characters-dialog');
+		this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+		this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
+		
+		this.characterItemViews = {};
+		
+		var crossElemClickListener = function(event) {
+			self.hide();
+		};
+		
+		this.crossElem.addEventListener('click', crossElemClickListener);
+		
+		this.once('dispose', function(event) {
+			self.crossElem.removeEventListener('click', crossElemClickListener);
+		});
+	};
+	CharactersDialogView.super = View;
+	CharactersDialogView.prototype = Object.create(View.prototype);
+	CharactersDialogView.prototype.constructor = CharactersDialogView;
+	CharactersDialogView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+		this.dialogWindowElem.classList.remove('hidden');
+	};
+	CharactersDialogView.prototype.hide = function() {
+		this.elem.classList.add('hidden');
+		this.dialogWindowElem.classList.add('hidden');
+	};
+	CharactersDialogView.prototype.addCharacterItem = function(characterItem) {
+		var characterItemView = new CharacterItemView(characterItem);
+		characterItemView.attachTo(this.contentElem);
+		this.characterItemViews[characterItem.key] = characterItemView;
+	};
 
 	var MessageView = function(model) {
 		MessageView.super.apply(this);
@@ -936,8 +989,7 @@ var messenger = messenger || {};
 				self.trigger('invalidate');
 			}
 		};
-		console.log(this.elem);
-		console.log(this.actorWrapperElem);
+
 		this.actorSelectView = new ActorSelectView(characters, characterData);
 		this.actorSelectView.attachTo(this.actorWrapperElem);
 		this.views.push(this.actorSelectView);
@@ -1175,6 +1227,19 @@ var messenger = messenger || {};
 	EmptyReplyView.super = View;
 	EmptyReplyView.prototype = Object.create(View.prototype);
 	EmptyReplyView.prototype.constructor = EmptyReplyView;
+	
+	var CharacterItemView = function(characterItem) {
+		CharacterItemView.super.apply(this);
+		var self = this;
+		
+		this.elem = template.create('character-item-template', { className: 'character-item' });
+		this.characterImageElem = this.elem.getElementsByClassName('character-image')[0];
+		
+		this.characterImageElem.src = characterItem.image;
+	};
+	CharacterItemView.super = View;
+	CharacterItemView.prototype = Object.create(View.prototype);
+	CharacterItemView.prototype.constructor = CharacterItemView;
 
 	var ContactView = function(model) {
 		ContactView.super.apply(this);

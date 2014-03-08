@@ -233,7 +233,7 @@ html, body
 			position absolute
 			top 0
 			left 0
-			z-index 10
+			z-index 20
 			background-color rgba(255, 255, 255, 0.9)
 		.controls
 			display table
@@ -522,6 +522,43 @@ html, body
 			border 1px solid #f00 !important
 			box-shadow 0 0 1px solid #f00 !important
 			color white !important
+#characters-dialog
+	font-size 12px
+	width 420px
+	height 305px
+	.title-holder
+		position relative
+	.content
+		height 140px
+		padding-top 5px
+		.character-item
+			display inline-block
+			vertical-align top
+			padding 4px;
+			border-radius 2px
+			border 1px solid #fff
+			cursor pointer
+			&:hover
+				border 1px solid #888
+			.character-image
+				width: 72px
+				height 72p
+	.cross
+		width 12px
+		height 12px
+		line-height 12px
+		padding 4px
+		right 8px
+		top 7px
+		float right
+		position absolute
+		color #f00
+		border 1px solid #f00
+		&:hover
+			box-shadow 0 0 2px #f00
+		&:active
+			background-color #f00
+			color #fff
 #preload-background
 	display table
 	position fixed

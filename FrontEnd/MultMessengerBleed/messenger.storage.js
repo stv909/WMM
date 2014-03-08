@@ -336,12 +336,19 @@ var messenger = messenger || {};
 			var response = JSON.parse(rawData);
 			var charactersDict = response.characters;
 			var charactersArray = [];
+			var characters = [];
 			for (var key in charactersDict) {
-				charactersArray.push(key);	
+				console.log(key);
+				charactersArray.push(key);
+				characters.push({
+					key: key,
+					image: ['./actors/', key, 'Actor.png'].join('')
+				});
 			}
 			self.trigger({
 				type: 'update:characters',
-				characters: charactersArray
+				charactersArray: charactersArray,
+				characters: characters
 			});
 		});
 	};

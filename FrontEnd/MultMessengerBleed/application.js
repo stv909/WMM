@@ -217,7 +217,9 @@ window.onload = function() {
 			contacts.next();
 		});
 		this.characterStorage.on('update:characters', function(event) {
+			var charactersArray = event.charactersArray;
 			var characters = event.characters;
+			self.editPageView.setCharactersArray(charactersArray);
 			self.editPageView.setCharacters(characters);
 		});
 	};

@@ -51,6 +51,7 @@
 	</div>
 </template>
 <template id="edit-page-template" style="display: none">
+	<div class="characters-button button" style="float: right">Выбор (тест)</div>
 	<div class="message-editor">
 		<div class="container">
 			<div class="message-wrapper">
@@ -129,6 +130,9 @@
 		<div class="reply-wrapper">
 		</div>
 	</div>
+</template>
+<template id="character-item-template" style="display: none">
+	<img class="character-image">
 </template>
 <div id="menu">
 	<div id="menu-container">
@@ -241,6 +245,15 @@
 			</div>
 			<div class="controls-holder">
 				<div class="ok button">Закрыть</div>
+			</div>
+		</div>
+		<div class="dialog-window hidden" id="characters-dialog">
+			<div class="title-holder">
+				<div class="title">Выбор персонажа</div>
+				<div class="cross button">X</div>
+			</div>
+			<div class="content">
+				
 			</div>
 		</div>
 	</div>
