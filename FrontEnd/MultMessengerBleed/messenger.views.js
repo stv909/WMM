@@ -667,10 +667,14 @@ var messenger = messenger || {};
 		this.dialogWindowElem = document.getElementById('post-dialog');
 		this.readyElem = this.dialogWindowElem.getElementsByClassName('ready')[0];
 		this.statusElem = this.dialogWindowElem.getElementsByClassName('status')[0];
+		
+		this.complete = false;
 
 		var readyElemClickListener = function(event) {
 			self.hide();
-			self.trigger('click:close');
+			if (self.complete) {
+				self.trigger('click:close');
+			}
 		};
 
 		this.readyElem.addEventListener('click', readyElemClickListener);
@@ -700,14 +704,17 @@ var messenger = messenger || {};
 			case 'wait':
 				this.statusElem.textContent = 'Отправка сообщения...';
 				this.readyElem.classList.add('hidden');
+				this.complete = false;
 				break;
 			case 'complete':
 				this.statusElem.textContent = 'Сообщение отправлено!';
 				this.readyElem.classList.remove('hidden');
+				this.complete = true;
 				break;
 			case 'fail':
-				this.statusElem.textContent = 'Не удалось отправить сообщение!';
+				this.statusElem.textContent = 'Сообщение не отправлено!';
 				this.readyElem.classList.remove('hidden');
+				this.complete = false;
 		}
 	};
 

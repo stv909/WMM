@@ -234,7 +234,7 @@ body {
   height: 100%;
   box-sizing: border-box;
   overflow: auto;
-  padding: 16px 0 16px 16px;
+  padding: 16px 0 24px 16px;
 }
 #select-page .message {
   margin: 8px;
@@ -303,7 +303,7 @@ body {
   width: 145px;
 }
 #post-page .receiver-wrapper .section {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 #post-page .search-wrapper {
   font-size: 12px;
@@ -379,6 +379,28 @@ body {
 .button {
   -webkit-user-select: none;
   user-select: none;
+  border: 1px solid #ddd;
+  display: inline-block;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: 12px;
+}
+.button:hover {
+  border: 1px solid #28f;
+  box-shadow: 0 0 1px #28f;
+  color: #28f;
+}
+.button:active {
+  color: #fff;
+  border: 1px solid #28f;
+  background-color: #28f;
+  box-shadow: 0 0 2px #28f;
+  text-shadow: 0 0 2px #666;
+}
+.button-special {
+  -webkit-user-select: none;
+  user-select: none;
   display: inline-block;
   padding: 8px;
   cursor: pointer;
@@ -389,17 +411,13 @@ body {
   text-shadow: 0 0 2px #666;
   color: #fff;
 }
-.button:hover {
-  border: 1px solid #28f;
+.button-special:hover {
   box-shadow: 0 0 2px #28f;
-  color: #fff;
 }
-.button:active {
-  color: #fff;
-  border: 1px solid #27e;
-  background-color: #27e;
-  box-shadow: 0 0 2px #27e;
-  text-shadow: 0 0 2px #666;
+.button-special:active {
+  border: 1px solid #26d;
+  background-color: #26d;
+  box-shadow: 0 0 2px #26d;
 }
 .load-holder {
   margin-top: 12px;
@@ -422,7 +440,7 @@ body {
   background-color: #fff;
   box-shadow: 0 0 6px #888;
 }
-#footer .button {
+#footer .button-special {
   box-sizing: border-box;
   line-height: 34px;
   padding-top: 0;
@@ -652,13 +670,12 @@ body {
 }
 .section {
   display: inline-block;
-  color: #fff;
-  background-color: #28f;
-  border: 1px solid #28f;
+  color: #28f;
+  border: 1px solid #fff;
   font-size: 12px;
+  font-weight: bold;
   padding: 8px;
   margin-bottom: 10px;
-  text-shadow: 0 0 2px #666;
   border-radius: 2px;
 }
 .text {
@@ -740,7 +757,7 @@ body {
 .controls .reset {
   margin-right: 0 !important;
 }
-.controls .button {
+.controls .button-special {
   margin-right: 10px;
 }
 .invalid {
