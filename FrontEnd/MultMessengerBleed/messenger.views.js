@@ -755,8 +755,8 @@ var messenger = messenger || {};
 				break;
 			case 'complete':
 				this.dialogWindowElem.classList.remove('error');
-				this.statusElem.textContent = 'Персонажи обновлены!';
 				this.readyElem.classList.remove('hidden');
+				this.hide();
 				break;
 			case 'fail':
 				this.dialogWindowElem.classList.add('error');
