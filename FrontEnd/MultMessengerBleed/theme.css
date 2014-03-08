@@ -492,6 +492,17 @@ body {
   font-size: 14px;
   border-bottom: 1px solid #ddd;
 }
+#dialog-background .dialog-wrapper .dialog-window .controls-holder {
+  width: 100%;
+  padding: 0 2px 0 2px;
+  display: table;
+  box-sizing: border-box;
+  border-spacing: 6px 0;
+  table-layout: fixed;
+}
+#dialog-background .dialog-wrapper .dialog-window .controls-holder .button {
+  display: table-cell;
+}
 #post-dialog {
   font-size: 12px;
   width: 360px;
