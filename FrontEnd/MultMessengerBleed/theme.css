@@ -234,19 +234,25 @@ body {
   height: 100%;
   box-sizing: border-box;
   overflow: auto;
-  padding: 16px 0 24px 16px;
+  padding: 8px 0 24px 16px;
+}
+#select-page .container .patterns {
+  margin-bottom: 16px;
 }
 #select-page .message {
   margin: 8px;
 }
 #select-page .load-holder {
-  margin-bottom: 4px;
+  margin-left: 8px;
+  width: 848px;
+}
+#select-page .load-holder .button {
+  width: 100%;
 }
 #edit-page {
   font-size: 0;
   position: absolute;
   overflow: hidden;
-  padding-top: 8px;
   top: 0;
   bottom: 0;
   left: 0;
@@ -276,7 +282,7 @@ body {
 }
 #edit-page .message-editor {
   position: absolute;
-  top: 24px;
+  top: 16px;
   bottom: 0;
   left: 8px;
   right: 0;
@@ -439,13 +445,8 @@ body {
   box-shadow: 0 0 2px #26d;
 }
 .load-holder {
-  margin-top: 12px;
   text-align: center;
   font-size: 12px;
-}
-.load-holder .button {
-  padding-left: 12px;
-  padding-right: 12px;
 }
 #footer {
   text-align: center;

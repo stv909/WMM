@@ -11,7 +11,7 @@ var messenger = messenger || {};
 
 		this.elem = template.create('select-page-template', { id: 'select-page' });
 		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
-		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
+		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[1];
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.preloadElem = this.elem.getElementsByClassName('preload')[0];
 		this.containerElem = this.elem.getElementsByClassName('container')[0];
