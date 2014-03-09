@@ -159,6 +159,10 @@ var messenger = messenger || {};
 			var rawMessage = event.response.send;
 			task.resolve(rawMessage);
 		});
+		this.chatClient.once('message:sent', function(event) {
+			var rawMessage = event.response.send;
+			task.resolve(rawMessage);
+		});
 		this.chatClient.sendMessage(message);
 		
 		return task.promise;

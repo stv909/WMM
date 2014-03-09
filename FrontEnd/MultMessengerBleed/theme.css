@@ -338,6 +338,13 @@ body {
   width: 100%;
   height: 100%;
 }
+#post-page .search-wrapper .load-holder {
+  margin-top: 16px;
+  width: 720px;
+}
+#post-page .search-wrapper .load-holder .button {
+  width: 100%;
+}
 #post-page .search-wrapper .search {
   display: table;
   width: 100%;
