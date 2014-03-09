@@ -1082,7 +1082,7 @@ var messenger = messenger || {};
 		this._setActor(this.lastValue);
 
 		var elemClickListener = function(event) {
-			self.charactersDialogView.show(self.lastValue);
+			self.charactersDialogView.show(self.value || self.lastValue);
 			self.charactersDialogView.once('select:character', function(event) {
 				var character = event.character;
 				self.value = character.key;

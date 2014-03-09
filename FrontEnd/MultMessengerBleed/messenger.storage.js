@@ -322,6 +322,7 @@ var messenger = messenger || {};
 	
 	var CharacterStorage = function() {
 		CharacterStorage.super.apply(this);
+		this.forbiddenCharacters = ['urgant', 'svetlakov'];
 	};
 	CharacterStorage.super = EventEmitter;
 	CharacterStorage.prototype = Object.create(EventEmitter.prototype);
@@ -337,10 +338,12 @@ var messenger = messenger || {};
 			var charactersDict = response.characters;
 			var characters = [];
 			for (var key in charactersDict) {
-				characters.push({
-					key: key,
-					image: ['./actors/', key, 'Actor.png'].join('')
-				});
+				if (self.forbiddenCharacters.indexOf(key) === -1) {
+					characters.push({
+						key: key,
+						image: ['./actors/', key, 'Actor.png'].join('')
+					});
+				}
 			}
 			self.trigger({
 				type: 'update:characters',
