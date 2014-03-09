@@ -128,11 +128,6 @@ var messenger = messenger || {};
 		this.memosElem = this.elem.getElementsByClassName('memos')[0];
 		this.characterCollectionElem = this.elem.getElementsByClassName('character-collection')[0];
 		
-		this.charactersButtonElem = this.elem.getElementsByClassName('characters-button')[0];
-		this.charactersButtonElem.addEventListener('click', function() {
-			self.charactersDialogView.show();	
-		});
-
 		this.messageEditorView = new MessageEditorView();
 		this.messageEditorView.attachFirstTo(this.messageWrapperElem);
 
@@ -143,7 +138,6 @@ var messenger = messenger || {};
 		
 		this.charactersDialogView = new CharactersDialogView();
 
-		this.charactersArray = null;
 		this.characters = null;
 		this.characterViewCollection = [];
 
@@ -287,7 +281,7 @@ var messenger = messenger || {};
 			type: meta.type
 		};
 
-		var characterView = new CharacterView(this.charactersArray, characterData);
+		var characterView = new CharacterView(characterData, this.characters, this.charactersDialogView);
 		characterView.attachTo(this.characterCollectionElem);
 		characterView.on('validate', function() {
 			if (self.isValid()) {
@@ -328,9 +322,6 @@ var messenger = messenger || {};
 		this.characterViewCollection.forEach(function(view) {
 			view.reset();
 		});
-	};
-	EditPageView.prototype.setCharactersArray = function(characters) {
-		this.charactersArray = characters;
 	};
 	EditPageView.prototype.setCharacters = function(characters) {
 		var self = this;
@@ -838,6 +829,15 @@ var messenger = messenger || {};
 		
 		this.characterItemViews = {};
 		
+		this.characterItemViewClickListener = function(event) {
+			var character = event.character;
+			self.trigger({
+				type: 'select:character',
+				character: character
+			});
+			self.hide();
+		};
+		
 		var crossElemClickListener = function(event) {
 			self.hide();
 		};
@@ -851,17 +851,24 @@ var messenger = messenger || {};
 	CharactersDialogView.super = View;
 	CharactersDialogView.prototype = Object.create(View.prototype);
 	CharactersDialogView.prototype.constructor = CharactersDialogView;
-	CharactersDialogView.prototype.show = function() {
+	CharactersDialogView.prototype.show = function(characterId) {
+		var self = this;
+		Object.keys(this.characterItemViews).forEach(function(key) {
+			self.characterItemViews[key].deselect();
+		});
+		this.characterItemViews[characterId].select(true);
 		this.elem.classList.remove('hidden');
 		this.dialogWindowElem.classList.remove('hidden');
 	};
 	CharactersDialogView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
 		this.dialogWindowElem.classList.add('hidden');
+		this.off('select:character');
 	};
 	CharactersDialogView.prototype.addCharacterItem = function(characterItem) {
 		var characterItemView = new CharacterItemView(characterItem);
 		characterItemView.attachTo(this.contentElem);
+		characterItemView.on('select:character', this.characterItemViewClickListener);
 		this.characterItemViews[characterItem.key] = characterItemView;
 	};
 
@@ -968,7 +975,7 @@ var messenger = messenger || {};
 		});
 	};
 
-	var CharacterView = function(characters, characterData) {
+	var CharacterView = function(characterData, characters, charactersDialogView) {
 		CharacterView.super.apply(this);
 		var self = this;
 
@@ -990,7 +997,7 @@ var messenger = messenger || {};
 			}
 		};
 
-		this.actorSelectView = new ActorSelectView(characters, characterData);
+		this.actorSelectView = new ActorSelectView(characterData, characters, charactersDialogView);
 		this.actorSelectView.attachTo(this.actorWrapperElem);
 		this.views.push(this.actorSelectView);
 		this.actorSelectView.on('invalidate', validChangeListener);
@@ -1056,31 +1063,35 @@ var messenger = messenger || {};
 		return data;
 	};
 
-	var ActorSelectView = function(characters, characterData) {
+	var ActorSelectView = function(characterData, characters, charactersDialogView) {
 		ActorSelectView.super.apply(this);
 		var self = this;
 
 		var actor = characterData.actors[0];
-
-		this.elem = document.createElement('select');
-		this.elem.classList.add('actor');
+		
+		this.elem = template.create('actor-template', { className: 'actor' });
 		this.elem.setAttribute('data-name', actor.name);
+		this.actorImageElem = this.elem.getElementsByClassName('actor-image')[0];
+		this.actorNameElem = this.elem.getElementsByClassName('actor-name')[0];
 		this.valid = true;
 		this.lastValue = actor.character;
+		this.value = null;
+		this.characters = characters;
+		this.charactersDialogView = charactersDialogView;
 
-		characters.forEach(function(character) {
-			var option = document.createElement('option');
-			option.value = character;
-			option.textContent = character;
-			self.elem.appendChild(option);
-		});
+		this._setActor(this.lastValue);
 
-		var elemChangeListener = function(event) {
-			self.invalidate();
+		var elemClickListener = function(event) {
+			self.charactersDialogView.show(self.lastValue);
+			self.charactersDialogView.once('select:character', function(event) {
+				var character = event.character;
+				self.value = character.key;
+				self._setActor(character.key);
+				self.invalidate();
+			});
 		};
 
-		this.elem.value = this.lastValue;
-		this.elem.addEventListener('change', elemChangeListener);
+		this.elem.addEventListener('click', elemClickListener);
 
 		this.on('validate', function() {
 			self.elem.classList.remove('invalid');
@@ -1089,7 +1100,7 @@ var messenger = messenger || {};
 			self.elem.classList.add('invalid');
 		});
 		this.once('dispose', function(event) {
-			self.elem.removeEventListener('change', elemChangeListener);
+			self.elem.removeEventListener('change', elemClickListener);
 		});
 	};
 	ActorSelectView.super = View;
@@ -1098,7 +1109,7 @@ var messenger = messenger || {};
 	ActorSelectView.prototype.validate = function() {
 		if (!this.valid) {
 			this.valid = true;
-			this.lastValue = this.elem.value;
+			this.lastValue = this.value;
 			this.trigger({
 				type: 'validate',
 				value: this.lastValue
@@ -1108,7 +1119,8 @@ var messenger = messenger || {};
 	ActorSelectView.prototype.reset = function() {
 		if (!this.valid) {
 			this.valid = true;
-			this.elem.value = this.lastValue;
+			this.value = this.lastValue;
+			this._setActor(this.value);
 			this.trigger({
 				type: 'validate',
 				value: this.lastValue
@@ -1116,17 +1128,17 @@ var messenger = messenger || {};
 		}
 	};
 	ActorSelectView.prototype.invalidate = function() {
-		if (this.elem.value === this.lastValue) {
+		if (this.value === this.lastValue) {
 			this.valid = true;
 			this.trigger({
 				type: 'validate',
-				value: this.elem.value
+				value: this.value
 			});
 		} else {
 			this.valid = false;
 			this.trigger({
 				type: 'invalidate',
-				value: this.elem.value
+				value: this.value
 			});
 		}
 	};
@@ -1136,8 +1148,21 @@ var messenger = messenger || {};
 	ActorSelectView.prototype.getData = function() {
 		return {
 			name: this.elem.dataset.name,
-			character: this.elem.value
+			character: this.value
 		};
+	};
+	ActorSelectView.prototype._setActor = function(actorName) {
+		var character = null;
+		for (var i = 0; i < this.characters.length; i++) {
+			if (this.characters[i].key === actorName) {
+				character = this.characters[i];
+				break;
+			}
+		}
+		if (character) {
+			this.actorImageElem.src = character.image;
+			this.actorNameElem.textContent = character.key;
+		}
 	};
 
 	var ReplyView = function(phrase, hint) {
@@ -1235,11 +1260,43 @@ var messenger = messenger || {};
 		this.elem = template.create('character-item-template', { className: 'character-item' });
 		this.characterImageElem = this.elem.getElementsByClassName('character-image')[0];
 		
+		this.characterItem = characterItem;
+		this.selected = false;
+
 		this.characterImageElem.src = characterItem.image;
+		
+		this.deselect();
+		
+		var elemClickListener = function(event) {
+			if (!self.selected) {
+				self.select();
+			}		
+		};
+		
+		this.elem.addEventListener('click', elemClickListener);
+		this.once('dispose', function(event) {
+			self.elem.removeEventListener('click', elemClickListener);
+		});
 	};
 	CharacterItemView.super = View;
 	CharacterItemView.prototype = Object.create(View.prototype);
 	CharacterItemView.prototype.constructor = CharacterItemView;
+	CharacterItemView.prototype.select = function(silent) {
+		this.elem.classList.remove('normal');
+		this.elem.classList.add('chosen');
+		if (!silent) {
+			this.trigger({
+				type: 'select:character',
+				character: this.characterItem
+			});
+		}
+		this.selected = true;
+	};
+	CharacterItemView.prototype.deselect = function() {
+		this.elem.classList.remove('chosen');
+		this.elem.classList.add('normal');
+		this.selected = false;
+	};
 
 	var ContactView = function(model) {
 		ContactView.super.apply(this);
@@ -1247,7 +1304,7 @@ var messenger = messenger || {};
 
 		this.elem = template.create('contact-template', { className: 'contact' });
 		this.photoElem = this.elem.getElementsByClassName('photo')[0];
-		this.fullNameElem = this.elem.getElementsByClassName('full-name')[0]
+		this.fullNameElem = this.elem.getElementsByClassName('full-name')[0];
 
 		this.selected = false;
 		this.setModel(model);

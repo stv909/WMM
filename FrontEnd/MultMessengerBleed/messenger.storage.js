@@ -335,11 +335,8 @@ var messenger = messenger || {};
 		}).then(function(rawData) {
 			var response = JSON.parse(rawData);
 			var charactersDict = response.characters;
-			var charactersArray = [];
 			var characters = [];
 			for (var key in charactersDict) {
-				console.log(key);
-				charactersArray.push(key);
 				characters.push({
 					key: key,
 					image: ['./actors/', key, 'Actor.png'].join('')
@@ -347,7 +344,6 @@ var messenger = messenger || {};
 			}
 			self.trigger({
 				type: 'update:characters',
-				charactersArray: charactersArray,
 				characters: characters
 			});
 		});

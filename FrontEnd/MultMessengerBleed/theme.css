@@ -613,7 +613,7 @@ body {
 #error-dialog .button:active {
   background-color: #f00 !important;
   border: 1px solid #f00 !important;
-  box-shadow: 0 0 1px solid #f00 !important;
+  box-shadow: 0 0 1px #f00 !important;
   color: #fff !important;
 }
 #characters-dialog {
@@ -636,8 +636,12 @@ body {
   border: 1px solid #fff;
   cursor: pointer;
 }
-#characters-dialog .content .character-item:hover {
+#characters-dialog .content .character-item.normal:hover {
   border: 1px solid #888;
+}
+#characters-dialog .content .character-item.chosen {
+  border: 1px solid #28f;
+  cursor: default;
 }
 #characters-dialog .content .character-item .character-image {
   width: 72px;
@@ -660,6 +664,7 @@ body {
 }
 #characters-dialog .cross:active {
   background-color: #f00;
+  box-shadow: 0 0 2px #f00;
   color: #fff;
 }
 #preload-background {
@@ -806,30 +811,28 @@ body {
   width: 100px;
   padding-right: 8px;
 }
-.characters .actor-wrapper select {
-  display: block;
-  margin-bottom: 10px;
-  margin-top: 0;
-  padding: 8px;
-  font-size: 12px;
-  margin-right: 10px;
-  -webkit-appearance: none;
-  overflow: hidden;
+.actor {
   border: 1px solid #ddd;
-  color: #666;
-  width: 100%;
-  background: url("arrow2.png") no-repeat right;
-  background-size: 32px 32px;
   border-radius: 2px;
+  height: 31px;
+  vertical-align: middle;
+  cursor: pointer;
 }
-.characters .actor-wrapper select:hover {
-  color: #333;
+.actor:hover {
   border: 1px solid #888;
 }
-.characters .actor-wrapper select:focus {
-  color: #333;
-  border: 1px solid #28f;
-  box-shadow: 0 0 2px #28f;
+.actor .actor-image {
+  width: 30px;
+  height: 31px;
+  margin-left: 4px;
+}
+.actor .actor-name {
+  height: 31px;
+  line-height: 31px;
+  font-size: 12px;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 6px;
 }
 .controls {
   float: right;
@@ -847,4 +850,5 @@ body {
 }
 .cell {
   display: table-cell;
+  vertical-align: top;
 }

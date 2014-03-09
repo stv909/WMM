@@ -520,7 +520,7 @@ html, body
 		&:active
 			background-color #f00 !important
 			border 1px solid #f00 !important
-			box-shadow 0 0 1px solid #f00 !important
+			box-shadow 0 0 1px #f00 !important
 			color white !important
 #characters-dialog
 	font-size 12px
@@ -538,8 +538,12 @@ html, body
 			border-radius 2px
 			border 1px solid #fff
 			cursor pointer
-			&:hover
-				border 1px solid #888
+			&.normal
+				&:hover
+					border 1px solid #888
+			&.chosen
+				border 1px solid aspect-color
+				cursor default
 			.character-image
 				width: 72px
 				height 72p
@@ -558,6 +562,7 @@ html, body
 			box-shadow 0 0 2px #f00
 		&:active
 			background-color #f00
+			box-shadow 0 0 2px #f00
 			color #fff
 #preload-background
 	display table
@@ -678,28 +683,25 @@ html, body
 	.actor-wrapper
 		width 100px
 		padding-right 8px
-		select
-			display block
-			margin-bottom 10px
-			margin-top 0
-			padding 8px
-			font-size 12px
-			margin-right 10px
-			-webkit-appearance none
-			overflow hidden
-			border 1px solid #ddd
-			color #666
-			width 100%
-			background url('arrow2.png') no-repeat right
-			background-size 32px 32px
-			border-radius 2px
-			&:hover
-				color #333
-				border 1px solid #888
-			&:focus
-				color #333
-				border 1px solid aspect-color
-				box-shadow 0 0 2px aspect-color
+.actor
+	border 1px solid #ddd
+	border-radius 2px
+	height 31px
+	vertical-align middle
+	cursor pointer
+	&:hover
+		border 1px solid #888
+	.actor-image
+		width 30px
+		height 31px
+		margin-left 4px
+	.actor-name
+		height 31px
+		line-height 31px
+		font-size 12px
+		display inline-block
+		vertical-align top
+		margin-left 6px
 .controls
 	float right
 	text-align center
@@ -712,3 +714,4 @@ html, body
 	background-color #ffffdd !important
 .cell
 	display table-cell
+	vertical-align top
