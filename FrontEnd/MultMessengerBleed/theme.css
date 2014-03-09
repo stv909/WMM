@@ -626,8 +626,8 @@ body {
 }
 #characters-dialog {
   font-size: 12px;
-  width: 420px;
-  height: 305px;
+  width: 430px;
+  height: 311px;
 }
 #characters-dialog .title-holder {
   position: relative;
@@ -642,6 +642,7 @@ body {
   padding: 4px;
   border-radius: 2px;
   border: 1px solid #fff;
+  margin: 1px;
   cursor: pointer;
 }
 #characters-dialog .content .character-item.normal:hover {
@@ -649,6 +650,7 @@ body {
 }
 #characters-dialog .content .character-item.chosen {
   border: 1px solid #28f;
+  box-shadow: 0 0 1px #28f;
   cursor: default;
 }
 #characters-dialog .content .character-item .character-image {

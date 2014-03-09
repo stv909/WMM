@@ -131,7 +131,7 @@ window.onload = function() {
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 			
 			self.chatClientWrapper.nowAsync().then(function(timestamp) {
-				VkTools.checkCanPost(companion);
+				VkTools.checkPostAccess(companion);
 				self.postDialogView.setText('Этап 2 из 5: Сохранение сообщения...');
 				message.timestamp = timestamp;
 				return self.chatClientWrapper.sendMessageAsync(message);
