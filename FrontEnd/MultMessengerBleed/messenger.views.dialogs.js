@@ -239,22 +239,33 @@ var messenger = messenger || {};
 	PostDialogView.prototype.setText = function(text) {
 		this.statusElem.textContent = text;
 	};
-	PostDialogView.prototype.setMode = function(mode) {
+	PostDialogView.prototype.setMode = function(mode, error) {
 		switch (mode) {
 			case 'wait':
-				this.statusElem.textContent = 'Отправка сообщения...';
+				this.statusElem.textContent = 'Этап 1 из 5: Создание сообщения...';
 				this.readyElem.classList.add('hidden');
+				this.dialogWindowElem.classList.remove('error');
 				this.complete = false;
 				break;
 			case 'complete':
 				this.statusElem.textContent = 'Сообщение отправлено!';
 				this.readyElem.classList.remove('hidden');
+				this.dialogWindowElem.classList.remove('error');
 				this.complete = true;
 				break;
 			case 'fail':
 				this.statusElem.textContent = 'Сообщение не отправлено!';
+				this.dialogWindowElem.classList.add('error');
 				this.readyElem.classList.remove('hidden');
+				this.setError(error);
 				this.complete = false;
+		}
+	};
+	PostDialogView.prototype.setError = function(error) {
+		if (error.errorCode === ErrorCodes.RESTICTED) {
+			this.statusElem.textContent = 'Невозможно отправить сообщение.\nПользователь закрыл доступ к стене.';
+		} else if (error.errorCode === ErrorCodes.NO_CONNECTION || error.errorCode === ErrorCodes.TIMEOUT) {
+			this.statusElem.textContent = 'Не удалось отправить сообщение!\nПроверьте интернет-подключение и \nпопробуйте позже.';
 		}
 	};
 	

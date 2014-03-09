@@ -157,6 +157,11 @@ var messenger = messenger || {};
 			this.photoElem.src = this.model.get('photo');
 			var fullName = [this.model.get('firstName'), this.model.get('lastName')].join(' ');
 			this.fullNameElem.textContent = fullName;
+			if (!this.model.get('canPost')) {
+				this.elem.classList.add('closed');
+			} else {
+				this.elem.classList.remove('closed');
+			}
 		}
 	};
 	

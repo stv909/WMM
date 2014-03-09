@@ -33,7 +33,7 @@ var messenger = messenger || {};
 	ContactStorage.prototype._loadOwnerAsync = function() {
 		var self = this;
 		return VK.apiAsync('users.get', {
-			fields: [ 'photo_200', 'photo_100', 'photo_50' ].join(','),
+			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 			name_case: 'nom',
 			v: 5.12
 		}).then(function(response) {
@@ -50,7 +50,7 @@ var messenger = messenger || {};
 		if (this.senderId && ownerId != this.senderId) {
 			return VK.apiAsync('users.get', {
 				user_ids: self.senderId,
-				fields: [ 'photo_200', 'photo_100', 'photo_50' ].join(','),
+				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 				name_case: 'nom',
 				v: 5.12
 			}).then(function(response) {
@@ -71,7 +71,7 @@ var messenger = messenger || {};
 			//user_id: 97383475,
 			count: count,
 			offset: offset,
-			fields: [ 'photo_200', 'photo_100', 'photo_50' ].join(','),
+			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 			name_case: 'nom',
 			v: 5.12
 		}).then(function(response) {

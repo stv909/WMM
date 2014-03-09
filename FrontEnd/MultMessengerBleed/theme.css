@@ -860,3 +860,6 @@ body {
   display: table-cell;
   vertical-align: top;
 }
+.closed {
+  opacity: 0.5;
+}

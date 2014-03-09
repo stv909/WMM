@@ -67,6 +67,13 @@ var messenger = messenger || {};
 				attachments: [imageId, fullAnswerUrl].join(','),
 				v: 5.12
 			};
+		},
+		checkPostAccess: function(contact) {
+			if (!contact.get('canPost')) {
+				throw {
+					errorCode: ErrorCodes.RESTRICTED
+				};
+			}
 		}
 	};
 	

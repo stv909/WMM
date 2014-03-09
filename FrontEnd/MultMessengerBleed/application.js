@@ -24,6 +24,8 @@ window.onload = function() {
 	var VkTools = messenger.utils.VkTools;
 	var ChatClientWrapper = messenger.utils.ChatClientWrapper;
 	var Helpers = messenger.utils.Helpers;
+	
+	var ErrorCodes = errors.ErrorCodes;
 
 	var ChatClient = chat.ChatClient;
 	var MessageFactory = chat.MessageFactory;
@@ -129,16 +131,17 @@ window.onload = function() {
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 			
 			self.chatClientWrapper.nowAsync().then(function(timestamp) {
-				self.postDialogView.setText('Сохрание сообщения...');
+				VkTools.checkCanPost(companion);
+				self.postDialogView.setText('Этап 2 из 5: Сохранение сообщения...');
 				message.timestamp = timestamp;
 				return self.chatClientWrapper.sendMessageAsync(message);
 			}).then(function() {
-				self.postDialogView.setText('Генерация превью...');
+				self.postDialogView.setText('Этап 3 из 5: Создание превью...');
 				return VkTools.getWallPhotoUploadUrlAsync();
 			}).then(function(uploadUrl) {
 				return VkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
 			}).then(function(response) {
-				self.postDialogView.setText('Сохранение превью в альбоме...');
+				self.postDialogView.setText('Этап 4 из 5: Сохранение превью в альбоме...');
 				var uploadResult = response.uploadResult;
 				var image = response.image;
 				message.preview = image;
@@ -146,7 +149,7 @@ window.onload = function() {
 				uploadResult.v = 5.12;
 				return VK.apiAsync('photos.saveWallPhoto', uploadResult);
 			}).then(function(response) {
-				self.postDialogView.setText('Отправка сообщения на стену...');
+				self.postDialogView.setText('Этап 5 из 5: Публикация сообщения на стене...');
 				var imageId = VkTools.getUploadedFileId(response);
 				var ownerId = companion.get('id');
 				var senderId = account.get('id');
@@ -155,7 +158,7 @@ window.onload = function() {
 			}).then(function() {
 				self.postDialogView.setMode('complete');
 			}).catch(function(error) {
-				self.postDialogView.setMode('fail');
+				self.postDialogView.setMode('fail', error);
 				console.error(error);
 			});
 		};

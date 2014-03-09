@@ -157,7 +157,7 @@ var messenger = messenger || {};
 		}
 	};
 	
-		var EditPageView = function() {
+	var EditPageView = function() {
 		EditPageView.super.apply(this);
 		var self = this;
 
