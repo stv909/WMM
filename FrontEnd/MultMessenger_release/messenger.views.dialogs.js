@@ -49,13 +49,13 @@ var messenger = messenger || {};
 		var message = 'Неизвестная ошибка';
 		switch (error.errorCode) {
 			case ErrorCodes.NO_CONNECTION:
-				message = 'Отсутствует интернет-соединение.\nПопробуйте позже.';
+				message = 'Не удалось выполнить операцию.\nПроверьте интернет-подключение и\nпопробуйте позже.';
 				break;
 			case ErrorCodes.API_ERROR:
 				message = 'Ошибка вызова интернет-сервиса.';
 				break;
 			case ErrorCodes.TIMEOUT:
-				message = 'Не удалось выполнить операцию.\n Проверьте интернет-подключение и \nпопробуйте позже.';
+				message = 'Не удалось выполнить операцию.\nПроверьте интернет-подключение и\nпопробуйте позже.';
 				break;
 		}
 		this.statusElem.textContent = message;

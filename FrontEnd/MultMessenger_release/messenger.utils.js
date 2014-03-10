@@ -79,15 +79,21 @@ var messenger = messenger || {};
 	
 	var ChatClientWrapper = function(chatClient) {
 		this.chatClient = chatClient;
-		this.operationTimeout = 30000;
+		this.operationTimeout = 7500;
 	};
-	ChatClientWrapper.prototype._createRequestTask = function() {
+	ChatClientWrapper.prototype._createRequestTask = function(checkReadyState) {
 		var task = Q.defer();
-		setTimeout(function() {
+		if (checkReadyState && this.chatClient.readyState() !== 1) {
 			task.reject({
-				errorCode: ErrorCodes.TIMEOUT
+				errorCode: ErrorCodes.NO_CONNECTION
 			});
-		}, this.operationTimeout);
+		} else {
+			setTimeout(function() {
+				task.reject({
+					errorCode: ErrorCodes.TIMEOUT
+				});
+			}, this.operationTimeout);
+		}
 		return task;
 	};
 	ChatClientWrapper.prototype.connectAsync = function() {
@@ -117,7 +123,7 @@ var messenger = messenger || {};
 		});
 	};
 	ChatClientWrapper.prototype.getMessageIdsAsync = function(groupId, count, offset) {
-		var task = this._createRequestTask();
+		var task = this._createRequestTask(true);
 		
 		this.chatClient.once('message:grouptape', function(event) {
 			var grouptape = event.response.grouptape;
@@ -138,7 +144,7 @@ var messenger = messenger || {};
 		return task.promise;
 	};
 	ChatClientWrapper.prototype.getMessagesAsync = function(messageIds) {
-		var task = this._createRequestTask();
+		var task = this._createRequestTask(true);
 		
 		this.chatClient.once('message:retrieve', function(event) {
 			var rawMessages = event.response.retrieve;
@@ -149,7 +155,7 @@ var messenger = messenger || {};
 		return task.promise;
 	};
 	ChatClientWrapper.prototype.nowAsync = function() {
-		var task = this._createRequestTask();
+		var task = this._createRequestTask(true);
 		
 		this.chatClient.once('message:now', function(event) {
 			var timestamp = event.response.now;
@@ -160,7 +166,7 @@ var messenger = messenger || {};
 		return task.promise;
 	};
 	ChatClientWrapper.prototype.sendMessageAsync = function(message) {
-		var task = this._createRequestTask();
+		var task = this._createRequestTask(true);
 		
 		this.chatClient.once('message:send', function(event) {
 			var rawMessage = event.response.send;

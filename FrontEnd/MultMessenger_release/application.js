@@ -220,30 +220,46 @@ window.onload = function() {
 			contacts.next();
 		});
 		this.characterStorage.on('update:characters', function(event) {
-			var charactersArray = event.charactersArray;
 			var characters = event.characters;
 			self.editPageView.setCharacters(characters);
 		});
 	};
 	MessengerApplication.prototype.initializeChatClient = function() {
 		var self = this;
-		this.chatClient.on('disconnect', function() {
-			self.onlineElem.textContent = 'не в сети';
-			self.onlineElem.classList.add('invalid');
-			self.chatClient.once('connect', function() {
-				var owner = self.contactStorage.owner;
-				var ownerId = owner.get('id');
-				var vkId = ['vkid', ownerId].join('');
-				self.chatClient.login(vkId);
+		
+		var checkOnline = function() {
+			self.chatClientWrapper.nowAsync().then(function() {
+				self.trigger('online');
+			}).catch(function() {
+				self.trigger('offline');
 			});
-			self.chatClient.connect();
-		});
-		this.chatClient.on('message:login', function() {
+		};
+		var reconnect = function() {
+			var vkId = Helpers.buildVkId(self.contactStorage.owner);
+			self.chatClientWrapper.connectAndLoginAsync(vkId).then(function() {
+				self.trigger('online');	
+			}).catch(function() {
+				self.trigger('offline');
+			});
+		};
+		
+		this.on('online', function() {
 			self.onlineElem.textContent = 'в сети';
 			self.onlineElem.classList.remove('invalid');
+			setTimeout(function() {
+				checkOnline();
+			}, 2500);
 		});
-		this.disconnectElem.addEventListener('click', function() {
-			self.chatClient.disconnect();
+		this.on('offline', function() {
+			self.onlineElem.textContent = 'не в сети';
+			self.onlineElem.classList.add('invalid');
+			setTimeout(function() {
+				reconnect();
+			}, 5000);
+		});
+		
+		this.chatClient.once('message:login', function() {
+			checkOnline();	
 		});
 	};
 	MessengerApplication.prototype.initializeViews = function() {
