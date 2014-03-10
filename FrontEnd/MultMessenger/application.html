@@ -21,7 +21,9 @@
 	<script src="settings.js"></script>
 	<script src="messenger.models.js"></script>
 	<script src="messenger.storage.js"></script>
-	<script src="messenger.views.js"></script>
+	<script src="messenger.views.partials.js"></script>
+	<script src="messenger.views.dialogs.js"></script>
+	<script src="messenger.views.pages.js"></script>
 	<script src="messenger.utils.js"></script>
 	<script src="application.js"></script>
 </head>
@@ -43,7 +45,9 @@
 </template>
 <template id="select-page-template" style="display: none">
 	<div class="container">
-		<div class="button preload hidden"></div>
+		<div class="load-holder">
+			<div class="button preload hidden"></div>
+		</div>
 		<div class="patterns"></div>
 		<div class="load-holder">
 			<div class="button load">Загрузить еще...</div>
@@ -54,6 +58,14 @@
 	<div class="message-editor">
 		<div class="container">
 			<div class="message-wrapper">
+				<div class="wrap">
+					<div class="controls">
+						<div class="line">
+							<div class="button-special update">Обновить</div>
+							<div class="button-special reset">Отмена</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="tools">
 				<div class="section">Надписи</div>
@@ -67,10 +79,6 @@
 							</td>
 							<td class="reply">
 								<div class="section">Реплики</div>
-								<div class="controls">
-									<div class="button hidden update">Обновить</div>
-									<div class="button hidden reset">Отмена</div>
-								</div>
 							</td>
 						</tr>
 					</thead>
@@ -126,6 +134,13 @@
 		</div>
 	</div>
 </template>
+<template id="character-item-template" style="display: none">
+	<img class="character-image">
+</template>
+<template id="actor-template" style="display:none">
+	<img class="actor-image">
+	<div class="actor-name"></div>
+</template>
 <div id="menu">
 	<div id="menu-container">
 		<div id="logo">
@@ -134,6 +149,7 @@
 				<div id="arrow"></div>
 			</div>
 			<span>Мессенджер 2.0</span>
+			<span style="font-size: 9px; display: inline-block; vertical-align:top; margin-left: -2px;margin-top: -6px;">бета</span>
 		</div>
 		<div id="breadcrumbs">
 			<div id="select">1. Лента</div>
@@ -151,7 +167,7 @@
 	</div>
 </div>
 <div id="footer">
-	<div class="button" id="next">Далее</div>
+	<div class="button-special" id="next">Далее</div>
 </div>
 <div id="preload-background">
 	<div class="wrapper">
@@ -162,6 +178,7 @@
 					<div id="big-arrow"></div>
 				</div>
 				<span>Мессенджер 2.0</span>
+				<span style="font-size: 12px; display: inline; vertical-align:top; margin-left: -6px;">бета</span>
 			</div>
 			<div class="content">
 				<div id="circularG">
@@ -187,7 +204,9 @@
 			<div class="content">
 				<div class="status">Сообщение отправлено!</div>
 			</div>
-			<div class="ready button hidden">Готово</div>
+			<div class="controls-holder">
+				<div class="ready button hidden">Готово</div>
+			</div>
 		</div>
 		<div class="dialog-window hidden" id="skip-answer-dialog">
 			<div class="title-holder">
@@ -196,8 +215,10 @@
 			<div class="content">
 				<div class="answer-text"></div>
 			</div>
-			<div class="ok button">Да</div>
-			<div class="cancel button">Отмена</div>
+			<div class="controls-holder">
+				<div class="ok button">Да</div>
+				<div class="cancel button">Отмена</div>
+			</div>
 		</div>
 		<div class="dialog-window hidden" id="update-message-dialog">
 			<div class="title-holder">
@@ -206,17 +227,21 @@
 			<div class="content">
 				<div class="status"></div>
 			</div>
-			<div class="ready button">Готово</div>
+			<div class="controls-holder">
+				<div class="ready button">Готово</div>
+			</div>
 		</div>
 		<div class="dialog-window hidden" id="ask-message-dialog">
 			<div class="title-holder">
 				<div class="title">Сообщение не обновлено</div>
 			</div>
 			<div class="content">
-				<div class="status">Все равно продолжить?</div>
+				<div class="status">Изменения не будут сохранены.<br>Все равно продолжить?</div>
 			</div>
-			<div class="ok button">Да</div>
-			<div class="cancel button">Отмена</div>
+			<div class="controls-holder">
+				<div class="ok button">Да</div>
+				<div class="cancel button">Отмена</div>
+			</div>
 		</div>
 		<div class="dialog-window hidden" id="error-dialog">
 			<div class="title-holder">
@@ -225,7 +250,18 @@
 			<div class="content">
 				<div class="status"></div>
 			</div>
-			<div class="ok button">Закрыть</div>
+			<div class="controls-holder">
+				<div class="ok button">Закрыть</div>
+			</div>
+		</div>
+		<div class="dialog-window hidden" id="characters-dialog">
+			<div class="title-holder">
+				<div class="title">Выбор персонажа</div>
+				<div class="cross button">X</div>
+			</div>
+			<div class="content">
+				
+			</div>
 		</div>
 	</div>
 </div>

@@ -234,27 +234,55 @@ body {
   height: 100%;
   box-sizing: border-box;
   overflow: auto;
-  padding: 16px 0 16px 16px;
+  padding: 8px 0 24px 16px;
+}
+#select-page .container .patterns {
+  margin-bottom: 16px;
 }
 #select-page .message {
   margin: 8px;
 }
 #select-page .load-holder {
-  margin-bottom: 4px;
+  margin-left: 8px;
+  width: 848px;
+}
+#select-page .load-holder .button {
+  width: 100%;
 }
 #edit-page {
   font-size: 0;
   position: absolute;
   overflow: hidden;
-  padding-top: 8px;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
 }
+#edit-page .message-wrapper {
+  position: relative;
+  margin-left: 16px;
+}
+#edit-page .message-wrapper .wrap {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  background-color: rgba(255,255,255,0.9);
+}
+#edit-page .message-wrapper .controls {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#edit-page .message-wrapper .controls .line {
+  display: table-cell;
+  vertical-align: middle;
+}
 #edit-page .message-editor {
   position: absolute;
-  top: 24px;
+  top: 16px;
   bottom: 0;
   left: 8px;
   right: 0;
@@ -273,9 +301,6 @@ body {
   padding-bottom: 6px;
   height: 16px;
   text-align: center;
-}
-#edit-page .message {
-  margin-left: 16px;
 }
 #post-page {
   font-size: 0;
@@ -303,7 +328,7 @@ body {
   width: 145px;
 }
 #post-page .receiver-wrapper .section {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 #post-page .search-wrapper {
   font-size: 12px;
@@ -312,6 +337,13 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
+}
+#post-page .search-wrapper .load-holder {
+  margin-top: 16px;
+  width: 720px;
+}
+#post-page .search-wrapper .load-holder .button {
+  width: 100%;
 }
 #post-page .search-wrapper .search {
   display: table;
@@ -379,6 +411,28 @@ body {
 .button {
   -webkit-user-select: none;
   user-select: none;
+  border: 1px solid #ddd;
+  display: inline-block;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: 12px;
+}
+.button:hover {
+  border: 1px solid #28f;
+  box-shadow: 0 0 1px #28f;
+  color: #28f;
+}
+.button:active {
+  color: #fff;
+  border: 1px solid #28f;
+  background-color: #28f;
+  box-shadow: 0 0 2px #28f;
+  text-shadow: 0 0 2px #666;
+}
+.button-special {
+  -webkit-user-select: none;
+  user-select: none;
   display: inline-block;
   padding: 8px;
   cursor: pointer;
@@ -389,26 +443,17 @@ body {
   text-shadow: 0 0 2px #666;
   color: #fff;
 }
-.button:hover {
-  border: 1px solid #28f;
+.button-special:hover {
   box-shadow: 0 0 2px #28f;
-  color: #fff;
 }
-.button:active {
-  color: #fff;
-  border: 1px solid #27e;
-  background-color: #27e;
-  box-shadow: 0 0 2px #27e;
-  text-shadow: 0 0 2px #666;
+.button-special:active {
+  border: 1px solid #26d;
+  background-color: #26d;
+  box-shadow: 0 0 2px #26d;
 }
 .load-holder {
-  margin-top: 12px;
   text-align: center;
   font-size: 12px;
-}
-.load-holder .button {
-  padding-left: 12px;
-  padding-right: 12px;
 }
 #footer {
   text-align: center;
@@ -422,7 +467,7 @@ body {
   background-color: #fff;
   box-shadow: 0 0 6px #888;
 }
-#footer .button {
+#footer .button-special {
   box-sizing: border-box;
   line-height: 34px;
   padding-top: 0;
@@ -474,6 +519,17 @@ body {
   font-size: 14px;
   border-bottom: 1px solid #ddd;
 }
+#dialog-background .dialog-wrapper .dialog-window .controls-holder {
+  width: 100%;
+  padding: 0 2px 0 2px;
+  display: table;
+  box-sizing: border-box;
+  border-spacing: 6px 0;
+  table-layout: fixed;
+}
+#dialog-background .dialog-wrapper .dialog-window .controls-holder .button {
+  display: table-cell;
+}
 #post-dialog {
   font-size: 12px;
   width: 360px;
@@ -482,6 +538,12 @@ body {
 #post-dialog .content {
   height: 140px;
   line-height: 140px;
+}
+#post-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
 }
 #skip-answer-dialog {
   font-size: 12px;
@@ -492,11 +554,11 @@ body {
   height: 140px;
   line-height: 140px;
 }
-#skip-answer-dialog .button {
-  padding-left: 12px;
-  padding-right: 12px;
-  margin-left: 3px;
-  margin-right: 3px;
+#skip-answer-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
 }
 #update-message-dialog {
   font-size: 12px;
@@ -522,11 +584,11 @@ body {
   height: 140px;
   line-height: 140px;
 }
-#ask-message-dialog .button {
-  padding-left: 12px;
-  padding-right: 12px;
-  margin-left: 3px;
-  margin-right: 3px;
+#ask-message-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
 }
 #error-dialog {
   font-size: 12px;
@@ -559,8 +621,62 @@ body {
 #error-dialog .button:active {
   background-color: #f00 !important;
   border: 1px solid #f00 !important;
-  box-shadow: 0 0 1px solid #f00 !important;
+  box-shadow: 0 0 1px #f00 !important;
   color: #fff !important;
+}
+#characters-dialog {
+  font-size: 12px;
+  width: 428px;
+  height: 308px;
+}
+#characters-dialog .title-holder {
+  position: relative;
+}
+#characters-dialog .content {
+  height: 140px;
+  padding-top: 5px;
+}
+#characters-dialog .content .character-item {
+  display: inline-block;
+  vertical-align: top;
+  padding: 4px;
+  border-radius: 2px;
+  border: 1px solid #fff;
+  margin-left: 1px;
+  margin-top: 1px;
+  cursor: pointer;
+}
+#characters-dialog .content .character-item.normal:hover {
+  border: 1px solid #888;
+}
+#characters-dialog .content .character-item.chosen {
+  border: 1px solid #28f;
+  box-shadow: 0 0 1px #28f;
+  cursor: default;
+}
+#characters-dialog .content .character-item .character-image {
+  width: 72px;
+  height: 72 p;
+}
+#characters-dialog .cross {
+  width: 12px;
+  height: 12px;
+  line-height: 12px;
+  padding: 4px;
+  right: 8px;
+  top: 7px;
+  float: right;
+  position: absolute;
+  color: #f00;
+  border: 1px solid #f00;
+}
+#characters-dialog .cross:hover {
+  box-shadow: 0 0 2px #f00;
+}
+#characters-dialog .cross:active {
+  background-color: #f00;
+  box-shadow: 0 0 2px #f00;
+  color: #fff;
 }
 #preload-background {
   display: table;
@@ -652,13 +768,12 @@ body {
 }
 .section {
   display: inline-block;
-  color: #fff;
-  background-color: #28f;
-  border: 1px solid #28f;
+  color: #28f;
+  border: 1px solid #fff;
   font-size: 12px;
+  font-weight: bold;
   padding: 8px;
   margin-bottom: 10px;
-  text-shadow: 0 0 2px #666;
   border-radius: 2px;
 }
 .text {
@@ -707,30 +822,28 @@ body {
   width: 100px;
   padding-right: 8px;
 }
-.characters .actor-wrapper select {
-  display: block;
-  margin-bottom: 10px;
-  margin-top: 0;
-  padding: 8px;
-  font-size: 12px;
-  margin-right: 10px;
-  -webkit-appearance: none;
-  overflow: hidden;
+.actor {
   border: 1px solid #ddd;
-  color: #666;
-  width: 100%;
-  background: url("arrow2.png") no-repeat right;
-  background-size: 32px 32px;
   border-radius: 2px;
+  height: 31px;
+  vertical-align: middle;
+  cursor: pointer;
 }
-.characters .actor-wrapper select:hover {
-  color: #333;
+.actor:hover {
   border: 1px solid #888;
 }
-.characters .actor-wrapper select:focus {
-  color: #333;
-  border: 1px solid #28f;
-  box-shadow: 0 0 2px #28f;
+.actor .actor-image {
+  width: 30px;
+  height: 31px;
+  margin-left: 4px;
+}
+.actor .actor-name {
+  height: 31px;
+  line-height: 31px;
+  font-size: 12px;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 6px;
 }
 .controls {
   float: right;
@@ -740,7 +853,7 @@ body {
 .controls .reset {
   margin-right: 0 !important;
 }
-.controls .button {
+.controls .button-special {
   margin-right: 10px;
 }
 .invalid {
@@ -748,4 +861,8 @@ body {
 }
 .cell {
   display: table-cell;
+  vertical-align: top;
+}
+.closed {
+  opacity: 0.5;
 }

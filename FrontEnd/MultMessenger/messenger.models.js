@@ -45,12 +45,14 @@ var messenger = messenger || {};
 		var firstName = rawData.first_name;
 		var lastName = rawData.last_name;
 		var photo = rawData.photo_200 || rawData.photo_100 || rawData.photo_50;
+		var canPost = rawData.can_post;
 		var contact = new ContactModel();
 		contact.set({
 			id: id,
 			firstName: firstName,
 			lastName: lastName,
-			photo: photo
+			photo: photo,
+			canPost: canPost
 		});
 		return contact;
 	};

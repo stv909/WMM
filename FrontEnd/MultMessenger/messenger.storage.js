@@ -33,7 +33,7 @@ var messenger = messenger || {};
 	ContactStorage.prototype._loadOwnerAsync = function() {
 		var self = this;
 		return VK.apiAsync('users.get', {
-			fields: [ 'photo_200', 'photo_100', 'photo_50' ].join(','),
+			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 			name_case: 'nom',
 			v: 5.12
 		}).then(function(response) {
@@ -50,7 +50,7 @@ var messenger = messenger || {};
 		if (this.senderId && ownerId != this.senderId) {
 			return VK.apiAsync('users.get', {
 				user_ids: self.senderId,
-				fields: [ 'photo_200', 'photo_100', 'photo_50' ].join(','),
+				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 				name_case: 'nom',
 				v: 5.12
 			}).then(function(response) {
@@ -71,7 +71,7 @@ var messenger = messenger || {};
 			//user_id: 97383475,
 			count: count,
 			offset: offset,
-			fields: [ 'photo_200', 'photo_100', 'photo_50' ].join(','),
+			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 			name_case: 'nom',
 			v: 5.12
 		}).then(function(response) {
@@ -322,6 +322,7 @@ var messenger = messenger || {};
 	
 	var CharacterStorage = function() {
 		CharacterStorage.super.apply(this);
+		this.forbiddenCharacters = ['urgant', 'svetlakov'];
 	};
 	CharacterStorage.super = EventEmitter;
 	CharacterStorage.prototype = Object.create(EventEmitter.prototype);
@@ -335,13 +336,18 @@ var messenger = messenger || {};
 		}).then(function(rawData) {
 			var response = JSON.parse(rawData);
 			var charactersDict = response.characters;
-			var charactersArray = [];
+			var characters = [];
 			for (var key in charactersDict) {
-				charactersArray.push(key);	
+				if (self.forbiddenCharacters.indexOf(key) === -1) {
+					characters.push({
+						key: key,
+						image: ['./actors/', key, 'Actor.png'].join('')
+					});
+				}
 			}
 			self.trigger({
 				type: 'update:characters',
-				characters: charactersArray
+				characters: characters
 			});
 		});
 	};

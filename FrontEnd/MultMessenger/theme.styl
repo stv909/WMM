@@ -1,5 +1,5 @@
 aspect-color = #28f
-active-aspect-color = #27e
+active-aspect-color = #26d
 default-font-color = #666
 default-width = 920px
 
@@ -210,23 +210,46 @@ html, body
 		height 100%
 		box-sizing border-box
 		overflow auto
-		padding 16px 0 16px 16px
+		padding 8px 0 24px 16px
+		.patterns
+			margin-bottom 16px
 	.message
 		margin 8px
 	.load-holder
-		margin-bottom 4px
+		margin-left 8px
+		width 848px
+		.button 
+			width 100%
 #edit-page
 	font-size 0
 	position absolute
 	overflow hidden
-	padding-top 8px
+	//padding-top 8px
 	top 0
 	bottom 0
 	left 0
 	right 0
+	.message-wrapper
+		position relative
+		margin-left 16px
+		.wrap
+			width 100%
+			height 100%
+			position absolute
+			top 0
+			left 0
+			z-index 20
+			background-color rgba(255, 255, 255, 0.9)
+		.controls
+			display table
+			width 100%
+			height 100%
+			.line
+				display table-cell
+				vertical-align middle
 	.message-editor
 		position absolute
-		top 24px
+		top 16px
 		bottom 0
 		left 8px
 		right 0
@@ -243,8 +266,6 @@ html, body
 		padding-bottom 6px
 		height 16px
 		text-align center
-	.message
-		margin-left 16px
 #post-page
 	font-size 0
 	position absolute
@@ -266,13 +287,18 @@ html, body
 	.receiver-wrapper
 		width 145px
 		.section
-			margin-bottom 12px
+			margin-bottom 10px
 	.search-wrapper
 		font-size 12px
 		>.wrap
 			position relative
 			width 100%
 			height 100%
+		.load-holder
+			margin-top 16px
+			width 720px
+			.button
+				width 100%
 		.search
 			display table
 			width 100%
@@ -325,6 +351,24 @@ html, body
 		font-size 16px
 .button
 	user-select(none)
+	border 1px solid #ddd
+	display inline-block
+	padding 8px
+	cursor pointer
+	border-radius 2px
+	font-size 12px
+	&:hover
+		border 1px solid aspect-color
+		box-shadow 0 0 1px aspect-color
+		color aspect-color
+	&:active
+		color #fff
+		border 1px solid aspect-color
+		background-color aspect-color
+		box-shadow 0 0 2px aspect-color
+		text-shadow 0 0 2px #666
+.button-special
+	user-select(none)
 	display inline-block
 	padding 8px
 	cursor pointer
@@ -335,22 +379,14 @@ html, body
 	text-shadow 0 0 2px #666
 	color white
 	&:hover
-		border 1px solid aspect-color
 		box-shadow 0 0 2px aspect-color
-		color white
 	&:active
-		color #fff
 		border 1px solid active-aspect-color
 		background-color active-aspect-color
 		box-shadow 0 0 2px active-aspect-color
-		text-shadow 0 0 2px #666
 .load-holder
-	margin-top 12px
 	text-align center
 	font-size 12px
-	.button
-		padding-left 12px
-		padding-right 12px
 #footer
 	text-align center
 	position fixed
@@ -362,7 +398,7 @@ html, body
 	height 36px
 	background-color #fff
 	box-shadow 0 0 6px #888
-	.button
+	.button-special
 		box-sizing border-box
 		line-height 34px
 		padding-top 0
@@ -407,6 +443,15 @@ html, body
 				color #333
 				font-size 14px
 				border-bottom 1px solid #ddd
+			.controls-holder
+				width 100%
+				padding 0 2px 0 2px
+				display table
+				box-sizing border-box
+				border-spacing 6px 0
+				table-layout fixed
+				.button
+					display table-cell
 #post-dialog
 	font-size 12px
 	width 360px
@@ -414,6 +459,11 @@ html, body
 	.content
 		height 140px
 		line-height 140px
+	.status
+		line-height 22px
+		white-space pre
+		vertical-align middle
+		display inline-block
 #skip-answer-dialog
 	font-size 12px
 	width 360px
@@ -421,11 +471,11 @@ html, body
 	.content
 		height 140px
 		line-height 140px
-	.button
-		padding-left 12px
-		padding-right 12px
-		margin-left 3px
-		margin-right 3px
+	.status
+		line-height 22px
+		white-space pre
+		vertical-align middle
+		display inline-block
 #update-message-dialog
 	font-size 12px
 	width 360px
@@ -445,11 +495,11 @@ html, body
 	.content
 		height 140px
 		line-height 140px
-	.button
-		padding-left 12px
-		padding-right 12px
-		margin-left 3px
-		margin-right 3px
+	.status
+		line-height 22px
+		white-space pre
+		vertical-align middle
+		display inline-block
 #error-dialog
 	font-size 12px
 	width 360px
@@ -476,8 +526,53 @@ html, body
 		&:active
 			background-color #f00 !important
 			border 1px solid #f00 !important
-			box-shadow 0 0 1px solid #f00 !important
+			box-shadow 0 0 1px #f00 !important
 			color white !important
+#characters-dialog
+	font-size 12px
+	width 428px
+	height 308px
+	.title-holder
+		position relative
+	.content
+		height 140px
+		padding-top 5px
+		.character-item
+			display inline-block
+			vertical-align top
+			padding 4px;
+			border-radius 2px
+			border 1px solid #fff
+			margin-left 1px
+			margin-top 1px;
+			cursor pointer
+			&.normal
+				&:hover
+					border 1px solid #888
+			&.chosen
+				border 1px solid aspect-color
+				box-shadow 0 0 1px aspect-color
+				cursor default
+			.character-image
+				width: 72px
+				height 72p
+	.cross
+		width 12px
+		height 12px
+		line-height 12px
+		padding 4px
+		right 8px
+		top 7px
+		float right
+		position absolute
+		color #f00
+		border 1px solid #f00
+		&:hover
+			box-shadow 0 0 2px #f00
+		&:active
+			background-color #f00
+			box-shadow 0 0 2px #f00
+			color #fff
 #preload-background
 	display table
 	position fixed
@@ -553,13 +648,12 @@ html, body
 	overflow-y auto
 .section
 	display inline-block
-	color white
-	background-color aspect-color
-	border 1px solid aspect-color
+	color aspect-color
+	border 1px solid #fff
 	font-size 12px
+	font-weight bold
 	padding 8px
 	margin-bottom 10px
-	text-shadow 0 0 2px #666
 	border-radius 2px
 .text
 	margin-top 0
@@ -598,37 +692,37 @@ html, body
 	.actor-wrapper
 		width 100px
 		padding-right 8px
-		select
-			display block
-			margin-bottom 10px
-			margin-top 0
-			padding 8px
-			font-size 12px
-			margin-right 10px
-			-webkit-appearance none
-			overflow hidden
-			border 1px solid #ddd
-			color #666
-			width 100%
-			background url('arrow2.png') no-repeat right
-			background-size 32px 32px
-			border-radius 2px
-			&:hover
-				color #333
-				border 1px solid #888
-			&:focus
-				color #333
-				border 1px solid aspect-color
-				box-shadow 0 0 2px aspect-color
+.actor
+	border 1px solid #ddd
+	border-radius 2px
+	height 31px
+	vertical-align middle
+	cursor pointer
+	&:hover
+		border 1px solid #888
+	.actor-image
+		width 30px
+		height 31px
+		margin-left 4px
+	.actor-name
+		height 31px
+		line-height 31px
+		font-size 12px
+		display inline-block
+		vertical-align top
+		margin-left 6px
 .controls
 	float right
 	text-align center
 	display inline-block
 	.reset
 		margin-right 0 !important
-	.button
+	.button-special
 		margin-right 10px
 .invalid
 	background-color #ffffdd !important
 .cell
 	display table-cell
+	vertical-align top
+.closed
+	opacity 0.5

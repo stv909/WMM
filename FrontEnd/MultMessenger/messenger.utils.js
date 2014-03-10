@@ -67,6 +67,13 @@ var messenger = messenger || {};
 				attachments: [imageId, fullAnswerUrl].join(','),
 				v: 5.12
 			};
+		},
+		checkPostAccess: function(contact) {
+			if (!contact.get('canPost')) {
+				throw {
+					errorCode: ErrorCodes.RESTRICTED
+				};
+			}
 		}
 	};
 	
@@ -156,6 +163,10 @@ var messenger = messenger || {};
 		var task = this._createRequestTask();
 		
 		this.chatClient.once('message:send', function(event) {
+			var rawMessage = event.response.send;
+			task.resolve(rawMessage);
+		});
+		this.chatClient.once('message:sent', function(event) {
 			var rawMessage = event.response.send;
 			task.resolve(rawMessage);
 		});
