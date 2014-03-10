@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, async, chat, Q) {
+(function(messenger, eve, async, chat, Q, settings) {
 	
 	var EventEmitter = eve.EventEmitter;
 	var ContactModel = messenger.models.ContactModel;
@@ -330,7 +330,7 @@ var messenger = messenger || {};
 	CharacterStorage.prototype.initializeAsync = function() {
 		var self = this;
 		return async.requestAsync({
-			url: 'https://bazelevshosting.net/MCM/characters_resources.json',
+			url: settings.characterListUrl,
 			method: 'GET',
 			data: null
 		}).then(function(rawData) {
@@ -613,4 +613,4 @@ var messenger = messenger || {};
 		MessageStorage: MessageStorage1,
 	};
 	
-})(messenger, eve, async, chat, Q);
+})(messenger, eve, async, chat, Q, settings);
