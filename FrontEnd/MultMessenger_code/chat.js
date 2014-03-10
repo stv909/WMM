@@ -1,9 +1,8 @@
 var chat = chat || {};
 
-(function(chat, eve, base64, Q) {
+(function(chat, eve, base64) {
 
 	var EventEmitter = eve.EventEmitter;
-	var ErrorCodes = errors.ErrorCodes;
 
 	var ChatClient = function(serverUrl) {
 		ChatClient.super.apply(this);
@@ -18,6 +17,7 @@ var chat = chat || {};
 	};
 	ChatClient.prototype.connect = function() {
 		var self = this;
+		
 		this.socket = new WebSocket(this.serverUrl);
 
 		var openSocketListener = function(socketEvent) {
@@ -140,7 +140,7 @@ var chat = chat || {};
 	};
 	ChatClient.prototype.disconnect = function() {
 		this.socket.close();
-		this.socket = null;
+		//this.socket = null;
 	};
 	//basic protocol operations
 	ChatClient.prototype.login = function(userId) {
@@ -332,4 +332,4 @@ var chat = chat || {};
 	chat.MessageFactory = MessageFactory;
 	chat.ToolFactory = ToolFactory;
 
-})(chat, eve, base64, Q);
+})(chat, eve, base64);
