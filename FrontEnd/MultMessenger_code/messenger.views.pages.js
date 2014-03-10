@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, settings, uuid, async) {
+(function(messenger, abyss, template, settings, uuid, async, Q) {
 	
 	var View = abyss.View;
 	
@@ -197,9 +197,9 @@ var messenger = messenger || {};
 			var data = self.getData();
 			var metas = data.map(self.formatMeta);
 			var requests = metas.map(function(meta) {
-				return Promise.all([meta, self.requestAnimationAsync(meta)]);
+				return Q.all([meta, self.requestAnimationAsync(meta)]);
 			});
-			Promise.all(requests).then(function(values) {
+			Q.all(requests).then(function(values) {
 				values.forEach(function(value) {
 					var meta = value[0];
 					var response = value[1];
@@ -576,4 +576,4 @@ var messenger = messenger || {};
 	messenger.views.EditPageView = EditPageView;
 	messenger.views.PostPageView = PostPageView;
 	
-})(messenger, abyss, template, settings, uuid, async);
+})(messenger, abyss, template, settings, uuid, async, Q);
