@@ -359,7 +359,7 @@ var messenger = messenger || {};
 		this.chatClientWrapper = chatClientWrapper;
 		this.chatClient = this.chatClientWrapper.chatClient;
 		
-		this.publicId = 'public.9205ef2d-4a2c-49dd-8203-f33a3ceac6c9';
+		this.publicId = settings.publicId;
 		//this.publicId = 'public.bc53e8d2-d372-49c2-a91b-2d3b0aaffcb6'; //empty
 		
 		this.preloadedMessages = {};
