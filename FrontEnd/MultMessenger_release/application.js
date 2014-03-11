@@ -436,6 +436,8 @@ window.onload = function() {
 	MessengerApplication.prototype.initializeSettings = function() {
 		var parseHash = function(hash) {
 			var settings = {};
+			hash = hash.indexOf('=') === 0 ? hash.substring(1) : hash;
+			hash = hash.replace('amp;', '');
 			hash.split('&').forEach(function(item) {
 				var pair = item.split('=');
 				var key = pair[0];
