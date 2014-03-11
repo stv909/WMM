@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, settings, uuid, async, Q) {
+(function(messenger, abyss, template, settings, uuid, async, Q, html) {
 	
 	var View = abyss.View;
 	
@@ -89,18 +89,38 @@ var messenger = messenger || {};
 			});
 		};
 		var wheelListener = function(event) {
-			this.scrollTop -= event.wheelDelta;
+			var dx = -(event.wheelDeltaX || 0);
+			var dy = -(event.wheelDeltaY || event.wheelDelta || 0);
+			if (event.detail !== null) {
+				if (event.axis == event.HORIZONTAL_AXIS)  {
+					dx = event.detail;
+				} else if (event.axis == event.VERTICAL_AXIS) {
+					dy = event.detail;
+				}
+			}
+			if (dx) {
+				var ndx = Math.round(html.normalizeWheelDelta(dx));
+				if (!ndx) ndx = dx > 0 ? 1 : -1;
+				self.containerElem.scrollLeft += ndx;
+			}
+			if (dy) {
+				var ndy = Math.round(html.normalizeWheelDelta(dy));
+				if (!ndy) ndy = dy > 0 ? 1 : -1;
+				self.containerElem.scrollTop += ndy;
+			}
 			event.preventDefault();
 		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
 		this.preloadElem.addEventListener('click', preloadElemClickListener);
-		this.containerElem.addEventListener('wheel', wheelListener);
+		this.elem.addEventListener('DOMMouseScroll', wheelListener);
+		this.elem.addEventListener('mousewheel', wheelListener);
 		
 		this.once('dispose', function(event) {
 			self.loadElem.removeEvent('click', loadElemClickListener);
 			self.preloadElem.removeEventListener('click', preloadElemClickListener);
-			self.containerElem.removeEventListener('wheel', wheelListener);
+			self.elem.removeEventListener('DOMMouseScroll', wheelListener);
+			self.elem.removeEventListener('mousewheel', wheelListener);
 		});
 
 		this.hide();
@@ -578,4 +598,4 @@ var messenger = messenger || {};
 	messenger.views.EditPageView = EditPageView;
 	messenger.views.PostPageView = PostPageView;
 	
-})(messenger, abyss, template, settings, uuid, async, Q);
+})(messenger, abyss, template, settings, uuid, async, Q, html);

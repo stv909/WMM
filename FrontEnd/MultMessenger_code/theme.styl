@@ -153,15 +153,6 @@ html, body
 	padding-right 12px
 	padding-left 12px
 	position relative
-	//&.chosen:before
-	//	content ""
-	//	top 0
-	//	left 0
-	//	position absolute
-	//	margin-left -12px
-	//	border-left 12px solid transparent
-	//	border-top 18px solid aspect-color
-	//	border-bottom 18px solid aspect-color
 	&.chosen:after
 		content ""
 		top 0
@@ -210,10 +201,10 @@ html, body
 	right 0
 	.container
 		width 100%
-		height 100%
+		height 100% !important
 		box-sizing(border-box)
 		overflow auto
-		padding 8px 0 24px 16px
+		padding 8px 0 0 16px
 		.patterns
 			margin-bottom 16px
 	.message
@@ -223,6 +214,9 @@ html, body
 		width 848px
 		.button 
 			width 100%
+		&.bottom
+			.button
+				margin-bottom 24px
 #edit-page
 	font-size 0
 	position absolute
