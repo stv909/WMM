@@ -6,7 +6,10 @@ default-width = 920px
 user-select(value)
 	-webkit-user-select value
 	user-select value
-
+box-sizing(value)
+	-moz-box-sizing value
+	box-sizing value
+	
 *
 	outline 0
 html, body
@@ -37,9 +40,7 @@ html, body
 	top 0
 	font-size 12px
 	width 920px
-	box-sizing border-box
-	padding-left 12px
-	padding-right 12px
+	box-sizing(border-box)
 	height 36px
 	line-height 36px
 	vertical-align middle
@@ -50,7 +51,9 @@ html, body
 	vertical-align top
 	position relative
 	text-align center
-	width 100%
+	margin-left 12px
+	margin-right 12px
+	box-sizing(content-box)
 #logo
 	position absolute
 	left 0
@@ -171,7 +174,7 @@ html, body
 #edit, #post
 	margin-left 12px
 #page
-	box-sizing border-box
+	box-sizing(border-box)
 	overflow-y auto
 	display block
 	position absolute
@@ -208,7 +211,7 @@ html, body
 	.container
 		width 100%
 		height 100%
-		box-sizing border-box
+		box-sizing(border-box)
 		overflow auto
 		padding 8px 0 24px 16px
 		.patterns
@@ -257,7 +260,7 @@ html, body
 		vertical-align top
 	.container
 		width 100%
-		box-sizing border-box
+		box-sizing(border-box)
 	.title
 		font-weight bold
 		color #333
@@ -279,7 +282,7 @@ html, body
 		display table
 		width 100%
 		height 100%
-		box-sizing border-box
+		box-sizing(border-box)
 	.receiver-wrapper, .search-wrapper
 		display table-cell
 		vertical-align top
@@ -329,7 +332,7 @@ html, body
 					position relative
 .message
 	display inline-block
-	box-sizing border-box
+	box-sizing(border-box)
 	border 1px solid #ddd
 	border-radius 2px
 	background-color #fff
@@ -399,7 +402,7 @@ html, body
 	background-color #fff
 	box-shadow 0 0 6px #888
 	.button-special
-		box-sizing border-box
+		box-sizing(border-box)
 		line-height 34px
 		padding-top 0
 		padding-bottom 0
@@ -447,7 +450,7 @@ html, body
 				width 100%
 				padding 0 2px 0 2px
 				display table
-				box-sizing border-box
+				box-sizing(border-box)
 				border-spacing 6px 0
 				table-layout fixed
 				.button
@@ -673,7 +676,7 @@ html, body
 	border 1px solid #ddd
 	width 100%
 	margin-bottom 8px
-	box-sizing border-box
+	box-sizing(border-box)
 	border-radius 2px
 	&:hover
 		color #333

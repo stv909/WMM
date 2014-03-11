@@ -35,9 +35,8 @@ body {
   top: 0;
   font-size: 12px;
   width: 920px;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
-  padding-left: 12px;
-  padding-right: 12px;
   height: 36px;
   line-height: 36px;
   vertical-align: middle;
@@ -49,7 +48,10 @@ body {
   vertical-align: top;
   position: relative;
   text-align: center;
-  width: 100%;
+  margin-left: 12px;
+  margin-right: 12px;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
 }
 #logo {
   position: absolute;
@@ -186,6 +188,7 @@ body {
   margin-left: 12px;
 }
 #page {
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow-y: auto;
   display: block;
@@ -232,6 +235,7 @@ body {
 #select-page .container {
   width: 100%;
   height: 100%;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: auto;
   padding: 8px 0 24px 16px;
@@ -291,6 +295,7 @@ body {
 }
 #edit-page .container {
   width: 100%;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 #edit-page .title {
@@ -316,6 +321,7 @@ body {
   display: table;
   width: 100%;
   height: 100%;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 #post-page .receiver-wrapper,
@@ -383,6 +389,7 @@ body {
 }
 .message {
   display: inline-block;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 2px;
@@ -468,6 +475,7 @@ body {
   box-shadow: 0 0 6px #888;
 }
 #footer .button-special {
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   line-height: 34px;
   padding-top: 0;
@@ -523,6 +531,7 @@ body {
   width: 100%;
   padding: 0 2px 0 2px;
   display: table;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   border-spacing: 6px 0;
   table-layout: fixed;
@@ -796,6 +805,7 @@ body {
   border: 1px solid #ddd;
   width: 100%;
   margin-bottom: 8px;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   border-radius: 2px;
 }
