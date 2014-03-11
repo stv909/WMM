@@ -607,7 +607,7 @@ window.onload = function() {
 			self.generatePreviewView.generatePreview(shareUrl)
 			.then(function(rawData) {
 				var data = JSON.parse(rawData);
-				messageView.previewElem.classList.add('super-hidden');
+				messageView.previewElem.textContent = 're-preview';
 				self.generatePreviewView.statusElem.textContent = 'Complete';
 				self.generatePreviewView.okElem.classList.remove('hidden');
 				self.generatePreviewView.progressElem.classList.add('hidden');

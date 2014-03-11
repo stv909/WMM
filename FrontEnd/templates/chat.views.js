@@ -603,7 +603,7 @@ var chat = chat || {};
 		}
 		var preview = this.model.getAttribute('preview');
 		if (preview) {
-			this.previewElem.classList.add('super-hidden');
+			this.previewElem.textContent = 're-preview';
 		}
 		this.editElem.addEventListener('click', editElemClickListener);
 		this.moreElem.addEventListener('click', moreElemClickListener);
