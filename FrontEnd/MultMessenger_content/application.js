@@ -236,8 +236,10 @@ window.onload = function() {
 		};
 		var reconnect = function() {
 			var vkId = Helpers.buildVkId(self.contactStorage.owner);
-			self.chatClientWrapper.connectAndLoginAsync(vkId).then(function() {
-				self.trigger('online');	
+			VK.initAsync().then(function() {
+				return self.chatClientWrapper.connectAndLoginAsync(vkId);
+			}).then(function() {
+				self.trigger('online');
 			}).catch(function() {
 				self.trigger('offline');
 			});

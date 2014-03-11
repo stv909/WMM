@@ -705,6 +705,18 @@ body {
 #preload-background .content {
   margin-top: 32px;
 }
+#chrome {
+  font-size: 12px;
+  position: absolute;
+  width: 140px;
+  text-align: center;
+  left: 390px;
+  bottom: 5px;
+}
+#chrome .chrome-image {
+  width: 64px;
+  height: 64px;
+}
 .contact {
   vertical-align: top;
   font-size: 0;

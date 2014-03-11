@@ -251,9 +251,11 @@ var messenger = messenger || {};
 		var textElements = rootElem.getElementsByClassName('layerType_text');
 		textElements = Array.prototype.slice.call(textElements, 0);
 		textElements = textElements.sort(function(elem1, elem2) {
-			if (elem1.style.zIndex > elem2.style.zIndex) {
+			var zIndex1 = parseInt(elem1.style.zIndex, 10);
+			var zIndex2 = parseInt(elem2.style.zIndex, 10);
+			if (zIndex1 > zIndex2) {
 				return -1;
-			} else if (elem1.style.zIndex <= elem2.style.zIndex) {
+			} else if (zIndex1 <= zIndex2) {
 				return 1;
 			} else {
 				return 0;
