@@ -498,7 +498,9 @@ window.onload = function() {
 		}).then(function() {
 			self.answerPageView.setContact(self.contactStorage.getSender());
 			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
+			analytics.send('application', 'init', 'success');
 		}).catch(function(error) {
+			analytics.send('application', 'init', 'failed');
 			console.error(error);
 		}).fin(function() {
 			self.preloadDialogView.hide();
