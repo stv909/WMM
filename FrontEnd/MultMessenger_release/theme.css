@@ -203,12 +203,9 @@ body {
   height: 100%;
   position: relative;
 }
-#answer-page {
-  padding: 8px;
-}
 #answer-page .container {
   display: inline-block;
-  margin-top: 10px;
+  margin-top: 16px;
 }
 #answer-page .message-wrapper,
 #answer-page .contact-wrapper {
@@ -217,7 +214,7 @@ body {
 }
 #answer-page .contact-wrapper {
   width: 220px;
-  margin-left: 10px;
+  margin-left: 16px;
 }
 #answer-page .message {
   margin-top: 0;
