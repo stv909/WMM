@@ -17,8 +17,8 @@ var analytics = analytics || {};
 	ga('create', 'UA-46127802-2', 'bazelevscontent.net');
 	ga('send', 'pageview');
 	
-	var send = function(category, action, value) {
-		ga('send', 'event', category, action, value);	
+	var send = function(category, action, label, value) {
+		ga('send', 'event', category, action, label, value);	
 	};
 	
 	analytics.send = send;
