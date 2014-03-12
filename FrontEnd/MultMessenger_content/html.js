@@ -74,11 +74,43 @@ var html = html || {};
 	var scrollToBottom = function(elem) {
 		elem.scrollTop = elem.scrollHeight;
 	};
+	
+	var normalizeWheelDelta = function() {
+		var distribution = [];
+		var done = null;
+		var scale = 30;
+		return function(n) {
+			if (n === 0) {
+				return n;
+			}
+			if (done !== null) {
+				return n * done;
+			}
+			var abs = Math.abs(n);
 
+			outer: do {
+				for (var i = 0; i < distribution.length; ++i) {
+					if (abs <= distribution[i]) {
+						distribution.splice(i, 0, abs);
+						break outer;
+					}
+				}
+				distribution.push(abs);
+			} while (false);
+			
+			var factor = scale / distribution[Math.floor(distribution.length / 3)];
+			if (distribution.length === 500) {
+				done = factor;
+			}
+			return n * factor;
+		};
+	}();
+	
 	html.pasteHtmlAtElement = pasteHtmlAtElement;
 	html.checkElemOverflowY = checkElemOverflowX;
 	html.checkElemOverflowY = checkElemOverflowY;
 	html.checkElemOverflow = checkElemOverflow;
 	html.scrollToBottom = scrollToBottom;
+	html.normalizeWheelDelta = normalizeWheelDelta;
 
 })(html);

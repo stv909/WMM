@@ -157,8 +157,10 @@ window.onload = function() {
 				return VK.apiAsync('wall.post', postData);
 			}).then(function() {
 				self.postDialogView.setMode('complete');
+				analytics.send('message', 'send', 'success');
 			}).catch(function(error) {
 				self.postDialogView.setMode('fail', error);
+				analytics.send('message', 'send', 'failed');
 				console.error(error);
 			});
 		};
@@ -431,6 +433,10 @@ window.onload = function() {
 		});
 		this.navigation.on('mode:post', function(event) {
 			self.currentShowAskMessageDialog();
+		});
+		this.navigation.on('mode', function(event) {
+			var mode = event.mode;
+			analytics.send('navigation', 'change', mode);	
 		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
