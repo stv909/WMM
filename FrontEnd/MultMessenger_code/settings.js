@@ -1,7 +1,7 @@
 var settings = settings || {};
 
 (function(settings) {
-	settings.version = 'release'; //can be: 'dev' | 'content' | 'release'
+	settings.version = 'dev'; //can be: 'dev' | 'content' | 'release'
 	
 	settings.publicIds = {
 		'dev': 'public.9205ef2d-4a2c-49dd-8203-f33a3ceac6c9',
@@ -15,27 +15,27 @@ var settings = settings || {};
 	};
 	settings.chatUrls = {
 		'dev': 'ws://www.bazelevscontent.net:9012/',
-		'content': 'ws://www.bazelevscontent.net:9012/',
+		'content': 'ws://www.bazelevscontent.net:9009/',
 		'release': 'ws://www.bazelevscontent.net:9009/'
 	};
 	settings.previewGeneratorUrls = {
 		'dev': 'https://www.bazelevscontent.net:8895',
-		'content': 'https://www.bazelevscontent.net:8895',
+		'content': 'https://www.bazelevscontent.net:8893',
 		'release': 'https://www.bazelevscontent.net:8893'
 	};
 	settings.imageStoreBaseUrls = {
 		'dev': 'http://www.bazelevscontent.net:8584/',
-		'content': 'http://www.bazelevscontent.net:8584/',
+		'content': 'http://www.bazelevscontent.net:8582/',
 		'release': 'http://www.bazelevscontent.net:8582/'
 	};
 	settings.layerImageStoreBaseUrls = {
 		'dev': 'https://www.bazelevscontent.net:8585/',
-		'content': 'https://www.bazelevscontent.net:8585/',
+		'content': 'https://www.bazelevscontent.net:8583/',
 		'release': 'https://www.bazelevscontent.net:8583/'
 	};
 	settings.animationServiceUrls = {
 		'dev': 'https://www.bazelevscontent.net:8795',
-		'content': 'https://www.bazelevscontent.net:8795',
+		'content': 'https://www.bazelevscontent.net:8793',
 		'release': 'https://www.bazelevscontent.net:8793'
 	};
 	
