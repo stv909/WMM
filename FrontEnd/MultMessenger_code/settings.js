@@ -1,7 +1,7 @@
 var settings = settings || {};
 
 (function(settings) {
-	settings.version = 'dev'; //can be: 'dev' | 'content' | 'release'
+	settings.version = 'release'; //can be: 'dev' | 'content' | 'release'
 	
 	settings.publicIds = {
 		'dev': 'public.9205ef2d-4a2c-49dd-8203-f33a3ceac6c9',
@@ -14,7 +14,7 @@ var settings = settings || {};
 		'release': 'vk.com/toome_app'
 	};
 	settings.chatUrls = {
-		'dev': 'ws://www.bazelevscontent.net:9009/',
+		'dev': 'ws://www.bazelevscontent.net:9012/',
 		'content': 'ws://www.bazelevscontent.net:9012/',
 		'release': 'ws://www.bazelevscontent.net:9009/'
 	};
