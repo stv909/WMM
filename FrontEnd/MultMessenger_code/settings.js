@@ -14,7 +14,7 @@ var settings = settings || {};
 		'release': 'vk.com/toome_app'
 	};
 	settings.chatUrls = {
-		'dev': 'ws://www.bazelevscontent.net:9012/',
+		'dev': 'ws://www.bazelevscontent.net:9009/',
 		'content': 'ws://www.bazelevscontent.net:9012/',
 		'release': 'ws://www.bazelevscontent.net:9009/'
 	};

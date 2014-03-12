@@ -518,18 +518,38 @@ var messenger = messenger || {};
 			}
 		};
 		var wheelListener = function(event) {
-			this.scrollTop -= event.wheelDelta;
+			var dx = -(event.wheelDeltaX || 0);
+			var dy = -(event.wheelDeltaY || event.wheelDelta || 0);
+			if (event.detail !== null) {
+				if (event.axis == event.HORIZONTAL_AXIS)  {
+					dx = event.detail;
+				} else if (event.axis == event.VERTICAL_AXIS) {
+					dy = event.detail;
+				}
+			}
+			if (dx) {
+				var ndx = Math.round(html.normalizeWheelDelta(dx));
+				if (!ndx) ndx = dx > 0 ? 1 : -1;
+				self.searchResultsWrapElem.scrollLeft += ndx;
+			}
+			if (dy) {
+				var ndy = Math.round(html.normalizeWheelDelta(dy));
+				if (!ndy) ndy = dy > 0 ? 1 : -1;
+				self.searchResultsWrapElem.scrollTop += ndy;
+			}
 			event.preventDefault();
 		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
 		this.queryElem.addEventListener('input', queryElemInputListener);
-		this.searchResultsWrapElem.addEventListener('wheel', wheelListener);
+		this.searchResultsWrapElem.addEventListener('DOMMouseScroll', wheelListener);
+		this.searchResultsWrapElem.addEventListener('mousewheel', wheelListener);
 		
 		this.once('dispose', function(event) {
 			self.loadElem.removeEventListener('click', loadElemClickListener);
 			self.queryElem.removeEventListener('input', queryElemInputListener);
-			self.searchResultsWrapElem.removeEventListener('wheel', wheelListener);
+			self.searchResultsWrapElem.addEventListener('DOMMouseScroll', wheelListener);
+			self.searchResultsWrapElem.addEventListener('mousewheel', wheelListener);
 		});
 
 		this.hide();
