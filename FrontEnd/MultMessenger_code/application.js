@@ -162,9 +162,9 @@ window.onload = function() {
 			}).catch(function(error) {
 				self.postDialogView.setMode('fail', error);
 				if (error.errorCode === ErrorCodes.RESTRICTED) {
-					analytics.send('message', 'send', 'rejected');
+					analytics.send('message', 'send', 'reject');
 				} else {
-					analytics.send('message', 'send', 'failed', error.errorCode);
+					analytics.send('message', 'send', 'fail', error.errorCode);
 				}
 				console.error(error);
 			});
@@ -441,7 +441,7 @@ window.onload = function() {
 		});
 		this.navigation.on('mode', function(event) {
 			var mode = event.mode;
-			analytics.send('navigation', 'change', mode);	
+			analytics.send('navigation', [mode, 'tab'].join('_'), 'success');	
 		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {

@@ -1,0 +1,15 @@
+@font-face {
+  font-family: 'Segoe UI';
+  src: url("http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff");
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI';
+}
+#menu {
+  height: 50px;
+  background-color: #1570a6;
+  padding: 10px;
+}

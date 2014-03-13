@@ -279,7 +279,7 @@ var messenger = messenger || {};
 				self._setActor(character.key);
 				self.invalidate();
 			});
-			analytics.send('message', 'edit', 'character');
+			analytics.send('template', 'edit_character', 'success');
 		};
 
 		this.elem.addEventListener('click', elemClickListener);
@@ -371,7 +371,7 @@ var messenger = messenger || {};
 
 		var elemInputListener = function(event) {
 			self.invalidate();
-			analytics.send('message', 'edit', 'reply');
+			analytics.send('template', 'edit_phrase', 'success');
 		};
 
 		this.elem.addEventListener('input', elemInputListener);

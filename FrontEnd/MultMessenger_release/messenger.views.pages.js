@@ -73,7 +73,7 @@ var messenger = messenger || {};
 					type: 'select:message',
 					message: message
 				});
-				analytics.send('message', 'change', 'success');
+				analytics.send('template', 'select_new', 'success');
 			}
 		};
 		
@@ -82,7 +82,7 @@ var messenger = messenger || {};
 				self.trigger({
 					type: 'click:load'
 				});
-				analytics.send('message', 'load', 'success');
+				analytics.send('template', 'load_more', 'success');
 			}
 		};
 		var preloadElemClickListener = function(event) {
@@ -205,7 +205,7 @@ var messenger = messenger || {};
 			self.characterViewCollection.forEach(function(view) {
 				view.reset();
 			});
-			analytics.send('message', 'update', 'canceled');
+			analytics.send('template', 'update_after_edit', 'cancel');
 		});
 		this.updateElem.addEventListener('click', function() {
 			var data = self.getData();
@@ -228,10 +228,10 @@ var messenger = messenger || {};
 					view.validate();
 				});
 				self.updateMessageDialogView.setMode('complete');
-				analytics.send('message', 'update', 'success');
+				analytics.send('template', 'update_after_edit', 'success');
 			}).catch(function() {
 				self.updateMessageDialogView.setMode('fail');
-				analytics.send('message', 'update', 'failed');
+				analytics.send('template', 'update_after_edit', 'fail');
 			});
 			self.updateMessageDialogView.show();
 		});
@@ -290,7 +290,7 @@ var messenger = messenger || {};
 
 		elem.addEventListener('input', function() {
 			layerTextElem.textContent = elem.value;
-			analytics.send('message', 'edit', 'text');
+			analytics.send('template', 'edit_caption', 'success');
 		});
 
 		this.memosElem.appendChild(elem);
@@ -495,7 +495,7 @@ var messenger = messenger || {};
 		var loadElemClickListener = function(event) {
 			if (self.loadElemEnable) {
 				self.trigger('click:load');
-				analytics.send('contact', 'load');
+				analytics.send('contact', 'load_more', 'success');
 			}
 		};
 		var lastQueryText = this.queryElem.value;
@@ -513,7 +513,7 @@ var messenger = messenger || {};
 						type: 'update:search',
 						text: queryText
 					});
-					analytics.send('contact', 'search');
+					analytics.send('contact', 'search', 'success');
 				}, 800);
 			}
 		};
