@@ -102,33 +102,6 @@ var messenger = messenger || {};
 				self.containerElem.scrollTop = self.containerElem.scrollHeight - self.containerElem.offsetHeight;
 				event.preventDefault();
             }
-			// var dx = -(event.wheelDeltaX || 0);
-			// var dy = -(event.wheelDeltaY || event.wheelDelta || 0);
-			// if (event.detail !== null) {
-			// 	if (event.axis == event.HORIZONTAL_AXIS) {
-			// 		dx = event.detail;
-			// 	} else if (event.axis == event.VERTICAL_AXIS) {
-			// 		dy = event.detail;
-			// 	}
-			// }
-			// if (dx) {
-			// 	var ndx = Math.round(html.normalizeWheelDelta(dx));
-			// 	if (!ndx) {
-			// 		ndx = dx > 0 ? 1 : -1;
-			// 	}
-			// 	self.containerElem.scrollLeft += ndx;
-			// }
-			// if (dy) {
-			// 	var ndy = Math.round(html.normalizeWheelDelta(dy));
-			// 	if (!ndy) {
-			// 		ndy = dy > 0 ? 1 : -1;
-			// 	}
-			// 	self.containerElem.scrollTop += ndy;
-			// }
-			// if (dx || dy) {
-			// 	event.preventDefault();
-			// 	event.stopPropagation();
-			// }
 		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
@@ -545,29 +518,17 @@ var messenger = messenger || {};
 			}
 		};
 		var wheelListener = function(event) {
-			var dx = -(event.wheelDeltaX || 0);
-			var dy = -(event.wheelDeltaY || event.wheelDelta || 0);
-			if (event.detail !== null) {
-				if (event.axis == event.HORIZONTAL_AXIS)  {
-					dx = event.detail;
-				} else if (event.axis == event.VERTICAL_AXIS) {
-					dy = event.detail;
-				}
-			}
-			if (dx) {
-				var ndx = Math.round(html.normalizeWheelDelta(dx));
-				if (!ndx) ndx = dx > 0 ? 1 : -1;
-				self.searchResultsWrapElem.scrollLeft += ndx;
-			}
-			if (dy) {
-				var ndy = Math.round(html.normalizeWheelDelta(dy));
-				if (!ndy) ndy = dy > 0 ? 1 : -1;
-				self.searchResultsWrapElem.scrollTop += ndy;
-			}
-			if (dx || dy) { 
+			var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
+            var isIE = Math.abs(delta) >= 120;
+            var scrollPending = isIE ? delta / 2 : 0;
+            if (delta < 0 && (self.searchResultsWrapElem.scrollTop + scrollPending) <= 0) {
+				self.searchResultsWrapElem.scrollTop = 0;
 				event.preventDefault();
-				event.stopPropagation(); 
-			}
+            }
+            else if (delta > 0 && (self.searchResultsWrapElem.scrollTop + scrollPending >= (self.searchResultsWrapElem.scrollHeight - self.searchResultsWrapElem.offsetHeight))) {
+				self.searchResultsWrapElem.scrollTop = self.searchResultsWrapElem.scrollHeight - self.searchResultsWrapElem.offsetHeight;
+				event.preventDefault();
+            }
 		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
