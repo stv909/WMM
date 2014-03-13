@@ -1,3 +1,6 @@
+* {
+  outline: none;
+}
 @font-face {
   font-family: 'Segoe UI';
   src: url("http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff");
@@ -13,26 +16,43 @@ body {
   top: 0;
   right: 0;
   width: 100%;
-  height: 60px;
+  height: 50px;
   background-color: #1570a6;
   color: #fff;
-  padding: 10px;
+  padding: 10px 20px 10px 20px;
   box-sizing: border-box;
   vertical-align: middle;
 }
 #menu .logo {
   float: left;
-  font-size: 32px;
+  position: absolute;
+  font-size: 28px;
   display: inline-block;
-  line-height: 40px;
+  line-height: 30px;
+}
+#filters {
+  width: 100%;
+  display: inline-block;
+  text-align: center;
+}
+#filters .datepicker {
+  border: none;
+  font-size: 14px;
+  font-family: 'Segoe UI';
+  height: 100%;
+  line-height: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 #page {
-  margin-top: 60px;
-  padding: 10px;
+  margin-top: 50px;
+  padding: 20px 20px 10px 20px;
 }
 .message {
+  vertical-align: top;
   font-size: 0px;
-  margin: 5px;
+  margin-right: 10px;
+  margin-bottom: 10px;
   border: 1px solid #ddd;
   display: inline-block;
 }
@@ -40,4 +60,23 @@ body {
   margin: 10px;
   width: 403px;
   height: 403px;
+  border: 1px solid #ddd;
+}
+.message .controls {
+  width: 100%;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.message .controls a {
+  color: #1570a6;
+}
+.message .controls a:hover {
+  color: #51ace2;
+}
+.message .sender-control,
+.message .receiver-control {
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 5px;
 }
