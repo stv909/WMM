@@ -1,8 +1,13 @@
 main-menu-color = rgb(21, 112, 166)
+main-color = rgb(21, 112, 166)
+hover-main-color = rgb(81, 172, 226)
 
-menu-height = 60px
-menu-padding = 10px
-page-padding = 10px
+menu-height = 50px
+menu-padding = 10px 20px 10px 20px
+page-padding = 20px 20px 10px 20px
+
+*
+	outline none
 
 @font-face
 	font-family 'Segoe UI'
@@ -24,20 +29,49 @@ html, body
 	vertical-align middle
 	.logo
 		float left
-		font-size 32px
+		position absolute
+		font-size 28px
 		display inline-block
 		line-height menu-height - 2 * menu-padding
+#filters
+	width 100%
+	display inline-block
+	text-align center
+	.datepicker
+		border none
+		font-size 14px
+		font-family 'Segoe UI'
+		height 100%
+		line-height menu-height - 2 * menu-padding
+		padding-left 10px
+		padding-right 10px
 #page
 	margin-top menu-height
 	padding page-padding
 .message
+	vertical-align top
 	font-size 0px
-	margin 5px
+	margin-right 10px
+	margin-bottom 10px
 	border 1px solid #ddd
 	display inline-block
 	.content
 		margin 10px
 		width 403px
 		height 403px
+		border 1px solid #ddd
+	.controls
+		width 100%
+		font-size 16px
+		text-align center
+		margin-bottom 10px
+		a
+			color main-color
+			&:hover
+				color hover-main-color
+	.sender-control, .receiver-control
+		display inline-block
+		margin-left: 5px
+		margin-right: 5px
 		
 	
