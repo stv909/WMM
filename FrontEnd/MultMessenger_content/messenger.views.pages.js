@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, settings, uuid, async, Q, html) {
+(function(messenger, abyss, template, settings, uuid, async, Q, html, analytics) {
 	
 	var View = abyss.View;
 	
@@ -73,6 +73,7 @@ var messenger = messenger || {};
 					type: 'select:message',
 					message: message
 				});
+				analytics.send('message', 'change');
 			}
 		};
 		
@@ -81,6 +82,7 @@ var messenger = messenger || {};
 				self.trigger({
 					type: 'click:load'
 				});
+				analytics.send('message', 'load');
 			}
 		};
 		var preloadElemClickListener = function(event) {
@@ -100,33 +102,6 @@ var messenger = messenger || {};
 				self.containerElem.scrollTop = self.containerElem.scrollHeight - self.containerElem.offsetHeight;
 				event.preventDefault();
             }
-			// var dx = -(event.wheelDeltaX || 0);
-			// var dy = -(event.wheelDeltaY || event.wheelDelta || 0);
-			// if (event.detail !== null) {
-			// 	if (event.axis == event.HORIZONTAL_AXIS) {
-			// 		dx = event.detail;
-			// 	} else if (event.axis == event.VERTICAL_AXIS) {
-			// 		dy = event.detail;
-			// 	}
-			// }
-			// if (dx) {
-			// 	var ndx = Math.round(html.normalizeWheelDelta(dx));
-			// 	if (!ndx) {
-			// 		ndx = dx > 0 ? 1 : -1;
-			// 	}
-			// 	self.containerElem.scrollLeft += ndx;
-			// }
-			// if (dy) {
-			// 	var ndy = Math.round(html.normalizeWheelDelta(dy));
-			// 	if (!ndy) {
-			// 		ndy = dy > 0 ? 1 : -1;
-			// 	}
-			// 	self.containerElem.scrollTop += ndy;
-			// }
-			// if (dx || dy) {
-			// 	event.preventDefault();
-			// 	event.stopPropagation();
-			// }
 		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
@@ -230,6 +205,7 @@ var messenger = messenger || {};
 			self.characterViewCollection.forEach(function(view) {
 				view.reset();
 			});
+			analytics.send('message', 'update', 'canceled');
 		});
 		this.updateElem.addEventListener('click', function() {
 			var data = self.getData();
@@ -252,8 +228,10 @@ var messenger = messenger || {};
 					view.validate();
 				});
 				self.updateMessageDialogView.setMode('complete');
+				analytics.send('message', 'update', 'success');
 			}).catch(function() {
 				self.updateMessageDialogView.setMode('fail');
+				analytics.send('message', 'update', 'failed');
 			});
 			self.updateMessageDialogView.show();
 		});
@@ -312,6 +290,7 @@ var messenger = messenger || {};
 
 		elem.addEventListener('input', function() {
 			layerTextElem.textContent = elem.value;
+			analytics.send('message', 'edit', 'text');
 		});
 
 		this.memosElem.appendChild(elem);
@@ -509,12 +488,14 @@ var messenger = messenger || {};
 					type: 'select:contact',
 					contact: self.selectedContactView.model
 				});
+				analytics.send('contact', 'change');
 			}
 		};
 		
 		var loadElemClickListener = function(event) {
 			if (self.loadElemEnable) {
 				self.trigger('click:load');
+				analytics.send('contant', 'load');
 			}
 		};
 		var lastQueryText = this.queryElem.value;
@@ -532,33 +513,22 @@ var messenger = messenger || {};
 						type: 'update:search',
 						text: queryText
 					});
+					analytics.send('contact', 'search');
 				}, 800);
 			}
 		};
 		var wheelListener = function(event) {
-			var dx = -(event.wheelDeltaX || 0);
-			var dy = -(event.wheelDeltaY || event.wheelDelta || 0);
-			if (event.detail !== null) {
-				if (event.axis == event.HORIZONTAL_AXIS)  {
-					dx = event.detail;
-				} else if (event.axis == event.VERTICAL_AXIS) {
-					dy = event.detail;
-				}
-			}
-			if (dx) {
-				var ndx = Math.round(html.normalizeWheelDelta(dx));
-				if (!ndx) ndx = dx > 0 ? 1 : -1;
-				self.searchResultsWrapElem.scrollLeft += ndx;
-			}
-			if (dy) {
-				var ndy = Math.round(html.normalizeWheelDelta(dy));
-				if (!ndy) ndy = dy > 0 ? 1 : -1;
-				self.searchResultsWrapElem.scrollTop += ndy;
-			}
-			if (dx || dy) { 
+			var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
+            var isIE = Math.abs(delta) >= 120;
+            var scrollPending = isIE ? delta / 2 : 0;
+            if (delta < 0 && (self.searchResultsWrapElem.scrollTop + scrollPending) <= 0) {
+				self.searchResultsWrapElem.scrollTop = 0;
 				event.preventDefault();
-				event.stopPropagation(); 
-			}
+            }
+            else if (delta > 0 && (self.searchResultsWrapElem.scrollTop + scrollPending >= (self.searchResultsWrapElem.scrollHeight - self.searchResultsWrapElem.offsetHeight))) {
+				self.searchResultsWrapElem.scrollTop = self.searchResultsWrapElem.scrollHeight - self.searchResultsWrapElem.offsetHeight;
+				event.preventDefault();
+            }
 		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
@@ -639,4 +609,4 @@ var messenger = messenger || {};
 	messenger.views.EditPageView = EditPageView;
 	messenger.views.PostPageView = PostPageView;
 	
-})(messenger, abyss, template, settings, uuid, async, Q, html);
+})(messenger, abyss, template, settings, uuid, async, Q, html, analytics);

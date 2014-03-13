@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template) {
+(function(messenger, abyss, template, analytics) {
 	
 	var View = abyss.View;
 	
@@ -279,6 +279,7 @@ var messenger = messenger || {};
 				self._setActor(character.key);
 				self.invalidate();
 			});
+			analytics.send('message', 'edit', 'character');
 		};
 
 		this.elem.addEventListener('click', elemClickListener);
@@ -370,6 +371,7 @@ var messenger = messenger || {};
 
 		var elemInputListener = function(event) {
 			self.invalidate();
+			analytics.send('message', 'edit', 'reply');
 		};
 
 		this.elem.addEventListener('input', elemInputListener);
@@ -497,4 +499,4 @@ var messenger = messenger || {};
 	messenger.views.CharacterView = CharacterView;
 	messenger.views.CharacterItemView = CharacterItemView;
 
-}(messenger, abyss, template));
+}(messenger, abyss, template, analytics));
