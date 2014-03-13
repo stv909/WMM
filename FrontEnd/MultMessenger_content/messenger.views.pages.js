@@ -73,7 +73,7 @@ var messenger = messenger || {};
 					type: 'select:message',
 					message: message
 				});
-				analytics.send('message', 'change');
+				analytics.send('message', 'change', 'success');
 			}
 		};
 		
@@ -82,7 +82,7 @@ var messenger = messenger || {};
 				self.trigger({
 					type: 'click:load'
 				});
-				analytics.send('message', 'load');
+				analytics.send('message', 'load', 'success');
 			}
 		};
 		var preloadElemClickListener = function(event) {
@@ -488,14 +488,14 @@ var messenger = messenger || {};
 					type: 'select:contact',
 					contact: self.selectedContactView.model
 				});
-				analytics.send('contact', 'change');
+				analytics.send('contact', 'change', 'success');
 			}
 		};
 		
 		var loadElemClickListener = function(event) {
 			if (self.loadElemEnable) {
 				self.trigger('click:load');
-				analytics.send('contant', 'load');
+				analytics.send('contact', 'load');
 			}
 		};
 		var lastQueryText = this.queryElem.value;
