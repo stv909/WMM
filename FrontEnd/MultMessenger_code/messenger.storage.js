@@ -368,7 +368,7 @@ var messenger = messenger || {};
 		
 		this.senderMessageId = null;
 		
-		this.messageCount = 4;
+		this.messageCount = 8;
 		this.messageOffset = 0;
 		this.totalMessageCount = 0;
 		

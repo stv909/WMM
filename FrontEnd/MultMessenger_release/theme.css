@@ -248,10 +248,10 @@ body {
   margin-left: 8px;
   width: 848px;
 }
-#select-page .load-holder .button {
+#select-page .load-holder .button-special {
   width: 100%;
 }
-#select-page .load-holder.bottom .button {
+#select-page .load-holder.bottom .button-special {
   margin-bottom: 24px;
 }
 #edit-page {
@@ -353,10 +353,11 @@ body {
   height: 100%;
 }
 #post-page .search-wrapper .load-holder {
+  margin-left: 2px;
   margin-top: 16px;
-  width: 720px;
+  width: 718px;
 }
-#post-page .search-wrapper .load-holder .button {
+#post-page .search-wrapper .load-holder .button-special {
   width: 100%;
 }
 #post-page .search-wrapper .search {
