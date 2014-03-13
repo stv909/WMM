@@ -1,7 +1,8 @@
 main-menu-color = rgb(21, 112, 166)
 
-menu-height = 50px
+menu-height = 60px
 menu-padding = 10px
+page-padding = 10px
 
 @font-face
 	font-family 'Segoe UI'
@@ -11,8 +12,32 @@ html, body
 	padding 0
 	font-family 'Segoe UI'
 #menu
+	position fixed
+	top 0
+	right 0
+	width 100%
 	height menu-height
 	background-color main-menu-color
+	color white
 	padding menu-padding
-	
+	box-sizing border-box
+	vertical-align middle
+	.logo
+		float left
+		font-size 32px
+		display inline-block
+		line-height menu-height - 2 * menu-padding
+#page
+	margin-top menu-height
+	padding page-padding
+.message
+	font-size 0px
+	margin 5px
+	border 1px solid #ddd
+	display inline-block
+	.content
+		margin 10px
+		width 403px
+		height 403px
+		
 	

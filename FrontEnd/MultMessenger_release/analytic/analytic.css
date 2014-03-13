@@ -9,7 +9,35 @@ body {
   font-family: 'Segoe UI';
 }
 #menu {
-  height: 50px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 60px;
   background-color: #1570a6;
+  color: #fff;
   padding: 10px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+#menu .logo {
+  float: left;
+  font-size: 32px;
+  display: inline-block;
+  line-height: 40px;
+}
+#page {
+  margin-top: 60px;
+  padding: 10px;
+}
+.message {
+  font-size: 0px;
+  margin: 5px;
+  border: 1px solid #ddd;
+  display: inline-block;
+}
+.message .content {
+  margin: 10px;
+  width: 403px;
+  height: 403px;
 }

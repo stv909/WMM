@@ -60,6 +60,17 @@ window.onload = function() {
 			return 'select';
 		}
 	};
+	Navigation.prototype.mapModeToAnalytic = function(mode) {
+		if (mode === 'select') {
+			return 'tape';
+		} else if (mode === 'edit') {
+			return 'editor';
+		} else if (mode === ' answer') {
+			return 'answer';
+		} else {
+			return 'friends';
+		}
+	}
 
 	var MessengerApplication = function() {
 		MessengerApplication.super.apply(this);
@@ -97,6 +108,7 @@ window.onload = function() {
 		this.currentLogoElemClickListener = null;
 		this.logoElemStandardClickListener = function(event) {
 			self.navigation.setMode('select');
+			analytics.send('navigation', 'tab_tape', 'success');
 		};
 		this.logoElemAnswerClickListener = function(event) {
 			self.skipDialogView.show();
@@ -104,17 +116,23 @@ window.onload = function() {
 
 		this.selectElemClickListener = function(event) {
 			self.navigation.setMode('select');
+			analytics.send('navigation', 'tab_tape', 'success');
 		};
 		this.editElemClickListener = function(event) {
 			self.navigation.setMode('edit');
+			analytics.send('navigation', 'tab_editor', 'success');
 		};
 		this.postElemClickListener = function(event) {
 			self.navigation.setMode('post');
+			analytics.send('navigation', 'tab_friends', 'success');
 		};
 
 		this.currentNextElemClickListener = null;
 		this.nextElemStandardClickListener = function(event) {
-			self.navigation.setMode(self.navigation.getNextMode());
+			var nextMode = self.navigation.getNextMode();
+			var analyticMode = self.navigation.mapModeToAnalytic(nextMode);
+			self.navigation.setMode(nextMode);
+			analytics.send('navigation', ['btn', 'go', analyticMode].join('_'), 'success');
 		};
 		this.nextElemPostClickListener = function(event) {
 			self.postDialogView.show();
@@ -439,10 +457,6 @@ window.onload = function() {
 		this.navigation.on('mode:post', function(event) {
 			self.currentShowAskMessageDialog();
 		});
-		this.navigation.on('mode', function(event) {
-			var mode = event.mode;
-			analytics.send('navigation', [mode, 'tab'].join('_'), 'success');	
-		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
 		var parseHash = function(hash) {
@@ -480,10 +494,14 @@ window.onload = function() {
 			var settings = parseHash(hash);
 			this.contactStorage.setSenderId(settings.senderId);
 			this.messageStorage.setSenderMessageId(settings.messageId);
+			
+			analytics.send('application', 'mode', 'answer');
 		} else {
 			this.navigation.setMode('select');
 			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
 			this.currentLogoElemClickListener = this.logoElemStandardClickListener;
+			
+			analytics.send('application', 'mode', 'blank');
 		}
 	};
 	MessengerApplication.prototype.initializeStartupData = function() {
@@ -503,9 +521,9 @@ window.onload = function() {
 		}).then(function() {
 			self.answerPageView.setContact(self.contactStorage.getSender());
 			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
-			analytics.send('application', 'init', 'success');
+			analytics.send('application', 'start', 'success');
 		}).catch(function(error) {
-			analytics.send('application', 'init', 'failed');
+			analytics.send('application', 'start', 'fail');
 			console.error(error);
 		}).fin(function() {
 			self.preloadDialogView.hide();
