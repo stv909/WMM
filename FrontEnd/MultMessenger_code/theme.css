@@ -127,6 +127,7 @@ body {
 #breadcrumbs {
   display: inline-block;
   font-size: 0;
+  margin-left: 48px;
 }
 #breadcrumbs .chosen {
   color: #fff;
@@ -167,8 +168,8 @@ body {
   font-size: 12px;
   cursor: pointer;
   display: inline-block;
-  padding-right: 12px;
-  padding-left: 12px;
+  padding-right: 6px;
+  padding-left: 6px;
   position: relative;
 }
 #select.chosen:after,
