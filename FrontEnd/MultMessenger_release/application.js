@@ -55,9 +55,9 @@ window.onload = function() {
 		} else if (this.mode === 'edit') {
 			return 'post';
 		} else if (this.mode === 'post') {
-			return 'select';
+			return 'friends';
 		} else if (this.mode === 'answer') {
-			return 'select';
+			return 'answer';
 		}
 	};
 	Navigation.prototype.mapModeToAnalytic = function(mode) {
