@@ -87,7 +87,6 @@ var html = html || {};
 				return n * done;
 			}
 			var abs = Math.abs(n);
-
 			outer: do {
 				for (var i = 0; i < distribution.length; ++i) {
 					if (abs <= distribution[i]) {
@@ -97,9 +96,8 @@ var html = html || {};
 				}
 				distribution.push(abs);
 			} while (false);
-			
 			var factor = scale / distribution[Math.floor(distribution.length / 3)];
-			if (distribution.length === 500) {
+			if (distribution.length == 500) {
 				done = factor;
 			}
 			return n * factor;

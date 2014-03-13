@@ -128,6 +128,7 @@ window.onload = function() {
 				Helpers.buildVkId(account),
 				Helpers.buildVkId(companion)
 			);
+			var isSelfMessage = account.get('id') === companion.get('id') ? 1 : 0;
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 			
 			self.chatClientWrapper.nowAsync().then(function(timestamp) {
@@ -157,10 +158,10 @@ window.onload = function() {
 				return VK.apiAsync('wall.post', postData);
 			}).then(function() {
 				self.postDialogView.setMode('complete');
-				analytics.send('message', 'send', 'success');
+				analytics.send('message', 'send', 'success', isSelfMessage);
 			}).catch(function(error) {
 				self.postDialogView.setMode('fail', error);
-				analytics.send('message', 'send', 'failed');
+				analytics.send('message', 'send', 'failed', error.errorCode);
 				console.error(error);
 			});
 		};
