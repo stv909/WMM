@@ -161,7 +161,11 @@ window.onload = function() {
 				analytics.send('message', 'send', 'success', isSelfMessage);
 			}).catch(function(error) {
 				self.postDialogView.setMode('fail', error);
-				analytics.send('message', 'send', 'failed', error.errorCode);
+				if (error.errorCode === ErrorCodes.RESTRICTED) {
+					analytics.send('message', 'send', 'rejected');
+				} else {
+					analytics.send('message', 'send', 'failed', error.errorCode);
+				}
 				console.error(error);
 			});
 		};
