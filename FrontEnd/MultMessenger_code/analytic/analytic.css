@@ -11,6 +11,21 @@ body {
   padding: 0;
   font-family: 'Segoe UI';
 }
+.hidden {
+  display: none;
+}
+.no-overflow {
+  overflow: hidden;
+}
+#wait {
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.8);
+}
 #menu {
   position: fixed;
   top: 0;
@@ -26,16 +41,37 @@ body {
 #menu .logo {
   float: left;
   position: absolute;
-  font-size: 28px;
+  font-size: 20px;
   display: inline-block;
   line-height: 30px;
+}
+#update {
+  -webkit-user-select: none;
+  user-select: none;
+  display: inline-block;
+  line-height: 30px;
+  background-color: #2c2;
+  height: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+#update:hover {
+  text-shadow: 0 0 2px #fff;
+}
+#update:active {
+  background-color: #5b5;
 }
 #filters {
   width: 100%;
   display: inline-block;
   text-align: center;
+  height: 30px;
 }
 #filters .datepicker {
+  vertical-align: top;
   border: none;
   font-size: 14px;
   font-family: 'Segoe UI';

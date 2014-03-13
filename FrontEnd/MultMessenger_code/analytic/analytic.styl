@@ -6,9 +6,11 @@ menu-height = 50px
 menu-padding = 10px 20px 10px 20px
 page-padding = 20px 20px 10px 20px
 
+user-select(value)
+	-webkit-user-select value
+	user-select value
 *
 	outline none
-
 @font-face
 	font-family 'Segoe UI'
 	src url('http://i.s-microsoft.com/fonts/segoe-ui/cyrillic/light/latest.woff')
@@ -16,6 +18,18 @@ html, body
 	margin 0
 	padding 0
 	font-family 'Segoe UI'
+.hidden
+	display none
+.no-overflow
+	overflow hidden
+#wait
+	z-index 10
+	position fixed
+	top 0
+	bottom 0
+	left 0
+	right 0
+	background-color rgba(0, 0, 0, 0.8)
 #menu
 	position fixed
 	top 0
@@ -30,14 +44,31 @@ html, body
 	.logo
 		float left
 		position absolute
-		font-size 28px
+		font-size 20px
 		display inline-block
 		line-height menu-height - 2 * menu-padding
+#update
+	user-select(none)
+	display inline-block
+	line-height menu-height - 2 * menu-padding
+	background-color #22cc22
+	height menu-height - 2 * menu-padding
+	padding-left 10px
+	padding-right 10px
+	margin-left 5px
+	cursor pointer
+	font-size 16px
+	&:hover
+		text-shadow 0 0 2px white
+	&:active
+		background-color #55bb55
 #filters
 	width 100%
 	display inline-block
 	text-align center
+	height menu-height - 2 * menu-padding
 	.datepicker
+		vertical-align top
 		border none
 		font-size 14px
 		font-family 'Segoe UI'
