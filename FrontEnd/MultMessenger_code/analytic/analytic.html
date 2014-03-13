@@ -14,6 +14,19 @@
 		<link rel="stylesheet" href="analytic.css">
 	</head>
 	<body class="no-overflow">
+		<template id="message" style="display: none">
+			<div class="content"></div>
+			<div class="controls">
+				<div class="sender-control">
+					<span>Sender:</span>
+					<a class="sender" href="https://vk.com/id1">vkid1</a>
+				</div>
+				<div class="receiver-control">
+					<span>Receiver:</span>
+					<a class="receiver" href="https://vk.com/id2">vkid2</a>
+				</div>
+			</div>
+		</template>
 		<div id="menu">
 			<div class="logo">Users' messages</div>
 			<div id="filters">
@@ -25,65 +38,9 @@
 			</div>
 		</div>
 		<div id="page">
-			<div class="message">
-				<div class="content"></div>
-				<div class="controls">
-					<div class="sender-control">
-						<span>Sender:</span>
-						<a href="https://vk.com/id1">vkid1</a>
-					</div>
-					<div class="receiver-control">
-						<span>Receiver:</span>
-						<a href="https://vk.com/id2">vkid2</a>
-					</div>
-				</div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
-			<div class="message">
-				<div class="content"></div>
-			</div>
 		</div>
-		<div id="wait"></div>
+		<div id="wait">
+			<div class="status">Wait...</div>
+		</div>
 	</body>
 </html>

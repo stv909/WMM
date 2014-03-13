@@ -134,6 +134,10 @@ var chat = chat || {};
 			type = 'message:ignore';
 		} else if (response.grouptape) {
 			type = 'message:grouptape';
+		} else if (response.messagedump) {
+			type = 'message:messagedump';
+		} else {
+			console.log(response);
 		}
 
 		return type;
@@ -281,6 +285,10 @@ var chat = chat || {};
 		this.socket.send('grouptape');
 		this.socket.send(id);
 		this.socket.send([count, offset].join('/'));
+	};
+	ChatClient.prototype.messagedump = function(startTimestamp, endTimestamp) {
+		this.socket.send('messagedump');
+		this.socket.send([startTimestamp, endTimestamp].join('-'));
 	};
 	//complex protocol operations
 	ChatClient.prototype.sendMessage = function(message, contactMode) {
