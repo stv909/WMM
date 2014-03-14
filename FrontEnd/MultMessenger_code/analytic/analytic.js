@@ -32,13 +32,15 @@ window.onload = function() {
 		var receiver = value.to;
 		var preview = value.preview;
 		var content = value.content;
+		var timestamp = value.timestamp;
 		
 		message.set({
 			id: id,
 			sender: sender,
 			receiver: receiver,
 			preview: preview ? ['http://www.bazelevscontent.net:8582/', preview].join('') : null,
-			content: content ? base64.decode(content) : null
+			content: content ? base64.decode(content) : null,
+			timestamp: timestamp
 		});
 		
 		return message;
@@ -53,6 +55,8 @@ window.onload = function() {
 		
 		this.receiverElem = this.elem.getElementsByClassName('receiver')[0];
 		this.senderElem = this.elem.getElementsByClassName('sender')[0];
+		this.shareElem = this.elem.getElementsByClassName('share')[0];
+		this.createdElem = this.elem.getElementsByClassName('created')[0];
 		
 		this.selected = false;
 		
@@ -94,6 +98,7 @@ window.onload = function() {
 	MessageView.prototype.prepareLinkElems = function() {
 		var sender = this.model.get('sender');
 		var receiver = this.model.get('receiver');
+		var id = this.model.get('id');
 		
 		this.senderElem.textContent = sender;
 		this.receiverElem.textContent = receiver;
@@ -106,6 +111,9 @@ window.onload = function() {
 		
 		prepareLink(this.senderElem, sender);
 		prepareLink(this.receiverElem, receiver);
+		
+		this.shareElem.href = ['http://bazelevscontent.net/WMM/share.html?ids=msg.', id].join('');
+		this.createdElem.textContent = new Date(this.model.get('timestamp'));
 	};
 	MessageView.prototype.setModel = function(model) {
 		this.model = model;
@@ -187,7 +195,7 @@ window.onload = function() {
 		this.messageViews = {};
 		this.selectedMessageView = null;
 		
-		this.chatClient = new ChatClient('ws://www.bazelevscontent.net:9012/');
+		this.chatClient = new ChatClient('ws://www.bazelevscontent.net:9009/');
 		this.account = 'analytics';
 		
 		this.messageStorage = new MessageStorage();
@@ -255,6 +263,16 @@ window.onload = function() {
 					.map(MessageModel.formRawData)
 					.filter(function(message) {
 						return message.isValid();	
+					}).sort(function(message1, message2) {
+						var timestamp1 = message1.get('timestamp');
+						var timestamp2 = message2.get('timestamp');
+						if (timestamp1 < timestamp2) {
+							return 1;
+						} else if (timestamp1 >= timestamp2) {
+							return -1;
+						} else {
+							return 0;
+						}
 					});
 				messages.forEach(function(message) {
 					self.messageStorage.add(message);	

@@ -76,6 +76,7 @@ var messenger = messenger || {};
 		var elemClickListener = function(event) {
 			if (!self.selected) {
 				self.select();
+				analytics.send('tape', 'msg_select_new');
 			}
 		};
 
@@ -122,6 +123,7 @@ var messenger = messenger || {};
 		var elemClickListener = function(event) {
 			if (!self.selected) {
 				self.select();
+				analytics.send('friends', 'friends_select');
 			}
 		};
 		var fullNameElemClickListener = function(event) {
@@ -278,8 +280,8 @@ var messenger = messenger || {};
 				self.value = character.key;
 				self._setActor(character.key);
 				self.invalidate();
+				analytics.send('editor', 'edit_character');
 			});
-			analytics.send('template', 'edit_character', 'success');
 		};
 
 		this.elem.addEventListener('click', elemClickListener);
@@ -371,7 +373,7 @@ var messenger = messenger || {};
 
 		var elemInputListener = function(event) {
 			self.invalidate();
-			analytics.send('template', 'edit_phrase', 'success');
+			analytics.send('editor', 'edit_phrase');
 		};
 
 		this.elem.addEventListener('input', elemInputListener);

@@ -73,7 +73,6 @@ var messenger = messenger || {};
 					type: 'select:message',
 					message: message
 				});
-				analytics.send('template', 'select_new', 'success');
 			}
 		};
 		
@@ -82,7 +81,6 @@ var messenger = messenger || {};
 				self.trigger({
 					type: 'click:load'
 				});
-				analytics.send('template', 'load_more', 'success');
 			}
 		};
 		var preloadElemClickListener = function(event) {
@@ -166,7 +164,7 @@ var messenger = messenger || {};
 			this.preloadElem.classList.add('hidden');
 		} else {
 			this.preloadElem.classList.remove('hidden');
-			this.preloadElem.textContent = ['Загрузить новые шаблоны (+', count, ')'].join('');
+			this.preloadElem.textContent = ['Загрузить новые мульты (+', count, ')'].join('');
 		}
 	};
 	
@@ -205,7 +203,7 @@ var messenger = messenger || {};
 			self.characterViewCollection.forEach(function(view) {
 				view.reset();
 			});
-			analytics.send('template', 'update_after_edit', 'cancel');
+			analytics.send('editor', 'update_cancel');
 		});
 		this.updateElem.addEventListener('click', function() {
 			var data = self.getData();
@@ -228,10 +226,10 @@ var messenger = messenger || {};
 					view.validate();
 				});
 				self.updateMessageDialogView.setMode('complete');
-				analytics.send('template', 'update_after_edit', 'success');
+				analytics.send('editor', 'edit_update', 'success');
 			}).catch(function() {
 				self.updateMessageDialogView.setMode('fail');
-				analytics.send('template', 'update_after_edit', 'fail');
+				analytics.send('editor', 'edit_update', 'fail');
 			});
 			self.updateMessageDialogView.show();
 		});
@@ -290,7 +288,7 @@ var messenger = messenger || {};
 
 		elem.addEventListener('input', function() {
 			layerTextElem.textContent = elem.value;
-			analytics.send('template', 'edit_caption', 'success');
+			analytics.send('editor', 'edit_caption');
 		});
 
 		this.memosElem.appendChild(elem);
@@ -488,14 +486,13 @@ var messenger = messenger || {};
 					type: 'select:contact',
 					contact: self.selectedContactView.model
 				});
-				analytics.send('contact', 'change', 'success');
 			}
 		};
 		
 		var loadElemClickListener = function(event) {
 			if (self.loadElemEnable) {
 				self.trigger('click:load');
-				analytics.send('contact', 'load_more', 'success');
+				analytics.send('friends', 'friends_load_more');
 			}
 		};
 		var lastQueryText = this.queryElem.value;
@@ -513,7 +510,7 @@ var messenger = messenger || {};
 						type: 'update:search',
 						text: queryText
 					});
-					analytics.send('contact', 'search', 'success');
+					analytics.send('friends', 'friends_search')
 				}, 800);
 			}
 		};

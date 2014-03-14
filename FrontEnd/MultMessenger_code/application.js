@@ -108,7 +108,6 @@ window.onload = function() {
 		this.currentLogoElemClickListener = null;
 		this.logoElemStandardClickListener = function(event) {
 			self.navigation.setMode('select');
-			analytics.send('navigation', 'tab_tape', 'success');
 		};
 		this.logoElemAnswerClickListener = function(event) {
 			self.skipDialogView.show();
@@ -116,23 +115,18 @@ window.onload = function() {
 
 		this.selectElemClickListener = function(event) {
 			self.navigation.setMode('select');
-			analytics.send('navigation', 'tab_tape', 'success');
 		};
 		this.editElemClickListener = function(event) {
 			self.navigation.setMode('edit');
-			analytics.send('navigation', 'tab_editor', 'success');
 		};
 		this.postElemClickListener = function(event) {
 			self.navigation.setMode('post');
-			analytics.send('navigation', 'tab_friends', 'success');
 		};
 
 		this.currentNextElemClickListener = null;
 		this.nextElemStandardClickListener = function(event) {
 			var nextMode = self.navigation.getNextMode();
-			var analyticMode = self.navigation.mapModeToAnalytic(nextMode);
 			self.navigation.setMode(nextMode);
-			analytics.send('navigation', ['btn', 'go', analyticMode].join('_'), 'success');
 		};
 		this.nextElemPostClickListener = function(event) {
 			self.postDialogView.show();
@@ -176,19 +170,14 @@ window.onload = function() {
 				return VK.apiAsync('wall.post', postData);
 			}).then(function() {
 				self.postDialogView.setMode('complete');
-				analytics.send('message', 'send', 'success', isSelfMessage);
 			}).catch(function(error) {
 				self.postDialogView.setMode('fail', error);
-				if (error.errorCode === ErrorCodes.RESTRICTED) {
-					analytics.send('message', 'send', 'reject');
-				} else {
-					analytics.send('message', 'send', 'fail', error.errorCode);
-				}
 				console.error(error);
 			});
 		};
 		this.nextElemAnswerClickListener = function(event) {
 			self.navigation.setMode('select');
+			analytics.send('answer', 'answer_msg');
 		};
 		
 		this.currentShowAskMessageDialog = null;
@@ -303,14 +292,18 @@ window.onload = function() {
 		});
 		this.selectPageView.on('click:load', function(event) {
 			self.selectPageView.disableMessageLoading();
-			self.messageStorage.loadMessagesAsync().catch(function(error) {
+			self.messageStorage.loadMessagesAsync().then(function() {
+				analytics.send('tape', 'msg_load_more', 'success');
+			}).catch(function(error) {
 				self.errorDialogView.show(error);
+				analytics.send('tape', 'msg_load_more', 'fail');
 			}).fin(function() {
 				self.selectPageView.enableMessageLoading();
 			});
 		});
 		this.selectPageView.on('click:preload', function(event) {
 			self.messageStorage.appendPreloadedMessages();	
+			analytics.send('tape', 'msg_load_new', 'success');
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
@@ -329,6 +322,7 @@ window.onload = function() {
 			self.currentLogoElemClickListener = self.logoElemStandardClickListener;
 			window.location.hash = '';
 			self.navigation.setMode('select');
+			analytics.send('answer', 'browse_tape');
 		});
 		this.postPageView.on('select:contact', function(event) {
 			self.contactStorage.selected = event.contact;
@@ -494,14 +488,10 @@ window.onload = function() {
 			var settings = parseHash(hash);
 			this.contactStorage.setSenderId(settings.senderId);
 			this.messageStorage.setSenderMessageId(settings.messageId);
-			
-			analytics.send('application', 'mode', 'answer');
 		} else {
 			this.navigation.setMode('select');
 			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
 			this.currentLogoElemClickListener = this.logoElemStandardClickListener;
-			
-			analytics.send('application', 'mode', 'blank');
 		}
 	};
 	MessengerApplication.prototype.initializeStartupData = function() {
@@ -521,12 +511,12 @@ window.onload = function() {
 		}).then(function() {
 			self.answerPageView.setContact(self.contactStorage.getSender());
 			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
-			analytics.send('application', 'start', 'success');
-		}).catch(function(error) {
-			analytics.send('application', 'start', 'fail');
-			console.error(error);
-		}).fin(function() {
 			self.preloadDialogView.hide();
+			analytics.send('app_start', 'app_success');
+		}).catch(function(error) {
+			analytics.send('app_start', 'app_fail');
+			console.error(error);
+			alert('Приносим извенение. В настоящий момент в работе приложения наблюдаются проблемы. Возможно вы используете неподдерживаемый браузер. Установите Chrome, Opera, YaBrowser или Safari');
 		});
 	};
 
