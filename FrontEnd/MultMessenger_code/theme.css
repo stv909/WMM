@@ -730,12 +730,15 @@ body {
 #chrome {
   font-size: 12px;
   position: absolute;
-  width: 140px;
+  width: 280px;
   text-align: center;
-  left: 390px;
+  left: 300px;
   bottom: 5px;
 }
-#chrome .chrome-image {
+#chrome .chrome-image,
+#chrome .opera-image,
+#chrome .safari-image,
+#chrome .yandex-image {
   width: 64px;
   height: 64px;
 }
