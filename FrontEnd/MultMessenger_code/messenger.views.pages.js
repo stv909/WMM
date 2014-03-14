@@ -510,7 +510,7 @@ var messenger = messenger || {};
 						type: 'update:search',
 						text: queryText
 					});
-					analytics.send('friends', 'friends_search')
+					analytics.send('friends', 'friends_search');
 				}, 800);
 			}
 		};

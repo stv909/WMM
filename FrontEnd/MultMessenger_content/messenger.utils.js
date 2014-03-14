@@ -74,12 +74,27 @@ var messenger = messenger || {};
 					errorCode: ErrorCodes.RESTRICTED
 				};
 			}
+		},
+		formatError: function(error) {
+			var result = [];
+			var mainResult = error.errorCode === ErrorCodes.RESTRICTED ? 'reject' : 'fail';
+			result.push(mainResult);
+			if (mainResult === 'fail') {
+				var message = error.message || {};
+				if (message.error_code) {
+					result.push(message.error_code);
+				} 
+				if (message.error_msg) {
+					result.push(message.error_msg);
+				}
+			}
+			return result.join('_');	
 		}
 	};
 	
 	var ChatClientWrapper = function(chatClient) {
 		this.chatClient = chatClient;
-		this.operationTimeout = 7500;
+		this.operationTimeout = 10000;
 	};
 	ChatClientWrapper.prototype._createRequestTask = function(checkReadyState) {
 		var task = Q.defer();

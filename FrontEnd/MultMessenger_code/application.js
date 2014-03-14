@@ -140,7 +140,8 @@ window.onload = function() {
 				Helpers.buildVkId(account),
 				Helpers.buildVkId(companion)
 			);
-			var isSelfMessage = account.get('id') === companion.get('id') ? 1 : 0;
+			var selfMessage = account.get('id') === companion.get('id') ? 'self' : 'friend';
+			var action = ['post', selfMessage].join('_');
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 			
 			self.chatClientWrapper.nowAsync().then(function(timestamp) {
@@ -170,9 +171,11 @@ window.onload = function() {
 				return VK.apiAsync('wall.post', postData);
 			}).then(function() {
 				self.postDialogView.setMode('complete');
+				analytics.send('post', action, 'success');
 			}).catch(function(error) {
 				self.postDialogView.setMode('fail', error);
 				console.error(error);
+				analytics.send('post', action, VkTools.formatError(error));
 			});
 		};
 		this.nextElemAnswerClickListener = function(event) {

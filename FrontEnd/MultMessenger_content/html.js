@@ -74,6 +74,9 @@ var html = html || {};
 	var scrollToBottom = function(elem) {
 		elem.scrollTop = elem.scrollHeight;
 	};
+	var scrollToTop = function(elem) {
+		elem.scrollTop = 0;	
+	};
 	
 	var normalizeWheelDelta = function() {
 		var distribution = [];
@@ -109,6 +112,7 @@ var html = html || {};
 	html.checkElemOverflowY = checkElemOverflowY;
 	html.checkElemOverflow = checkElemOverflow;
 	html.scrollToBottom = scrollToBottom;
+	html.scrollToTop = scrollToTop;
 	html.normalizeWheelDelta = normalizeWheelDelta;
 
 })(html);

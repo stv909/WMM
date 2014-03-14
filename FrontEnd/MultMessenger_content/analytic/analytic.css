@@ -11,7 +11,34 @@ body {
   padding: 0;
   font-family: 'Segoe UI';
 }
+.hidden {
+  display: none !important;
+}
+.no-overflow {
+  overflow: hidden;
+}
+#wait {
+  z-index: 10000;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.8);
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#wait .status {
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 18px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+}
 #menu {
+  z-index: 1000;
   position: fixed;
   top: 0;
   right: 0;
@@ -26,16 +53,37 @@ body {
 #menu .logo {
   float: left;
   position: absolute;
-  font-size: 28px;
+  font-size: 20px;
   display: inline-block;
   line-height: 30px;
+}
+#update {
+  -webkit-user-select: none;
+  user-select: none;
+  display: inline-block;
+  line-height: 30px;
+  background-color: #2c2;
+  height: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+#update:hover {
+  text-shadow: 0 0 2px #fff;
+}
+#update:active {
+  background-color: #5b5;
 }
 #filters {
   width: 100%;
   display: inline-block;
   text-align: center;
+  height: 30px;
 }
 #filters .datepicker {
+  vertical-align: top;
   border: none;
   font-size: 14px;
   font-family: 'Segoe UI';
@@ -47,6 +95,7 @@ body {
 #page {
   margin-top: 50px;
   padding: 20px 20px 10px 20px;
+  text-align: center;
 }
 .message {
   vertical-align: top;
@@ -56,11 +105,23 @@ body {
   border: 1px solid #ddd;
   display: inline-block;
 }
+.message.normal {
+  cursor: pointer;
+}
+.message.normal:hover {
+  border: 1px solid #1570a6;
+}
+.message.chosen {
+  border: 1px solid #1570a6;
+  box-shadow: 0 0 5px #1570a6;
+}
 .message .content {
   margin: 10px;
   width: 403px;
   height: 403px;
   border: 1px solid #ddd;
+  font-size: 14px;
+  position: relative;
 }
 .message .controls {
   width: 100%;

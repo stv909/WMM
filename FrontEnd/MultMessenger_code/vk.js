@@ -11,7 +11,7 @@
 			} else {
 				deferred.reject({
 					errorCode: ErrorCodes.API_ERROR,
-					message: JSON.stringify(data.error, null, 4)
+					message: data.error
 				});
 			}
 		});
