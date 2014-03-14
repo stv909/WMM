@@ -18,7 +18,7 @@ body {
   overflow: hidden;
 }
 #wait {
-  z-index: 10;
+  z-index: 10000;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -38,6 +38,7 @@ body {
   color: #fff;
 }
 #menu {
+  z-index: 1000;
   position: fixed;
   top: 0;
   right: 0;
@@ -94,6 +95,7 @@ body {
 #page {
   margin-top: 50px;
   padding: 20px 20px 10px 20px;
+  text-align: center;
 }
 .message {
   vertical-align: top;
@@ -103,11 +105,23 @@ body {
   border: 1px solid #ddd;
   display: inline-block;
 }
+.message.normal {
+  cursor: pointer;
+}
+.message.normal:hover {
+  border: 1px solid #1570a6;
+}
+.message.chosen {
+  border: 1px solid #1570a6;
+  box-shadow: 0 0 5px #1570a6;
+}
 .message .content {
   margin: 10px;
   width: 403px;
   height: 403px;
   border: 1px solid #ddd;
+  font-size: 14px;
+  position: relative;
 }
 .message .controls {
   width: 100%;

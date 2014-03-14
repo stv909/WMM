@@ -37,7 +37,7 @@ window.onload = function() {
 			id: id,
 			sender: sender,
 			receiver: receiver,
-			preview: preview,
+			preview: preview ? ['http://www.bazelevscontent.net:8582/', preview].join('') : null,
 			content: content ? base64.decode(content) : null
 		});
 		
@@ -46,12 +46,97 @@ window.onload = function() {
 	
 	var MessageView = function(model) {
 		MessageView.super.apply(this);
+		var self = this;
 		
-		this.elem = template.create('message', { className: 'message' });
+		this.elem = template.create('message', { className: 'message normal' });
+		this.contentElem = this.elem.getElementsByClassName('content')[0];
+		
+		this.receiverElem = this.elem.getElementsByClassName('receiver')[0];
+		this.senderElem = this.elem.getElementsByClassName('sender')[0];
+		
+		this.selected = false;
+		
+		this.setModel(model);
+		
+		var elemClickListener = function() {
+			if (!self.selected) {
+				self.select();
+			}
+		};
+		this.elem.addEventListener('click', elemClickListener);
+		
+		this.once('dispose', function() {
+			self.elem.removeEventListener('click', elemClickListener);	
+		});
 	};
 	MessageView.super = View;
 	MessageView.prototype = Object.create(View.prototype);
 	MessageView.prototype.constructor = MessageView;
+	MessageView.prototype.prepareCachedPreviewElem = function() {
+		this.cachedPreviewElem = document.createElement('div');
+		var imgElem = document.createElement('img');
+		imgElem.src = this.model.get('preview');
+		this.cachedPreviewElem.appendChild(imgElem);
+	};
+	MessageView.prototype.prepareCachedFullElem = function() {
+		this.cachedFullElem = document.createElement('div');
+		this.cachedFullElem.innerHTML = this.model.get('content');
+	};
+	MessageView.prototype.addCachedElem = function(cachedElem) {
+		this.cachedElem = cachedElem;
+		this.contentElem.appendChild(cachedElem);
+	};
+	MessageView.prototype.removeCachedElem = function() {
+		if (this.cachedElem) {
+			this.contentElem.removeChild(this.cachedElem);
+		}
+	};
+	MessageView.prototype.prepareLinkElems = function() {
+		var sender = this.model.get('sender');
+		var receiver = this.model.get('receiver');
+		
+		this.senderElem.textContent = sender;
+		this.receiverElem.textContent = receiver;
+		
+		var prepareLink = function(elem, data) {
+			if (data.indexOf('vkid') === 0) {
+				elem.href = ['https://vk.com/id', data.replace('vkid', '')].join('');
+			}	
+		};
+		
+		prepareLink(this.senderElem, sender);
+		prepareLink(this.receiverElem, receiver);
+	};
+	MessageView.prototype.setModel = function(model) {
+		this.model = model;
+		this.removeCachedElem();
+		this.prepareCachedPreviewElem();
+		this.prepareCachedFullElem();
+		this.prepareLinkElems();
+		if (this.selected) {
+			this.addCachedElem(this.cachedFullElem);
+		} else {
+			this.addCachedElem(this.cachedPreviewElem);
+		}
+	};
+	MessageView.prototype.select = function() {
+		this.selected = true;
+		this.elem.classList.add('chosen');
+		this.elem.classList.remove('normal');
+		this.removeCachedElem();
+		this.addCachedElem(this.cachedFullElem);
+		this.trigger({
+			type: 'select',
+			message: this.model
+		});
+	};
+	MessageView.prototype.deselect = function() {
+		this.selected = false;
+		this.elem.classList.remove('chosen');
+		this.elem.classList.add('normal');
+		this.removeCachedElem();
+		this.addCachedElem(this.cachedPreviewElem);
+	};
 	
 	var MessageStorage = function() {
 		MessageStorage.super.apply(this);	
@@ -100,6 +185,7 @@ window.onload = function() {
 		this.statusElem = this.waitElem.getElementsByClassName('status')[0];
 		
 		this.messageViews = {};
+		this.selectedMessageView = null;
 		
 		this.chatClient = new ChatClient('ws://www.bazelevscontent.net:9012/');
 		this.account = 'analytics';
@@ -128,6 +214,13 @@ window.onload = function() {
 			var messageId = message.get('id');
 			var messageView = new MessageView(message);
 			messageView.attachTo(self.pageElem);
+			messageView.on('select', function(event) {
+				if (self.selectedMessageView) {
+					self.selectedMessageView.deselect();
+					self.selectedMessageView = null;
+				}
+				self.selectedMessageView = messageView;
+			});
 			self.messageViews[messageId] = messageView;
 		});
 		this.messageStorage.on('remove:message', function(event) {
@@ -135,6 +228,7 @@ window.onload = function() {
 			var messageView = self.messageViews[messageId];
 			messageView.dispose();
 			delete self.messageViews[messageId];
+			self.selectedMessageView = null;
 		});
 	};
 	Application.prototype.initializeUI = function() {
@@ -177,6 +271,7 @@ window.onload = function() {
 			self.chatClient.login(self.account);
 		});
 		this.chatClient.once('message:login', function(event) {
+			//self.updateElem.click();
 			self.hideWaitElem();
 		});
 		this.chatClient.connect();
