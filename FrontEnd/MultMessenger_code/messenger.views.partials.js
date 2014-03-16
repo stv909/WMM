@@ -267,7 +267,7 @@ var messenger = messenger || {};
 		this.actorNameElem = this.elem.getElementsByClassName('actor-name')[0];
 		this.valid = true;
 		this.lastValue = actor.character;
-		this.value = actor.character;;
+		this.value = actor.character;
 		this.characters = characters;
 		this.charactersDialogView = charactersDialogView;
 
