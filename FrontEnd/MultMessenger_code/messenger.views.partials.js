@@ -492,6 +492,24 @@ var messenger = messenger || {};
 		this.selected = false;
 	};
 	
+	var ImageItemView = function() {
+		ImageItemView.super.apply(this);
+		var self = this;
+		
+		this.elem = template.create('image-item-template', { className: 'image-item' });
+		
+		var elemClickListener = function(event) {
+			
+		};
+		
+		this.once('dispose', function() {
+			self.elem.removeEventListener('click', elemClickListener);	
+		});
+	};
+	ImageItemView.super = View;
+	ImageItemView.prototype = Object.create(View.prototype);
+	ImageItemView.prototype.constructor = ImageItemView;
+	
 	messenger.views = messenger.views || {};
 	
 	messenger.views.MessageView = MessageView;
@@ -500,5 +518,6 @@ var messenger = messenger || {};
 	messenger.views.ContactView = ContactView;
 	messenger.views.CharacterView = CharacterView;
 	messenger.views.CharacterItemView = CharacterItemView;
+	messenger.views.ImageItemView = ImageItemView;
 
 }(messenger, abyss, template, analytics));
