@@ -9,4 +9,5 @@ body, html {
     width: 403px;
     height: 403px;
     overflow: hidden;
+    display: inline-block;
 }
