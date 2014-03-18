@@ -121,6 +121,7 @@ var messenger = messenger || {};
 			html.scrollToBottom(self.containerElem);
 			self.containerElem.classList.remove('shifted');
 			self.teaserElem.classList.add('hidden');
+			analytics.send('tape', 'hint_load_click');
 		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);

@@ -7,9 +7,11 @@ var messenger = messenger || {};
 	var MessageEditorView = messenger.views.MessageEditorView;
 	var ContactView = messenger.views.ContactView;
 	var CharacterView = messenger.views.CharacterView;
+	var ImageItemView = messenger.views.ImageItemView;
 
 	var UpdateMessageDialogView = messenger.views.UpdateMessageDialogView;
 	var CharactersDialogView = messenger.views.CharactersDialogView;
+	var ImageSelectDialogView = messenger.views.ImageSelectDialogView;
 
 	var AnswerPageView = function() {
 		AnswerPageView.super.apply(this);
@@ -56,6 +58,8 @@ var messenger = messenger || {};
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.preloadElem = this.elem.getElementsByClassName('preload')[0];
 		this.containerElem = this.elem.getElementsByClassName('container')[0];
+		this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
+		this.teaserCrossElem = this.teaserElem.getElementsByClassName('cross')[0];
 		
 		this.selectedMessageView = null;
 		this.messageViews = {};
@@ -81,6 +85,8 @@ var messenger = messenger || {};
 				self.trigger({
 					type: 'click:load'
 				});
+				self.containerElem.classList.remove('shifted');
+				self.teaserElem.classList.add('hidden');
 			}
 		};
 		var preloadElemClickListener = function(event) {
@@ -101,17 +107,39 @@ var messenger = messenger || {};
 				event.preventDefault();
             }
 		};
+		var crossClickListener = function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			self.containerElem.classList.remove('shifted');
+			self.teaserElem.classList.add('hidden');	
+		};
+		var crossMouseMoveListener = function(event) {
+			event.stopPropagation();
+			event.preventDefault();
+		};
+		var teaserElemClickListener = function(event) {
+			html.scrollToBottom(self.containerElem);
+			self.containerElem.classList.remove('shifted');
+			self.teaserElem.classList.add('hidden');
+			analytics.send('tape', 'hint_load_click');
+		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
 		this.preloadElem.addEventListener('click', preloadElemClickListener);
 		this.containerElem.addEventListener('DOMMouseScroll', wheelListener, false);
 		this.containerElem.addEventListener('mousewheel', wheelListener, false);
+		this.teaserCrossElem.addEventListener('click', crossClickListener);
+		this.teaserCrossElem.addEventListener('mousemove', crossMouseMoveListener);
+		this.teaserElem.addEventListener('click', teaserElemClickListener);
 		
 		this.once('dispose', function(event) {
 			self.loadElem.removeEvent('click', loadElemClickListener);
 			self.preloadElem.removeEventListener('click', preloadElemClickListener);
 			self.containerElem.removeEventListener('DOMMouseScroll', wheelListener);
 			self.containerElem.removeEventListener('mousewheel', wheelListener);
+			self.teaserCrossElem.removeEventListener('click', crossClickListener);
+			self.teaserCrossElem.addEventListener('mousemove', crossMouseMoveListener);
+			self.teaserElem.addEventListener('click', teaserElemClickListener);
 		});
 
 		this.hide();
@@ -177,7 +205,15 @@ var messenger = messenger || {};
 		this.updateElem = this.elem.getElementsByClassName('update')[0];
 		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
 		this.wrapElem = this.messageWrapperElem.getElementsByClassName('wrap')[0];
+		
 		this.memosElem = this.elem.getElementsByClassName('memos')[0];
+		this.memosSectionElem = this.memosElem.getElementsByClassName('section')[0];
+		this.memosCollectionElem = this.memosElem.getElementsByClassName('collection')[0];
+		
+		this.imagesElem = this.elem.getElementsByClassName('images')[0];
+		this.imagesSectionElem = this.imagesElem.getElementsByClassName('section')[0];
+		this.imagesCollectionElem = this.imagesElem.getElementsByClassName('collection')[0];
+
 		this.characterCollectionElem = this.elem.getElementsByClassName('character-collection')[0];
 		
 		this.messageEditorView = new MessageEditorView();
@@ -189,14 +225,17 @@ var messenger = messenger || {};
 		});
 		
 		this.charactersDialogView = new CharactersDialogView();
+		this.imageSelectDialogView = new ImageSelectDialogView();
 
 		this.characters = null;
 		this.characterViewCollection = [];
+		this.imageItemViewCollection = [];
 
 		this.messageEditorView.on('change:content', function(event) {
 			var elem = event.elem;
 			self.clear();
 			self._parseLayerTypeText(elem);
+			self._parseLayerTypeCustomImage(elem);
 			self._parseLayerTypeActor(elem);
 		});
 		this.resetElem.addEventListener('click', function() {
@@ -253,11 +292,20 @@ var messenger = messenger || {};
 		return this.messageEditorView.cachedFullElem.innerHTML;
 	};
 	EditPageView.prototype.clear = function() {
+		this.wrapElem.classList.add('hidden');
+		
+		this.memosCollectionElem.innerHTML = '';
+		
+		this.imageItemViewCollection.forEach(function(view) {
+			view.dispose();
+		});
+		this.imagesCollectionElem.innerHTML = '';
+		this.imagesElem.classList.add('hidden');
+		this.imageItemViewCollection = [];
+		
 		this.characterViewCollection.forEach(function(view) {
 			view.dispose();
 		});
-		this.memosElem.innerHTML = '';
-		this.wrapElem.classList.add('hidden');
 		this.characterCollectionElem.innerHTML = '';
 		this.characterViewCollection = [];
 	};
@@ -291,7 +339,7 @@ var messenger = messenger || {};
 			analytics.send('editor', 'edit_caption');
 		});
 
-		this.memosElem.appendChild(elem);
+		this.memosCollectionElem.appendChild(elem);
 	};
 	EditPageView.prototype._parseLayerTypeActor = function(rootElem) {
 		var actorElements = rootElem.getElementsByClassName('layerType_actor');
@@ -360,6 +408,22 @@ var messenger = messenger || {};
 			}
 		});
 		this.characterViewCollection.push(characterView);
+	};
+	EditPageView.prototype._parseLayerTypeCustomImage = function(rootElem) {
+		var layerImageElems = rootElem.getElementsByClassName('layerType_customImg');
+		if (layerImageElems.length === 0) {
+			this.imagesElem.classList.add('hidden');
+		} else {
+			this.imagesElem.classList.remove('hidden');
+			for (var i = 0; i < layerImageElems.length; i++) {
+				this._createLayerTypeCustomImage(layerImageElems[i]);
+			}
+		}
+	};
+	EditPageView.prototype._createLayerTypeCustomImage = function(layerImageElem) {
+		var imageItemView = new ImageItemView(layerImageElem, this.imageSelectDialogView);
+		imageItemView.attachTo(this.imagesCollectionElem);
+		this.imageItemViewCollection.push(imageItemView);
 	};
 	EditPageView.prototype.isValid = function() {
 		var valid = true;

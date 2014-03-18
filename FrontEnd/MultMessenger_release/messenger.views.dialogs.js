@@ -323,6 +323,36 @@ var messenger = messenger || {};
 		this.characterItemViews[characterItem.key] = characterItemView;
 	};
 	
+	var ImageSelectDialogView = function() {
+		ImageSelectDialogView.super.apply(this);
+		var self = this;
+		
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('image-select-dialog');
+		this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+		
+		var crossElemClickListener = function(event) {
+			self.hide();
+		};
+		
+		this.crossElem.addEventListener('click', crossElemClickListener);
+		
+		this.once('dispose', function() {
+			self.crossElem.removeEventListener('click', crossElemClickListener);
+		});
+	};
+	ImageSelectDialogView.super = View;
+	ImageSelectDialogView.prototype = Object.create(View.prototype);
+	ImageSelectDialogView.prototype.constructor = ImageSelectDialogView;
+	ImageSelectDialogView.prototype.show = function() {
+		this.elem.classList.remove('hidden');
+		this.dialogWindowElem.classList.remove('hidden');
+	};
+	ImageSelectDialogView.prototype.hide = function() {
+		this.elem.classList.add('hidden');
+		this.dialogWindowElem.classList.add('hidden');
+	};
+	
 	messenger.views = messenger.views || {};
 	
 	messenger.views.PreloadDialogView = PreloadDialogView;
@@ -332,5 +362,6 @@ var messenger = messenger || {};
 	messenger.views.UpdateMessageDialogView = UpdateMessageDialogView;
 	messenger.views.PostDialogView = PostDialogView;
 	messenger.views.CharactersDialogView = CharactersDialogView;
+	messenger.views.ImageSelectDialogView = ImageSelectDialogView;
 	
 })(messenger, abyss, template, errors);

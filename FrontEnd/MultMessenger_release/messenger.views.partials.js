@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, analytics) {
+(function(messenger, abyss, template, analytics, css) {
 	
 	var View = abyss.View;
 	
@@ -267,7 +267,7 @@ var messenger = messenger || {};
 		this.actorNameElem = this.elem.getElementsByClassName('actor-name')[0];
 		this.valid = true;
 		this.lastValue = actor.character;
-		this.value = actor.character;;
+		this.value = actor.character;
 		this.characters = characters;
 		this.charactersDialogView = charactersDialogView;
 
@@ -492,6 +492,58 @@ var messenger = messenger || {};
 		this.selected = false;
 	};
 	
+	var ImageItemView = function(layerImageElem, imageSelectDialog) {
+		ImageItemView.super.apply(this);
+		var self = this;
+		
+		this.imageSelectDialog = imageSelectDialog;
+		this.elem = template.create('image-item-template', { className: 'image-item' });
+		this.imageElem = this.elem.getElementsByClassName('image')[0];
+		this.preloaderElem = this.elem.getElementsByClassName('circularImageHolderG')[0];
+		
+		this.layerImageElem = layerImageElem;
+		this.lastValue = this.layerImageElem.src;
+		this.value = this.layerImageElem.src;
+
+		this.imageElem.src = this.value;
+		
+		var elemClickListener = function(event) {
+			self.imageSelectDialog.show();
+		};
+		var firstImageLoadListener = function(event) {
+			if (self.disposed) {
+				return;
+			}
+			self.imageElem.removeEventListener('load', firstImageLoadListener);
+			self.elem.addEventListener('click', elemClickListener);
+			self.setReady(true);
+			self.imageSize = {
+				width: self.imageElem.offsetWidth,
+				height: self.imageElem.offsetHeight
+			};
+			self.transform = css.getTransform(self.layerImageElem);
+		};
+		
+		this.imageElem.addEventListener('load', firstImageLoadListener);
+		
+		this.once('dispose', function() {
+			self.elem.removeEventListener('click', elemClickListener);
+			self.imageElem.removeEventListener('load', firstImageLoadListener);
+		});
+	};
+	ImageItemView.super = View;
+	ImageItemView.prototype = Object.create(View.prototype);
+	ImageItemView.prototype.constructor = ImageItemView;
+	ImageItemView.prototype.setReady = function(ready) {
+		if (ready) {
+			this.preloaderElem.classList.add('hidden');
+			this.elem.classList.add('ready');
+		} else {
+			this.preloaderElem.classList.remove('hidden');
+			this.elem.classList.remove('ready');
+		}
+	};
+	
 	messenger.views = messenger.views || {};
 	
 	messenger.views.MessageView = MessageView;
@@ -500,5 +552,6 @@ var messenger = messenger || {};
 	messenger.views.ContactView = ContactView;
 	messenger.views.CharacterView = CharacterView;
 	messenger.views.CharacterItemView = CharacterItemView;
+	messenger.views.ImageItemView = ImageItemView;
 
-}(messenger, abyss, template, analytics));
+}(messenger, abyss, template, analytics, css));

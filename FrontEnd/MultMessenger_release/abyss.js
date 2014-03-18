@@ -10,6 +10,7 @@ var abyss = abyss || {};
 		Model.super.apply(this);
 
 		this.attributes = {};
+		this.disposed = false;
 	};
 	Model.super = EventEmitter;
 	Model.prototype = Object.create(EventEmitter.prototype);
@@ -69,9 +70,10 @@ var abyss = abyss || {};
 	};
 	Model.prototype.toJSON = function() {
 		return this.attributes;
-	}
+	};
 	Model.prototype.dispose = function() {
 		this.off();
+		this.disposed = true;
 	};
 
 	var View = function() {
@@ -80,6 +82,7 @@ var abyss = abyss || {};
 		this.model = null;
 		this.parentElem = null;
 		this.elem = null;
+		this.disposed = false;
 	};
 	View.super = EventEmitter;
 	View.prototype = Object.create(EventEmitter.prototype);
@@ -106,6 +109,7 @@ var abyss = abyss || {};
 		this.trigger('dispose');
 		this.detach();
 		this.off();
+		this.disposed = true;
 	};
 
 	abyss.Model = Model;

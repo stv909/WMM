@@ -6,12 +6,14 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin,latin-ext">
 	<link rel="stylesheet" href="theme.css">
 	<link rel="stylesheet" href="main-preloader.css">
+	<link rel="stylesheet" href="image-preloader.css">
 	<script src="analytics.js"></script>
 	<script src="https://vk.com/js/api/xd_connection.js?2" type="text/javascript"></script>
 	<script src="q.js"></script>
 	<script src="eve.js"></script>
 	<script src="uuid.js"></script>
 	<script src="html.js"></script>
+	<script src="css.js"></script>
 	<script src="template.js"></script>
 	<script src="abyss.js"></script>
 	<script src="errors.js"></script>
@@ -45,7 +47,11 @@
 	</div>
 </template>
 <template id="select-page-template" style="display: none">
-	<div class="container">
+	<div class="teaser">
+		<div class="cross">X</div>
+		<div>Еще больше мультов внизу. Крути и загружай!</div>
+	</div>
+	<div class="container shifted">
 		<div class="load-holder">
 			<div class="button-special preload hidden"></div>
 		</div>
@@ -69,8 +75,13 @@
 				</div>
 			</div>
 			<div class="tools">
-				<div class="section">Надписи</div>
 				<div class="memos">
+					<div class="section">Надписи</div>
+					<div class="collection"></div>
+				</div>
+				<div class="images">
+					<div class="section">Изображения</div>
+					<div class="collection"></div>
 				</div>
 				<table class="characters">
 					<thead>
@@ -142,6 +153,19 @@
 <template id="actor-template" style="display:none">
 	<img class="actor-image">
 	<div class="actor-name"></div>
+</template>
+<template id="image-item-template" style="display: none">
+	<div class="circularImageHolderG">
+		<div class="circularImageG_1 circularImageG"></div>
+		<div class="circularImageG_2 circularImageG"></div>
+		<div class="circularImageG_3 circularImageG"></div>
+		<div class="circularImageG_4 circularImageG"></div>
+		<div class="circularImageG_5 circularImageG"></div>
+		<div class="circularImageG_6 circularImageG"></div>
+		<div class="circularImageG_7 circularImageG"></div>
+		<div class="circularImageG_8 circularImageG"></div>
+	</div>
+	 <img class="image">
 </template>
 <div id="menu">
 	<div id="menu-container">
@@ -266,6 +290,15 @@
 		<div class="dialog-window hidden" id="characters-dialog">
 			<div class="title-holder">
 				<div class="title">Выбор персонажа</div>
+				<div class="cross button">X</div>
+			</div>
+			<div class="content">
+				
+			</div>
+		</div>
+		<div class="dialog-window hidden" id="image-select-dialog">
+			<div class="title-holder">
+				<div class="title">Выбор изображения</div>
 				<div class="cross button">X</div>
 			</div>
 			<div class="content">
