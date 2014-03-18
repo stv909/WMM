@@ -2,6 +2,20 @@ var css = css || {};
 
 (function(css) {
 	
+	var parseStyleSize = function(value) {
+		value = value || 0;
+		if (typeof value === 'string') {
+			value = parseInt(value.replace('px', ''), 10);
+		}
+		return value;
+	};
+	var parseTransformMatrix = function(rawMatrix) {
+		var values = rawMatrix.split('(')[1].split(')')[0].split(',');
+		var matrix = values.map(function(value) {
+			return parseFloat(value);
+		});
+		return matrix;
+	};
 	var getScales = function(transform) {
 		var result = {
 			scaleX: 1,
@@ -44,6 +58,8 @@ var css = css || {};
 		return textChunks.join('');
 	};
 	
+	css.parseStyleSize = parseStyleSize;
+	css.parseTransformMatrix = parseTransformMatrix;
 	css.getScales = getScales;
 	css.getRotate = getRotate;
 	css.toTransform = toTransform;
