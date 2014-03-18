@@ -842,7 +842,10 @@ body {
   border: 1px solid #fff;
 }
 .memos {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+.images {
+  margin-bottom: 10px;
 }
 .characters {
   width: 100%;

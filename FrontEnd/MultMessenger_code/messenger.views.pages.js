@@ -177,7 +177,15 @@ var messenger = messenger || {};
 		this.updateElem = this.elem.getElementsByClassName('update')[0];
 		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
 		this.wrapElem = this.messageWrapperElem.getElementsByClassName('wrap')[0];
+		
 		this.memosElem = this.elem.getElementsByClassName('memos')[0];
+		this.memosSectionElem = this.memosElem.getElementsByClassName('section')[0];
+		this.memosCollectionElem = this.memosElem.getElementsByClassName('collection')[0];
+		
+		this.imagesElem = this.elem.getElementsByClassName('images')[0];
+		this.imagesSectionElem = this.imagesElem.getElementsByClassName('section')[0];
+		this.imagesCollectionElem = this.imagesElem.getElementsByClassName('collection');
+
 		this.characterCollectionElem = this.elem.getElementsByClassName('character-collection')[0];
 		
 		this.messageEditorView = new MessageEditorView();
@@ -192,11 +200,13 @@ var messenger = messenger || {};
 
 		this.characters = null;
 		this.characterViewCollection = [];
+		this.imageItemViewCollection = [];
 
 		this.messageEditorView.on('change:content', function(event) {
 			var elem = event.elem;
 			self.clear();
 			self._parseLayerTypeText(elem);
+			self._parseLayerTypeCustomImage(elem);
 			self._parseLayerTypeActor(elem);
 		});
 		this.resetElem.addEventListener('click', function() {
@@ -253,11 +263,20 @@ var messenger = messenger || {};
 		return this.messageEditorView.cachedFullElem.innerHTML;
 	};
 	EditPageView.prototype.clear = function() {
+		this.wrapElem.classList.add('hidden');
+		
+		this.memosCollectionElem.innerHTML = '';
+		
+		this.imageItemViewCollection.forEach(function(view) {
+			view.dispose();
+		});
+		this.imagesCollectionElem.innerHTML = '';
+		this.imagesElem.classList.add('hidden');
+		this.imageItemViewCollection = [];
+		
 		this.characterViewCollection.forEach(function(view) {
 			view.dispose();
 		});
-		this.memosElem.innerHTML = '';
-		this.wrapElem.classList.add('hidden');
 		this.characterCollectionElem.innerHTML = '';
 		this.characterViewCollection = [];
 	};
@@ -291,7 +310,7 @@ var messenger = messenger || {};
 			analytics.send('editor', 'edit_caption');
 		});
 
-		this.memosElem.appendChild(elem);
+		this.memosCollectionElem.appendChild(elem);
 	};
 	EditPageView.prototype._parseLayerTypeActor = function(rootElem) {
 		var actorElements = rootElem.getElementsByClassName('layerType_actor');
@@ -360,6 +379,20 @@ var messenger = messenger || {};
 			}
 		});
 		this.characterViewCollection.push(characterView);
+	};
+	EditPageView.prototype._parseLayerTypeCustomImage = function(rootElem) {
+		var layerImageElems = rootElem.getElementsByClassName('layerType_customImage');
+		if (layerImageElems.length === 0) {
+			this.imagesElem.classList.add('hidden');
+		} else {
+			this.imagesElem.classList.remove('hidden');
+			for (var i = 0; i < layerImageElems.length; i++) {
+				this._createLayerTypeCustomImage(layerImageElems[i]);
+			}
+		}
+	};
+	EditPageView.prototype._createLayerTypeCustomImage = function(layerImageElem) {
+		
 	};
 	EditPageView.prototype.isValid = function() {
 		var valid = true;
