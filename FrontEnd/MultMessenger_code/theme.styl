@@ -580,6 +580,32 @@ html, body
 			background-color #f00
 			box-shadow 0 0 2px #f00
 			color #fff
+#image-select-dialog
+	font-size 12px
+	width 360px
+	height 220px
+	.title-holder
+		position relative
+	.content
+		height 140px
+		line-height 140px
+	.cross
+		width 12px
+		height 12px
+		line-height 12px
+		padding 4px
+		right 8px
+		top 7px
+		float right
+		position absolute
+		color #f00
+		border 1px solid #f00
+		&:hover
+			box-shadow 0 0 2px #f00
+		&:active
+			background-color #f00
+			box-shadow 0 0 2px #f00
+			color #fff
 #preload-background
 	display table
 	position fixed
@@ -663,6 +689,7 @@ html, body
 	position absolute
 	right 0
 	overflow-y auto
+	overflow-x hidden
 .section
 	display inline-block
 	color aspect-color
@@ -700,7 +727,11 @@ html, body
 .images
 	margin-bottom 10px
 	.image-item
+		padding 2px
 		border 1px solid #ddd
+		display inline-block
+		border-radius 2px
+		vertical-align top
 .characters
 	width 100%
 	padding 0

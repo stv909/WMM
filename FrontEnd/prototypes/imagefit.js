@@ -14,8 +14,6 @@ window.onload = function() {
 	var switch2Elem = document.getElementById('switch2');
 	var switch3Elem = document.getElementById('switch3');
 
-	var modeElem = document.getElementById('mode');
-
 	switch1Elem.addEventListener('click', function() {
 		if (index1 >= images.length) index1 = 0;
 		imageElem1.src = images[index1];
@@ -30,16 +28,6 @@ window.onload = function() {
 		if (index3 >= images.length) index3 = 0;
 		imageElem3.src = images[index3];
 		index3++;
-	});
-
-	modeElem.addEventListener('click', function() {
-		mode = !mode;
-		if (mode) {
-			modeElem.textContent = 'by height';
-		}
-		else {
-			modeElem.textContent = 'by width';
-		}
 	});
 
 	containerElem.innerHTML = data;
@@ -117,7 +105,10 @@ window.onload = function() {
 		target.addEventListener('load', function() {
 			var newWidth = target.offsetWidth;
 			var newHeight = target.offsetHeight;
-			var scaleFactor = (mode) ? (height / newHeight) : (width / newWidth);
+			//var scaleFactor = (mode) ? (height / newHeight) : (width / newWidth);
+			var scaleX = width / newWidth;
+			var scaleY = height / newHeight;
+			var scaleFactor = Math.min(scaleX, scaleY);
 			var newScales = {
 				scaleX: scales.scaleX * scaleFactor,
 				scaleY: scales.scaleY * scaleFactor

@@ -7,10 +7,11 @@ var messenger = messenger || {};
 	var MessageEditorView = messenger.views.MessageEditorView;
 	var ContactView = messenger.views.ContactView;
 	var CharacterView = messenger.views.CharacterView;
-	var ImageItemView = messenger.view.ImageItemView;
+	var ImageItemView = messenger.views.ImageItemView;
 
 	var UpdateMessageDialogView = messenger.views.UpdateMessageDialogView;
 	var CharactersDialogView = messenger.views.CharactersDialogView;
+	var ImageSelectDialogView = messenger.views.ImageSelectDialogView;
 
 	var AnswerPageView = function() {
 		AnswerPageView.super.apply(this);
@@ -185,7 +186,7 @@ var messenger = messenger || {};
 		
 		this.imagesElem = this.elem.getElementsByClassName('images')[0];
 		this.imagesSectionElem = this.imagesElem.getElementsByClassName('section')[0];
-		this.imagesCollectionElem = this.imagesElem.getElementsByClassName('collection');
+		this.imagesCollectionElem = this.imagesElem.getElementsByClassName('collection')[0];
 
 		this.characterCollectionElem = this.elem.getElementsByClassName('character-collection')[0];
 		
@@ -198,6 +199,7 @@ var messenger = messenger || {};
 		});
 		
 		this.charactersDialogView = new CharactersDialogView();
+		this.imageSelectDialogView = new ImageSelectDialogView();
 
 		this.characters = null;
 		this.characterViewCollection = [];
@@ -382,7 +384,7 @@ var messenger = messenger || {};
 		this.characterViewCollection.push(characterView);
 	};
 	EditPageView.prototype._parseLayerTypeCustomImage = function(rootElem) {
-		var layerImageElems = rootElem.getElementsByClassName('layerType_customImage');
+		var layerImageElems = rootElem.getElementsByClassName('layerType_customImg');
 		if (layerImageElems.length === 0) {
 			this.imagesElem.classList.add('hidden');
 		} else {
@@ -393,7 +395,9 @@ var messenger = messenger || {};
 		}
 	};
 	EditPageView.prototype._createLayerTypeCustomImage = function(layerImageElem) {
-		
+		var imageItemView = new ImageItemView(layerImageElem, this.imageSelectDialogView);
+		imageItemView.attachTo(this.imagesCollectionElem);
+		this.imageItemViewCollection.push(imageItemView);
 	};
 	EditPageView.prototype.isValid = function() {
 		var valid = true;

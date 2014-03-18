@@ -492,18 +492,36 @@ var messenger = messenger || {};
 		this.selected = false;
 	};
 	
-	var ImageItemView = function() {
+	var ImageItemView = function(layerImageElem, imageSelectDialog) {
 		ImageItemView.super.apply(this);
 		var self = this;
 		
+		this.imageSelectDialog = imageSelectDialog;
 		this.elem = template.create('image-item-template', { className: 'image-item' });
+		this.imageElem = this.elem.getElementsByClassName('image')[0];
+		
+		this.layerImageElem = layerImageElem;
+		this.lastValue = this.layerImageElem.src;
+		this.value = this.layerImageElem.src;
+
+		this.imageElem.src = this.value;
 		
 		var elemClickListener = function(event) {
-			
+			self.imageSelectDialog.show();
+		};
+		var firstImageLoadListener = function(event) {
+			console.log('test');
+			if (self.disposed) {
+				return;
+			}
 		};
 		
+		this.elem.addEventListener('click', elemClickListener);
+		this.imageElem.addEventListener('load', firstImageLoadListener);
+		
 		this.once('dispose', function() {
-			self.elem.removeEventListener('click', elemClickListener);	
+			self.elem.removeEventListener('click', elemClickListener);
+			self.imageElem.removeEventListener('load', firstImageLoadListener);
 		});
 	};
 	ImageItemView.super = View;

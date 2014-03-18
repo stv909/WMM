@@ -9,6 +9,7 @@ var css = css || {};
 		}
 		return value;
 	};
+	
 	var parseTransformMatrix = function(rawMatrix) {
 		var values = rawMatrix.split('(')[1].split(')')[0].split(',');
 		var matrix = values.map(function(value) {
@@ -16,6 +17,7 @@ var css = css || {};
 		});
 		return matrix;
 	};
+	
 	var getScales = function(transform) {
 		var result = {
 			scaleX: 1,

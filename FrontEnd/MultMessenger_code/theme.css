@@ -700,6 +700,38 @@ body {
   box-shadow: 0 0 2px #f00;
   color: #fff;
 }
+#image-select-dialog {
+  font-size: 12px;
+  width: 360px;
+  height: 220px;
+}
+#image-select-dialog .title-holder {
+  position: relative;
+}
+#image-select-dialog .content {
+  height: 140px;
+  line-height: 140px;
+}
+#image-select-dialog .cross {
+  width: 12px;
+  height: 12px;
+  line-height: 12px;
+  padding: 4px;
+  right: 8px;
+  top: 7px;
+  float: right;
+  position: absolute;
+  color: #f00;
+  border: 1px solid #f00;
+}
+#image-select-dialog .cross:hover {
+  box-shadow: 0 0 2px #f00;
+}
+#image-select-dialog .cross:active {
+  background-color: #f00;
+  box-shadow: 0 0 2px #f00;
+  color: #fff;
+}
 #preload-background {
   display: table;
   position: fixed;
@@ -802,6 +834,7 @@ body {
   position: absolute;
   right: 0;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .section {
   display: inline-block;
@@ -846,6 +879,13 @@ body {
 }
 .images {
   margin-bottom: 10px;
+}
+.images .image-item {
+  padding: 2px;
+  border: 1px solid #ddd;
+  display: inline-block;
+  border-radius: 2px;
+  vertical-align: top;
 }
 .characters {
   width: 100%;

@@ -606,12 +606,15 @@ window.onload = function() {
 			self.generatePreviewView.show();
 			self.generatePreviewView.generatePreview(shareUrl)
 			.then(function(rawData) {
+				console.log(rawData);
 				var data = JSON.parse(rawData);
 				messageView.previewElem.textContent = 're-preview';
 				self.generatePreviewView.statusElem.textContent = 'Complete';
 				self.generatePreviewView.okElem.classList.remove('hidden');
 				self.generatePreviewView.progressElem.classList.add('hidden');
 				message.setAttribute('preview', data.image);
+			}).catch(function(error) {
+				console.log(error);
 			});
 		};
 		var borrowClickListener = function(event) {
