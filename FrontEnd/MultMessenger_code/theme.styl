@@ -727,11 +727,18 @@ html, body
 .images
 	margin-bottom 10px
 	.image-item
+		font-size 0
 		padding 2px
 		border 1px solid #ddd
 		display inline-block
 		border-radius 2px
 		vertical-align top
+		cursor wait
+		margin-right 8px
+		&.ready
+			cursor pointer
+			&:hover
+				border 1px solid #888
 .characters
 	width 100%
 	padding 0

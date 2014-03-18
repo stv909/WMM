@@ -881,11 +881,20 @@ body {
   margin-bottom: 10px;
 }
 .images .image-item {
+  font-size: 0;
   padding: 2px;
   border: 1px solid #ddd;
   display: inline-block;
   border-radius: 2px;
   vertical-align: top;
+  cursor: wait;
+  margin-right: 8px;
+}
+.images .image-item.ready {
+  cursor: pointer;
+}
+.images .image-item.ready:hover {
+  border: 1px solid #888;
 }
 .characters {
   width: 100%;

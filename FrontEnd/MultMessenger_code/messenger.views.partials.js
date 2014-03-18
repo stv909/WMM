@@ -515,10 +515,10 @@ var messenger = messenger || {};
 				return;
 			}
 			self.imageElem.removeEventListener('load', firstImageLoadListener);
-			self.preloaderElem.classList.add('hidden');
+			self.elem.addEventListener('click', elemClickListener);
+			self.setReady(true);
 		};
 		
-		this.elem.addEventListener('click', elemClickListener);
 		this.imageElem.addEventListener('load', firstImageLoadListener);
 		
 		this.once('dispose', function() {
@@ -529,6 +529,15 @@ var messenger = messenger || {};
 	ImageItemView.super = View;
 	ImageItemView.prototype = Object.create(View.prototype);
 	ImageItemView.prototype.constructor = ImageItemView;
+	ImageItemView.prototype.setReady = function(ready) {
+		if (ready) {
+			this.preloaderElem.classList.add('hidden');
+			this.elem.classList.add('ready');
+		} else {
+			this.preloaderElem.classList.remove('hidden');
+			this.elem.classList.remove('ready');
+		}
+	};
 	
 	messenger.views = messenger.views || {};
 	
