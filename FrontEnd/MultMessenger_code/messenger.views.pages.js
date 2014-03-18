@@ -58,6 +58,8 @@ var messenger = messenger || {};
 		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.preloadElem = this.elem.getElementsByClassName('preload')[0];
 		this.containerElem = this.elem.getElementsByClassName('container')[0];
+		this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
+		this.teaserCrossElem = this.teaserElem.getElementsByClassName('cross')[0];
 		
 		this.selectedMessageView = null;
 		this.messageViews = {};
@@ -83,6 +85,8 @@ var messenger = messenger || {};
 				self.trigger({
 					type: 'click:load'
 				});
+				self.containerElem.classList.remove('shifted');
+				self.teaserElem.classList.add('hidden');
 			}
 		};
 		var preloadElemClickListener = function(event) {
@@ -103,17 +107,38 @@ var messenger = messenger || {};
 				event.preventDefault();
             }
 		};
+		var crossClickListener = function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			self.containerElem.classList.remove('shifted');
+			self.teaserElem.classList.add('hidden');	
+		};
+		var crossMouseMoveListener = function(event) {
+			event.stopPropagation();
+			event.preventDefault();
+		};
+		var teaserElemClickListener = function(event) {
+			html.scrollToBottom(self.containerElem);
+			self.containerElem.classList.remove('shifted');
+			self.teaserElem.classList.add('hidden');
+		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
 		this.preloadElem.addEventListener('click', preloadElemClickListener);
 		this.containerElem.addEventListener('DOMMouseScroll', wheelListener, false);
 		this.containerElem.addEventListener('mousewheel', wheelListener, false);
+		this.teaserCrossElem.addEventListener('click', crossClickListener);
+		this.teaserCrossElem.addEventListener('mousemove', crossMouseMoveListener);
+		this.teaserElem.addEventListener('click', teaserElemClickListener);
 		
 		this.once('dispose', function(event) {
 			self.loadElem.removeEvent('click', loadElemClickListener);
 			self.preloadElem.removeEventListener('click', preloadElemClickListener);
 			self.containerElem.removeEventListener('DOMMouseScroll', wheelListener);
 			self.containerElem.removeEventListener('mousewheel', wheelListener);
+			self.teaserCrossElem.removeEventListener('click', crossClickListener);
+			self.teaserCrossElem.addEventListener('mousemove', crossMouseMoveListener);
+			self.teaserElem.addEventListener('click', teaserElemClickListener);
 		});
 
 		this.hide();

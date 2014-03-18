@@ -42,6 +42,12 @@ var css = css || {};
 		return result;
 	};
 	
+	var getTransform = function(elem) {
+		return elem.style['-webkit-transform'] || 
+			elem.style['-moz-transform'] ||
+			'';
+	};
+	
 	var toTransform = function(rotate, scales) {
 		var textChunks = [];
 		textChunks.push('rotate(');
@@ -64,6 +70,7 @@ var css = css || {};
 	css.parseTransformMatrix = parseTransformMatrix;
 	css.getScales = getScales;
 	css.getRotate = getRotate;
+	css.getTransform = getTransform;
 	css.toTransform = toTransform;
 	
 })(css);

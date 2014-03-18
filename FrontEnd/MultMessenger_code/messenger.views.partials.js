@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, analytics) {
+(function(messenger, abyss, template, analytics, css) {
 	
 	var View = abyss.View;
 	
@@ -517,6 +517,11 @@ var messenger = messenger || {};
 			self.imageElem.removeEventListener('load', firstImageLoadListener);
 			self.elem.addEventListener('click', elemClickListener);
 			self.setReady(true);
+			self.imageSize = {
+				width: self.imageElem.offsetWidth,
+				height: self.imageElem.offsetHeight
+			};
+			self.transform = css.getTransform(self.layerImageElem);
 		};
 		
 		this.imageElem.addEventListener('load', firstImageLoadListener);
@@ -549,4 +554,4 @@ var messenger = messenger || {};
 	messenger.views.CharacterItemView = CharacterItemView;
 	messenger.views.ImageItemView = ImageItemView;
 
-}(messenger, abyss, template, analytics));
+}(messenger, abyss, template, analytics, css));
