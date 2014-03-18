@@ -499,6 +499,7 @@ var messenger = messenger || {};
 		this.imageSelectDialog = imageSelectDialog;
 		this.elem = template.create('image-item-template', { className: 'image-item' });
 		this.imageElem = this.elem.getElementsByClassName('image')[0];
+		this.preloaderElem = this.elem.getElementsByClassName('circularImageHolderG')[0];
 		
 		this.layerImageElem = layerImageElem;
 		this.lastValue = this.layerImageElem.src;
@@ -510,10 +511,11 @@ var messenger = messenger || {};
 			self.imageSelectDialog.show();
 		};
 		var firstImageLoadListener = function(event) {
-			console.log('test');
 			if (self.disposed) {
 				return;
 			}
+			self.imageElem.removeEventListener('load', firstImageLoadListener);
+			self.preloaderElem.classList.add('hidden');
 		};
 		
 		this.elem.addEventListener('click', elemClickListener);
