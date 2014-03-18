@@ -7,6 +7,7 @@ var messenger = messenger || {};
 	var MessageEditorView = messenger.views.MessageEditorView;
 	var ContactView = messenger.views.ContactView;
 	var CharacterView = messenger.views.CharacterView;
+	var ImageItemView = messenger.view.ImageItemView;
 
 	var UpdateMessageDialogView = messenger.views.UpdateMessageDialogView;
 	var CharactersDialogView = messenger.views.CharactersDialogView;
