@@ -811,7 +811,8 @@ body {
 }
 #group {
   display: inline-block;
-  height: 36px;
+  height: 32px;
+  margin-top: 2px;
   margin-right: 8px;
   padding-right: 8px;
   -webkit-user-select: none;
@@ -820,6 +821,7 @@ body {
   color: #fff;
   background-color: #5b5;
   text-shadow: 0 0 2px #666;
+  border-radius: 2px;
 }
 #group:hover {
   background-color: #4a4;
@@ -828,13 +830,13 @@ body {
   background-color: #393;
 }
 #bender {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
 }
 #group-text {
   display: inline-block;
-  height: 36px;
-  line-height: 14px;
+  height: 32px;
+  line-height: 12px;
   vertical-align: top;
   padding-top: 4px;
   padding-bottom: 4px;

@@ -80,6 +80,7 @@ window.onload = function() {
 		this.editElem = document.getElementById('edit');
 		this.postElem = document.getElementById('post');
 		this.onlineElem = document.getElementById('online');
+		this.groupElem = document.getElementById('group');
 		this.disconnectElem = document.getElementById('disconnect');
 
 		this.pageElem = document.getElementById('page');
@@ -263,14 +264,12 @@ window.onload = function() {
 		};
 		
 		this.on('online', function() {
-			self.onlineElem.textContent = 'в сети';
 			self.onlineElem.classList.remove('invalid');
 			setTimeout(function() {
 				checkOnline();
 			}, 2500);
 		});
 		this.on('offline', function() {
-			self.onlineElem.textContent = 'не в сети';
 			self.onlineElem.classList.add('invalid');
 			setTimeout(function() {
 				reconnect();
@@ -369,6 +368,10 @@ window.onload = function() {
 		});
 		this.askMessageDialogView.on('click:cancel', function(event) {
 			self.navigation.setMode('edit');
+		});
+		
+		this.groupElem.addEventListener('click', function() {
+			window.open(settings.groupUrl, '_blank');
 		});
 	};
 	MessengerApplication.prototype.initializeNavigation = function() {

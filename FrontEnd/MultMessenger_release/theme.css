@@ -141,18 +141,18 @@ body {
   position: absolute;
   right: 0;
   display: inline-block;
+  height: 36px;
 }
 #online {
   color: #fff;
-  border-radius: 2px;
+  border-radius: 3px;
   background-color: #5b5;
   border: 1px solid #5b5;
-  height: 16px;
-  line-height: 16px;
-  padding: 4px 8px 4px 8px;
-  margin-top: 5px;
+  width: 4px;
+  height: 4px;
   display: inline-block;
-  margin-left: 3px;
+  vertical-align: top;
+  margin-top: 15px;
 }
 #online.invalid {
   background-color: #f00 !important;
@@ -736,15 +736,16 @@ body {
 }
 #image-select-dialog {
   font-size: 12px;
-  width: 360px;
-  height: 220px;
+  width: 520px;
+  height: 360px;
 }
 #image-select-dialog .title-holder {
   position: relative;
 }
 #image-select-dialog .content {
-  height: 140px;
-  line-height: 140px;
+  height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 #image-select-dialog .cross {
   width: 12px;
@@ -807,6 +808,40 @@ body {
 #chrome .yandex-image {
   width: 64px;
   height: 64px;
+}
+#group {
+  display: inline-block;
+  height: 32px;
+  margin-top: 2px;
+  margin-right: 8px;
+  padding-right: 8px;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  color: #fff;
+  background-color: #5b5;
+  text-shadow: 0 0 2px #666;
+  border-radius: 2px;
+}
+#group:hover {
+  background-color: #4a4;
+}
+#group:active {
+  background-color: #393;
+}
+#bender {
+  width: 32px;
+  height: 32px;
+}
+#group-text {
+  display: inline-block;
+  height: 32px;
+  line-height: 12px;
+  vertical-align: top;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .contact {
   vertical-align: top;

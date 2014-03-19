@@ -5,6 +5,7 @@ var messenger = messenger || {};
 	var View = abyss.View;
 	var ErrorCodes = errors.ErrorCodes;
 	var CharacterItemView = messenger.views.CharacterItemView;
+	var PhotoItemView = messenger.views.PhotoItemView;
 	
 	var PreloadDialogView = function() {
 		PreloadDialogView.super.apply(this);
@@ -329,13 +330,29 @@ var messenger = messenger || {};
 		
 		this.elem = document.getElementById('dialog-background');
 		this.dialogWindowElem = document.getElementById('image-select-dialog');
+		this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
 		this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+		
+		this.photoItemViewCollection = [];
 		
 		var crossElemClickListener = function(event) {
 			self.hide();
 		};
 		
 		this.crossElem.addEventListener('click', crossElemClickListener);
+		
+		this.photoItemViewClickListener = function(event) {
+			var image = event.image;
+			self.trigger({
+				type: 'select:image',
+				image: image
+			});
+			self.hide();
+		};
+		
+		this.addImage('http://www.theapphouse.com/images/app_store.png');
+		this.addImage('https://lh4.googleusercontent.com/-RUyzcGAdX4c/UZHzGP8QXVI/AAAAAAAABds/_gBEWmaF_eQ/s64-no/windows.jpg');
+		this.addImage('http://nw-sb.com/wp-content/uploads/2014/01/065f0b43-6498-4d3d-bc65-75b941791a68.png');
 		
 		this.once('dispose', function() {
 			self.crossElem.removeEventListener('click', crossElemClickListener);
@@ -351,6 +368,12 @@ var messenger = messenger || {};
 	ImageSelectDialogView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
 		this.dialogWindowElem.classList.add('hidden');
+		this.off('select:image');
+	};
+	ImageSelectDialogView.prototype.addImage = function(url) {
+		var photoItemView = new PhotoItemView(url);
+		photoItemView.attachTo(this.contentElem);
+		photoItemView.on('click:image', this.photoItemViewClickListener);
 	};
 	
 	messenger.views = messenger.views || {};
