@@ -6,6 +6,9 @@ menu-height = 50px
 menu-padding = 10px 20px 10px 20px
 page-padding = 20px 20px 10px 20px
 
+box-sizing(value)
+	-moz-box-sizing value
+	box-sizing value
 user-select(value)
 	-webkit-user-select value
 	user-select value
@@ -92,12 +95,14 @@ html, body
 	padding page-padding
 	text-align center
 .message
+	text-align left
 	vertical-align top
 	font-size 0px
 	margin-right 10px
 	margin-bottom 10px
 	border 1px solid #ddd
 	display inline-block
+	box-sizing(border-box)
 	&.normal
 		cursor pointer
 		&:hover
@@ -106,12 +111,13 @@ html, body
 		border 1px solid main-color
 		box-shadow 0 0 5px main-color
 	.content
-		margin 10px
+		background-color #fff
+		display inline-block
 		width 403px
 		height 403px
-		border 1px solid #ddd
-		font-size 14px
-		position relative
+		overflow hidden
+		margin 10px
+		font-size 16px
 	.controls
 		width 100%
 		font-size 16px
