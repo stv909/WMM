@@ -736,15 +736,16 @@ body {
 }
 #image-select-dialog {
   font-size: 12px;
-  width: 360px;
-  height: 220px;
+  width: 520px;
+  height: 360px;
 }
 #image-select-dialog .title-holder {
   position: relative;
 }
 #image-select-dialog .content {
-  height: 140px;
-  line-height: 140px;
+  height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 #image-select-dialog .cross {
   width: 12px;

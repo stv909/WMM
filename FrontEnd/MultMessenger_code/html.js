@@ -1,6 +1,6 @@
 var html = html || {};
 
-(function(html) {
+(function(html, Q) {
 
 	var pasteHtmlAtElement = function(targetElem, html) {
 		if (targetElem.contentEditable === 'false') {
@@ -107,6 +107,24 @@ var html = html || {};
 		};
 	}();
 	
+	var getImageSizeAsync = function(imageUrl) {
+		var deferred = Q.defer();
+		var image = document.createElement('img');
+		
+		image.onload = function() {
+			deferred.resolve({
+				width: image.width,
+				height: image.height
+			});
+		};
+		image.onerror = function() {
+			deferred.reject();
+		};
+		image.src = imageUrl;
+		
+		return deferred.promise;
+	};
+	
 	html.pasteHtmlAtElement = pasteHtmlAtElement;
 	html.checkElemOverflowY = checkElemOverflowX;
 	html.checkElemOverflowY = checkElemOverflowY;
@@ -114,5 +132,6 @@ var html = html || {};
 	html.scrollToBottom = scrollToBottom;
 	html.scrollToTop = scrollToTop;
 	html.normalizeWheelDelta = normalizeWheelDelta;
+	html.getImageSizeAsync = getImageSizeAsync;
 
-})(html);
+})(html, Q);

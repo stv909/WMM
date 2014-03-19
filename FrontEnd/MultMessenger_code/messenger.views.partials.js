@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, analytics, css) {
+(function(messenger, abyss, template, analytics, css, html) {
 	
 	var View = abyss.View;
 	
@@ -509,26 +509,48 @@ var messenger = messenger || {};
 		
 		var elemClickListener = function(event) {
 			self.imageSelectDialog.show();
+			self.imageSelectDialog.once('select:image', function(event) {
+				var image = event.image;
+				html.getImageSizeAsync(image).then(function(size) {
+					var newImageSize = size;
+					var scaleX = self.imageSize.width / newImageSize.width;
+					var scaleY = self.imageSize.height / newImageSize.height;
+					var scaleFactor = Math.min(scaleX, scaleY); 
+					var newScales = {
+						scaleX: self.scales.scaleX * scaleFactor,
+						scaleY: self.scales.scaleY * scaleFactor
+					};
+					var newTransform = css.toTransform(self.rotate, newScales);
+					css.setTransform(self.layerImageElem, newTransform);
+					var offsetLeft = (self.imageSize.width - newImageSize.width) / 2;
+					var offsetTop = (self.imageSize.height - newImageSize.height) / 2;
+					self.layerImageElem.style.left = (self.left + offsetLeft) + 'px';
+					self.layerImageElem.style.top = (self.top + offsetTop) + 'px';
+					self.layerImageElem.src = image;
+				});
+			});
 		};
-		var firstImageLoadListener = function(event) {
+		
+		html.getImageSizeAsync(this.value).then(function(size) {
 			if (self.disposed) {
 				return;
 			}
-			self.imageElem.removeEventListener('load', firstImageLoadListener);
-			self.elem.addEventListener('click', elemClickListener);
 			self.setReady(true);
-			self.imageSize = {
-				width: self.imageElem.offsetWidth,
-				height: self.imageElem.offsetHeight
-			};
+			self.elem.addEventListener('click', elemClickListener);
+			self.left = css.parseStyleSize(self.layerImageElem.style.left);
+			self.top = css.parseStyleSize(self.layerImageElem.style.top);
+			self.imageSize = size;
 			self.transform = css.getTransform(self.layerImageElem);
-		};
-		
-		this.imageElem.addEventListener('load', firstImageLoadListener);
+			self.rotate = css.getRotate(self.transform);
+			self.scales = css.getScales(self.transform);
+			self.imageElem.style.width = parseInt(self.imageSize.width * self.scales.scaleX, 10) + 'px';
+			self.imageElem.style.height = parseInt(self.imageSize.height * self.scales.scaleY, 10) + 'px';
+		}).catch(function() {
+			self.elem.classList.add('hidden');
+		});
 		
 		this.once('dispose', function() {
 			self.elem.removeEventListener('click', elemClickListener);
-			self.imageElem.removeEventListener('load', firstImageLoadListener);
 		});
 	};
 	ImageItemView.super = View;
@@ -544,6 +566,37 @@ var messenger = messenger || {};
 		}
 	};
 	
+	var PhotoItemView = function(imageUrl) {
+		PhotoItemView.super.call(this);
+		var self = this;
+		
+		this.elem = document.createElement('img');
+		this.elem.onload = function() {
+			if (self.disposed) {
+				return;
+			}
+			self.elem.addEventListener('click', elemClickListener);
+		};
+		this.elem.onerror = function() {
+			
+		};
+		this.elem.src = imageUrl;
+		
+		var elemClickListener = function() {
+			self.trigger({
+				type: 'click:image',
+				image: imageUrl
+			});
+		};
+		
+		this.once('dispose', function() {
+			self.elem.removeEventListener('click', elemClickListener);
+		});
+	};
+	PhotoItemView.super = View;
+	PhotoItemView.prototype = Object.create(View.prototype);
+	PhotoItemView.prototype.constructor = PhotoItemView;
+	
 	messenger.views = messenger.views || {};
 	
 	messenger.views.MessageView = MessageView;
@@ -553,5 +606,6 @@ var messenger = messenger || {};
 	messenger.views.CharacterView = CharacterView;
 	messenger.views.CharacterItemView = CharacterItemView;
 	messenger.views.ImageItemView = ImageItemView;
+	messenger.views.PhotoItemView = PhotoItemView;
 
-}(messenger, abyss, template, analytics, css));
+}(messenger, abyss, template, analytics, css, html));
