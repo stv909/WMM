@@ -130,17 +130,17 @@ html, body
 	position absolute
 	right 0
 	display inline-block
+	height 36px
 #online
 	color white
-	border-radius 2px
+	border-radius 3px
 	background-color #55bb55
 	border 1px solid #55bb55
-	height 16px
-	line-height 16px
-	padding 4px 8px 4px 8px
-	margin-top 5px
+	width 4px
+	height 4px
 	display inline-block
-	margin-left 3px
+	vertical-align top
+	margin-top 15px
 	&.invalid
 		background-color #f00 !important
 		border 1px solid #f00
@@ -670,6 +670,31 @@ html, body
 	.chrome-image, .opera-image, .safari-image, .yandex-image
 		width 64px
 		height 64px
+#group
+	display inline-block
+	height 36px
+	margin-right 8px
+	padding-right 8px
+	user-select(none)
+	cursor pointer
+	color #fff
+	background-color #5b5
+	text-shadow 0 0 2px #666
+	&:hover
+		background-color #4a4
+	&:active
+		background-color #393
+#bender
+	width 36px
+	height 36px
+#group-text
+	display inline-block
+	height 36px
+	line-height 14px
+	vertical-align top
+	padding-top 4px
+	padding-bottom 4px
+	box-sizing(border-box)
 .contact
 	vertical-align top
 	font-size 0
