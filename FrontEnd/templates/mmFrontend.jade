@@ -19,7 +19,7 @@ mixin message-body(composer)
 				.buttons-holder.hidden
 					.simple-button.share share
 					.simple-button.preview preview
-					.simple-button.wall on wall
+					.simple-button.wall.super-hidden on wall
 					.simple-button.borrow borrow
 					.simple-button.edit edit
 					.simple-button.clear.hidden clear
@@ -108,6 +108,7 @@ html
 		script(type="application/javascript", src="html.js")
 		script(type="application/javascript", src="template.js")
 		script(type="application/javascript", src="mvp.js")
+		script(type="application/javascript", src="settings.js")
 		script(type="application/javascript", src="chat.js")
 		script(type="application/javascript", src="chat.models.js")
 		script(type="application/javascript", src="chat.store.js")

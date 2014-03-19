@@ -606,11 +606,54 @@ var messenger = messenger || {};
 		});
 	};
 	
+	var PhotoStorage = function() {
+		PhotoStorage.super.apply(this);
+		
+		this.count = 16;
+		this.offset = 0;
+		this.total = 0;
+		
+		this.photos = [];
+	};
+	PhotoStorage.super = EventEmitter;
+	PhotoStorage.prototype = Object.create(EventEmitter.prototype);
+	PhotoStorage.prototype.constructor = PhotoStorage;
+	PhotoStorage.prototype.loadPhotosAsync = function() {
+		var self = this;
+		return VK.apiAsync('photos.getAll', { 
+			offset: this.offset,
+			count: this.count,
+			v: 5.12 
+		}).then(function(response) {
+			self.total = response.count;
+			self.offset += response.items.length;
+			if (self.offset >= self.total) {
+				self.trigger('end:photos');
+			}
+			response.items.forEach(function(item) {
+				var photoKeys = Object.keys(item).filter(function(key) {
+					return key.indexOf('photo') === 0;
+				});
+				photoKeys.forEach(function(key) {
+					self.addPhoto(item[key]);	
+				});
+			});
+		});
+	};
+	PhotoStorage.prototype.addPhoto = function(photo) {
+		this.photos.push(photo);
+		this.trigger({
+			type: 'add:photo',
+			photo: photo
+		});
+	};
+	
 	messenger.storage = {
 		ContactStorage: ContactStorage,
 		CharacterStorage: CharacterStorage,
 		PaginationCollection: PaginationCollection,
 		MessageStorage: MessageStorage1,
+		PhotoStorage: PhotoStorage
 	};
 	
 })(messenger, eve, async, chat, Q, settings);

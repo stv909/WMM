@@ -24,7 +24,7 @@ window.onload = function() {
 		ChatApplication.super.apply(this, arguments);
 		var self = this;
 		
-		this.serverUrl = 'ws://www.bazelevscontent.net:9009/';
+		this.serverUrl = settings.chatUrl;
 		this.shareUrl = 'https://c9.io/stv909/wmm/workspace/FrontEnd/templates/share.html';
 		this.chatClient = new ChatClient(this.serverUrl);
 		this.storage = new Storage();

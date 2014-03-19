@@ -1,6 +1,6 @@
 var chat = chat || {};
 
-(function(chat, mvp, template, html) {
+(function(chat, mvp, template, html, settings) {
 
 	var View = mvp.View;
 
@@ -1050,7 +1050,7 @@ var chat = chat || {};
 		};
 		var rawRequestData = JSON.stringify(requestData);
 		var options = {
-			url: 'https://www.bazelevscontent.net:8893',
+			url: settings.settings.previewGeneratorUrl,
 			method: 'POST',
 			data: 'type=render&data=' + encodeURIComponent(rawRequestData)
 		};
@@ -1168,7 +1168,7 @@ var chat = chat || {};
 		};
 		var rawRequestData = JSON.stringify(requestData);
 		var options = {
-			url: 'https://www.bazelevscontent.net:8893',
+			url: settings.previewGeneratorUrl,
 			method: 'POST',
 			data: 'type=render&data=' + encodeURIComponent(rawRequestData)
 		};
@@ -1222,4 +1222,4 @@ var chat = chat || {};
 		GeneratePreviewView: GeneratePreviewView
 	};
 	
-})(chat, mvp, template, html);
+})(chat, mvp, template, html, settings);

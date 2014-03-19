@@ -503,13 +503,12 @@ var messenger = messenger || {};
 		
 		this.layerImageElem = layerImageElem;
 		this.lastValue = this.layerImageElem.src;
-		this.value = this.layerImageElem.src;
-
-		this.imageElem.src = this.value;
+		this.imageElem.src = this.layerImageElem.src;
 		
 		var elemClickListener = function(event) {
 			self.imageSelectDialog.show();
 			self.imageSelectDialog.once('select:image', function(event) {
+				self.setReady(false);
 				var image = event.image;
 				html.getImageSizeAsync(image).then(function(size) {
 					var newImageSize = size;
@@ -527,14 +526,24 @@ var messenger = messenger || {};
 					self.layerImageElem.style.left = (self.left + offsetLeft) + 'px';
 					self.layerImageElem.style.top = (self.top + offsetTop) + 'px';
 					self.layerImageElem.src = image;
+					self.imageElem.src = image;
+					
+					var styleScaleX = self.oldStyleWidth / newImageSize.width;
+					var styleScaleY = self.oldStyleHeight / newImageSize.height;
+					var minStyleScale = Math.min(styleScaleX, styleScaleY);
+					
+					self.imageElem.style.width = parseInt(newImageSize.width * minStyleScale, 10) + 'px';
+					self.imageElem.style.height = parseInt(newImageSize.height * minStyleScale, 10) + 'px';
+				}).catch(function(error) {
+					self.imageElem.src = self.lastValue;
+					self.layerImageElem.src = self.lastValue;
+				}).fin(function() {
+					self.setReady(true);
 				});
 			});
 		};
 		
-		html.getImageSizeAsync(this.value).then(function(size) {
-			if (self.disposed) {
-				return;
-			}
+		html.getImageSizeAsync(this.lastValue).then(function(size) {
 			self.setReady(true);
 			self.elem.addEventListener('click', elemClickListener);
 			self.left = css.parseStyleSize(self.layerImageElem.style.left);
@@ -545,7 +554,10 @@ var messenger = messenger || {};
 			self.scales = css.getScales(self.transform);
 			self.imageElem.style.width = parseInt(self.imageSize.width * self.scales.scaleX, 10) + 'px';
 			self.imageElem.style.height = parseInt(self.imageSize.height * self.scales.scaleY, 10) + 'px';
-		}).catch(function() {
+			self.oldStyleWidth = css.parseStyleSize(self.imageElem.style.width);
+			self.oldStyleHeight = css.parseStyleSize(self.imageElem.style.height);
+		}).catch(function(error) {
+			console.log(error);
 			self.elem.classList.add('hidden');
 		});
 		
@@ -560,9 +572,11 @@ var messenger = messenger || {};
 		if (ready) {
 			this.preloaderElem.classList.add('hidden');
 			this.elem.classList.add('ready');
+			this.imageElem.classList.remove('hidden');
 		} else {
 			this.preloaderElem.classList.remove('hidden');
 			this.elem.classList.remove('ready');
+			this.imageElem.classList.add('hidden');
 		}
 	};
 	
@@ -570,17 +584,22 @@ var messenger = messenger || {};
 		PhotoItemView.super.call(this);
 		var self = this;
 		
-		this.elem = document.createElement('img');
-		this.elem.onload = function() {
+		this.elem = template.create('image-item-template', { className: 'image-item' });
+		this.imageElem = this.elem.getElementsByClassName('image')[0];
+		this.preloaderElem = this.elem.getElementsByClassName('circularImageHolderG')[0];
+		this.imageElem.onload = function() {
 			if (self.disposed) {
 				return;
 			}
 			self.elem.addEventListener('click', elemClickListener);
+			self.preloaderElem.classList.add('hidden');
+			self.imageElem.classList.remove('hidden');
+			self.elem.classList.add('ready');
 		};
-		this.elem.onerror = function() {
-			
+		this.imageElem.onerror = function() {
+			self.elem.classList.add('hidden');
 		};
-		this.elem.src = imageUrl;
+		this.imageElem.src = imageUrl;
 		
 		var elemClickListener = function() {
 			self.trigger({
