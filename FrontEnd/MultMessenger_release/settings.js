@@ -35,8 +35,8 @@ var settings = settings || {};
 	};
 	settings.animationServiceUrls = {
 		'dev': 'https://www.bazelevscontent.net/8794',
-		'content': 'https://www.bazelevscontent.net/8793',
-		'release': 'https://www.bazelevscontent.net/8793'
+		'content': 'https://www.bazelevscontent.net/8792',
+		'release': 'https://www.bazelevscontent.net/8792'
 	};
 	
 	settings.publicId = settings.publicIds[settings.version];
