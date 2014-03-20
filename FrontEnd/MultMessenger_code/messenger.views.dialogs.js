@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, errors) {
+(function(messenger, abyss, template, errors, html) {
 	
 	var View = abyss.View;
 	var ErrorCodes = errors.ErrorCodes;
@@ -335,11 +335,14 @@ var messenger = messenger || {};
 		this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
 		this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
 		this.loadPhotoElem = this.dialogWindowElem.getElementsByClassName('load-photo')[0];
-		this.imageCollection = this.dialogWindowElem.getElementsByClassName('image-collection')[0];
+		this.imageCollectionElem = this.dialogWindowElem.getElementsByClassName('image-collection')[0];
+		this.preloadedImageCollectionElem = this.dialogWindowElem.getElementsByClassName('preloaded-image-collection')[0];
 		
+		this.preloadedPhotoItemViewCollection = [];
 		this.photoItemViewCollection = [];
 		this.photoStorage = new PhotoStorage();
 		this.loading = false;
+		this.isFirstTime = true;
 		
 		var crossElemClickListener = function(event) {
 			self.hide();
@@ -392,10 +395,6 @@ var messenger = messenger || {};
 			self.addImage(event.photo);	
 		});
 		
-		this.addImage('http://www.theapphouse.com/images/app_store.png');
-		this.addImage('https://lh4.googleusercontent.com/-RUyzcGAdX4c/UZHzGP8QXVI/AAAAAAAABds/_gBEWmaF_eQ/s64-no/windows.jpg');
-		this.addImage('http://nw-sb.com/wp-content/uploads/2014/01/065f0b43-6498-4d3d-bc65-75b941791a68.png');
-		
 		this.once('dispose', function() {
 			self.crossElem.removeEventListener('click', crossElemClickListener);
 			self.loadPhotoElem.removeEventListener('click', loadPhotoElemClickListener);
@@ -408,8 +407,13 @@ var messenger = messenger || {};
 	ImageSelectDialogView.prototype = Object.create(View.prototype);
 	ImageSelectDialogView.prototype.constructor = ImageSelectDialogView;
 	ImageSelectDialogView.prototype.show = function() {
+		html.scrollToTop(this.contentElem);
 		this.elem.classList.remove('hidden');
 		this.dialogWindowElem.classList.remove('hidden');
+		if (this.isFirstTime) {
+			this.isFirstTime = false;
+			this.loadPhotoElem.click();
+		}
 	};
 	ImageSelectDialogView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
@@ -418,8 +422,22 @@ var messenger = messenger || {};
 	};
 	ImageSelectDialogView.prototype.addImage = function(url) {
 		var photoItemView = new PhotoItemView(url);
-		photoItemView.attachTo(this.imageCollection);
+		photoItemView.attachTo(this.imageCollectionElem);
 		photoItemView.on('click:image', this.photoItemViewClickListener);
+		this.photoItemViewCollection.push(photoItemView);
+	};
+	ImageSelectDialogView.prototype.updatePreloadedImages = function(images) {
+		var self = this;
+		self.preloadedPhotoItemViewCollection.forEach(function(view) {
+			view.dispose();
+		});
+		self.preloadedImageCollection = [];
+		images.forEach(function(image) {
+			var photoItemView = new PhotoItemView(image);
+			photoItemView.attachTo(self.preloadedImageCollectionElem);
+			photoItemView.on('click:image', self.photoItemViewClickListener);
+			self.preloadedPhotoItemViewCollection.push(photoItemView);
+		});
 	};
 	
 	messenger.views = messenger.views || {};
@@ -433,4 +451,4 @@ var messenger = messenger || {};
 	messenger.views.CharactersDialogView = CharactersDialogView;
 	messenger.views.ImageSelectDialogView = ImageSelectDialogView;
 	
-})(messenger, abyss, template, errors);
+})(messenger, abyss, template, errors, html);

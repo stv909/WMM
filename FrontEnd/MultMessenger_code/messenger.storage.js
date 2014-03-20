@@ -614,6 +614,7 @@ var messenger = messenger || {};
 		this.total = 0;
 		
 		this.photos = [];
+		this.photoKeys = ['photo_807', 'photo_604', 'photo_130', 'photo'];
 	};
 	PhotoStorage.super = EventEmitter;
 	PhotoStorage.prototype = Object.create(EventEmitter.prototype);
@@ -631,12 +632,18 @@ var messenger = messenger || {};
 				self.trigger('end:photos');
 			}
 			response.items.forEach(function(item) {
-				var photoKeys = Object.keys(item).filter(function(key) {
-					return key.indexOf('photo') === 0;
-				});
-				photoKeys.forEach(function(key) {
-					self.addPhoto(item[key]);	
-				});
+				var key;
+				var keys = Object.keys(item);
+				for (var i = 0; i < self.photoKeys.length; i++) {
+					var photoKey = self.photoKeys[i];
+					if (keys.indexOf(photoKey) !== -1) {
+						key = photoKey;
+						break;
+					}
+				}
+				if (key) {
+					self.addPhoto(item[key]);
+				}
 			});
 		});
 	};
