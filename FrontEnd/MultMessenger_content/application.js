@@ -372,6 +372,7 @@ window.onload = function() {
 		
 		this.groupElem.addEventListener('click', function() {
 			window.open(settings.groupUrl, '_blank');
+			analytics.send('app_start', 'app_go_group');
 		});
 	};
 	MessengerApplication.prototype.initializeNavigation = function() {

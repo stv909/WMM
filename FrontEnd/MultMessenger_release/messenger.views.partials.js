@@ -515,6 +515,7 @@ var messenger = messenger || {};
 		
 		var elemClickListener = function(event) {
 			self.imageSelectDialog.show();
+			analytics.send('editor', 'photo_change');
 			self.imageSelectDialog.once('select:image', function(event) {
 				self.setReady(false);
 				var image = event.image;
@@ -542,6 +543,7 @@ var messenger = messenger || {};
 					
 					self.imageElem.style.width = parseInt(newImageSize.width * minStyleScale, 10) + 'px';
 					self.imageElem.style.height = parseInt(newImageSize.height * minStyleScale, 10) + 'px';
+					analytics.send('editor', 'photo_select');
 				}).catch(function(error) {
 					self.imageElem.src = self.lastValue;
 					self.layerImageElem.src = self.lastValue;

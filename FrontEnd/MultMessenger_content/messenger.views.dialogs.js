@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, errors, html) {
+(function(messenger, abyss, template, errors, html, analytics) {
 	
 	var View = abyss.View;
 	var ErrorCodes = errors.ErrorCodes;
@@ -357,6 +357,7 @@ var messenger = messenger || {};
 					self.loading = false;
 					self.loadPhotoElem.textContent = 'Загрузить еще фото...';
 				});
+				analytics.send('editor', 'photo_load_more');
 			}
 		};
 		
@@ -451,4 +452,4 @@ var messenger = messenger || {};
 	messenger.views.CharactersDialogView = CharactersDialogView;
 	messenger.views.ImageSelectDialogView = ImageSelectDialogView;
 	
-})(messenger, abyss, template, errors, html);
+})(messenger, abyss, template, errors, html, analytics);

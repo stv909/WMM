@@ -7,7 +7,7 @@ var settings = settings || {};
 	
 	settings.previewGeneratorUrls = {
 		'dev': 'https://www.bazelevscontent.net/8894',
-		'release': 'https://www.bazelevscontent.net/8893'
+		'release': 'https://www.bazelevscontent.net/8892'
 	};
 
 	settings.chatUrls = {

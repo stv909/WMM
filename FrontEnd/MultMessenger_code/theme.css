@@ -757,6 +757,11 @@ body {
 #image-select-dialog .content .image-item .image {
   max-width: 320px;
 }
+#image-select-dialog .button-special {
+  width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 #image-select-dialog .cross {
   width: 12px;
   height: 12px;

@@ -54,7 +54,7 @@
 							var content = value.content;
 							if (content) {
 								var decodedContent = base64.decode(content);
-								var newContent = decodedContent.replace(/https:\/\/www.bazelevscontent.net:8583\//g, 'https://www.bazelevscontent.net/8582/');
+								var newContent = decodedContent.replace('background-image: url(http://bazelevscontent.net/WMM/chat.html);', '');
 								if (decodedContent !== newContent) {
 									var newEncodedContent = base64.encode(newContent);
 									message.value.content = newEncodedContent;
