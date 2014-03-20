@@ -20,8 +20,8 @@ var settings = settings || {};
 	};
 	settings.previewGeneratorUrls = {
 		'dev': 'https://www.bazelevscontent.net/8894',
-		'content': 'https://www.bazelevscontent.net/8893',
-		'release': 'https://www.bazelevscontent.net/8893'
+		'content': 'https://www.bazelevscontent.net/8892',
+		'release': 'https://www.bazelevscontent.net/8892'
 	};
 	settings.imageStoreBaseUrls = {
 		'dev': 'https://www.bazelevscontent.net/8584/',
