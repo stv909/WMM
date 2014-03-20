@@ -14,30 +14,35 @@ var settings = settings || {};
 		'release': 'vk.com/toome_app'
 	};
 	settings.chatUrls = {
-		'dev': 'ws://www.bazelevscontent.net:9012/',
-		'content': 'ws://www.bazelevscontent.net:9009/',
+		'dev': 'wss://www.bazelevscontent.net/9012/',
+		'content': 'wss://www.bazelevscontent.net/9012/',
 		'release': 'ws://www.bazelevscontent.net:9009/'
 	};
 	settings.previewGeneratorUrls = {
-		'dev': 'https://www.bazelevscontent.net:8895',
-		'content': 'https://www.bazelevscontent.net:8893',
+		'dev': 'https://www.bazelevscontent.net/8894',
+		'content': 'https://www.bazelevscontent.net/8894',
 		'release': 'https://www.bazelevscontent.net:8893'
 	};
 	settings.imageStoreBaseUrls = {
-		'dev': 'http://www.bazelevscontent.net:8584/',
-		'content': 'http://www.bazelevscontent.net:8582/',
+		'dev': 'http://www.bazelevscontent.net/8584/',
+		'content': 'http://www.bazelevscontent.net/8584/',
 		'release': 'http://www.bazelevscontent.net:8582/'
 	};
 	settings.layerImageStoreBaseUrls = {
-		'dev': 'https://www.bazelevscontent.net:8585/',
-		'content': 'https://www.bazelevscontent.net:8583/',
+		'dev': 'http://www.bazelevscontent.net/8584/',
+		'content': 'http://www.bazelevscontent.net/8584/',
 		'release': 'https://www.bazelevscontent.net:8583/'
 	};
 	settings.animationServiceUrls = {
-		'dev': 'https://www.bazelevscontent.net:8795',
-		'content': 'https://www.bazelevscontent.net:8793',
+		'dev': 'https://www.bazelevscontent.net/8794',
+		'content': 'https://www.bazelevscontent.net/8794',
 		'release': 'https://www.bazelevscontent.net:8793'
 	};
+	// settings.imageUploadServiceUrls = {
+	// 	'dev': 'http://bazelevscontent.net:9090/',
+	// 	'content': 'http://bazelevscontent.net/9090/',
+	// 	'release': 'http://bazelevscontent.net:9090/'
+	// };
 	
 	settings.publicId = settings.publicIds[settings.version];
 	settings.vkAppUrl = settings.vkAppUrls[settings.version];
@@ -45,7 +50,7 @@ var settings = settings || {};
 	settings.vkAppHttpsUrl = ['https://', settings.vkAppUrl].join('');
 	settings.shareMessageBaseUrl = 'https://bazelevscontent.net/multmessenger_release/share.html?ids=msg.';
 	settings.characterListUrl = 'https://bazelevshosting.net/MCM/characters_resources.json';
-	settings.imageUploadServiceUrl = 'http://bazelevscontent.net:9090/';
+	//settings.imageUploadServiceUrl = settings.imageUploadServiceUrls[settings.version];
 	settings.chatUrl = settings.chatUrls[settings.version];
 	settings.previewGeneratorUrl = settings.previewGeneratorUrls[settings.version];
 	settings.imageStoreBaseUrl = settings.imageStoreBaseUrls[settings.version];

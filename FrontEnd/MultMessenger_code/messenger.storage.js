@@ -35,6 +35,7 @@ var messenger = messenger || {};
 		return VK.apiAsync('users.get', {
 			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 			name_case: 'nom',
+			https: 1,
 			v: 5.12
 		}).then(function(response) {
 			var rawOwner = response[0];
@@ -52,6 +53,7 @@ var messenger = messenger || {};
 				user_ids: self.senderId,
 				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 				name_case: 'nom',
+				https: 1,
 				v: 5.12
 			}).then(function(response) {
 				var rawSender = response[0];
@@ -73,6 +75,7 @@ var messenger = messenger || {};
 			offset: offset,
 			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 			name_case: 'nom',
+			https: 1,
 			v: 5.12
 		}).then(function(response) {
 			var rawFriends = response.items;
@@ -624,6 +627,7 @@ var messenger = messenger || {};
 		return VK.apiAsync('photos.getAll', { 
 			offset: this.offset,
 			count: this.count,
+			https: 1,
 			v: 5.12 
 		}).then(function(response) {
 			self.total = response.count;
