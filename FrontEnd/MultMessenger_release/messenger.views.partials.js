@@ -21,7 +21,7 @@ var messenger = messenger || {};
 		this.elem.classList.add('chosen');
 		this.elem.classList.remove('normal');
 		this.removeCachedElem();
-		this.addCachedElem(this.cachedFullElem);
+		this.addCachedElem(this.getCachedFullElem());
 		this.trigger({
 			type: 'select',
 			message: this.model
@@ -53,13 +53,21 @@ var messenger = messenger || {};
 		this.cachedFullElem = document.createElement('div');
 		this.cachedFullElem.innerHTML = this.model.get('content');
 	};
-	MessageView.prototype.setModel = function(model) {
+	MessageView.prototype.getCachedFullElem = function() {
+		if (!this.cachedFullElem) {
+			this.prepareCachedFullElem();
+		}
+		return this.cachedFullElem;
+	};
+	MessageView.prototype.setModel = function(model, full) {
 		this.model = model;
 		this.removeCachedElem();
 		this.prepareCachedPreviewElem();
-		this.prepareCachedFullElem();
+		if (full) {
+			this.prepareCachedFullElem();
+		}
 		if (this.selected) {
-			this.addCachedElem(this.cachedFullElem);
+			this.addCachedElem(this.getCachedFullElem());
 		} else {
 			this.addCachedElem(this.cachedPreviewElem);
 		}
@@ -70,7 +78,7 @@ var messenger = messenger || {};
 		var self = this;
 
 		this.prepareCachedPreviewElem();
-		this.prepareCachedFullElem();
+		//this.prepareCachedFullElem();
 		this.deselect();
 
 		var elemClickListener = function(event) {
@@ -101,7 +109,7 @@ var messenger = messenger || {};
 	MessageEditorView.prototype = Object.create(MessageView.prototype);
 	MessageEditorView.prototype.constructor = MessageEditorView;
 	MessageEditorView.prototype.setModel = function(model) {
-		MessageEditorView.super.prototype.setModel.apply(this, arguments);
+		MessageEditorView.super.prototype.setModel.apply(this, [model, true]);
 		this.trigger({
 			type: 'change:content',
 			elem: this.cachedFullElem
