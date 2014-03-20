@@ -94,7 +94,7 @@ var messenger = messenger || {};
 	
 	var ChatClientWrapper = function(chatClient) {
 		this.chatClient = chatClient;
-		this.operationTimeout = 10000;
+		this.operationTimeout = 60000;
 	};
 	ChatClientWrapper.prototype._createRequestTask = function(checkReadyState) {
 		var task = Q.defer();

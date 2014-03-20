@@ -47,6 +47,7 @@ body {
   background-color: #1570a6;
   color: #fff;
   padding: 10px 20px 10px 20px;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   vertical-align: middle;
 }
@@ -98,12 +99,15 @@ body {
   text-align: center;
 }
 .message {
+  text-align: left;
   vertical-align: top;
   font-size: 0px;
   margin-right: 10px;
   margin-bottom: 10px;
   border: 1px solid #ddd;
   display: inline-block;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .message.normal {
   cursor: pointer;
@@ -116,12 +120,13 @@ body {
   box-shadow: 0 0 5px #1570a6;
 }
 .message .content {
-  margin: 10px;
+  background-color: #fff;
+  display: inline-block;
   width: 403px;
   height: 403px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  position: relative;
+  overflow: hidden;
+  margin: 10px;
+  font-size: 16px;
 }
 .message .controls {
   width: 100%;

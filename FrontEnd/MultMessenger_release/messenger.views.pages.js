@@ -411,6 +411,11 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype._parseLayerTypeCustomImage = function(rootElem) {
 		var layerImageElems = rootElem.getElementsByClassName('layerType_customImg');
+		var photoUrls = [];
+		for (var i = 0; i < layerImageElems.length; i++) {
+			photoUrls.push(layerImageElems[i].src);
+		}
+		this.imageSelectDialogView.updatePreloadedImages(photoUrls);
 		if (layerImageElems.length === 0) {
 			this.imagesElem.classList.add('hidden');
 		} else {

@@ -35,6 +35,7 @@ var messenger = messenger || {};
 		return VK.apiAsync('users.get', {
 			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 			name_case: 'nom',
+			https: 1,
 			v: 5.12
 		}).then(function(response) {
 			var rawOwner = response[0];
@@ -52,6 +53,7 @@ var messenger = messenger || {};
 				user_ids: self.senderId,
 				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 				name_case: 'nom',
+				https: 1,
 				v: 5.12
 			}).then(function(response) {
 				var rawSender = response[0];
@@ -73,6 +75,7 @@ var messenger = messenger || {};
 			offset: offset,
 			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 			name_case: 'nom',
+			https: 1,
 			v: 5.12
 		}).then(function(response) {
 			var rawFriends = response.items;
@@ -606,11 +609,62 @@ var messenger = messenger || {};
 		});
 	};
 	
+	var PhotoStorage = function() {
+		PhotoStorage.super.apply(this);
+		
+		this.count = 16;
+		this.offset = 0;
+		this.total = 0;
+		
+		this.photos = [];
+		this.photoKeys = ['photo_807', 'photo_604', 'photo_130', 'photo'];
+	};
+	PhotoStorage.super = EventEmitter;
+	PhotoStorage.prototype = Object.create(EventEmitter.prototype);
+	PhotoStorage.prototype.constructor = PhotoStorage;
+	PhotoStorage.prototype.loadPhotosAsync = function() {
+		var self = this;
+		return VK.apiAsync('photos.getAll', { 
+			offset: this.offset,
+			count: this.count,
+			https: 1,
+			v: 5.12 
+		}).then(function(response) {
+			self.total = response.count;
+			self.offset += response.items.length;
+			if (self.offset >= self.total) {
+				self.trigger('end:photos');
+			}
+			response.items.forEach(function(item) {
+				var key;
+				var keys = Object.keys(item);
+				for (var i = 0; i < self.photoKeys.length; i++) {
+					var photoKey = self.photoKeys[i];
+					if (keys.indexOf(photoKey) !== -1) {
+						key = photoKey;
+						break;
+					}
+				}
+				if (key) {
+					self.addPhoto(item[key]);
+				}
+			});
+		});
+	};
+	PhotoStorage.prototype.addPhoto = function(photo) {
+		this.photos.push(photo);
+		this.trigger({
+			type: 'add:photo',
+			photo: photo
+		});
+	};
+	
 	messenger.storage = {
 		ContactStorage: ContactStorage,
 		CharacterStorage: CharacterStorage,
 		PaginationCollection: PaginationCollection,
 		MessageStorage: MessageStorage1,
+		PhotoStorage: PhotoStorage
 	};
 	
 })(messenger, eve, async, chat, Q, settings);

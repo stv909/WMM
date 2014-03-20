@@ -1,0 +1,91 @@
+<html>
+	<head>
+		<title>Convert</title>
+		<script src="../eve.js"></script>
+		<script src="../base64.js"></script>
+		<script src="../chat.js"></script>
+		<script>
+			Array.prototype.chunk = function(chunkSize) {
+				var array = this;
+				return [].concat.apply([],
+				array.map(function(elem, i) {
+					return i % chunkSize ? [] : [array.slice(i, i + chunkSize)];
+				}));
+			}
+			var notifier = new eve.EventEmitter();
+			window.onload = function() {
+				var wait = false;
+				var chatClient = new chat.ChatClient('wss://www.bazelevscontent.net/9009/');
+				chatClient.on('connect', function() {
+					console.log('connect');
+					chatClient.login('test');
+				});
+				chatClient.on('message:login', function() {
+					console.log('login');
+					chatClient.messagedump(0, Date.now());
+				});
+				chatClient.on('message:messagedump', function(event) {
+					console.log('messagedump');
+					var messagedump = event.response.messagedump;
+					var chunks = messagedump.chunk(50);
+					var next = 0;
+					notifier.on('next', function() {
+						if (next >= chunks.length) {
+							notifier.trigger('end');
+						} else {
+							console.log(next);
+							chatClient.retrieve(chunks[next]);
+							next++;
+						}
+					});
+					notifier.on('end', function() {
+						setInterval(function() {
+							chatClient.disconnect();
+						}, 60000);
+					});
+					notifier.trigger('next');
+				});
+				chatClient.on('message:retrieve', function(event) {
+					console.log('retrieve');
+					var retrieve = event.response.retrieve;
+					retrieve.forEach(function(message) {
+						var value = message.value;
+						if (value) {
+							var content = value.content;
+							if (content) {
+								var decodedContent = base64.decode(content);
+								var newContent = decodedContent.replace(/https:\/\/www.bazelevscontent.net:8583\//g, 'https://www.bazelevscontent.net/8582/');
+								if (decodedContent !== newContent) {
+									var newEncodedContent = base64.encode(newContent);
+									message.value.content = newEncodedContent;
+									var id = message.value.id;
+									console.log('save: ' + id);
+									chatClient.store('msg', id, JSON.stringify(message.value));
+								}
+							}
+						}
+					});
+					setTimeout(function() {
+						notifier.trigger('next');
+					}, 250);
+				});
+				chatClient.on('disconnect', function() {
+					console.log('disconnect');
+					wait = false;
+					converElem.textContent = 'Convert';
+				});
+				var converElem = document.getElementById('convert');
+				converElem.addEventListener('click', function() {
+					if (!wait) {
+						converElem.textContent = 'Wait... (look at console)';
+						wait = true;
+						chatClient.connect();
+					}
+				});
+			};
+		</script>
+	</head>
+	<body>
+		<button id="convert">Convert</button>
+	</body>
+</html>

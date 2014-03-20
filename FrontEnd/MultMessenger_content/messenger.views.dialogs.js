@@ -1,11 +1,13 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, errors) {
+(function(messenger, abyss, template, errors, html) {
 	
 	var View = abyss.View;
 	var ErrorCodes = errors.ErrorCodes;
 	var CharacterItemView = messenger.views.CharacterItemView;
 	var PhotoItemView = messenger.views.PhotoItemView;
+	
+	var PhotoStorage = messenger.storage.PhotoStorage;
 	
 	var PreloadDialogView = function() {
 		PreloadDialogView.super.apply(this);
@@ -332,14 +334,50 @@ var messenger = messenger || {};
 		this.dialogWindowElem = document.getElementById('image-select-dialog');
 		this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
 		this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+		this.loadPhotoElem = this.dialogWindowElem.getElementsByClassName('load-photo')[0];
+		this.imageCollectionElem = this.dialogWindowElem.getElementsByClassName('image-collection')[0];
+		this.preloadedImageCollectionElem = this.dialogWindowElem.getElementsByClassName('preloaded-image-collection')[0];
 		
+		this.preloadedPhotoItemViewCollection = [];
 		this.photoItemViewCollection = [];
+		this.photoStorage = new PhotoStorage();
+		this.loading = false;
+		this.isFirstTime = true;
 		
 		var crossElemClickListener = function(event) {
 			self.hide();
 		};
 		
+		var loadPhotoElemClickListener = function(event) {
+			if (!self.loading) {
+				self.loading = true;
+				self.loadPhotoElem.textContent = 'Загрузка фото...';
+				self.photoStorage.loadPhotosAsync().then(function() {
+				}).fin(function() {
+					self.loading = false;
+					self.loadPhotoElem.textContent = 'Загрузить еще фото...';
+				});
+			}
+		};
+		
+		var wheelListener = function(event) {
+            var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
+            var isIE = Math.abs(delta) >= 120;
+            var scrollPending = isIE ? delta / 2 : 0;
+            if (delta < 0 && (self.contentElem.scrollTop + scrollPending) <= 0) {
+				self.contentElem.scrollTop = 0;
+				event.preventDefault();
+            }
+            else if (delta > 0 && (self.contentElem.scrollTop + scrollPending >= (self.contentElem.scrollHeight - self.contentElem.offsetHeight))) {
+				self.contentElem.scrollTop = self.contentElem.scrollHeight - self.contentElem.offsetHeight;
+				event.preventDefault();
+            }
+		};
+		
 		this.crossElem.addEventListener('click', crossElemClickListener);
+		this.loadPhotoElem.addEventListener('click', loadPhotoElemClickListener);
+		this.contentElem.addEventListener('DOMMouseScroll', wheelListener, false);
+		this.contentElem.addEventListener('mousewheel', wheelListener, false);
 		
 		this.photoItemViewClickListener = function(event) {
 			var image = event.image;
@@ -350,20 +388,32 @@ var messenger = messenger || {};
 			self.hide();
 		};
 		
-		this.addImage('http://www.theapphouse.com/images/app_store.png');
-		this.addImage('https://lh4.googleusercontent.com/-RUyzcGAdX4c/UZHzGP8QXVI/AAAAAAAABds/_gBEWmaF_eQ/s64-no/windows.jpg');
-		this.addImage('http://nw-sb.com/wp-content/uploads/2014/01/065f0b43-6498-4d3d-bc65-75b941791a68.png');
+		this.photoStorage.on('end:photos', function() {
+			self.loadPhotoElem.classList.add('hidden');
+		});
+		this.photoStorage.on('add:photo', function(event) {
+			self.addImage(event.photo);	
+		});
 		
 		this.once('dispose', function() {
 			self.crossElem.removeEventListener('click', crossElemClickListener);
+			self.loadPhotoElem.removeEventListener('click', loadPhotoElemClickListener);
+			self.contentElem.addEventListener('DOMMouseScroll', wheelListener);
+			self.contentElem.addEventListener('mousewheel', wheelListener);
+			self.photoStorage.dispose();
 		});
 	};
 	ImageSelectDialogView.super = View;
 	ImageSelectDialogView.prototype = Object.create(View.prototype);
 	ImageSelectDialogView.prototype.constructor = ImageSelectDialogView;
 	ImageSelectDialogView.prototype.show = function() {
+		html.scrollToTop(this.contentElem);
 		this.elem.classList.remove('hidden');
 		this.dialogWindowElem.classList.remove('hidden');
+		if (this.isFirstTime) {
+			this.isFirstTime = false;
+			this.loadPhotoElem.click();
+		}
 	};
 	ImageSelectDialogView.prototype.hide = function() {
 		this.elem.classList.add('hidden');
@@ -372,8 +422,22 @@ var messenger = messenger || {};
 	};
 	ImageSelectDialogView.prototype.addImage = function(url) {
 		var photoItemView = new PhotoItemView(url);
-		photoItemView.attachTo(this.contentElem);
+		photoItemView.attachTo(this.imageCollectionElem);
 		photoItemView.on('click:image', this.photoItemViewClickListener);
+		this.photoItemViewCollection.push(photoItemView);
+	};
+	ImageSelectDialogView.prototype.updatePreloadedImages = function(images) {
+		var self = this;
+		self.preloadedPhotoItemViewCollection.forEach(function(view) {
+			view.dispose();
+		});
+		self.preloadedImageCollection = [];
+		images.forEach(function(image) {
+			var photoItemView = new PhotoItemView(image);
+			photoItemView.attachTo(self.preloadedImageCollectionElem);
+			photoItemView.on('click:image', self.photoItemViewClickListener);
+			self.preloadedPhotoItemViewCollection.push(photoItemView);
+		});
 	};
 	
 	messenger.views = messenger.views || {};
@@ -387,4 +451,4 @@ var messenger = messenger || {};
 	messenger.views.CharactersDialogView = CharactersDialogView;
 	messenger.views.ImageSelectDialogView = ImageSelectDialogView;
 	
-})(messenger, abyss, template, errors);
+})(messenger, abyss, template, errors, html);

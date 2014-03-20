@@ -736,16 +736,26 @@ body {
 }
 #image-select-dialog {
   font-size: 12px;
-  width: 520px;
-  height: 360px;
+  width: 720px;
+  height: 480px;
 }
 #image-select-dialog .title-holder {
   position: relative;
 }
 #image-select-dialog .content {
-  height: 300px;
+  height: 443px;
+  padding: 10px;
   overflow-y: auto;
   overflow-x: hidden;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#image-select-dialog .content .image-item {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+#image-select-dialog .content .image-item .image {
+  max-width: 320px;
 }
 #image-select-dialog .cross {
   width: 12px;
@@ -799,7 +809,7 @@ body {
   position: absolute;
   width: 280px;
   text-align: center;
-  left: 300px;
+  left: 320px;
   bottom: 5px;
 }
 #chrome .chrome-image,
@@ -949,7 +959,7 @@ body {
 .images {
   margin-bottom: 10px;
 }
-.images .image-item {
+.image-item {
   font-size: 0;
   padding: 2px;
   border: 1px solid #ddd;
@@ -958,11 +968,12 @@ body {
   vertical-align: top;
   cursor: wait;
   margin-right: 8px;
+  margin-bottom: 8px;
 }
-.images .image-item.ready {
+.image-item.ready {
   cursor: pointer;
 }
-.images .image-item.ready:hover {
+.image-item.ready:hover {
   border: 1px solid #888;
 }
 .characters {
