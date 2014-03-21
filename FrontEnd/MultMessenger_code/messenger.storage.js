@@ -285,6 +285,33 @@ var messenger = messenger || {};
 		});
 	};
 	
+	var GroupStorage = function() {
+		var self = this;
+		GroupStorage.super.apply(this);
+	};
+	GroupStorage.super = EventEmitter;
+	GroupStorage.prototype = Object.create(EventEmitter.prototype);
+	GroupStorage.prototype.constructor = GroupStorage;
+	GroupStorage.prototype.initializeAsync = function() {
+		return this._loadGroupsAsync(0, 1000);
+	};
+	GroupStorage.prototype._loadGroupsAsync = function(count, offset) {
+		var self = this;
+		return VK.apiAsync('groups.get', {
+			extended: 1,
+			offset: offset,
+			count: count,
+			v: 5.12
+		}).then(function(response) {
+			var rawGroup = response.items;
+			console.log(rawGroup);
+			var groupCount = response.count;
+			if (groupCount !== 0) {
+				self._loadGroupsAsync(count, offset + groupCount);
+			}
+		});
+	};
+	
 	var PaginationCollection = function(data) {
 		PaginationCollection.super.apply(this);
 		
@@ -664,7 +691,8 @@ var messenger = messenger || {};
 		CharacterStorage: CharacterStorage,
 		PaginationCollection: PaginationCollection,
 		MessageStorage: MessageStorage1,
-		PhotoStorage: PhotoStorage
+		PhotoStorage: PhotoStorage,
+		GroupStorage: GroupStorage
 	};
 	
 })(messenger, eve, async, chat, Q, settings);
