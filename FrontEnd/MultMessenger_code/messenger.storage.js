@@ -4,6 +4,7 @@ var messenger = messenger || {};
 	
 	var EventEmitter = eve.EventEmitter;
 	var ContactModel = messenger.models.ContactModel;
+	var GroupModel = messenger.models.GroupModel;
 	var MessageModel = messenger.models.MessageModel;
 	
 	var ContactStorage = function() {
@@ -288,6 +289,8 @@ var messenger = messenger || {};
 	var GroupStorage = function() {
 		var self = this;
 		GroupStorage.super.apply(this);
+		
+		this.groups = [];
 	};
 	GroupStorage.super = EventEmitter;
 	GroupStorage.prototype = Object.create(EventEmitter.prototype);
@@ -305,7 +308,10 @@ var messenger = messenger || {};
 			v: 5.12
 		}).then(function(response) {
 			var rawGroups = response.items;
-			console.log(rawGroups);
+			rawGroups.forEach(function(rawGroup) {
+				var group = GroupModel.fromVkData(rawGroup);
+				self.groups.push(group);
+			});
 			var groupCount = rawGroups.length;
 			if (groupCount !== 0) {
 				return self._loadGroupsAsync(count, offset + groupCount);

@@ -1,6 +1,6 @@
-var message = message || {};
+var messenger = messenger || {};
 
-(function(message, eve, settings) {
+(function(messenger, eve, settings) {
 	
 	var EventEmitter = eve.EventEmitter;
 	
@@ -64,8 +64,8 @@ var message = message || {};
 		
 	};
 	
-	message.storage = message.storage.storage;
+	messenger.storage = messenger.storage || {};
 	
-	message.storage.MessageStorage = MessageStorage;
+	messenger.storage.MessageStorage = MessageStorage;
 	
 })(message, eve, settings);

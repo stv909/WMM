@@ -67,7 +67,7 @@ var messenger = messenger || {};
 	};
 	ErrorDialogView.prototype.hide = function() {
 		this.dialogWindowElem.classList.add('hidden');
-		this.elem.classList.add('hidden');	
+		this.elem.classList.add('hidden');
 	};
 	
 	var AskMessageDialogView = function() {

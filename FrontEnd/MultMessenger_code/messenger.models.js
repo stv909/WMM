@@ -83,5 +83,4 @@ var messenger = messenger || {};
 		ContactModel: ContactModel,
 		GroupModel: GroupModel
 	};
-
 })(messenger, abyss, base64, eve);

@@ -9,6 +9,8 @@ window.onload = function() {
 	var GroupStorage = messenger.storage.GroupStorage;
 	var CharacterStorage = messenger.storage.CharacterStorage;
 	var MessageStorage = messenger.storage.MessageStorage;
+	
+	var ContactRepository = messenger.repository.ContactRepository;
 
 	var SelectPageView = messenger.views.SelectPageView;
 	var EditPageView = messenger.views.EditPageView;
@@ -97,6 +99,8 @@ window.onload = function() {
 		this.contactStorage = new ContactStorage();
 		this.groupStorage = new GroupStorage();
 		this.characterStorage = new CharacterStorage();
+		
+		this.contactRepository = new ContactRepository();
 
 		this.selectPageView = new SelectPageView();
 		this.editPageView = new EditPageView();
@@ -508,9 +512,9 @@ window.onload = function() {
 		
 		VK.initAsync().then(function() {
 			var contactStoragePromise = self.contactStorage.initializeAsync();
-			var groupStoragePromise = self.groupStorage.initializeAsync();
 			var characterStoragePromise = self.characterStorage.initializeAsync();
-			var promises = [contactStoragePromise, groupStoragePromise, characterStoragePromise];
+			var contactRepositoryPromise = self.contactRepository.initializeAsync();
+			var promises = [contactStoragePromise, characterStoragePromise, contactRepositoryPromise];
 			return Q.all(promises);
 		}).then(function() {
 			var owner = self.contactStorage.owner;
