@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, abyss, VK) {
+(function(messenger, eve, abyss, Q, VK) {
 	
 	var UserModel = (function(base) {
 		eve.extend(UserModel, base);
@@ -27,8 +27,44 @@ var messenger = messenger || {};
 			return user;
 		};
 		
+		UserModel.loadOwnAsync = function() {
+			return VK.apiAsync('users.get', {
+				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
+				name_case: 'nom',
+				https: 1,
+				v: 5.12	
+			}).then(function(response) {
+				return UserModel.fromRaw(response[0]);
+			});
+		};
+		
+		UserModel.loadByIdAsync = function(id) {
+			return VK.apiAsync('users.get', {
+				user_ids: id,
+				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
+				name_case: 'nom',
+				https: 1,
+				v: 5.12	
+			}).then(function(response) {
+				return UserModel.fromRaw(response[0]);
+			});
+		};
+		
+		UserModel.loadFriendsChunkAsync = function(count, offset) {
+			return VK.apiAsync('friends.get', {
+				count: count,
+				offset: offset,
+				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
+				name_case: 'nom',
+				https: 1,
+				v: 5.12
+			}).then(function(response) {
+				return response.items.map(UserModel.fromRaw);
+			});
+		};
+		
 		return UserModel;
-	})(eve.EventEmitter);
+	})(abyss.Model);
 	
 	var GroupModel = (function(base) {
 		eve.extend(GroupModel, base)
@@ -72,12 +108,52 @@ var messenger = messenger || {};
 			base.apply(this, arguments);
 			
 			this.groups = [];
-			this.friends = [];
+			this.users = [];
+			this.owner = null;
+			
+			this.senderId = '1';
 		}
 		
 		ContactRepository.prototype.initializeAsync = function() {
-			return this._loadGroupsAsync();
+			return Q.all([this._loadUsersAsync(), this._loadGroupsAsync()]);
 		};
+		
+		ContactRepository.prototype._loadUsersAsync = function() {
+			var self = this;
+			var count = 1000;
+			var offset = 0;
+			
+			var loadFriendsAsync = function(count, offset) {
+				var ownerId = self.owner.get('id');
+				var senderId = self.sender.get('id');
+				
+				return UserModel.loadFriendsChunkAsync(count, offset).then(function(friends) {
+					var friendCount = friends.length;
+					friends = friends.filter(function(friend) {
+						var id = friend.get('id');
+						return id !== ownerId && id !== senderId;
+					});
+					self.users = self.users.concat(friends);
+					if (friendCount) {
+						return loadFriendsAsync(count, offset + friendCount);
+					}
+				});
+			};
+			
+			return UserModel.loadOwnAsync().then(function(owner) {
+				self.owner = owner;
+				self.users.push(owner);
+				self.senderId = self.senderId || self.owner.get('id');
+				return UserModel.loadByIdAsync(self.senderId);
+			}).then(function(sender) {
+				self.sender = sender;
+				if (sender.get('id') !== self.owner.get('id')) {
+					self.users.unshift(self.sender);
+				}
+				return loadFriendsAsync(count, offset);
+			});
+		};
+		
 		ContactRepository.prototype._loadGroupsAsync = function() {
 			var self = this;
 			var count = 1000;
@@ -89,9 +165,6 @@ var messenger = messenger || {};
 				}
 			});
 		};
-		ContactRepository.prototype._loadAllFriendsAsync = function() {
-			
-		};
 		
 		return ContactRepository;
 		
@@ -101,4 +174,4 @@ var messenger = messenger || {};
 	messenger.repository = messenger.repository || {};
 	messenger.repository.ContactRepository = ContactRepository;
 	
-})(messenger, eve, abyss, VK);
+})(messenger, eve, abyss, Q, VK);
