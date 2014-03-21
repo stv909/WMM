@@ -2,9 +2,37 @@ var messenger = messenger || {};
 
 (function(messenger, eve, abyss, VK) {
 	
+	var UserModel = (function(base) {
+		eve.extend(UserModel, base);
+		
+		function UserModel() {
+			base.apply(this, base);
+		}
+		
+		UserModel.prototype.getFullName = function() {
+			return [this.get('firstName'), this.get('lastName')].join(' ');	
+		};
+		
+		UserModel.fromRaw = function(rawUser) {
+			var user = new UserModel();
+			
+			user.set({
+				id: rawUser.id,
+				firstName: rawUser.first_name,
+				lastName: rawUser.last_name,
+				photo: rawUser.photo_200 || rawUser.photo_100 || rawUser.photo_50,
+				canPost: rawUser.can_post
+			});
+			
+			return user;
+		};
+		
+		return UserModel;
+	})(eve.EventEmitter);
+	
 	var GroupModel = (function(base) {
 		eve.extend(GroupModel, base)
-		
+	
 		function GroupModel() {
 			base.apply(this, arguments);	
 		}
@@ -22,7 +50,7 @@ var messenger = messenger || {};
 			return group;
 		};
 		
-		GroupModel.loadAsync = function(count, offset) {
+		GroupModel.loadChunkAsync = function(count, offset) {
 			return VK.apiAsync('groups.get', {
 				extended: 1,
 				fields: ['photo_200', 'photo_100', 'photo_50', 'can_post'].join(','),
@@ -48,19 +76,16 @@ var messenger = messenger || {};
 		}
 		
 		ContactRepository.prototype.initializeAsync = function() {
-			console.log('test');
 			return this._loadGroupsAsync();
 		};
 		ContactRepository.prototype._loadGroupsAsync = function() {
 			var self = this;
 			var count = 1000;
 			var offset = 0;
-			
-			return GroupModel.loadAsync(count, offset).then(function(groups) {
-				console.log(groups);
+			return GroupModel.loadChunkAsync(count, offset).then(function(groups) {
 				if (groups.length) {
 					self.groups = self.groups.concat(groups);
-					return GroupModel.loadAsync(count, offset + groups.length);
+					return GroupModel.loadChunkAsync(count, offset + groups.length);
 				}
 			});
 		};
