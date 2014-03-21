@@ -6,6 +6,7 @@ window.onload = function() {
 	var MessageCollection = messenger.models.MessageCollection;
 	
 	var ContactStorage = messenger.storage.ContactStorage;
+	var GroupStorage = messenger.storage.GroupStorage;
 	var CharacterStorage = messenger.storage.CharacterStorage;
 	var MessageStorage = messenger.storage.MessageStorage;
 
@@ -70,7 +71,7 @@ window.onload = function() {
 		} else {
 			return 'friends';
 		}
-	}
+	};
 
 	var MessengerApplication = function() {
 		MessengerApplication.super.apply(this);
@@ -94,6 +95,7 @@ window.onload = function() {
 		
 		this.messageStorage = new MessageStorage(this.chatClientWrapper);
 		this.contactStorage = new ContactStorage();
+		this.groupStorage = new GroupStorage();
 		this.characterStorage = new CharacterStorage();
 
 		this.selectPageView = new SelectPageView();
@@ -506,8 +508,9 @@ window.onload = function() {
 		
 		VK.initAsync().then(function() {
 			var contactStoragePromise = self.contactStorage.initializeAsync();
+			var groupStoragePromise = self.groupStorage.initializeAsync();
 			var characterStoragePromise = self.characterStorage.initializeAsync();
-			var promises = [contactStoragePromise, characterStoragePromise];
+			var promises = [contactStoragePromise, groupStoragePromise, characterStoragePromise];
 			return Q.all(promises);
 		}).then(function() {
 			var owner = self.contactStorage.owner;

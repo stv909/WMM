@@ -293,21 +293,22 @@ var messenger = messenger || {};
 	GroupStorage.prototype = Object.create(EventEmitter.prototype);
 	GroupStorage.prototype.constructor = GroupStorage;
 	GroupStorage.prototype.initializeAsync = function() {
-		return this._loadGroupsAsync(0, 1000);
+		return this._loadGroupsAsync(1000, 0);
 	};
 	GroupStorage.prototype._loadGroupsAsync = function(count, offset) {
 		var self = this;
 		return VK.apiAsync('groups.get', {
 			extended: 1,
+			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
 			offset: offset,
 			count: count,
 			v: 5.12
 		}).then(function(response) {
-			var rawGroup = response.items;
-			console.log(rawGroup);
-			var groupCount = response.count;
+			var rawGroups = response.items;
+			console.log(rawGroups);
+			var groupCount = rawGroups.length;
 			if (groupCount !== 0) {
-				self._loadGroupsAsync(count, offset + groupCount);
+				return self._loadGroupsAsync(count, offset + groupCount);
 			}
 		});
 	};

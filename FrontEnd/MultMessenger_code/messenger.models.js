@@ -56,10 +56,32 @@ var messenger = messenger || {};
 		});
 		return contact;
 	};
+	
+	var GroupModel = function() {
+		GroupModel.super.apply(this);
+	};
+	GroupModel.super = Model;
+	GroupModel.prototype = Object.create(Model.prototype);
+	GroupModel.prototype.constructor = GroupModel;
+	GroupModel.fromVkData = function(rawData) {
+		var id = -rawData.id;
+		var name = rawData.name;
+		var photo = rawData.photo_200 || rawData.photo_100 || rawData.photo_50;
+		var canPost = rawData.can_post;
+		var group = new GroupModel();
+		group.set({
+			id: id,
+			name: name,
+			photo: photo,
+			canPost: canPost
+		});
+		return group;
+	};
 
 	messenger.models = {
 		MessageModel: MessageModel,
 		ContactModel: ContactModel,
+		GroupModel: GroupModel
 	};
 
 })(messenger, abyss, base64, eve);
