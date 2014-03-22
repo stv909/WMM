@@ -39,15 +39,21 @@ var text = text || {};
 			}
 		}, this);
 		indices = indices.sort(function(index1, index2) {
-			var firstMatch1 = index1.matches[0];
-			var firstMatch2 = index2.matches[0];
-			if (firstMatch1.matchPosition >= firstMatch2.matchPosition) {
-				return 1;
-			} else if (firstMatch1.matchPosition < firstMatch2.matchPosition) {
-				return -1;
-			} else {
-				return 0;
+			var length = index1.matches.length;
+			var result = 0;
+			for (var i = 0; i < length; i++) {
+				var match1 = index1.matches[i];
+				var match2 = index2.matches[i];
+				if (match1.matchPosition !== match2.matchPosition) {
+					if (match1.matchPosition > match2.matchPosition) {
+						result = 1;
+					} else {
+						result = -1;
+					}
+					break;
+				}
 			}
+			return result;
 		});
 		return indices;
 	};

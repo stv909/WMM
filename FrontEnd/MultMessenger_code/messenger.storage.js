@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, async, chat, Q, settings) {
+(function(messenger, eve, async, chat, Q, settings, text) {
 	
 	var EventEmitter = eve.EventEmitter;
 	var ContactModel = messenger.models.ContactModel;
@@ -17,6 +17,7 @@ var messenger = messenger || {};
 		this.friends = [];
 		this.senderId = null;
 		this.searchCollection = null;
+		this.friendSearch = null;
 	};
 	ContactStorage.super = EventEmitter;
 	ContactStorage.prototype = Object.create(EventEmitter.prototype);
@@ -28,6 +29,9 @@ var messenger = messenger || {};
 		}).then(function() {
 			return self._loadFriendsAsync(1000, 0);
 		}).then(function() {
+			self.friendSearch = new text.TextSearch(self.friends, function(contact) {
+				return [contact.get('firstName'), contact.get('lastName')];	
+			});
 			self.search();
 		});
 	};
@@ -71,7 +75,7 @@ var messenger = messenger || {};
 		//97383475 - more 1k friends
 		var self = this;
 		return VK.apiAsync('friends.get', {
-			//user_id: 97383475,
+			user_id: 97383475,
 			count: count,
 			offset: offset,
 			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
@@ -116,164 +120,11 @@ var messenger = messenger || {};
 		this._setSearchCollection(searchCollection);
 	};
 	ContactStorage.prototype._search = function(query) {
-		var keywords = this._prepareKeywords(query);
-		var regExps = this._prepareRegExps(keywords);
-		var indicies = this._buildIndicies(regExps);
-		var data = this._buildSeachData(indicies);
+		var indices = this.friendSearch.search(query);
+		var data = indices.map(function(index) {
+			return this.friends[index.position];
+		}, this);
 		return data;
-	};
-	ContactStorage.prototype._prepareKeywords = function(query) {
-		query = query.trim();
-		var keywords = query.split(/\s+/);
-		keywords = keywords.map(function(keyword) {
-			return keyword.trim();	
-		});
-		return keywords;
-	};
-	ContactStorage.prototype._prepareRegExps = function(keywords) {
-		return keywords.map(function(keyword) {
-			return new RegExp(keyword, 'i');	
-		});
-	};
-	ContactStorage.prototype._buildIndicies = function(regExps) {
-		var indicies = [];
-		var self = this;
-		this.friends.forEach(function(item, pos) {
-			var index = self._buildIndex(item, pos, regExps);
-			if (index) {
-				indicies.push(index);
-			} 
-		});
-		return indicies;
-	};
-	ContactStorage.prototype._buildIndex = function(contact, position, regExps) {
-		regExps = regExps.slice(0);
-
-		var index = null;
-		var firstName = contact.get('firstName');
-		var lastName = contact.get('lastName');
-		
-		var firstNameMatch = 99999;
-		var lastNameMatch = 99999;
-		
-		var isFirstNameMatch = false;
-		var isLastNameMatch = false;
-		var needSecondMatch = false;
-		var needFirstMatch = false;
-		
-		var deleteIndex = -1;
-		var i, match;
-		for (i = 0; i < regExps.length; i++) {
-			match = firstName.search(regExps[i]);
-			if (match !== -1) {
-				isFirstNameMatch = true;
-				if (match < firstNameMatch) {
-					firstNameMatch = match;
-					deleteIndex = i;
-				}
-			}
-		}
-		
-		if (isFirstNameMatch) {
-			regExps.splice(deleteIndex, 1);
-			needSecondMatch = regExps.length > 0;
-		} else {
-			for (i = 0; i < regExps.length; i++) {
-				match = lastName.search(regExps[i]);
-				if (match !== -1) {
-					isLastNameMatch = true;
-					if (match < lastNameMatch) {
-						lastNameMatch = match;
-						deleteIndex = i;
-					}
-				}
-			}
-			if (isLastNameMatch) {
-				regExps.splice(deleteIndex, 1);
-				needFirstMatch = regExps.length > 0;
-			}
-			
-			for (i = 0; i < regExps.length; i++) {
-				match = firstName.search(regExps[i]);
-				if (match !== -1) {
-					isFirstNameMatch = true;
-					if (match < firstNameMatch) {
-						firstNameMatch = match;
-						deleteIndex = i;
-					}
-				}
-			}
-		}
-		
-		for (i = 0; i < regExps.length; i++) {
-			match = lastName.search(regExps[i]);
-			if (match !== -1) {
-				isLastNameMatch = true;
-				if (match < lastNameMatch) {
-					lastNameMatch = match;
-					deleteIndex = i;
-				}
-			}
-		}
-		
-		if (isFirstNameMatch && !needSecondMatch) {
-			index = {};
-			index.pos = position;
-			index.firstMatch = firstNameMatch;
-		} else if (isLastNameMatch && !needFirstMatch) {
-			index = {};
-			index.pos = position;
-			index.isLastNameMatch = isLastNameMatch;
-		} else if (needSecondMatch && isLastNameMatch && firstNameMatch) {
-			index = {};
-			index.firstMatch = firstNameMatch;
-			index.lastMatch = lastNameMatch;
-		}
-		return index;
-	};
-	ContactStorage.prototype._buildSeachData = function(indicies) {
-		var self = this;
-		indicies = indicies.sort(function(index1, index2) {
-			var firstMatch1 = index1.firstMatch;
-			var firstMatch2 = index2.firstMatch;
-			var isFirstMatch1 = typeof(firstMatch1) === 'number' && firstMatch1 !== -1;
-			var isFirstMatch2 = typeof(firstMatch2) === 'number' && firstMatch2 !== -1;
-			var isValid = isFirstMatch1 && isFirstMatch2;
-			
-			if (isValid) {
-				if (index1.firstMatch >= index2.firstMatch) {
-					return 1;
-				} else if (index1.firstMatch < index2.firstMatch) {
-					return -1;
-				} else {
-					return 0;
-				}
-			} else {
-				return 0;
-			}
-		});
-		indicies = indicies.sort(function(index1, index2) {
-			var lastMatch1 = index1.lastMatch;
-			var lastMatch2 = index2.lastMatch;
-			var isLastMatch1 = typeof(lastMatch1) === 'number' && lastMatch1 !== -1;
-			var isLastMatch2 = typeof(lastMatch2) === 'number' && lastMatch2 !== -1;
-			var isValid = isLastMatch1 && isLastMatch2;
-			
-			if (isValid) {
-				if (index1.lastMatch >= index2.lastMatch) {
-					return 1;
-				} else if (index1.lastMatch < index2.lastMatch) {
-					return -1;
-				} else {
-					return 0;
-				}
-			} else {
-				return 0;
-			}
-		});
-		return indicies.map(function(index) {
-			return self.friends[index.pos];
-		});
 	};
 	ContactStorage.prototype._setSearchCollection = function(searchCollection) {
 		if (this.searchCollection) {
@@ -702,4 +553,4 @@ var messenger = messenger || {};
 		GroupStorage: GroupStorage
 	};
 	
-})(messenger, eve, async, chat, Q, settings);
+})(messenger, eve, async, chat, Q, settings, text);

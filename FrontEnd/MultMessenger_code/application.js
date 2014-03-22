@@ -513,8 +513,8 @@ window.onload = function() {
 		VK.initAsync().then(function() {
 			var contactStoragePromise = self.contactStorage.initializeAsync();
 			var characterStoragePromise = self.characterStorage.initializeAsync();
-			var contactRepositoryPromise = self.contactRepository.initializeAsync();
-			var promises = [contactStoragePromise, characterStoragePromise, contactRepositoryPromise];
+			//var contactRepositoryPromise = self.contactRepository.initializeAsync();
+			var promises = [contactStoragePromise, characterStoragePromise];//, contactRepositoryPromise];
 			return Q.all(promises);
 		}).then(function() {
 			var owner = self.contactStorage.owner;
