@@ -86,7 +86,12 @@ var eve = eve || {};
 			}
 		}
 	};
-	
+
+	/**
+	 * Extends an object.
+	 * @param {function} derived A constructor function.
+	 * @param {function} base A base constructor function.
+	 */
 	var extend = function(derived, base) {
 		for (var property in base) {
 			if (base.hasOwnProperty(property)) {
