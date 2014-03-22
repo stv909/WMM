@@ -14,7 +14,7 @@ var text = text || {};
 		var tokens = this._tokenizeQuery(query);
 		var regExps = this._tokensToRegExps(tokens);
 		var indices = this._buildIndices(regExps);
-		console.log(JSON.stringify(indices, null, 4));
+		return indices;
 	};
 	TextSearch.prototype._tokenizeQuery = function(query) {
 		query = query.trim();
@@ -38,6 +38,17 @@ var text = text || {};
 				indices.push(index);
 			}
 		}, this);
+		indices = indices.sort(function(index1, index2) {
+			var firstMatch1 = index1.matches[0];
+			var firstMatch2 = index2.matches[0];
+			if (firstMatch1.matchPosition >= firstMatch2.matchPosition) {
+				return 1;
+			} else if (firstMatch1.matchPosition < firstMatch2.matchPosition) {
+				return -1;
+			} else {
+				return 0;
+			}
+		});
 		return indices;
 	};
 	TextSearch.prototype._buildIndex = function(strings, position, regExps) {
