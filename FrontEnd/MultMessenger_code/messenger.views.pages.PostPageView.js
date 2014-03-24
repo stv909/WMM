@@ -26,9 +26,58 @@
 			var self = this;
 			
 			this.elem = template.create('post-page-template', { id: 'post-page' });
+			this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
+			this.receiverHolderElem = this.elem.getElementsByClassName('receiver-holder')[0];
+			this.queryElem = this.elem.getElementsByClassName('query')[0];
+			
+			this.mode = 'friends';
+			this.friendSearchView = new FriendSearchView();
+			this.groupSearchView = new GroupSearchView();
+			
+			this.initializeViews();
 		}
 		
+		PostPageView.prototype.initializeViews = function() {
+			
+		};
+		PostPageView.prototype.setMode = function(mode) {
+			this.mode = mode;
+			
+			switch (this.mode) {
+				case 'friends':
+					this.friendSearchView.show();
+					this.groupSearchView.hide();
+					break;
+				case 'groups':
+					this.friendSearchView.hide();
+					this.groupSearchView.show();
+					break;
+				default:
+					throw new Error('unsupported mode');
+			}
+		};
+		
 		return PostPageView;
+	})(PageView);
+	
+	var FriendSearchView = (function(base) {
+		eve.extend(FriendSearchView, base);
+		
+		function FriendSearchView() {
+			base.apply(this, arguments);
+		}
+		
+		return FriendSearchView;
+	})(PageView);
+	
+	var GroupSearchView = (function(base) {
+		eve.extend(GroupSearchView, base);
+		
+		function GroupSearchView() {
+			base.apply(this, arguments);
+		}
+		
+		return GroupSearchView;
 	})(PageView);
 	
 	messenger.views = messenger.views || {};
