@@ -7,136 +7,6 @@ var messenger = messenger || {};
 	var GroupModel = messenger.models.GroupModel;
 	var MessageModel = messenger.models.MessageModel;
 	
-	var ContactStorage = function() {
-		var self = this;
-		ContactStorage.super.apply(this);
-		
-		this.owner = null;
-		this.sender = null;
-		this.selected = null;
-		this.friends = [];
-		this.senderId = null;
-		this.searchCollection = null;
-		this.friendSearch = null;
-	};
-	ContactStorage.super = EventEmitter;
-	ContactStorage.prototype = Object.create(EventEmitter.prototype);
-	ContactStorage.prototype.constructor = ContactStorage;
-	ContactStorage.prototype.initializeAsync = function() {
-		var self = this;
-		return self._loadOwnerAsync().then(function() {
-			self._loadSenderAsync();
-		}).then(function() {
-			return self._loadFriendsAsync(1000, 0);
-		}).then(function() {
-			self.friendSearch = new text.TextSearch(self.friends, function(contact) {
-				return [contact.get('firstName'), contact.get('lastName')];	
-			});
-			self.search();
-		});
-	};
-	ContactStorage.prototype._loadOwnerAsync = function() {
-		var self = this;
-		return VK.apiAsync('users.get', {
-			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
-			name_case: 'nom',
-			https: 1,
-			v: 5.12
-		}).then(function(response) {
-			var rawOwner = response[0];
-			var owner = ContactModel.fromVkData(rawOwner);
-			self.owner = owner;
-			self.friends.push(self.owner);
-		});
-	};
-	ContactStorage.prototype._loadSenderAsync = function() {
-		var ownerId = this.owner.get('id');
-		var self = this;
-
-		if (this.senderId && ownerId != this.senderId) {
-			return VK.apiAsync('users.get', {
-				user_ids: self.senderId,
-				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
-				name_case: 'nom',
-				https: 1,
-				v: 5.12
-			}).then(function(response) {
-				var rawSender = response[0];
-				var sender = ContactModel.fromVkData(rawSender);
-				self.sender = sender;
-				self.friends.unshift(self.sender);
-			});
-		} else {
-			this.sender = this.owner;
-			return Q.when();
-		}
-	};
-	ContactStorage.prototype._loadFriendsAsync = function(count, offset) {
-		//97383475 - more 1k friends
-		var self = this;
-		return VK.apiAsync('friends.get', {
-			//user_id: 97383475,
-			count: count,
-			offset: offset,
-			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
-			name_case: 'nom',
-			https: 1,
-			v: 5.12
-		}).then(function(response) {
-			var rawFriends = response.items;
-			var friendCount = rawFriends.length;
-			rawFriends.forEach(function(rawFriend) {
-				var friend = ContactModel.fromVkData(rawFriend);
-				var friendId = friend.get('id');
-				if (friendId != self.senderId) {
-					self.friends.push(friend);
-				}
-			});
-			if (friendCount !== 0) {
-				return self._loadFriendsAsync(count, offset + friendCount);
-			}
-		});
-	};
-	ContactStorage.prototype.setSenderId = function(senderId) {
-		this.senderId = senderId;
-	};
-	ContactStorage.prototype.getSenderId = function() {
-		return this.sender.get('id');	
-	};
-	ContactStorage.prototype.getSender = function() {
-		return this.sender;
-	};
-	ContactStorage.prototype.search = function(query) {
-		var searchCollection;
-		if (!query || query.length === 0) {
-			searchCollection = new PaginationCollection(this.friends);
-			searchCollection.count = 18;
-		} else {
-			var data = this._search(query);
-			searchCollection = new PaginationCollection(data);
-			searchCollection.count = 18;
-		}
-		
-		this._setSearchCollection(searchCollection);
-	};
-	ContactStorage.prototype._search = function(query) {
-		var indices = this.friendSearch.search(query);
-		var data = indices.map(function(index) {
-			return this.friends[index.position];
-		}, this);
-		return data;
-	};
-	ContactStorage.prototype._setSearchCollection = function(searchCollection) {
-		if (this.searchCollection) {
-			this.searchCollection.dispose();
-		}
-		this.searchCollection = searchCollection;
-		this.trigger({
-			type: 'update:search',
-			contacts: this.searchCollection
-		});
-	};
-	
 	var PaginationCollection = function(data) {
 		PaginationCollection.super.apply(this);
 		
@@ -398,7 +268,7 @@ var messenger = messenger || {};
 		var self = this;
 		var senderMessageId = this.getSenderMessageId();
 		var hasSenderMessage = false;
-		var messages = rawMessages.map(MessageModel.fromChatMessage);
+		var messages = rawMessages.map(MessageModel.fromRaw);
 
 		messages = messages.filter(function(message) {
 			return message.isValid();
@@ -420,7 +290,7 @@ var messenger = messenger || {};
 	};
 	MessageStorage1.prototype._addNextRawMessages = function(rawMessages) {
 		var self = this;
-		var messages = rawMessages.map(MessageModel.fromChatMessage);
+		var messages = rawMessages.map(MessageModel.fromRaw);
 		messages = messages.filter(function(message) {
 			return message.isValid();
 		});
@@ -512,7 +382,6 @@ var messenger = messenger || {};
 	};
 	
 	messenger.storage = {
-		ContactStorage: ContactStorage,
 		CharacterStorage: CharacterStorage,
 		PaginationCollection: PaginationCollection,
 		MessageStorage: MessageStorage1,

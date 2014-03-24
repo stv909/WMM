@@ -5,12 +5,10 @@ window.onload = function() {
 	var ContactModel = messenger.models.ContactModel;
 	var MessageCollection = messenger.models.MessageCollection;
 	
-	var ContactStorage = messenger.storage.ContactStorage;
-	var GroupStorage = messenger.storage.GroupStorage;
+	var ContactRepository = messenger.repository.ContactRepository;
+	
 	var CharacterStorage = messenger.storage.CharacterStorage;
 	var MessageStorage = messenger.storage.MessageStorage;
-	
-	var ContactRepository = messenger.repository.ContactRepository;
 
 	var SelectPageView = messenger.views.SelectPageView;
 	var EditPageView = messenger.views.EditPageView;
@@ -96,8 +94,6 @@ window.onload = function() {
 		this.chatClientWrapper = new ChatClientWrapper(this.chatClient);
 		
 		this.messageStorage = new MessageStorage(this.chatClientWrapper);
-		this.contactStorage = new ContactStorage();
-		this.groupStorage = new GroupStorage();
 		this.characterStorage = new CharacterStorage();
 		
 		this.contactRepository = new ContactRepository();
@@ -138,8 +134,8 @@ window.onload = function() {
 		this.nextElemPostClickListener = function(event) {
 			self.postDialogView.show();
 
-			var account = self.contactStorage.owner;
-			var companion = self.contactStorage.selected;
+			var account = self.contactRepository.owner;
+			var companion = self.contactRepository.selected;
 			var content = self.editPageView.getMessageContent();
 			var message = MessageFactory.create(
 				uuid.v4(),
@@ -230,19 +226,19 @@ window.onload = function() {
 			self.selectPageView.hideMessageLoading();	
 		});
 		
-		this.contactStorage.on('update:search', function(event) {
-			self.postPageView.clear();
-			self.postPageView.showContactLoading();
-			var contacts = event.contacts;
-			contacts.on('paginate:item', function(event) {
-				var contact = event.item;
-				self.postPageView.showContact(contact);
-			});
-			contacts.on('paginate:end', function(event) {
-				self.postPageView.hideContactLoading();	
-			});
-			contacts.next();
-		});
+		// this.contactStorage.on('update:search', function(event) {
+		// 	self.postPageView.clear();
+		// 	self.postPageView.showContactLoading();
+		// 	var contacts = event.contacts;
+		// 	contacts.on('paginate:item', function(event) {
+		// 		var contact = event.item;
+		// 		self.postPageView.showContact(contact);
+		// 	});
+		// 	contacts.on('paginate:end', function(event) {
+		// 		self.postPageView.hideContactLoading();	
+		// 	});
+		// 	contacts.next();
+		// });
 		this.characterStorage.on('update:characters', function(event) {
 			var characters = event.characters;
 			self.editPageView.setCharacters(characters);
@@ -259,7 +255,7 @@ window.onload = function() {
 			});
 		};
 		var reconnect = function() {
-			var vkId = Helpers.buildVkId(self.contactStorage.owner);
+			var vkId = Helpers.buildVkId(self.contactRepository.owner);
 			VK.initAsync().then(function() {
 				return self.chatClientWrapper.connectAndLoginAsync(vkId);
 			}).then(function() {
@@ -315,7 +311,7 @@ window.onload = function() {
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
-				self.postPageView.selectContact(self.contactStorage.owner);
+				//self.postPageView.selectContact(self.contactRepository.owner);
 				self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 				self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 				self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -324,7 +320,7 @@ window.onload = function() {
 			self.navigation.setMode('select');
 		});
 		this.skipDialogView.on('click:ok', function(event) {
-			self.postPageView.selectContact(self.contactStorage.owner);
+			//self.postPageView.selectContact(self.contactRepository.owner);
 			self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 			self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 			self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -332,15 +328,15 @@ window.onload = function() {
 			self.navigation.setMode('select');
 			analytics.send('answer', 'browse_tape');
 		});
-		this.postPageView.on('select:contact', function(event) {
-			self.contactStorage.selected = event.contact;
-		});
-		this.postPageView.on('click:load', function() {
-			self.contactStorage.searchCollection.next();
-		});
-		this.postPageView.on('update:search', function(event) {
-			self.contactStorage.search(event.text);	
-		});
+		// this.postPageView.on('select:contact', function(event) {
+		// 	self.contactStorage.selected = event.contact;
+		// });
+		// this.postPageView.on('click:load', function() {
+		// 	self.contactStorage.searchCollection.next();
+		// });
+		// this.postPageView.on('update:search', function(event) {
+		// 	self.contactStorage.search(event.text);	
+		// });
 		this.editPageView.on('status:validate', function() {
 			self.currentShowAskMessageDialog = self.validShowAskMessageDialog;
 		});
@@ -499,7 +495,7 @@ window.onload = function() {
 			this.currentLogoElemClickListener = this.logoElemAnswerClickListener;
 			
 			var settings = parseHash(hash);
-			this.contactStorage.setSenderId(settings.senderId);
+			this.contactRepository.setSenderId(settings.senderId);
 			this.messageStorage.setSenderMessageId(settings.messageId);
 		} else {
 			this.navigation.setMode('select');
@@ -511,19 +507,18 @@ window.onload = function() {
 		var self = this;
 		
 		VK.initAsync().then(function() {
-			var contactStoragePromise = self.contactStorage.initializeAsync();
+			var contactRepositoryPromise = self.contactRepository.initializeAsync();
 			var characterStoragePromise = self.characterStorage.initializeAsync();
-			//var contactRepositoryPromise = self.contactRepository.initializeAsync();
-			var promises = [contactStoragePromise, characterStoragePromise];//, contactRepositoryPromise];
+			var promises = [contactRepositoryPromise, characterStoragePromise];
 			return Q.all(promises);
 		}).then(function() {
-			var owner = self.contactStorage.owner;
+			var owner = self.contactRepository.owner;
 			var vkId = Helpers.buildVkId(owner);
 			return self.chatClientWrapper.connectAndLoginAsync(vkId);
 		}).then(function() {
 			return self.messageStorage.loadMessagesAsync();
 		}).then(function() {
-			self.answerPageView.setContact(self.contactStorage.getSender());
+			self.answerPageView.setContact(self.contactRepository.sender);
 			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
 			self.preloadDialogView.hide();
 			analytics.send('app_start', 'app_success');

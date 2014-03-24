@@ -11,7 +11,7 @@ var messenger = messenger || {};
 			
 			this.elem = template.create('contact-template', { className: 'contact' });
 			this.photoElem = this.elem.getElementsByClassName('photo')[0];
-			this.nameElem = this.elem.getElementsByClassName('name');
+			this.nameElem = this.elem.getElementsByClassName('name')[0];
 			
 			this.selected = false;
 			
@@ -68,8 +68,8 @@ var messenger = messenger || {};
 		}
 		
 		UserView.prototype.setModel = function(model) {
-			base.prototype.setModel.apply(this, model);
-			
+			base.prototype.setModel.apply(this, arguments);
+
 			if (!this.model) {
 				return;
 			}
@@ -97,10 +97,10 @@ var messenger = messenger || {};
 			this.deselect();
 		}
 		
-		UserView.prototype.setModel = function(model) {
+		GroupView.prototype.setModel = function(model) {
 			base.prototype.setModel.apply(this, model);
 			
-			if (this.model) {
+			if (!this.model) {
 				return;
 			}
 			

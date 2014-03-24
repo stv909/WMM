@@ -62,8 +62,12 @@ var messenger = messenger || {};
 			this.owner = null;
 			this.sender = null;
 			
-			this.senderId = '1';
+			this.senderId = null;
 		}
+		
+		ContactRepository.prototype.setSenderId = function(senderId) {
+			this.senderId = senderId;	
+		};
 		
 		ContactRepository.prototype.initializeAsync = function() {
 			var self = this;
@@ -123,6 +127,26 @@ var messenger = messenger || {};
 				} else {
 					self.groupSearch = new TextSearch(groupCollection);
 				}
+			});
+		};
+		
+		ContactRepository.prototype.searchUsers = function(query) {
+			var users = this.userSearch.search(query);
+			var paginableUsers = new Pagination(users);
+			paginableUsers.count = 18;
+			this.trigger({
+				type: 'search:users',
+				users: paginableUsers
+			});
+		};
+		
+		ContactRepository.prototype.searchGroups = function(query) {
+			var groups = this.groupSearch.search(query);
+			var paginableGroups = new Pagination(groups);
+			paginableGroups.count = 18;
+			this.trigger({
+				type: 'search:groups',
+				groups: paginableGroups
 			});
 		};
 		
