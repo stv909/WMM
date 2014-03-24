@@ -887,7 +887,7 @@ body {
   width: 100px;
   height: 100px;
 }
-.contact .full-name {
+.contact .name {
   margin-left: 1px;
   margin-right: 1px;
   font-size: 10px;
@@ -896,7 +896,7 @@ body {
   white-space: pre-wrap;
   cursor: pointer;
 }
-.contact .full-name:hover {
+.contact .name:hover {
   color: #28f;
   text-decoration: underline;
 }

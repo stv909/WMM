@@ -51,4 +51,5 @@ var settings = settings || {};
 	settings.layerImageStoreBaseUrl = settings.layerImageStoreBaseUrls[settings.version];
 	settings.animationServiceUrl = settings.animationServiceUrls[settings.version];
 	settings.groupUrl = 'https://vk.com/toome_mobi';
+	settings.vkContactBaseUrl = 'https://vk.com/id';
 })(settings);
