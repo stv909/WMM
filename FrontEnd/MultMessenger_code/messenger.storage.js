@@ -137,39 +137,6 @@ var messenger = messenger || {};
 		});
 	};
 	
-	var GroupStorage = function() {
-		var self = this;
-		GroupStorage.super.apply(this);
-		
-		this.groups = [];
-	};
-	GroupStorage.super = EventEmitter;
-	GroupStorage.prototype = Object.create(EventEmitter.prototype);
-	GroupStorage.prototype.constructor = GroupStorage;
-	GroupStorage.prototype.initializeAsync = function() {
-		return this._loadGroupsAsync(1000, 0);
-	};
-	GroupStorage.prototype._loadGroupsAsync = function(count, offset) {
-		var self = this;
-		return VK.apiAsync('groups.get', {
-			extended: 1,
-			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
-			offset: offset,
-			count: count,
-			v: 5.12
-		}).then(function(response) {
-			var rawGroups = response.items;
-			rawGroups.forEach(function(rawGroup) {
-				var group = GroupModel.fromVkData(rawGroup);
-				self.groups.push(group);
-			});
-			var groupCount = rawGroups.length;
-			if (groupCount !== 0) {
-				return self._loadGroupsAsync(count, offset + groupCount);
-			}
-		});
-	};
-	
 	var PaginationCollection = function(data) {
 		PaginationCollection.super.apply(this);
 		
@@ -550,7 +517,6 @@ var messenger = messenger || {};
 		PaginationCollection: PaginationCollection,
 		MessageStorage: MessageStorage1,
 		PhotoStorage: PhotoStorage,
-		GroupStorage: GroupStorage
 	};
 	
 })(messenger, eve, async, chat, Q, settings, text);

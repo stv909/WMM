@@ -11,10 +11,16 @@ var text = text || {};
 		};
 	}
 	TextSearch.prototype.search = function(query) {
+		var data = this.objects;
 		var tokens = this._tokenizeQuery(query);
-		var regExps = this._tokensToRegExps(tokens);
-		var indices = this._buildIndices(regExps);
-		return indices;
+		
+		if (tokens.length) {
+			var regExps = this._tokensToRegExps(tokens);
+			var indices = this._buildIndices(regExps);
+			data = this._buildData(indices);
+		}
+
+		return data;
 	};
 	TextSearch.prototype._tokenizeQuery = function(query) {
 		query = query.trim();
@@ -120,6 +126,11 @@ var text = text || {};
 			});
 		});
 		return result;
+	};
+	TextSearch.prototype._buildData = function(indices) {
+		return indices.map(function(index) {
+			return this.data[index.position];
+		}, this);
 	};
 
 	text.TextSearch = TextSearch;

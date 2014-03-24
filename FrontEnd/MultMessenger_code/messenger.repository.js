@@ -1,9 +1,10 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, abyss, template, Q, VK, settings, analytics) {
+(function(messenger, eve, abyss, VK, text, settings) {
 	
 	var UserModel = messenger.models.UserModel;
 	var GroupModel = messenger.models.GroupModel;
+	var TextSearch = text.TextSearch;
 	
 	var Pagination = (function(base) {
 		eve.extend(Pagination, base);
@@ -55,9 +56,11 @@ var messenger = messenger || {};
 		function ContactRepository() {
 			base.apply(this, arguments);
 			
-			this.groups = [];
-			this.users = [];
+			this.groupSearch = null;
+			this.userSearch = null;
+			
 			this.owner = null;
+			this.sender = null;
 			
 			this.senderId = '1';
 		}
@@ -73,6 +76,7 @@ var messenger = messenger || {};
 			var self = this;
 			var count = 1000;
 			var offset = 0;
+			var userCollection = [];
 			
 			var loadFriendsAsync = function(count, offset) {
 				var ownerId = self.owner.get('id');
@@ -84,22 +88,24 @@ var messenger = messenger || {};
 						var id = friend.get('id');
 						return id !== ownerId && id !== senderId;
 					});
-					self.users = self.users.concat(friends);
+					userCollection = userCollection.concat(friends);
 					if (friendCount) {
 						return loadFriendsAsync(count, offset + friendCount);
+					} else {
+						self.userSearch = new TextSearch(userCollection);
 					}
 				});
 			};
 			
 			return UserModel.loadOwnAsync().then(function(owner) {
 				self.owner = owner;
-				self.users.push(owner);
+				userCollection.push(owner);
 				self.senderId = self.senderId || self.owner.get('id');
 				return UserModel.loadByIdAsync(self.senderId);
 			}).then(function(sender) {
 				self.sender = sender;
 				if (sender.get('id') !== self.owner.get('id')) {
-					self.users.unshift(self.sender);
+					userCollection.unshift(self.sender);
 				}
 				return loadFriendsAsync(count, offset);
 			});
@@ -109,10 +115,13 @@ var messenger = messenger || {};
 			var self = this;
 			var count = 1000;
 			var offset = 0;
+			var groupCollection = [];
 			return GroupModel.loadChunkAsync(count, offset).then(function(groups) {
 				if (groups.length) {
-					self.groups = self.groups.concat(groups);
+					groupCollection = groupCollection.concat(groups);
 					return GroupModel.loadChunkAsync(count, offset + groups.length);
+				} else {
+					self.groupSearch = new TextSearch(groupCollection);
 				}
 			});
 		};
@@ -125,4 +134,4 @@ var messenger = messenger || {};
 	messenger.repository.Pagination = Pagination;
 	messenger.repository.ContactRepository = ContactRepository;
 	
-})(messenger, eve, abyss, template, Q, VK, settings, analytics);
+})(messenger, eve, abyss, VK, text, settings);
