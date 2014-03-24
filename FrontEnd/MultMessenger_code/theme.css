@@ -349,10 +349,52 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
+}
+#post-page .tabs {
+  height: 38px;
+  line-height: 38px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  background-color: #efefef;
+}
+#post-page .tabs .tab {
+  position: relative;
+  background-color: #fff;
+  font-size: 12px;
+  display: inline-block;
+  height: 32px;
+  line-height: 32px;
+  border: 1px solid #ddd;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-top: 5px;
+  margin-left: 2px;
+  margin-right: 2px;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+}
+#post-page .tabs .tab.normal {
+  cursor: pointer;
+}
+#post-page .tabs .tab.normal:hover {
+  color: #28f;
+}
+#post-page .tabs .tab.chosen {
+  cursor: default;
+  border-bottom: 1px solid #fff;
+  color: #28f;
+}
+#post-page-1 {
+  font-size: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   overflow: hidden;
   padding: 14px 0 0 16px;
 }
-#post-page .container {
+#post-page-1 .container {
   display: block;
   position: relative;
   width: 100%;
@@ -361,8 +403,8 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-#post-page .receiver-wrapper,
-#post-page .search-wrapper {
+#post-page-1 .receiver-wrapper,
+#post-page-1 .search-wrapper {
   padding-top: 2px;
   vertical-align: top;
   position: relative;
@@ -370,61 +412,61 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-#post-page .receiver-wrapper {
+#post-page-1 .receiver-wrapper {
   width: 145px;
   float: left;
 }
-#post-page .receiver-wrapper .section {
+#post-page-1 .receiver-wrapper .section {
   margin-bottom: 10px;
 }
-#post-page .search-wrapper {
+#post-page-1 .search-wrapper {
   font-size: 12px;
   margin-left: 145px;
 }
-#post-page .search-wrapper >.wrap {
+#post-page-1 .search-wrapper >.wrap {
   position: relative;
   width: 100%;
   height: 100%;
 }
-#post-page .search-wrapper .load-holder {
+#post-page-1 .search-wrapper .load-holder {
   margin-left: 2px;
   margin-top: 16px;
   width: 718px;
 }
-#post-page .search-wrapper .load-holder .button-special {
+#post-page-1 .search-wrapper .load-holder .button-special {
   width: 100%;
 }
-#post-page .search-wrapper .search {
+#post-page-1 .search-wrapper .search {
   display: block;
   width: 100%;
   height: 100%;
   position: relative;
 }
-#post-page .search-wrapper .search .search-controls,
-#post-page .search-wrapper .search .search-results {
+#post-page-1 .search-wrapper .search .search-controls,
+#post-page-1 .search-wrapper .search .search-results {
   display: block;
   position: absolute;
 }
-#post-page .search-wrapper .search .search-controls {
+#post-page-1 .search-wrapper .search .search-controls {
   height: 39px;
   padding-right: 16px;
 }
-#post-page .search-wrapper .search .search-controls .query {
+#post-page-1 .search-wrapper .search .search-controls .query {
   width: 738px;
   margin-bottom: 6px;
 }
-#post-page .search-wrapper .search .search-results {
+#post-page-1 .search-wrapper .search .search-results {
   top: 39px;
   bottom: 0;
 }
-#post-page .search-wrapper .search .search-results .shadow {
+#post-page-1 .search-wrapper .search .search-results .shadow {
   width: 100%;
   position: absolute;
   z-index: 10;
   height: 6px;
   background-image: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 100%);
 }
-#post-page .search-wrapper .search .search-results .wrap {
+#post-page-1 .search-wrapper .search .search-results .wrap {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   padding-top: 6px;

@@ -26,15 +26,34 @@
 			var self = this;
 			
 			this.elem = template.create('post-page-template', { id: 'post-page' });
-			this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
-			this.receiverHolderElem = this.elem.getElementsByClassName('receiver-holder')[0];
-			this.queryElem = this.elem.getElementsByClassName('query')[0];
-			
-			this.mode = 'friends';
+			this.tabsElem = this.elem.getElementsByClassName('tabs')[0];
+			this.friendTabElem = this.tabsElem.getElementsByClassName('friend')[0];
+			this.groupTabElem = this.tabsElem.getElementsByClassName('group')[0];
+
+			this.mode = 'friend';
 			this.friendSearchView = new FriendSearchView();
 			this.groupSearchView = new GroupSearchView();
 			
+			var friendTabElemClickListener = function(event) {
+				if (self.mode != 'friend') {
+					self.setMode('friend');
+				}
+			};
+			var groupTabElemClickListener = function(event) {
+				if (self.mode != 'group') {
+					self.setMode('group');
+				}
+			};
+			
+			this.friendTabElem.addEventListener('click', friendTabElemClickListener);
+			this.groupTabElem.addEventListener('click', groupTabElemClickListener);
+			
 			this.initializeViews();
+			
+			this.once('dispose', function() {
+				self.friendTabElem.removeEventListener('click', friendTabElemClickListener);
+				self.groupTabElem.removeEventListener('click', groupTabElemClickListener);
+			});
 		}
 		
 		PostPageView.prototype.initializeViews = function() {
@@ -44,11 +63,19 @@
 			this.mode = mode;
 			
 			switch (this.mode) {
-				case 'friends':
+				case 'friend':
+					this.friendTabElem.classList.remove('normal');
+					this.friendTabElem.classList.add('chosen');
+					this.groupTabElem.classList.add('normal');
+					this.groupTabElem.classList.remove('chosen');
 					this.friendSearchView.show();
 					this.groupSearchView.hide();
 					break;
-				case 'groups':
+				case 'group':
+					this.friendTabElem.classList.add('normal');
+					this.friendTabElem.classList.remove('chosen');
+					this.groupTabElem.classList.remove('normal');
+					this.groupTabElem.classList.add('chosen');
 					this.friendSearchView.hide();
 					this.groupSearchView.show();
 					break;
