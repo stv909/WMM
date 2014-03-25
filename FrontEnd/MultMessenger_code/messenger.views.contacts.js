@@ -98,9 +98,23 @@ var messenger = messenger || {};
 		
 		function GroupView(model) {
 			base.apply(this, arguments);
+			var self = this;
 			
 			this.setModel(model);
 			this.deselect();
+			
+			var nameElemClickListener = function(event) {
+				var id = -self.model.get('id');
+				var type = self.model.get('type');
+				var vkLink = [settings.vkGroupBaseUrls[type], id].join('');
+				window.open(vkLink, '_blank');
+			};
+			
+			this.nameElem.addEventListener('click', nameElemClickListener);
+						
+			this.on('dispose', function() {
+				self.nameElem.removeEventListener('click', nameElemClickListener);	
+			});
 		}
 		
 		GroupView.prototype.setModel = function(model) {
@@ -112,7 +126,7 @@ var messenger = messenger || {};
 			
 			this.photoElem.src = this.model.get('photo');
 			this.nameElem.textContent = this.model.get('name');
-			
+
 			if (this.model.get('canPost')) {
 				this.elem.classList.remove('closed');
 			} else {

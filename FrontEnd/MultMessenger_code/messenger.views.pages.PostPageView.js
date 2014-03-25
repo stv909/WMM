@@ -143,15 +143,33 @@
 			this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
 			this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
 			this.loadElem = this.loadHolderElem.getElementsByClassName('load')[0];
+			this.wrapperElem = this.elem.getElementsByClassName('wrapper')[0];
 			
 			var loadElemClickListener = function(event) {
 				self.trigger('click:load');
 			};
+			var wheelListener = function(event) {
+				var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
+				var isIE = Math.abs(delta) >= 120;
+				var scrollPending = isIE ? delta / 2 : 0;
+				if (delta < 0 && (self.wrapperElem.scrollTop + scrollPending) <= 0) {
+					self.wrapperElem.scrollTop = 0;
+					event.preventDefault();
+				}
+				else if (delta > 0 && (self.wrapperElem.scrollTop + scrollPending >= (self.wrapperElem.scrollHeight - self.wrapperElem.offsetHeight))) {
+					self.wrapperElem.scrollTop = self.wrapperElem.scrollHeight - self.wrapperElem.offsetHeight;
+					event.preventDefault();
+				}
+			};
 			
 			this.loadElem.addEventListener('click', loadElemClickListener);
+			this.wrapperElem.addEventListener('DOMMouseScroll', wheelListener, false);
+			this.wrapperElem.addEventListener('mousewheel', wheelListener, false);
 			
 			this.once('dispose', function() {
 				self.loadElem.removeEventListener('click', loadElemClickListener);	
+				self.wrapperElem.removeEventListener('DOMMouseScroll', wheelListener);
+				self.wrapperElem.removeEventListener('mousewheel', wheelListener);
 			});
 		}
 		

@@ -81,6 +81,7 @@ var messenger = messenger || {};
 				id: -rawGroup.id,
 				name: rawGroup.name,
 				photo: rawGroup.photo_200 || rawGroup.photo_100 || rawGroup.photo_50,
+				type: rawGroup.type,
 				canPost: rawGroup.can_post
 			});
 			
@@ -91,10 +92,13 @@ var messenger = messenger || {};
 			return VK.apiAsync('groups.get', {
 				extended: 1,
 				fields: ['photo_200', 'photo_100', 'photo_50', 'can_post'].join(','),
+				filter: ['admin', 'editor', 'moder'].join(','),
 				offset: offset,
 				count: count,
+				https: 1,
 				v: 5.12
 			}).then(function(response) {
+				console.log(response);
 				return response.items.map(GroupModel.fromRaw);
 			});
 		};

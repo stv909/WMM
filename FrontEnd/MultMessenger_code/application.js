@@ -370,7 +370,6 @@ window.onload = function() {
 			self.contactRepository.selected = event.user;
 		});
 		this.postPageView.groupSearchView.on('select:group', function(event) {
-			console.log(event);
 			self.contactRepository.selected = event.group;
 		});
 		this.editPageView.on('status:validate', function() {
