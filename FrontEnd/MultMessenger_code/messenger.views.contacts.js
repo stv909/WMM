@@ -21,18 +21,11 @@ var messenger = messenger || {};
 					analytics.send('friends', 'friends_select');
 				}
 			};
-			var nameElemClickListener = function(event) {
-				var id = self.model.get('id');
-				var vkLink = [settings.vkContactBaseUrl, id].join('');
-				window.open(vkLink, '_blank');
-			};
-			
+
 			this.elem.addEventListener('click', elemClick);
-			this.nameElem.addEventListener('click', nameElemClickListener);
-			
+
 			this.once('dispose', function() {
 				self.elem.removeEventListener('click', elemClick);
-				self.nameElem.removeEventListener('click', nameElemClickListener);
 			});
 		}
 		
@@ -62,9 +55,22 @@ var messenger = messenger || {};
 		
 		function UserView(model) {
 			base.apply(this, arguments);
+			var self = this;
 			
 			this.setModel(model);
 			this.deselect();
+			
+			var nameElemClickListener = function(event) {
+				var id = self.model.get('id');
+				var vkLink = [settings.vkContactBaseUrl, id].join('');
+				window.open(vkLink, '_blank');
+			};
+			
+			this.nameElem.addEventListener('click', nameElemClickListener);
+						
+			this.on('dispose', function() {
+				self.nameElem.removeEventListener('click', nameElemClickListener);	
+			});
 		}
 		
 		UserView.prototype.setModel = function(model) {

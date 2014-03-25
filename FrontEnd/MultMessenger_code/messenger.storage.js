@@ -103,7 +103,7 @@ var messenger = messenger || {};
 		var messageRecieveListener = function(rawMessage) {
 			var value = rawMessage.value || {};
 			var group = value.group || "";
-			var message = MessageModel.fromChatMessage(rawMessage);
+			var message = MessageModel.fromRaw(rawMessage);
 			var messageId = message.get('id');
 			do {
 				if (self.hasMessage(messageId)) break;

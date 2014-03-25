@@ -269,6 +269,9 @@ window.onload = function() {
 				});
 				groups.next();
 			});
+			self.contactRepository.on('empty:groups', function(event) {
+				self.postPageView.disableGroupTab();
+			});
 		})();
 	};
 	MessengerApplication.prototype.initializeChatClient = function() {
@@ -338,7 +341,8 @@ window.onload = function() {
 		});
 		this.postDialogView.on('click:close', function(event) {
 			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
-				//self.postPageView.selectContact(self.contactRepository.owner);
+				self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
+				self.postPageView.setMode('friend');
 				self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 				self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 				self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -347,7 +351,8 @@ window.onload = function() {
 			self.navigation.setMode('select');
 		});
 		this.skipDialogView.on('click:ok', function(event) {
-			//self.postPageView.selectContact(self.contactRepository.owner);
+			self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
+			self.postPageView.setMode('friend');
 			self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
 			self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
 			self.currentLogoElemClickListener = self.logoElemStandardClickListener;
@@ -355,20 +360,18 @@ window.onload = function() {
 			self.navigation.setMode('select');
 			analytics.send('answer', 'browse_tape');
 		});
-		// this.postPageView.on('select:contact', function(event) {
-		// 	self.contactStorage.selected = event.contact;
-		// });
-		// this.postPageView.on('click:load', function() {
-		// 	self.contactStorage.searchCollection.next();
-		// });
-		// this.postPageView.on('update:search', function(event) {
-		// 	self.contactStorage.search(event.text);	
-		// });
 		this.postPageView.friendSearchView.on('search:users', function(event) {
 			self.contactRepository.searchUsers(event.text);
 		});
 		this.postPageView.groupSearchView.on('search:groups', function(event) {
 			self.contactRepository.searchGroups(event.text);
+		});
+		this.postPageView.friendSearchView.on('select:user', function(event) {
+			self.contactRepository.selected = event.user;
+		});
+		this.postPageView.groupSearchView.on('select:group', function(event) {
+			console.log(event);
+			self.contactRepository.selected = event.group;
 		});
 		this.editPageView.on('status:validate', function() {
 			self.currentShowAskMessageDialog = self.validShowAskMessageDialog;

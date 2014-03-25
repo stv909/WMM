@@ -61,6 +61,7 @@ var messenger = messenger || {};
 			
 			this.owner = null;
 			this.sender = null;
+			this.selected = null;
 			
 			this.senderId = null;
 		}
@@ -74,8 +75,8 @@ var messenger = messenger || {};
 			return this._loadGroupsAsync().then(function() {
 				return self._loadUsersAsync();
 			}).then(function() {
-				self.searchUsers('');
 				self.searchGroups('');
+				self.searchUsers('');
 			});
 		};
 		
@@ -135,6 +136,9 @@ var messenger = messenger || {};
 						self.groupSearch = new TextSearch(groupCollection, function(group) {
 							return [group.get('name')];
 						});
+						if (!groupCollection.length) {
+							self.trigger('empty:groups');
+						}
 					}
 				});
 			};

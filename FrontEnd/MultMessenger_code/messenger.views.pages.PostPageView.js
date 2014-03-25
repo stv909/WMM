@@ -122,6 +122,9 @@
 					throw new Error('unsupported mode');
 			}
 		};
+		PostPageView.prototype.disableGroupTab = function() {
+			this.groupTabElem.classList.add('hidden');
+		};
 		
 		return PostPageView;
 	})(PageView);
@@ -232,6 +235,19 @@
 				userView.select();
 			}
 		};
+		FriendSearchView.prototype.selectFriend = function(user) {
+			var userView = this._getOrCreateUserView(user);
+			userView.select();
+		};
+		FriendSearchView.prototype.show = function() {
+			base.prototype.show.apply(this, arguments);
+			if (this.selectedUserView) {
+				this.trigger({
+					type: 'select:user',
+					user: this.selectedUserView.model
+				});
+			}
+		};
 		FriendSearchView.prototype._getOrCreateUserView = function(user) {
 			var id = user.get('id');
 			var userView = this.cachedUserViews[id];
@@ -314,6 +330,19 @@
 			this.groupViews[id] = groupView;
 			if (!this.selectedGroupView) {
 				groupView.select();
+			}
+		};
+		GroupSearchView.prototype.selectGroup = function(group) {
+			var groupView = this._getOrCreateGroupView(group);
+			groupView.select();
+		};
+		GroupSearchView.prototype.show = function() {
+			base.prototype.show.apply(this, arguments);
+			if (this.selectedGroupView) {
+				this.trigger({
+					type: 'select:group',
+					group: this.selectedGroupView.model
+				});
 			}
 		};
 		GroupSearchView.prototype._getOrCreateGroupView = function(group) {

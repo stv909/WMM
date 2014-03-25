@@ -19,9 +19,9 @@ var settings = settings || {};
 		'release': 'wss://www.bazelevscontent.net/9009/'
 	};
 	settings.previewGeneratorUrls = {
-		'dev': 'https://www.bazelevscontent.net:4443/8894',
-		'content': 'https://www.bazelevscontent.net/8892',
-		'release': 'https://www.bazelevscontent.net/8892'
+		'dev': 'https://www.bazelevscontent.net:4443/8894/',
+		'content': 'https://www.bazelevscontent.net/8892/',
+		'release': 'https://www.bazelevscontent.net/8892/'
 	};
 	settings.imageStoreBaseUrls = {
 		'dev': 'https://www.bazelevscontent.net:4443/8584/',
