@@ -78,9 +78,9 @@ var messenger = messenger || {};
 			this.nameElem.textContent = this.model.getFullName();
 			
 			if (this.model.get('canPost')) {
-				this.elem.classList.add('closed');
-			} else {
 				this.elem.classList.remove('closed');
+			} else {
+				this.elem.classList.add('closed');
 			}
 		};
 		
@@ -98,8 +98,8 @@ var messenger = messenger || {};
 		}
 		
 		GroupView.prototype.setModel = function(model) {
-			base.prototype.setModel.apply(this, model);
-			
+			base.prototype.setModel.apply(this, arguments);
+
 			if (!this.model) {
 				return;
 			}
@@ -108,9 +108,9 @@ var messenger = messenger || {};
 			this.nameElem.textContent = this.model.get('name');
 			
 			if (this.model.get('canPost')) {
-				this.elem.classList.add('closed');
-			} else {
 				this.elem.classList.remove('closed');
+			} else {
+				this.elem.classList.add('closed');
 			}
 		};
 		

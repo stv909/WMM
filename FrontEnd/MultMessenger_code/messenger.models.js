@@ -15,7 +15,7 @@ var messenger = messenger || {};
 
 		UserModel.fromRaw = function(rawUser) {
 			var user = new UserModel();
-			
+
 			user.set({
 				id: rawUser.id,
 				firstName: rawUser.first_name,

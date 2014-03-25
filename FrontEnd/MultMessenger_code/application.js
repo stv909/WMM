@@ -225,29 +225,41 @@ window.onload = function() {
 		this.messageStorage.on('end:messages', function() {
 			self.selectPageView.hideMessageLoading();	
 		});
-		this.contactRepository.on('search:users', function(event) {
-			console.log(event);
-		});
-		this.contactRepository.on('search:groups', function(event) {
-			console.log(event);
-		});
-		// this.contactStorage.on('update:search', function(event) {
-		// 	self.postPageView.clear();
-		// 	self.postPageView.showContactLoading();
-		// 	var contacts = event.contacts;
-		// 	contacts.on('paginate:item', function(event) {
-		// 		var contact = event.item;
-		// 		self.postPageView.showContact(contact);
-		// 	});
-		// 	contacts.on('paginate:end', function(event) {
-		// 		self.postPageView.hideContactLoading();	
-		// 	});
-		// 	contacts.next();
-		// });
 		this.characterStorage.on('update:characters', function(event) {
 			var characters = event.characters;
 			self.editPageView.setCharacters(characters);
 		});
+		(function() {
+			var users = null;
+			var groups = null;
+			
+			self.contactRepository.on('search:users', function(event) {
+				self.postPageView.friendSearchView.clear();
+				if (users) users.dispose();
+				users = event.users;
+				users.on('paginate:item', function(event) {
+					var friend = event.item;
+					self.postPageView.friendSearchView.addFriend(friend);
+				});
+				users.on('paginate:end', function(event) {
+					
+				});
+				users.next();
+			});
+			self.contactRepository.on('search:groups', function(event) {
+				self.postPageView.groupSearchView.clear();
+				if (groups) groups.dispose();
+				groups = event.groups;
+				groups.on('paginate:item', function(event) {
+					var group = event.item;
+					self.postPageView.groupSearchView.addGroup(group);
+				});
+				groups.on('paginate:end', function(event) {
+					
+				});
+				groups.next();
+			});
+		})();
 	};
 	MessengerApplication.prototype.initializeChatClient = function() {
 		var self = this;

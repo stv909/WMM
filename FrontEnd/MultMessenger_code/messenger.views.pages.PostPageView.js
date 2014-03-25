@@ -159,9 +159,21 @@
 			
 			this.cachedUserViews = {};
 			this.userViews = {};
+			this.selectedUserView = null;
 			
 			this.userViewSelectListener = function(event) {
-				
+				var target = event.target;
+				if (target !== self.selectedUserView) {
+					if (self.selectedUserView) {
+						self.selectedUserView.deselect();
+					}
+					self.selectedUserView = target;
+					self.userView.setModel(self.selectedUserView.model);
+					self.trigger({
+						type: 'select:user',
+						user: self.selectedUserView.model
+					});
+				}
 			};
 			
 			this.queryElemObserver = new DelayedObserver(this.queryElem.value);
@@ -186,14 +198,19 @@
 		}
 		
 		FriendSearchView.prototype.clear = function() {
-			this.userViews.forEach(function(userView) {
-				userView.detach();	
-			});
+			Object.keys(this.userViews).forEach(function(key) {
+				this.userViews[key].detach();	
+			}, this);
 			this.userViews = {};
 		};
 		FriendSearchView.prototype.addFriend = function(user) {
+			var id = user.get('id');
 			var userView = this._getOrCreateUserView(user);
 			userView.attachTo(this.searchResultsElem);
+			this.userViews[id] = userView;
+			if (!this.selectedUserView) {
+				userView.select();
+			}
 		};
 		FriendSearchView.prototype._getOrCreateUserView = function(user) {
 			var id = user.get('id');
@@ -225,9 +242,21 @@
 			
 			this.cachedGroupViews = {};
 			this.groupViews = {};
+			this.selectedGroupView = null;
 			
 			this.groupViewSelectListener = function(event) {
-				
+				var target = event.target;
+				if (target !== self.selectedGroupView) {
+					if (self.selectedGroupView) {
+						self.selectedGroupView.deselect();
+					}
+					self.selectedGroupView = target;
+					self.groupView.setModel(self.selectedGroupView.model);
+					self.trigger({
+						type: 'select:group',
+						group: self.selectedGroupView.model
+					});
+				}
 			};
 			
 			this.queryElemObserver = new DelayedObserver(this.queryElem.value);
@@ -252,18 +281,23 @@
 		}
 		
 		GroupSearchView.prototype.clear = function() {
-			this.groupViews.forEach(function(groupView) {
-				groupView.detach();	
-			});
+			Object.keys(this.groupViews).forEach(function(key) {
+				this.groupViews[key].detach();	
+			}, this);
 			this.groupViews = {};
 		};
 		GroupSearchView.prototype.addGroup = function(group) {
+			var id = group.get('id');
 			var groupView = this._getOrCreateGroupView(group);
 			groupView.attachTo(this.searchResultsElem);
+			this.groupViews[id] = groupView;
+			if (!this.selectedGroupView) {
+				groupView.select();
+			}
 		};
 		GroupSearchView.prototype._getOrCreateGroupView = function(group) {
 			var id = group.get('id');
-			var groupView = this.cachedUserViews[id];
+			var groupView = this.cachedGroupViews[id];
 			if (!groupView) {
 				groupView = new GroupView(group);
 				groupView.on('select', this.groupViewSelectListener);

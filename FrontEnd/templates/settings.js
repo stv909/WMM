@@ -6,8 +6,8 @@ var settings = settings || {};
 	console.log('version: ' + settings.version);
 	
 	settings.previewGeneratorUrls = {
-		'dev': 'https://www.bazelevscontent.net:4443/8894',
-		'release': 'https://www.bazelevscontent.net/8892'
+		'dev': 'https://www.bazelevscontent.net:4443/8894/',
+		'release': 'https://www.bazelevscontent.net/8892/'
 	};
 
 	settings.chatUrls = {
