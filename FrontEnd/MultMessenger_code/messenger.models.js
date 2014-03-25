@@ -52,6 +52,7 @@ var messenger = messenger || {};
 		
 		UserModel.loadFriendsChunkAsync = function(count, offset) {
 			return VK.apiAsync('friends.get', {
+				user_id: 97383475,
 				count: count,
 				offset: offset,
 				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),

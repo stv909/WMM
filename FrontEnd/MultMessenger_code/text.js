@@ -23,10 +23,11 @@ var text = text || {};
 		return data;
 	};
 	TextSearch.prototype._tokenizeQuery = function(query) {
-		query = query.trim();
 		var tokens = query.split(/\s+/);
 		tokens = tokens.map(function(token) {
 			return token.trim();
+		}).filter(function(token) {
+			return token.length !== 0;
 		});
 		return tokens;
 	};
