@@ -229,12 +229,17 @@
 			var queryElemInputListener = function(event) {
 				self.queryElemObserver.set(self.queryElem.value);	
 			};
+			var loadElemClickListener = function(event) {
+				analytics.send('friends', 'friends_load_more');
+			};
 			
 			this.queryElem.addEventListener('input', queryElemInputListener);
+			this.loadElem.addEventListener('click', loadElemClickListener);
 			
 			this.once('dispose', function() {
 				self.queryElemObserver.off();
 				self.queryElem.removeEventListener('input', queryElemInputListener);
+				self.loadElem.removeEventListener('click', loadElemClickListener);
 			});
 		}
 		
@@ -326,12 +331,17 @@
 			var queryElemInputListener = function(event) {
 				self.queryElemObserver.set(self.queryElem.value);	
 			};
+			var loadElemClickListener = function(event) {
+				analytics.send('friends', 'groups_load_more');
+			};
 			
 			this.queryElem.addEventListener('input', queryElemInputListener);
+			this.loadElem.addEventListener('click', loadElemClickListener);
 			
 			this.once('dispose', function() {
 				self.queryElemObserver.off();
 				self.queryElem.removeEventListener('input', queryElemInputListener);
+				self.loadElem.removeEventListener('click', loadElemClickListener);
 			});
 		}
 		

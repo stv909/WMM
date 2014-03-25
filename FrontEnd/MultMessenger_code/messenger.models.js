@@ -52,7 +52,7 @@ var messenger = messenger || {};
 		
 		UserModel.loadFriendsChunkAsync = function(count, offset) {
 			return VK.apiAsync('friends.get', {
-				user_id: 97383475,
+				//user_id: 97383475,
 				count: count,
 				offset: offset,
 				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
@@ -92,13 +92,11 @@ var messenger = messenger || {};
 			return VK.apiAsync('groups.get', {
 				extended: 1,
 				fields: ['photo_200', 'photo_100', 'photo_50', 'can_post'].join(','),
-				filter: ['admin', 'editor', 'moder'].join(','),
 				offset: offset,
 				count: count,
 				https: 1,
 				v: 5.12
 			}).then(function(response) {
-				console.log(response);
 				return response.items.map(GroupModel.fromRaw);
 			});
 		};

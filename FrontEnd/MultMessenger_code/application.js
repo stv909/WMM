@@ -143,8 +143,8 @@ window.onload = function() {
 				Helpers.buildVkId(account),
 				Helpers.buildVkId(companion)
 			);
-			var selfMessage = account.get('id') === companion.get('id') ? 'self' : 'friend';
-			var action = ['post', selfMessage].join('_');
+			var messageTarget = Helpers.getMessageTarget(account, companion);
+			var action = ['post', messageTarget].join('_');
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 			
 			self.chatClientWrapper.nowAsync().then(function(timestamp) {

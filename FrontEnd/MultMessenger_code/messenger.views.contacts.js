@@ -18,7 +18,6 @@ var messenger = messenger || {};
 			var elemClick = function(event) {
 				if (!self.selected) {
 					self.select();
-					analytics.send('friends', 'friends_select');
 				}
 			};
 
@@ -65,11 +64,16 @@ var messenger = messenger || {};
 				var vkLink = [settings.vkContactBaseUrl, id].join('');
 				window.open(vkLink, '_blank');
 			};
+			var elemClickListener = function(event) {
+				analytics.send('friends', 'friends_select');	
+			};
 			
 			this.nameElem.addEventListener('click', nameElemClickListener);
+			this.elem.addEventListener('click', elemClickListener);
 						
 			this.on('dispose', function() {
 				self.nameElem.removeEventListener('click', nameElemClickListener);	
+				self.elem.removeEventListener('click', elemClickListener);
 			});
 		}
 		
@@ -109,11 +113,16 @@ var messenger = messenger || {};
 				var vkLink = [settings.vkGroupBaseUrls[type], id].join('');
 				window.open(vkLink, '_blank');
 			};
+			var elemClickListener = function(event) {
+				analytics.send('friends', 'groups_select');	
+			};
 			
 			this.nameElem.addEventListener('click', nameElemClickListener);
+			this.elem.addEventListener('click', elemClickListener);
 						
 			this.on('dispose', function() {
-				self.nameElem.removeEventListener('click', nameElemClickListener);	
+				self.nameElem.removeEventListener('click', nameElemClickListener);
+				self.elem.removeEventListener('click', elemClickListener);
 			});
 		}
 		
@@ -126,12 +135,6 @@ var messenger = messenger || {};
 			
 			this.photoElem.src = this.model.get('photo');
 			this.nameElem.textContent = this.model.get('name');
-
-			if (this.model.get('canPost')) {
-				this.elem.classList.remove('closed');
-			} else {
-				this.elem.classList.add('closed');
-			}
 		};
 		
 		return GroupView;

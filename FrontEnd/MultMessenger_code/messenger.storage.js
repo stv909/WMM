@@ -150,7 +150,6 @@ var messenger = messenger || {};
 				validMessageCount++;
 			}	
 		});
-		console.log('valid ' + validMessageCount);
 		this.trigger({
 			type: 'preload:update',
 			count: validMessageCount
