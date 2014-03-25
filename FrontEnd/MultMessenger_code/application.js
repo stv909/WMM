@@ -225,7 +225,12 @@ window.onload = function() {
 		this.messageStorage.on('end:messages', function() {
 			self.selectPageView.hideMessageLoading();	
 		});
-		
+		this.contactRepository.on('search:users', function(event) {
+			console.log(event);
+		});
+		this.contactRepository.on('search:groups', function(event) {
+			console.log(event);
+		});
 		// this.contactStorage.on('update:search', function(event) {
 		// 	self.postPageView.clear();
 		// 	self.postPageView.showContactLoading();
@@ -337,6 +342,12 @@ window.onload = function() {
 		// this.postPageView.on('update:search', function(event) {
 		// 	self.contactStorage.search(event.text);	
 		// });
+		this.postPageView.friendSearchView.on('search:users', function(event) {
+			self.contactRepository.searchUsers(event.text);
+		});
+		this.postPageView.groupSearchView.on('search:groups', function(event) {
+			self.contactRepository.searchGroups(event.text);
+		});
 		this.editPageView.on('status:validate', function() {
 			self.currentShowAskMessageDialog = self.validShowAskMessageDialog;
 		});

@@ -347,18 +347,29 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
   right: 0;
+  left: 0;
 }
-#post-page .tabs {
+#post-page >div {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#post-page >div .tabs,
+#post-page >div .container {
+  display: table-row;
+}
+#post-page >div .tabs {
   height: 38px;
-  line-height: 38px;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
   background-color: #efefef;
-}
-#post-page .tabs .tab {
+  text-align: center;
   position: relative;
+}
+#post-page >div .tabs .strike {
+  height: 38px;
+  border-bottom: 1px solid #ddd;
+}
+#post-page >div .tabs .tab {
   background-color: #fff;
   font-size: 12px;
   display: inline-block;
@@ -373,16 +384,52 @@ body {
   border-top-right-radius: 2px;
   border-top-left-radius: 2px;
 }
-#post-page .tabs .tab.normal {
+#post-page >div .tabs .tab.normal {
   cursor: pointer;
 }
-#post-page .tabs .tab.normal:hover {
+#post-page >div .tabs .tab.normal:hover {
   color: #28f;
 }
-#post-page .tabs .tab.chosen {
+#post-page >div .tabs .tab.chosen {
   cursor: default;
   border-bottom: 1px solid #fff;
   color: #28f;
+}
+#post-page >div .container {
+  width: 100%;
+  height: 100%;
+}
+#post-page >div .container .contact-search {
+  width: 100%;
+  height: 100%;
+}
+#post-page >div .container .contact-search >div {
+  display: table;
+  width: 100%;
+  height: 100%;
+  table-layout: fixed;
+}
+#post-page >div .container .contact-search >div .header {
+  display: table-row;
+  height: 1%;
+}
+#post-page >div .container .contact-search >div .body {
+  display: table-row;
+}
+#post-page >div .container .contact-search >div .receiver-place,
+#post-page >div .container .contact-search >div .search-place {
+  display: table-cell;
+}
+#post-page >div .container .contact-search >div .receiver-place {
+  padding-left: 16px;
+  width: 145px;
+}
+#post-page >div .container .contact-search >div .receiver-place .section {
+  width: 100%;
+  margin-top: 12px;
+}
+#post-page >div .container .contact-search >div .search-place {
+  padding-right: 12px;
 }
 #post-page-1 {
   font-size: 0;

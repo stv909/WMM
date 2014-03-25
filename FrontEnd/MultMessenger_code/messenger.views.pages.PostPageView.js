@@ -1,4 +1,7 @@
-(function(messenger, eve, abyss, template) {
+(function(messenger, eve, abyss, template, analytics) {
+	
+	var UserView = messenger.views.UserView;
+	var GroupView = messenger.views.GroupView;
 	
 	var PageView = (function(base) {
 		eve.extend(PageView, base);
@@ -18,6 +21,37 @@
 		return PageView;
 	})(abyss.View);
 	
+	var DelayedObserver = (function(base) {
+		eve.extend(DelayedObserver, base);
+		
+		function DelayedObserver(value) {
+			base.apply(this, arguments);
+			
+			this.lastValue = value;
+			this.lastTimeout = null;
+			this.delay = 800;
+		}
+		
+		DelayedObserver.prototype.set = function(value) {
+			var self = this;
+			if (this.lastTimeout) {
+				clearTimeout(this.lastTimeout);
+				this.lastTimeout = null;
+			}
+			if (value !== this.lastValue) {
+				this.lastTimeout = setTimeout(function() {
+					self.lastValue = value;
+					self.trigger({
+						type: 'change:value',
+						value: self.lastValue
+					});
+				}, this.delay);
+			}
+		};
+		
+		return DelayedObserver;
+	})(eve.EventEmitter);
+	
 	var PostPageView = (function(base) {
 		eve.extend(PostPageView, base);
 		
@@ -29,6 +63,7 @@
 			this.tabsElem = this.elem.getElementsByClassName('tabs')[0];
 			this.friendTabElem = this.tabsElem.getElementsByClassName('friend')[0];
 			this.groupTabElem = this.tabsElem.getElementsByClassName('group')[0];
+			this.containerElem = this.elem.getElementsByClassName('container')[0];
 
 			this.mode = 'friend';
 			this.friendSearchView = new FriendSearchView();
@@ -49,15 +84,19 @@
 			this.groupTabElem.addEventListener('click', groupTabElemClickListener);
 			
 			this.initializeViews();
+			this.setMode('friend');
 			
 			this.once('dispose', function() {
+				self.friendSearchView.dispose();
+				self.groupSearchView.dispose();
 				self.friendTabElem.removeEventListener('click', friendTabElemClickListener);
 				self.groupTabElem.removeEventListener('click', groupTabElemClickListener);
 			});
 		}
 		
 		PostPageView.prototype.initializeViews = function() {
-			
+			this.friendSearchView.attachTo(this.containerElem);
+			this.groupSearchView.attachTo(this.containerElem);
 		};
 		PostPageView.prototype.setMode = function(mode) {
 			this.mode = mode;
@@ -87,25 +126,154 @@
 		return PostPageView;
 	})(PageView);
 	
+	var SearchView = (function(base) {
+		eve.extend(SearchView, base);
+		
+		function SearchView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.elem = template.create('contact-search-template', { className: 'contact-search' });
+			this.receiverHolderElem = this.elem.getElementsByClassName('receiver-holder')[0];
+			this.sectionElem = this.elem.getElementsByClassName('section')[0];
+			this.queryElem = this.elem.getElementsByClassName('query')[0];
+			this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
+		}
+		
+		return SearchView;
+	})(PageView);
+	
 	var FriendSearchView = (function(base) {
 		eve.extend(FriendSearchView, base);
 		
 		function FriendSearchView() {
 			base.apply(this, arguments);
+			var self = this;
+			
+			this.sectionElem.textContent = 'Друг';
+			this.queryElem.placeholder = 'Найти друга';
+			
+			this.userView = new UserView();
+			this.userView.attachTo(this.receiverHolderElem);
+			this.userView.select();
+			
+			this.cachedUserViews = {};
+			this.userViews = {};
+			
+			this.userViewSelectListener = function(event) {
+				
+			};
+			
+			this.queryElemObserver = new DelayedObserver(this.queryElem.value);
+			this.queryElemObserver.on('change:value', function(event) {
+				self.trigger({
+					type: 'search:users',
+					text: event.value
+				});
+				analytics.send('friends', 'friends_search');
+			});
+			
+			var queryElemInputListener = function(event) {
+				self.queryElemObserver.set(self.queryElem.value);	
+			};
+			
+			this.queryElem.addEventListener('input', queryElemInputListener);
+			
+			this.once('dispose', function() {
+				self.queryElemObserver.off();
+				self.queryElem.removeEventListener('input', queryElemInputListener);
+			});
 		}
 		
+		FriendSearchView.prototype.clear = function() {
+			this.userViews.forEach(function(userView) {
+				userView.detach();	
+			});
+			this.userViews = {};
+		};
+		FriendSearchView.prototype.addFriend = function(user) {
+			var userView = this._getOrCreateUserView(user);
+			userView.attachTo(this.searchResultsElem);
+		};
+		FriendSearchView.prototype._getOrCreateUserView = function(user) {
+			var id = user.get('id');
+			var userView = this.cachedUserViews[id];
+			if (!userView) {
+				userView = new UserView(user);
+				userView.on('select', this.userViewSelectListener);
+				this.cachedUserViews[id] = userView;
+			}
+			return userView;
+		};
+		
 		return FriendSearchView;
-	})(PageView);
+	})(SearchView);
 	
 	var GroupSearchView = (function(base) {
 		eve.extend(GroupSearchView, base);
 		
 		function GroupSearchView() {
 			base.apply(this, arguments);
+			var self = this;
+			
+			this.sectionElem.textContent = 'Сообщество';
+			this.queryElem.placeholder = 'Найти сообщество';
+			
+			this.groupView = new GroupView();
+			this.groupView.attachTo(this.receiverHolderElem);
+			this.groupView.select();
+			
+			this.cachedGroupViews = {};
+			this.groupViews = {};
+			
+			this.groupViewSelectListener = function(event) {
+				
+			};
+			
+			this.queryElemObserver = new DelayedObserver(this.queryElem.value);
+			this.queryElemObserver.on('change:value', function(event) {
+				self.trigger({
+					type: 'search:groups',
+					text: event.value
+				});
+				analytics.send('friends', 'groups_search');
+			});
+			
+			var queryElemInputListener = function(event) {
+				self.queryElemObserver.set(self.queryElem.value);	
+			};
+			
+			this.queryElem.addEventListener('input', queryElemInputListener);
+			
+			this.once('dispose', function() {
+				self.queryElemObserver.off();
+				self.queryElem.removeEventListener('input', queryElemInputListener);
+			});
 		}
 		
+		GroupSearchView.prototype.clear = function() {
+			this.groupViews.forEach(function(groupView) {
+				groupView.detach();	
+			});
+			this.groupViews = {};
+		};
+		GroupSearchView.prototype.addGroup = function(group) {
+			var groupView = this._getOrCreateGroupView(group);
+			groupView.attachTo(this.searchResultsElem);
+		};
+		GroupSearchView.prototype._getOrCreateGroupView = function(group) {
+			var id = group.get('id');
+			var groupView = this.cachedUserViews[id];
+			if (!groupView) {
+				groupView = new GroupView(group);
+				groupView.on('select', this.groupViewSelectListener);
+				this.cachedGroupViews[id] = groupView;
+			}
+			return groupView;
+		};
+		
 		return GroupSearchView;
-	})(PageView);
+	})(SearchView);
 	
 	messenger.views = messenger.views || {};
 	messenger.views.PostPageView = PostPageView;
@@ -256,4 +424,4 @@
 	// 	}
 	// 	return contactView;
 	// };
-})(messenger || (messenger = {}), eve, abyss, template);
+})(messenger || (messenger = {}), eve, abyss, template, analytics);

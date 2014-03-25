@@ -299,37 +299,70 @@ html, body
 	position absolute
 	top 0
 	bottom 0
-	left 0
 	right 0
-	.tabs
-		height 38px
-		line-height 38px
-		border-bottom 1px solid #ddd
-		text-align center
-		background-color #efefef
-		.tab
+	left 0
+	>div
+		display table
+		width 100%
+		height 100%
+		.tabs, .container
+			display table-row
+		.tabs
+			height 38px
+			background-color #efefef
+			text-align center
 			position relative
-			background-color white
-			font-size 12px
-			display inline-block
-			height 32px
-			line-height 32px
-			border 1px solid #ddd
-			padding-left 16px
-			padding-right 16px
-			margin-top 5px
-			margin-left 2px
-			margin-right 2px
-			border-top-right-radius 2px
-			border-top-left-radius 2px
-			&.normal
-				cursor pointer
-				&:hover
+			.strike
+				height 38px
+				border-bottom 1px solid #ddd
+			.tab
+				background-color white
+				font-size 12px
+				display inline-block
+				height 32px
+				line-height 32px
+				border 1px solid #ddd
+				padding-left 16px
+				padding-right 16px
+				margin-top 5px
+				margin-left 2px
+				margin-right 2px
+				border-top-right-radius 2px
+				border-top-left-radius 2px
+				&.normal
+					cursor pointer
+					&:hover
+						color aspect-color
+				&.chosen
+					cursor default
+					border-bottom 1px solid white
 					color aspect-color
-			&.chosen
-				cursor default
-				border-bottom 1px solid white
-				color aspect-color
+		.container
+			width 100%
+			height 100%
+			.contact-search
+				width 100%
+				height 100%
+				>div
+					display table
+					width 100%
+					height 100%
+					 table-layout fixed
+					.header
+						display table-row
+						height 1%
+					.body
+						display table-row
+					.receiver-place, .search-place
+						display table-cell
+					.receiver-place
+						padding-left 16px
+						width 145px
+						.section
+							width 100%
+							margin-top 12px
+					.search-place
+						padding-right 12px
 #post-page-1
 	font-size 0
 	position absolute

@@ -129,7 +129,7 @@ var text = text || {};
 	};
 	TextSearch.prototype._buildData = function(indices) {
 		return indices.map(function(index) {
-			return this.data[index.position];
+			return this.objects[index.position];
 		}, this);
 	};
 

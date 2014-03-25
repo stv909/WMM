@@ -71,8 +71,11 @@ var messenger = messenger || {};
 		
 		ContactRepository.prototype.initializeAsync = function() {
 			var self = this;
-			return this._loadUsersAsync().then(function() {
-				return self._loadGroupsAsync();
+			return this._loadGroupsAsync().then(function() {
+				return self._loadUsersAsync();
+			}).then(function() {
+				self.searchUsers('');
+				self.searchGroups('');
 			});
 		};
 		
@@ -96,7 +99,9 @@ var messenger = messenger || {};
 					if (friendCount) {
 						return loadFriendsAsync(count, offset + friendCount);
 					} else {
-						self.userSearch = new TextSearch(userCollection);
+						self.userSearch = new TextSearch(userCollection, function(user) {
+							return [user.get('firstName'), user.get('lastName')];
+						});
 					}
 				});
 			};
@@ -120,14 +125,21 @@ var messenger = messenger || {};
 			var count = 1000;
 			var offset = 0;
 			var groupCollection = [];
-			return GroupModel.loadChunkAsync(count, offset).then(function(groups) {
-				if (groups.length) {
-					groupCollection = groupCollection.concat(groups);
-					return GroupModel.loadChunkAsync(count, offset + groups.length);
-				} else {
-					self.groupSearch = new TextSearch(groupCollection);
-				}
-			});
+			
+			var loadGroupsAsync = function(count, offset) {
+				return GroupModel.loadChunkAsync(count, offset).then(function(groups) {
+					if (groups.length) {
+						groupCollection = groupCollection.concat(groups);
+						return loadGroupsAsync(count, offset + groups.length);
+					} else {
+						self.groupSearch = new TextSearch(groupCollection, function(group) {
+							return [group.get('name')];
+						});
+					}
+				});
+			};
+
+			return loadGroupsAsync(count, offset);
 		};
 		
 		ContactRepository.prototype.searchUsers = function(query) {

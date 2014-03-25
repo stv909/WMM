@@ -6,12 +6,12 @@ var settings = settings || {};
 	console.log('version: ' + settings.version);
 	
 	settings.previewGeneratorUrls = {
-		'dev': 'https://www.bazelevscontent.net/8894',
+		'dev': 'https://www.bazelevscontent.net:4443/8894',
 		'release': 'https://www.bazelevscontent.net/8892'
 	};
 
 	settings.chatUrls = {
-		'dev': 'wss://www.bazelevscontent.net/9012/',
+		'dev': 'wss://www.bazelevscontent.net:4443/9012/',
 		'release': 'wss://www.bazelevscontent.net/9009/'
 	};
 	
