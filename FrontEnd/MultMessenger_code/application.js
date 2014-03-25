@@ -234,28 +234,38 @@ window.onload = function() {
 			var groups = null;
 			
 			self.contactRepository.on('search:users', function(event) {
-				self.postPageView.friendSearchView.clear();
 				if (users) users.dispose();
+				self.postPageView.friendSearchView.clear();
+				self.postPageView.friendSearchView.showLoader();
+				self.postPageView.friendSearchView.off('click:load');
+				self.postPageView.friendSearchView.on('click:load', function() {
+					users.next();
+				});
 				users = event.users;
 				users.on('paginate:item', function(event) {
 					var friend = event.item;
 					self.postPageView.friendSearchView.addFriend(friend);
 				});
 				users.on('paginate:end', function(event) {
-					
+					self.postPageView.friendSearchView.hideLoader();
 				});
 				users.next();
 			});
 			self.contactRepository.on('search:groups', function(event) {
-				self.postPageView.groupSearchView.clear();
 				if (groups) groups.dispose();
+				self.postPageView.groupSearchView.clear();
+				self.postPageView.groupSearchView.showLoader();
+				self.postPageView.groupSearchView.off('click:load');
+				self.postPageView.groupSearchView.on('click:load', function() {
+					groups.next();	
+				});
 				groups = event.groups;
 				groups.on('paginate:item', function(event) {
 					var group = event.item;
 					self.postPageView.groupSearchView.addGroup(group);
 				});
 				groups.on('paginate:end', function(event) {
-					
+					self.postPageView.groupSearchView.hideLoader();
 				});
 				groups.next();
 			});

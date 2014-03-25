@@ -138,7 +138,26 @@
 			this.sectionElem = this.elem.getElementsByClassName('section')[0];
 			this.queryElem = this.elem.getElementsByClassName('query')[0];
 			this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
+			this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
+			this.loadElem = this.loadHolderElem.getElementsByClassName('load')[0];
+			
+			var loadElemClickListener = function(event) {
+				self.trigger('click:load');
+			};
+			
+			this.loadElem.addEventListener('click', loadElemClickListener);
+			
+			this.once('dispose', function() {
+				self.loadElem.removeEventListener('click', loadElemClickListener);	
+			});
 		}
+		
+		SearchView.prototype.hideLoader = function() {
+			this.loadHolderElem.classList.add('hidden');
+		};
+		SearchView.prototype.showLoader = function() {
+			this.loadHolderElem.classList.remove('hidden');	
+		};
 		
 		return SearchView;
 	})(PageView);
@@ -152,6 +171,7 @@
 			
 			this.sectionElem.textContent = 'Друг';
 			this.queryElem.placeholder = 'Найти друга';
+			this.loadElem.textContent = 'Загрузить еще друзей...';
 			
 			this.userView = new UserView();
 			this.userView.attachTo(this.receiverHolderElem);
@@ -235,6 +255,7 @@
 			
 			this.sectionElem.textContent = 'Сообщество';
 			this.queryElem.placeholder = 'Найти сообщество';
+			this.loadElem.textContent = 'Загрузить еще сообществ...';
 			
 			this.groupView = new GroupView();
 			this.groupView.attachTo(this.receiverHolderElem);

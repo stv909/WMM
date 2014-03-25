@@ -419,109 +419,59 @@ body {
 #post-page >div .container .contact-search >div .receiver-place,
 #post-page >div .container .contact-search >div .search-place {
   display: table-cell;
+  vertical-align: top;
 }
 #post-page >div .container .contact-search >div .receiver-place {
   padding-left: 16px;
   width: 145px;
 }
+#post-page >div .container .contact-search >div .receiver-place .receiver-holder {
+  vertical-align: top;
+  padding-top: 6px;
+}
 #post-page >div .container .contact-search >div .receiver-place .section {
   width: 100%;
   margin-top: 12px;
+  margin-bottom: 0;
 }
 #post-page >div .container .contact-search >div .search-place {
-  padding-right: 12px;
+  padding-right: 20px;
 }
-#post-page-1 {
-  font-size: 0;
+#post-page >div .container .contact-search >div .search-place >.prewrapper {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+#post-page >div .container .contact-search >div .search-place >.prewrapper >.wrapper {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
   right: 0;
-  overflow: hidden;
-  padding: 14px 0 0 16px;
+  left: 0;
+  padding-top: 6px;
+  overflow: auto;
 }
-#post-page-1 .container {
-  display: block;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+#post-page >div .container .contact-search >div .search-place .query {
+  margin-right: 12px;
+  margin-top: 12px;
+  margin-bottom: 4px;
 }
-#post-page-1 .receiver-wrapper,
-#post-page-1 .search-wrapper {
-  padding-top: 2px;
-  vertical-align: top;
-  position: relative;
-  height: 100%;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-#post-page-1 .receiver-wrapper {
-  width: 145px;
-  float: left;
-}
-#post-page-1 .receiver-wrapper .section {
-  margin-bottom: 10px;
-}
-#post-page-1 .search-wrapper {
-  font-size: 12px;
-  margin-left: 145px;
-}
-#post-page-1 .search-wrapper >.wrap {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-#post-page-1 .search-wrapper .load-holder {
-  margin-left: 2px;
-  margin-top: 16px;
-  width: 718px;
-}
-#post-page-1 .search-wrapper .load-holder .button-special {
-  width: 100%;
-}
-#post-page-1 .search-wrapper .search {
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-#post-page-1 .search-wrapper .search .search-controls,
-#post-page-1 .search-wrapper .search .search-results {
-  display: block;
-  position: absolute;
-}
-#post-page-1 .search-wrapper .search .search-controls {
-  height: 39px;
-  padding-right: 16px;
-}
-#post-page-1 .search-wrapper .search .search-controls .query {
-  width: 738px;
-  margin-bottom: 6px;
-}
-#post-page-1 .search-wrapper .search .search-results {
-  top: 39px;
-  bottom: 0;
-}
-#post-page-1 .search-wrapper .search .search-results .shadow {
+#post-page >div .container .contact-search .shadow {
   width: 100%;
   position: absolute;
   z-index: 10;
   height: 6px;
   background-image: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 100%);
 }
-#post-page-1 .search-wrapper .search .search-results .wrap {
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  padding-top: 6px;
+#post-page >div .container .contact-search .load-holder {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  width: 718px;
+}
+#post-page >div .container .contact-search .load-holder .button-special {
   width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  position: relative;
 }
 .message {
   display: inline-block;

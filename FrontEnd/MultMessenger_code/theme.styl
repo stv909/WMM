@@ -355,85 +355,48 @@ html, body
 						display table-row
 					.receiver-place, .search-place
 						display table-cell
+						vertical-align top
 					.receiver-place
 						padding-left 16px
 						width 145px
+						.receiver-holder
+							vertical-align top
+							padding-top 6px
 						.section
 							width 100%
 							margin-top 12px
+							margin-bottom 0
 					.search-place
-						padding-right 12px
-#post-page-1
-	font-size 0
-	position absolute
-	top 0
-	bottom 0
-	left 0
-	right 0
-	overflow hidden
-	padding 14px 0 0 16px
-	.container
-		display block
-		position relative
-		width 100%
-		height 100%
-		overflow hidden
-		box-sizing border-box
-	.receiver-wrapper, .search-wrapper
-		padding-top 2px
-		vertical-align top
-		position relative
-		height 100%
-		box-sizing border-box
-	.receiver-wrapper
-		width 145px
-		float left
-		.section
-			margin-bottom 10px
-	.search-wrapper
-		font-size 12px
-		margin-left 145px
-		>.wrap
-			position relative
-			width 100%
-			height 100%
-		.load-holder
-			margin-left 2px
-			margin-top 16px
-			width 718px
-			.button-special
-				width 100%
-		.search
-			display block
-			width 100%
-			height 100%
-			position relative
-			.search-controls, .search-results
-				display block
-				position absolute
-			.search-controls
-				height 39px
-				padding-right 16px
-				.query
-					width 738px
-					margin-bottom 6px
-			.search-results
-				top 39px
-				bottom 0
+						padding-right 20px
+						>.prewrapper
+							box-sizing(border-box)
+							width 100%
+							height 100%
+							position relative
+							>.wrapper
+								position absolute
+								top 0
+								bottom 0
+								right 0 
+								left 0
+								padding-top 6px
+								overflow auto
+						.query
+							margin-right 12px
+							margin-top 12px
+							margin-bottom 4px
 				.shadow
 					width 100%
 					position absolute
 					z-index 10
 					height 6px
 					background-image linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%)
-				.wrap
-					box-sizing(border-box)
-					padding-top 6px
-					width 100%
-					height 100%
-					overflow-y auto
-					overflow-x hidden
-					position relative
+				.load-holder
+					margin-top 16px
+					margin-bottom 16px
+					width 718px
+					.button-special
+						width 100%
 .message
 	display inline-block
 	box-sizing(border-box)
