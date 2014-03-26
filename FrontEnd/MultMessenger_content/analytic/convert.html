@@ -11,7 +11,31 @@
 				array.map(function(elem, i) {
 					return i % chunkSize ? [] : [array.slice(i, i + chunkSize)];
 				}));
-			}
+			};
+			var wkTransformPattern = /(-webkit-transform:([^;]*);)/g;
+			var mozTransformPattern = /(-moz-transform:([^;]*);)/g;
+			var msTransformPattern = /(-ms-transform:([^;]*);)/g;
+			var transformPattern = /([^-]transform:([^;]*);)/g;
+			var buildWkTransform = function(transformValue) {
+				return ['-webkit-transform:', transformValue, ';'].join('');
+			};
+			var buildMozTransform = function(transformValue) {
+				return ['-moz-transform:', transformValue, ';'].join('');
+			};
+			var buildMsTransform = function(transformValue) {
+				return ['-ms-transform:', transformValue, ';'].join('');
+			};
+			var buildTransform = function(transformValue) {
+				return ['transform:', transformValue, ';'].join('');
+			};
+			var replaceTransform = function(match, transform, transformValue) {
+				return [
+					buildWkTransform(transformValue), 
+					buildMozTransform(transformValue),
+					buildMsTransform(transformValue),
+					buildTransform(transformValue)
+				].join(' ');
+			};
 			var notifier = new eve.EventEmitter();
 			window.onload = function() {
 				var wait = false;
@@ -54,7 +78,12 @@
 							var content = value.content;
 							if (content) {
 								var decodedContent = base64.decode(content);
-								var newContent = decodedContent.replace(/(https:\/\/www.bazelevscontent\.net\/8582\/)/g, 'https://bazelevscontent.net:4443/8584/');
+								var newContent = decodedContent
+									.replace(mozTransformPattern, '')
+									.replace(msTransformPattern, '')
+									.replace(transformPattern, '');
+								newContent = newContent.replace(wkTransformPattern, replaceTransform);
+								newContent = newContent.replace(/(https:\/\/www.bazelevscontent\.net\/8582\/)/g, 'https://do7qxewf181q3.cloudfront.net/');
 								if (decodedContent !== newContent) {
 									var newEncodedContent = base64.encode(newContent);
 									message.value.content = newEncodedContent;

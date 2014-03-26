@@ -72,11 +72,11 @@ var messenger = messenger || {};
 			var fullAnswerUrl = ['https://', answerUrl].join('');
 
 			if (ownerId === senderId) {
-				content = 'Мой мульт! \nСмотреть: ';
+				content = 'Мой мульт!\nСмотреть: ';
 			} else if (ownerId < 0) {
-				content = 'Зацените мульт!\n';
+				content = 'Зацените мульт!\nСмотреть:';
 			} else {
-				content = 'Тебе мульт! \nСмотреть: ';
+				content = 'Тебе мульт!\nСмотреть: ';
 			}
 			
 			return {
