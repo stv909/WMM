@@ -45,10 +45,15 @@ var css = css || {};
 	var getTransform = function(elem) {
 		return elem.style['-webkit-transform'] || 
 			elem.style['-moz-transform'] ||
+			elem.style['-ms-transform'] ||
+			elem.style['transform'] ||
 			'';
 	};
 	var setTransform = function(elem, transform) {
-		elem.style['-webkit-transform']	= elem.style['-moz-transform'] = transform;
+		elem.style['-webkit-transform']	= 
+		elem.style['-moz-transform'] = 
+		elem.style['-ms-transform'] = 
+		elem.style['transform'] = transform;
 	};
 	
 	var toTransform = function(rotate, scales) {

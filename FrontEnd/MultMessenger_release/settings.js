@@ -24,14 +24,14 @@ var settings = settings || {};
 		'release': 'https://www.bazelevscontent.net/8892/'
 	};
 	settings.imageStoreBaseUrls = {
-		'dev': 'https://www.bazelevscontent.net:4443/8584/',
-		'content': 'https://www.bazelevscontent.net/8582/',
-		'release': 'https://www.bazelevscontent.net/8582/'
+		'dev': 'https://do7qxewf181q3.cloudfront.net/8584/',
+		'content': 'https://do7qxewf181q3.cloudfront.net/8582/',
+		'release': 'https://do7qxewf181q3.cloudfront.net/8582/'
 	};
 	settings.layerImageStoreBaseUrls = {
-		'dev': 'https://www.bazelevscontent.net:4443/8584/',
-		'content': 'https://www.bazelevscontent.net/8582/',
-		'release': 'https://www.bazelevscontent.net/8582/'
+		'dev': 'https://do7qxewf181q3.cloudfront.net/8584/',
+		'content': 'https://do7qxewf181q3.cloudfront.net/8582/',
+		'release': 'https://do7qxewf181q3.cloudfront.net/8582/'
 	};
 	settings.animationServiceUrls = {
 		'dev': 'https://www.bazelevscontent.net:4443/8794/',

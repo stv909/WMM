@@ -83,7 +83,8 @@
 									.replace(msTransformPattern, '')
 									.replace(transformPattern, '');
 								newContent = newContent.replace(wkTransformPattern, replaceTransform);
-								newContent = newContent.replace(/(https:\/\/www.bazelevscontent\.net\/8582\/)/g, 'https://do7qxewf181q3.cloudfront.net/');
+								//var newContent = decodedContent.replace(/(https:\/\/do7qxewf181q3.cloudfront\.net\/)/g, 'https://do7qxewf181q3.cloudfront.net/8582/')
+								newContent = newContent.replace(/(https:\/\/www.bazelevscontent\.net\/8582\/)/g, 'https://do7qxewf181q3.cloudfront.net/8582/');
 								if (decodedContent !== newContent) {
 									var newEncodedContent = base64.encode(newContent);
 									message.value.content = newEncodedContent;
