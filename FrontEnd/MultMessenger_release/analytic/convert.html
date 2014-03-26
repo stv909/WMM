@@ -15,7 +15,7 @@
 			var notifier = new eve.EventEmitter();
 			window.onload = function() {
 				var wait = false;
-				var chatClient = new chat.ChatClient('wss://www.bazelevscontent.net/9009/');
+				var chatClient = new chat.ChatClient('ws://bazelevscontent.net:9012/');
 				chatClient.on('connect', function() {
 					console.log('connect');
 					chatClient.login('test');
@@ -54,7 +54,7 @@
 							var content = value.content;
 							if (content) {
 								var decodedContent = base64.decode(content);
-								var newContent = decodedContent.replace('background-image: url(http://bazelevscontent.net/WMM/chat.html);', '');
+								var newContent = decodedContent.replace(/(https:\/\/www.bazelevscontent\.net\/8582\/)/g, 'https://bazelevscontent.net:4443/8584/');
 								if (decodedContent !== newContent) {
 									var newEncodedContent = base64.encode(newContent);
 									message.value.content = newEncodedContent;

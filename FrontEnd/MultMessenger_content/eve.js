@@ -87,7 +87,23 @@ var eve = eve || {};
 		}
 	};
 
+	/**
+	 * Extends an object.
+	 * @param {function} derived A constructor function.
+	 * @param {function} base A base constructor function.
+	 */
+	var extend = function(derived, base) {
+		for (var property in base) {
+			if (base.hasOwnProperty(property)) {
+				derived[property] = property;
+			}
+		}
+		derived.prototype = Object.create(base.prototype);
+		derived.prototype.constructor = derived;
+	};
+
 	eve.EventEmitter = EventEmitter;
+	eve.extend = extend;
 
 	if (typeof module !== 'undefined') {
 		module.exports = eve;

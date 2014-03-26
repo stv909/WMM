@@ -115,66 +115,7 @@ var messenger = messenger || {};
 			elem: this.cachedFullElem
 		});
 	};
-	
-	var ContactView = function(model) {
-		ContactView.super.apply(this);
-		var self = this;
 
-		this.elem = template.create('contact-template', { className: 'contact' });
-		this.photoElem = this.elem.getElementsByClassName('photo')[0];
-		this.fullNameElem = this.elem.getElementsByClassName('full-name')[0];
-
-		this.selected = false;
-		this.setModel(model);
-		this.deselect();
-
-		var elemClickListener = function(event) {
-			if (!self.selected) {
-				self.select();
-				analytics.send('friends', 'friends_select');
-			}
-		};
-		var fullNameElemClickListener = function(event) {
-			var vkLink = ['https://vk.com/id', self.model.get('id')].join('');
-			window.open(vkLink, '_blank');
-		};
-
-		this.elem.addEventListener('click', elemClickListener);
-		this.fullNameElem.addEventListener('click', fullNameElemClickListener);
-
-		this.once('dispose', function() {
-			self.elem.removeEventListener('click', elemClickListener);
-			self.fullNameElem.removeEventListener('click', fullNameElemClickListener);
-		});
-	};
-	ContactView.super = View;
-	ContactView.prototype = Object.create(View.prototype);
-	ContactView.prototype.constructor = ContactView;
-	ContactView.prototype.select = function() {
-		this.selected = true;
-		this.elem.classList.remove('normal');
-		this.elem.classList.add('chosen');
-		this.trigger('select');
-	};
-	ContactView.prototype.deselect = function() {
-		this.selected = false;
-		this.elem.classList.add('normal');
-		this.elem.classList.remove('chosen');
-	};
-	ContactView.prototype.setModel = function(model) {
-		if (model) {
-			this.model = model;
-			this.photoElem.src = this.model.get('photo');
-			var fullName = [this.model.get('firstName'), this.model.get('lastName')].join(' ');
-			this.fullNameElem.textContent = fullName;
-			if (!this.model.get('canPost')) {
-				this.elem.classList.add('closed');
-			} else {
-				this.elem.classList.remove('closed');
-			}
-		}
-	};
-	
 	var CharacterView = function(characterData, characters, charactersDialogView) {
 		CharacterView.super.apply(this);
 		var self = this;
@@ -631,7 +572,6 @@ var messenger = messenger || {};
 	messenger.views.MessageView = MessageView;
 	messenger.views.MessagePatternView = MessagePatternView;
 	messenger.views.MessageEditorView = MessageEditorView;
-	messenger.views.ContactView = ContactView;
 	messenger.views.CharacterView = CharacterView;
 	messenger.views.CharacterItemView = CharacterItemView;
 	messenger.views.ImageItemView = ImageItemView;

@@ -68,7 +68,7 @@ var messenger = messenger || {};
 	})(abyss.Model);
 	
 	var GroupModel = (function(base) {
-		eve.extend(GroupModel, base)
+		eve.extend(GroupModel, base);
 	
 		function GroupModel() {
 			base.apply(this, arguments);	

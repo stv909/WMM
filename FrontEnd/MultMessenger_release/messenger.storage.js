@@ -1,289 +1,11 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, async, chat, Q, settings) {
+(function(messenger, eve, async, chat, Q, settings, text) {
 	
 	var EventEmitter = eve.EventEmitter;
 	var ContactModel = messenger.models.ContactModel;
+	var GroupModel = messenger.models.GroupModel;
 	var MessageModel = messenger.models.MessageModel;
-	
-	var ContactStorage = function() {
-		var self = this;
-		ContactStorage.super.apply(this);
-		
-		this.owner = null;
-		this.sender = null;
-		this.selected = null;
-		this.friends = [];
-		this.senderId = null;
-		this.searchCollection = null;
-	};
-	ContactStorage.super = EventEmitter;
-	ContactStorage.prototype = Object.create(EventEmitter.prototype);
-	ContactStorage.prototype.constructor = ContactStorage;
-	ContactStorage.prototype.initializeAsync = function() {
-		var self = this;
-		return self._loadOwnerAsync().then(function() {
-			self._loadSenderAsync();
-		}).then(function() {
-			return self._loadFriendsAsync(1000, 0);
-		}).then(function() {
-			self.search();
-		});
-	};
-	ContactStorage.prototype._loadOwnerAsync = function() {
-		var self = this;
-		return VK.apiAsync('users.get', {
-			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
-			name_case: 'nom',
-			https: 1,
-			v: 5.12
-		}).then(function(response) {
-			var rawOwner = response[0];
-			var owner = ContactModel.fromVkData(rawOwner);
-			self.owner = owner;
-			self.friends.push(self.owner);
-		});
-	};
-	ContactStorage.prototype._loadSenderAsync = function() {
-		var ownerId = this.owner.get('id');
-		var self = this;
-
-		if (this.senderId && ownerId != this.senderId) {
-			return VK.apiAsync('users.get', {
-				user_ids: self.senderId,
-				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
-				name_case: 'nom',
-				https: 1,
-				v: 5.12
-			}).then(function(response) {
-				var rawSender = response[0];
-				var sender = ContactModel.fromVkData(rawSender);
-				self.sender = sender;
-				self.friends.unshift(self.sender);
-			});
-		} else {
-			this.sender = this.owner;
-			return Q.when();
-		}
-	};
-	ContactStorage.prototype._loadFriendsAsync = function(count, offset) {
-		//97383475 - more 1k friends
-		var self = this;
-		return VK.apiAsync('friends.get', {
-			//user_id: 97383475,
-			count: count,
-			offset: offset,
-			fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
-			name_case: 'nom',
-			https: 1,
-			v: 5.12
-		}).then(function(response) {
-			var rawFriends = response.items;
-			var friendCount = rawFriends.length;
-			rawFriends.forEach(function(rawFriend) {
-				var friend = ContactModel.fromVkData(rawFriend);
-				var friendId = friend.get('id');
-				if (friendId != self.senderId) {
-					self.friends.push(friend);
-				}
-			});
-			if (friendCount !== 0) {
-				return self._loadFriendsAsync(count, offset + friendCount);
-			}
-		});
-	};
-	ContactStorage.prototype.setSenderId = function(senderId) {
-		this.senderId = senderId;
-	};
-	ContactStorage.prototype.getSenderId = function() {
-		return this.sender.get('id');	
-	};
-	ContactStorage.prototype.getSender = function() {
-		return this.sender;
-	};
-	ContactStorage.prototype.search = function(query) {
-		var searchCollection;
-		if (!query || query.length === 0) {
-			searchCollection = new PaginationCollection(this.friends);
-			searchCollection.count = 18;
-		} else {
-			var data = this._search(query);
-			searchCollection = new PaginationCollection(data);
-			searchCollection.count = 18;
-		}
-		
-		this._setSearchCollection(searchCollection);
-	};
-	ContactStorage.prototype._search = function(query) {
-		var keywords = this._prepareKeywords(query);
-		var regExps = this._prepareRegExps(keywords);
-		var indicies = this._buildIndicies(regExps);
-		var data = this._buildSeachData(indicies);
-		return data;
-	};
-	ContactStorage.prototype._prepareKeywords = function(query) {
-		query = query.trim();
-		var keywords = query.split(/\s+/);
-		keywords = keywords.map(function(keyword) {
-			return keyword.trim();	
-		});
-		return keywords;
-	};
-	ContactStorage.prototype._prepareRegExps = function(keywords) {
-		return keywords.map(function(keyword) {
-			return new RegExp(keyword, 'i');	
-		});
-	};
-	ContactStorage.prototype._buildIndicies = function(regExps) {
-		var indicies = [];
-		var self = this;
-		this.friends.forEach(function(item, pos) {
-			var index = self._buildIndex(item, pos, regExps);
-			if (index) {
-				indicies.push(index);
-			} 
-		});
-		return indicies;
-	};
-	ContactStorage.prototype._buildIndex = function(contact, position, regExps) {
-		regExps = regExps.slice(0);
-
-		var index = null;
-		var firstName = contact.get('firstName');
-		var lastName = contact.get('lastName');
-		
-		var firstNameMatch = 99999;
-		var lastNameMatch = 99999;
-		
-		var isFirstNameMatch = false;
-		var isLastNameMatch = false;
-		var needSecondMatch = false;
-		var needFirstMatch = false;
-		
-		var deleteIndex = -1;
-		var i, match;
-		for (i = 0; i < regExps.length; i++) {
-			match = firstName.search(regExps[i]);
-			if (match !== -1) {
-				isFirstNameMatch = true;
-				if (match < firstNameMatch) {
-					firstNameMatch = match;
-					deleteIndex = i;
-				}
-			}
-		}
-		
-		if (isFirstNameMatch) {
-			regExps.splice(deleteIndex, 1);
-			needSecondMatch = regExps.length > 0;
-		} else {
-			for (i = 0; i < regExps.length; i++) {
-				match = lastName.search(regExps[i]);
-				if (match !== -1) {
-					isLastNameMatch = true;
-					if (match < lastNameMatch) {
-						lastNameMatch = match;
-						deleteIndex = i;
-					}
-				}
-			}
-			if (isLastNameMatch) {
-				regExps.splice(deleteIndex, 1);
-				needFirstMatch = regExps.length > 0;
-			}
-			
-			for (i = 0; i < regExps.length; i++) {
-				match = firstName.search(regExps[i]);
-				if (match !== -1) {
-					isFirstNameMatch = true;
-					if (match < firstNameMatch) {
-						firstNameMatch = match;
-						deleteIndex = i;
-					}
-				}
-			}
-		}
-		
-		for (i = 0; i < regExps.length; i++) {
-			match = lastName.search(regExps[i]);
-			if (match !== -1) {
-				isLastNameMatch = true;
-				if (match < lastNameMatch) {
-					lastNameMatch = match;
-					deleteIndex = i;
-				}
-			}
-		}
-		
-		if (isFirstNameMatch && !needSecondMatch) {
-			index = {};
-			index.pos = position;
-			index.firstMatch = firstNameMatch;
-		} else if (isLastNameMatch && !needFirstMatch) {
-			index = {};
-			index.pos = position;
-			index.isLastNameMatch = isLastNameMatch;
-		} else if (needSecondMatch && isLastNameMatch && firstNameMatch) {
-			index = {};
-			index.firstMatch = firstNameMatch;
-			index.lastMatch = lastNameMatch;
-		}
-		return index;
-	};
-	ContactStorage.prototype._buildSeachData = function(indicies) {
-		var self = this;
-		indicies = indicies.sort(function(index1, index2) {
-			var firstMatch1 = index1.firstMatch;
-			var firstMatch2 = index2.firstMatch;
-			var isFirstMatch1 = typeof(firstMatch1) === 'number' && firstMatch1 !== -1;
-			var isFirstMatch2 = typeof(firstMatch2) === 'number' && firstMatch2 !== -1;
-			var isValid = isFirstMatch1 && isFirstMatch2;
-			
-			if (isValid) {
-				if (index1.firstMatch >= index2.firstMatch) {
-					return 1;
-				} else if (index1.firstMatch < index2.firstMatch) {
-					return -1;
-				} else {
-					return 0;
-				}
-			} else {
-				return 0;
-			}
-		});
-		indicies = indicies.sort(function(index1, index2) {
-			var lastMatch1 = index1.lastMatch;
-			var lastMatch2 = index2.lastMatch;
-			var isLastMatch1 = typeof(lastMatch1) === 'number' && lastMatch1 !== -1;
-			var isLastMatch2 = typeof(lastMatch2) === 'number' && lastMatch2 !== -1;
-			var isValid = isLastMatch1 && isLastMatch2;
-			
-			if (isValid) {
-				if (index1.lastMatch >= index2.lastMatch) {
-					return 1;
-				} else if (index1.lastMatch < index2.lastMatch) {
-					return -1;
-				} else {
-					return 0;
-				}
-			} else {
-				return 0;
-			}
-		});
-		return indicies.map(function(index) {
-			return self.friends[index.pos];
-		});
-	};
-	ContactStorage.prototype._setSearchCollection = function(searchCollection) {
-		if (this.searchCollection) {
-			this.searchCollection.dispose();
-		}
-		this.searchCollection = searchCollection;
-		this.trigger({
-			type: 'update:search',
-			contacts: this.searchCollection
-		});
-	};
 	
 	var PaginationCollection = function(data) {
 		PaginationCollection.super.apply(this);
@@ -381,7 +103,7 @@ var messenger = messenger || {};
 		var messageRecieveListener = function(rawMessage) {
 			var value = rawMessage.value || {};
 			var group = value.group || "";
-			var message = MessageModel.fromChatMessage(rawMessage);
+			var message = MessageModel.fromRaw(rawMessage);
 			var messageId = message.get('id');
 			do {
 				if (self.hasMessage(messageId)) break;
@@ -428,7 +150,6 @@ var messenger = messenger || {};
 				validMessageCount++;
 			}	
 		});
-		console.log('valid ' + validMessageCount);
 		this.trigger({
 			type: 'preload:update',
 			count: validMessageCount
@@ -546,7 +267,7 @@ var messenger = messenger || {};
 		var self = this;
 		var senderMessageId = this.getSenderMessageId();
 		var hasSenderMessage = false;
-		var messages = rawMessages.map(MessageModel.fromChatMessage);
+		var messages = rawMessages.map(MessageModel.fromRaw);
 
 		messages = messages.filter(function(message) {
 			return message.isValid();
@@ -568,7 +289,7 @@ var messenger = messenger || {};
 	};
 	MessageStorage1.prototype._addNextRawMessages = function(rawMessages) {
 		var self = this;
-		var messages = rawMessages.map(MessageModel.fromChatMessage);
+		var messages = rawMessages.map(MessageModel.fromRaw);
 		messages = messages.filter(function(message) {
 			return message.isValid();
 		});
@@ -660,11 +381,10 @@ var messenger = messenger || {};
 	};
 	
 	messenger.storage = {
-		ContactStorage: ContactStorage,
 		CharacterStorage: CharacterStorage,
 		PaginationCollection: PaginationCollection,
 		MessageStorage: MessageStorage1,
-		PhotoStorage: PhotoStorage
+		PhotoStorage: PhotoStorage,
 	};
 	
-})(messenger, eve, async, chat, Q, settings);
+})(messenger, eve, async, chat, Q, settings, text);

@@ -7,11 +7,27 @@ var messenger = messenger || {};
 	var Helpers = {
 		buildVkId: function(contact) {
 			var contactId = contact.get('id');
-			return ['vkid', contactId].join('');
+			if (contactId >= 0) {
+				return ['vkid', contactId].join('');
+			} else {
+				var type = contact.get('type');
+				return ['vk', type, -contactId].join('');
+			}
 		},
 		buidFbId: function(contact) {
 			var contactId = contact.get('id');
 			return ['fbid', contactId].join('');
+		},
+		getMessageTarget: function(sender, receiver) {
+			var senderId = sender.get('id');
+			var receiverId = receiver.get('id');
+			if (senderId === receiverId) {
+				return 'self';
+			} else if (receiverId < 0) {
+				return 'group';
+			} else {
+				return 'friend';
+			}
 		}
 	};
 	
@@ -54,9 +70,11 @@ var messenger = messenger || {};
 			var hash = ['senderId=', senderId, '&messageId=', message.id].join('');
 			var answerUrl = [appUrl, '#', hash].join('');
 			var fullAnswerUrl = ['https://', answerUrl].join('');
-			
-			if (message.from === message.to) {
+
+			if (ownerId === senderId) {
 				content = 'Мой мульт! \nСмотреть: ';
+			} else if (ownerId < 0) {
+				content = 'Зацените мульт!\n';
 			} else {
 				content = 'Тебе мульт! \nСмотреть: ';
 			}
@@ -69,7 +87,7 @@ var messenger = messenger || {};
 			};
 		},
 		checkPostAccess: function(contact) {
-			if (!contact.get('canPost')) {
+			if (!contact.get('canPost') && contact.get('id') >= 0) {
 				throw {
 					errorCode: ErrorCodes.RESTRICTED
 				};

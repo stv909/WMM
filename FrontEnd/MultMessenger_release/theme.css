@@ -347,92 +347,132 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
   right: 0;
-  overflow: hidden;
-  padding: 14px 0 0 16px;
+  left: 0;
 }
-#post-page .container {
-  display: block;
-  position: relative;
+#post-page >div {
+  display: table;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
 }
-#post-page .receiver-wrapper,
-#post-page .search-wrapper {
-  padding-top: 2px;
-  vertical-align: top;
+#post-page >div .tabs,
+#post-page >div .container {
+  display: table-row;
+}
+#post-page >div .tabs {
+  height: 38px;
+  background-color: #efefef;
+  text-align: center;
   position: relative;
-  height: 100%;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
 }
-#post-page .receiver-wrapper {
-  width: 145px;
-  float: left;
+#post-page >div .tabs .strike {
+  height: 38px;
+  border-bottom: 1px solid #ddd;
 }
-#post-page .receiver-wrapper .section {
-  margin-bottom: 10px;
-}
-#post-page .search-wrapper {
+#post-page >div .tabs .tab {
+  background-color: #fff;
   font-size: 12px;
-  margin-left: 145px;
-}
-#post-page .search-wrapper >.wrap {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-#post-page .search-wrapper .load-holder {
-  margin-left: 2px;
-  margin-top: 16px;
-  width: 718px;
-}
-#post-page .search-wrapper .load-holder .button-special {
-  width: 100%;
-}
-#post-page .search-wrapper .search {
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-#post-page .search-wrapper .search .search-controls,
-#post-page .search-wrapper .search .search-results {
-  display: block;
-  position: absolute;
-}
-#post-page .search-wrapper .search .search-controls {
-  height: 39px;
+  display: inline-block;
+  height: 32px;
+  line-height: 32px;
+  border: 1px solid #ddd;
+  padding-left: 16px;
   padding-right: 16px;
+  margin-top: 5px;
+  margin-left: 2px;
+  margin-right: 2px;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
 }
-#post-page .search-wrapper .search .search-controls .query {
-  width: 738px;
-  margin-bottom: 6px;
+#post-page >div .tabs .tab.normal {
+  cursor: pointer;
 }
-#post-page .search-wrapper .search .search-results {
-  top: 39px;
+#post-page >div .tabs .tab.normal:hover {
+  color: #28f;
+}
+#post-page >div .tabs .tab.chosen {
+  cursor: default;
+  border-bottom: 1px solid #fff;
+  color: #28f;
+}
+#post-page >div .container {
+  width: 100%;
+  height: 100%;
+}
+#post-page >div .container .contact-search {
+  width: 100%;
+  height: 100%;
+}
+#post-page >div .container .contact-search >div {
+  display: table;
+  width: 100%;
+  height: 100%;
+  table-layout: fixed;
+}
+#post-page >div .container .contact-search >div .header {
+  display: table-row;
+  height: 1%;
+}
+#post-page >div .container .contact-search >div .body {
+  display: table-row;
+}
+#post-page >div .container .contact-search >div .receiver-place,
+#post-page >div .container .contact-search >div .search-place {
+  display: table-cell;
+  vertical-align: top;
+}
+#post-page >div .container .contact-search >div .receiver-place {
+  padding-left: 16px;
+  width: 145px;
+}
+#post-page >div .container .contact-search >div .receiver-place .receiver-holder {
+  vertical-align: top;
+  padding-top: 6px;
+}
+#post-page >div .container .contact-search >div .receiver-place .section {
+  width: 100%;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+#post-page >div .container .contact-search >div .search-place {
+  padding-right: 20px;
+}
+#post-page >div .container .contact-search >div .search-place >.prewrapper {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+#post-page >div .container .contact-search >div .search-place >.prewrapper >.wrapper {
+  position: absolute;
+  top: 0;
   bottom: 0;
+  right: 0;
+  left: 0;
+  padding-top: 6px;
+  overflow: auto;
 }
-#post-page .search-wrapper .search .search-results .shadow {
+#post-page >div .container .contact-search >div .search-place .query {
+  margin-right: 12px;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+#post-page >div .container .contact-search .shadow {
   width: 100%;
   position: absolute;
   z-index: 10;
   height: 6px;
   background-image: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 100%);
 }
-#post-page .search-wrapper .search .search-results .wrap {
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  padding-top: 6px;
+#post-page >div .container .contact-search .load-holder {
+  margin-left: 2px;
+  margin-top: 18px;
+  margin-bottom: 18px;
+  width: 718px;
+}
+#post-page >div .container .contact-search .load-holder .button-special {
   width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  position: relative;
 }
 .message {
   display: inline-block;
@@ -887,7 +927,7 @@ body {
   width: 100px;
   height: 100px;
 }
-.contact .full-name {
+.contact .name {
   margin-left: 1px;
   margin-right: 1px;
   font-size: 10px;
@@ -896,7 +936,7 @@ body {
   white-space: pre-wrap;
   cursor: pointer;
 }
-.contact .full-name:hover {
+.contact .name:hover {
   color: #28f;
   text-decoration: underline;
 }

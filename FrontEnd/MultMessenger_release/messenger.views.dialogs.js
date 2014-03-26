@@ -67,7 +67,7 @@ var messenger = messenger || {};
 	};
 	ErrorDialogView.prototype.hide = function() {
 		this.dialogWindowElem.classList.add('hidden');
-		this.elem.classList.add('hidden');	
+		this.elem.classList.add('hidden');
 	};
 	
 	var AskMessageDialogView = function() {
@@ -269,6 +269,20 @@ var messenger = messenger || {};
 			this.statusElem.textContent = 'Невозможно отправить сообщение.\nПользователь закрыл доступ к стене.';
 		} else if (error.errorCode === ErrorCodes.NO_CONNECTION || error.errorCode === ErrorCodes.TIMEOUT) {
 			this.statusElem.textContent = 'Не удалось отправить сообщение!\nПроверьте интернет-подключение и \nпопробуйте позже.';
+		} else {
+			var message = error.message || {};
+			var messageCode = message.error_code;
+			console.log(messageCode);
+			switch (messageCode) {
+				case 15:
+					this.statusElem.textContent = 'Невозможно отправить сообщение.\nНет доступа к группе.';
+					break;
+				case 214:
+					this.statusElem.textContent = 'Невозможно отправить сообщение.\nДоступ к стене закрыт.';
+					break;
+				default:
+					break;
+			}
 		}
 	};
 	

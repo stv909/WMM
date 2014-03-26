@@ -264,7 +264,8 @@ var messenger = messenger || {};
 				});
 				self.updateMessageDialogView.setMode('complete');
 				analytics.send('editor', 'edit_update', 'success');
-			}).catch(function() {
+			}).catch(function(error) {
+				console.log(error);
 				self.updateMessageDialogView.setMode('fail');
 				analytics.send('editor', 'edit_update', 'fail');
 			});

@@ -19,9 +19,9 @@ var settings = settings || {};
 		'release': 'wss://www.bazelevscontent.net/9009/'
 	};
 	settings.previewGeneratorUrls = {
-		'dev': 'https://www.bazelevscontent.net:4443/8894',
-		'content': 'https://www.bazelevscontent.net/8892',
-		'release': 'https://www.bazelevscontent.net/8892'
+		'dev': 'https://www.bazelevscontent.net:4443/8894/',
+		'content': 'https://www.bazelevscontent.net/8892/',
+		'release': 'https://www.bazelevscontent.net/8892/'
 	};
 	settings.imageStoreBaseUrls = {
 		'dev': 'https://www.bazelevscontent.net:4443/8584/',
@@ -52,4 +52,9 @@ var settings = settings || {};
 	settings.animationServiceUrl = settings.animationServiceUrls[settings.version];
 	settings.groupUrl = 'https://vk.com/toome_mobi';
 	settings.vkContactBaseUrl = 'https://vk.com/id';
+	settings.vkGroupBaseUrls = {
+		'page': 'https://vk.com/public',
+		'group': 'https://vk.com/club',
+		'event': 'https://vk.com/event'
+	};
 })(settings);

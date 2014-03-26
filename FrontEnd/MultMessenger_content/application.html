@@ -20,13 +20,17 @@
 	<script src="async.js"></script>
 	<script src="vk.js"></script>
 	<script src="base64.js"></script>
+	<script src="text.js"></script>
 	<script src="chat.js"></script>
 	<script src="settings.js"></script>
 	<script src="messenger.models.js"></script>
+	<script src="messenger.repository.js"></script>
 	<script src="messenger.storage.js"></script>
 	<script src="messenger.views.partials.js"></script>
+	<script src="messenger.views.contacts.js"></script>
 	<script src="messenger.views.dialogs.js"></script>
 	<script src="messenger.views.pages.js"></script>
+	<script src="messenger.views.pages.PostPageView.js"></script>
 	<script src="messenger.utils.js"></script>
 	<script src="application.js"></script>
 </head>
@@ -102,30 +106,37 @@
 	</div>
 </template>
 <template id="post-page-template" style="display: none">
-	<div class="container">
-		<div class="receiver-wrapper">
-			<div>
-				<div class="section">Получатель</div>
-				<div class="receiver-holder"></div>
+	<div>
+		<div class="tabs">
+			<div class="strike">
+				<div class="tab friend">Друзья</div>
+				<div class="tab group">Сообщества</div>
 			</div>
 		</div>
-		<div class="search-wrapper">
-			<div class="wrap">
-				<div class="search">
-					<div class="search-controls">
-						<div class="wrap">
-							<input class="query text" type="text" placeholder="Найти получателя" value="">
-						</div>
-					</div>
-					<div class="search-results">
-						<div class="shadow"></div>
-						<div class="wrap">
-							<div class="contacts">
-							</div>
-							<div class="load-holder hidden">
-								<div class="button-special load">Загрузить еще друзей...</div>
-							</div>
-							<div style="height: 24px"></div>
+		<div class="container"></div>
+	</div>
+</template>
+<template id="contact-search-template" style="display: none">
+	<div>
+		<div class="header">
+			<div class="receiver-place">
+				<div class="section"></div>
+			</div>
+			<div class="search-place">
+				<input class="query text" type="text" placeholder="" value="">
+			</div>
+		</div>
+		<div class="body">
+			<div class="receiver-place">
+				<div class="receiver-holder"></div>
+			</div>
+			<div class="search-place" style="padding-right: 0">
+				<div class="prewrapper">
+					<div class="shadow"></div>
+					<div class="wrapper">
+						<div class="search-results"></div>
+						<div class="load-holder">
+							<div class="button-special load"></div>
 						</div>
 					</div>
 				</div>
@@ -137,7 +148,7 @@
 	<div class="photo-holder">
 		<img class="photo">
 	</div>
-	<div class="full-name"></div>
+	<div class="name"></div>
 </template>
 <template id="character-template" style="display: none">
 	<div class="actor-wrapper cell">
@@ -226,10 +237,10 @@
 	</div>
 	<div id="chrome">
 		<div class="powered">Разработано для</div>
-		<img class="chrome-image" src="chrome.png">
-		<img class="opera-image" src="opera.png">
-		<img class="safari-image" src="safari.png">
-		<img class="yandex-image" src="yandex.png">
+		<img class="chrome-image" src="images/chrome.png">
+		<img class="opera-image" src="images/opera.png">
+		<img class="safari-image" src="images/safari.png">
+		<img class="yandex-image" src="images/yandex.png">
 	</div>
 </div>
 <div id="dialog-background" class="hidden">
