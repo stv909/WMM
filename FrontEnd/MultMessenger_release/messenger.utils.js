@@ -74,7 +74,7 @@ var messenger = messenger || {};
 			if (ownerId === senderId) {
 				content = 'Мой мульт!\nСмотреть: ';
 			} else if (ownerId < 0) {
-				content = 'Зацените мульт!\nСмотреть:';
+				content = 'Зацените мульт!\nСмотреть: ';
 			} else {
 				content = 'Тебе мульт!\nСмотреть: ';
 			}
