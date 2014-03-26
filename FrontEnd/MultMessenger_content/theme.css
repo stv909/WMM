@@ -852,15 +852,16 @@ body {
 #chrome {
   font-size: 12px;
   position: absolute;
-  width: 280px;
+  width: 350px;
   text-align: center;
-  left: 320px;
+  left: 285px;
   bottom: 5px;
 }
 #chrome .chrome-image,
 #chrome .opera-image,
 #chrome .safari-image,
-#chrome .yandex-image {
+#chrome .yandex-image,
+#chrome .firefox-image {
   width: 64px;
   height: 64px;
 }

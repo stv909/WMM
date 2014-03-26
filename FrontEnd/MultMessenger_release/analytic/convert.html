@@ -39,7 +39,7 @@
 			var notifier = new eve.EventEmitter();
 			window.onload = function() {
 				var wait = false;
-				var chatClient = new chat.ChatClient('ws://bazelevscontent.net:9012/');
+				var chatClient = new chat.ChatClient('ws://bazelevscontent.net:9009/');
 				chatClient.on('connect', function() {
 					console.log('connect');
 					chatClient.login('test');
