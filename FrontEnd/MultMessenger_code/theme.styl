@@ -9,7 +9,11 @@ user-select(value)
 box-sizing(value)
 	-moz-box-sizing value
 	box-sizing value
-	
+transform(value)
+	-webkit-transform value
+	-moz-transform value
+	-ms-transform value
+	transform value
 *
 	outline 0
 html, body
@@ -666,8 +670,36 @@ html, body
 			box-shadow 0 0 2px #f00
 			color #fff
 #moods-dialog
-	width 320px
-	height 180px
+	width 360px
+	height 122px
+	.content
+		height 90px
+	.mood-item
+		width 48px
+		height 48px
+		display inline-block
+		user-select(none)
+		margin-top 12px
+		margin-left 3px
+		margin-right 3px
+		cursor pointer
+		border 1px solid white
+		border-radius 2px
+		padding 6px
+		&.normal
+			&:hover
+				border 1px solid #888
+		.icon
+			display:
+			width 100%
+			height 100%
+			border-radius 24px
+			transform(rotate(90deg))
+			box-sizing(border-box)
+			font-size 26px
+			line-height 40px
+			color black
+			box-shadow 0 0 5px #ddd
 #image-select-dialog
 	font-size 12px
 	width 720px
@@ -912,6 +944,15 @@ html, body
 	vertical-align top
 .closed
 	opacity 0.5
+.happy, .calm, .amaze
+	background-color #ffc944
+	border 1px solid #ffc944 -#333
+.angry 
+	background-color #eb0542
+	border 1px solid #eb0542 - #333
+.sad
+	background-color #adcdec
+	border 1px solid #adcdec - #333
 @-webkit-keyframes pulse
 	0%
 		-webkit-box-shadow 0 0 50px rgba(aspect-color, 0.0)

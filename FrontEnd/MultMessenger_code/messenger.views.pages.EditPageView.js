@@ -201,6 +201,23 @@
 		return FilmTextView;
 	})(abyss.View);
 	
+	var MoodItemView = (function(base) {
+		eve.extend(MoodItemView, base);
+		
+		function MoodItemView(mood) {
+			base.apply(this, arguments);
+			
+			this.elem = template.create('mood-item-template', { className: 'mood-item' });
+			this.elem.classList.add('normal');
+			this.iconElem = this.elem.getElementsByClassName('icon')[0];
+			
+			this.iconElem.textContent = mood.icon;
+			this.iconElem.classList.add(mood.value);
+		}
+		
+		return MoodItemView;
+	})(abyss.View);
+	
 	var MoodsDialogView = (function(base) {
 		eve.extend(MoodsDialogView, base);
 		
@@ -210,9 +227,14 @@
 			
 			this.dialogWindowElem = document.getElementById('moods-dialog');
 			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+			this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
+			
+			this.moodItemViews = [];
+			this.initializeMoodItemViews();
+			
 			
 			var crossElementClickListener = function(event) {
-				self.hide();	
+				self.hide();
 			};
 			
 			this.crossElem.addEventListener('click', crossElementClickListener);
@@ -221,6 +243,19 @@
 				self.crossElem.removeEventListener('click', crossElementClickListener);
 			});
 		}
+		
+		MoodsDialogView.prototype.initializeMoodItemViews = function() {
+			this.addMoodItemView({ icon: ':-|', value: 'calm' });
+			this.addMoodItemView({ icon: '>:(', value: 'angry' });
+			this.addMoodItemView({ icon: ':-(', value: 'sad' });
+			this.addMoodItemView({ icon: ':-)', value: 'happy' });
+			this.addMoodItemView({ icon: ':-0', value: 'amaze' });
+		};
+		MoodsDialogView.prototype.addMoodItemView = function(mood) {
+			var moodItemView = new MoodItemView(mood);
+			moodItemView.attachTo(this.contentElem);
+			this.moodItemViews.push(moodItemView);
+		};
 		
 		return MoodsDialogView;
 		
