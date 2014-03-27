@@ -3,9 +3,12 @@
 	var PageView = messenger.views.PageView;
 	var MessageEditorView = messenger.views.MessageEditorView;
 	var ImageItemView = messenger.views.ImageItemView;
+	
+	var DialogView = messenger.views.DialogView;
 	var UpdateMessageDialogView = messenger.views.UpdateMessageDialogView;
 	var CharactersDialogView = messenger.views.CharactersDialogView;
 	var ImageSelectDialogView = messenger.views.ImageSelectDialogView;
+	
 	var FilmText = filmlang.FilmText;
 	
 	var EditPageView = (function(base) {
@@ -34,8 +37,11 @@
 			this.imageItemViewCollection = [];
 	
 			this.updateMessageDialogView = new UpdateMessageDialogView();
-			this.charactersDialogView = new CharactersDialogView();
 			this.imageSelectDialogView = new ImageSelectDialogView();
+			this.charactersDialogView = new CharactersDialogView();
+			this.gagsDialogView = new GagsDialogView();
+			this.moodsDialogView = new MoodsDialogView();
+			this.actionsDialogView = new ActionsDialogView();
 			
 			this.characters = [];
 			this.filmTexts = [];
@@ -67,6 +73,10 @@
 					filmText.reset();
 				});
 				analytics.send('editor', 'update_cancel');
+			});
+			
+			this.elem.getElementsByClassName('test')[0].addEventListener('click', function() {
+				self.moodsDialogView.show();
 			});
 		}
 		
@@ -190,6 +200,79 @@
 		
 		return FilmTextView;
 	})(abyss.View);
+	
+	var MoodsDialogView = (function(base) {
+		eve.extend(MoodsDialogView, base);
+		
+		function MoodsDialogView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.dialogWindowElem = document.getElementById('moods-dialog');
+			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+			
+			var crossElementClickListener = function(event) {
+				self.hide();	
+			};
+			
+			this.crossElem.addEventListener('click', crossElementClickListener);
+			
+			this.once('dispose', function() {
+				self.crossElem.removeEventListener('click', crossElementClickListener);
+			});
+		}
+		
+		return MoodsDialogView;
+		
+	})(DialogView);
+	
+	var GagsDialogView = (function(base) {
+		eve.extend(GagsDialogView, base);
+		
+		function GagsDialogView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.dialogWindowElem = document.getElementById('gags-dialog');
+			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+			
+			var crossElementClickListener = function(event) {
+				self.hide();	
+			};
+			
+			this.crossElem.addEventListener('click', crossElementClickListener);
+			
+			this.once('dispose', function() {
+				self.crossElem.removeEventListener('click', crossElementClickListener);
+			});
+		}
+		
+		return GagsDialogView;
+	})(DialogView);
+	
+	var ActionsDialogView = (function(base) {
+		eve.extend(ActionsDialogView, base);
+		
+		function ActionsDialogView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.dialogWindowElem = document.getElementById('actions-dialog');
+			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+			
+			var crossElementClickListener = function(event) {
+				self.hide();	
+			};
+			
+			this.crossElem.addEventListener('click', crossElementClickListener);
+			
+			this.once('dispose', function() {
+				self.crossElem.removeEventListener('click', crossElementClickListener);
+			});
+		}
+		
+		return ActionsDialogView;
+	})(DialogView);
 	
 	messenger.views.EditPageView = EditPageView;
 	

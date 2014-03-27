@@ -774,6 +774,46 @@ body {
   box-shadow: 0 0 2px #f00;
   color: #fff;
 }
+#moods-dialog,
+#actions-dialog,
+#gags-dialog {
+  font-size: 12px;
+}
+#moods-dialog .title-holder,
+#actions-dialog .title-holder,
+#gags-dialog .title-holder {
+  position: relative;
+}
+#moods-dialog .cross,
+#actions-dialog .cross,
+#gags-dialog .cross {
+  width: 12px;
+  height: 12px;
+  line-height: 12px;
+  padding: 4px;
+  right: 8px;
+  top: 7px;
+  float: right;
+  position: absolute;
+  color: #f00;
+  border: 1px solid #f00;
+}
+#moods-dialog .cross:hover,
+#actions-dialog .cross:hover,
+#gags-dialog .cross:hover {
+  box-shadow: 0 0 2px #f00;
+}
+#moods-dialog .cross:active,
+#actions-dialog .cross:active,
+#gags-dialog .cross:active {
+  background-color: #f00;
+  box-shadow: 0 0 2px #f00;
+  color: #fff;
+}
+#moods-dialog {
+  width: 320px;
+  height: 180px;
+}
 #image-select-dialog {
   font-size: 12px;
   width: 720px;
