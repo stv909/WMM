@@ -1,5 +1,5 @@
-var messenger = messenger || {};
-
-(function(messenger) {
+(function(messenger, eve, abyss, settings) {
 	
-})(messenger);
+	var PageView = messenger.views.PageView;
+	
+})(messenger, eve, abyss, settings);

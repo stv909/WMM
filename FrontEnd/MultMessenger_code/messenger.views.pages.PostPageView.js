@@ -1,27 +1,8 @@
-var messenger = messenger || {};
-
 (function(messenger, eve, abyss, template, analytics) {
 	
+	var PageView = messenger.views.PageView;
 	var UserView = messenger.views.UserView;
 	var GroupView = messenger.views.GroupView;
-	
-	var PageView = (function(base) {
-		eve.extend(PageView, base);
-		
-		function PageView() {
-			base.apply(this, arguments);
-		}
-		
-		PageView.prototype.show = function() {
-			this.elem.classList.remove('hidden');	
-		};
-		
-		PageView.prototype.hide = function() {
-			this.elem.classList.add('hidden');
-		};
-		
-		return PageView;
-	})(abyss.View);
 	
 	var DelayedObserver = (function(base) {
 		eve.extend(DelayedObserver, base);
@@ -389,7 +370,6 @@ var messenger = messenger || {};
 		return GroupSearchView;
 	})(SearchView);
 	
-	messenger.views = messenger.views || {};
 	messenger.views.PostPageView = PostPageView;
 	
 })(messenger, eve, abyss, template, analytics);
