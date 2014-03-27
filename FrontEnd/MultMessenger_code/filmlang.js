@@ -71,11 +71,14 @@ var filmlang = filmlang || {};
 			
 			this.items = [];
 			
+			this.isValid = true;
+			
 			this.validateListener = function() {
 				var isInvalid = false;
 				self.items.forEach(function(item) {
 					isInvalid = isInvalid || !item.isValid;	
 				});
+				self.isValid = !isInvalid;
 				if (isInvalid) {
 					self.trigger('invalidate');
 				} else {
