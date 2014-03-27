@@ -1,6 +1,6 @@
 var filmlang = filmlang || {};
 
-(function(filmlang, eve) {
+(function(filmlang, eve, uuid) {
 	
 	var FilmTextItem =(function(base) {
 		eve.extend(FilmTextItem, base);
@@ -67,7 +67,6 @@ var filmlang = filmlang || {};
 			this.typeItem = null;
 			
 			this.actorItems = [];
-			
 			this.commandItems = [];
 			
 			this.items = [];
@@ -175,10 +174,34 @@ var filmlang = filmlang || {};
 				url: this.imageItem.value
 			};
 		};
+		FilmText.prototype.toAnimationRequestData = function() {
+			var meta = this.toMeta();
+			var commandChunks = [];
+			
+			commandChunks.push('<?xml version="1.0"?><commands version="1.0.0"><');
+			commandChunks.push(meta.type);
+			commandChunks.push('>');
+			commandChunks.push(meta.commands);
+			commandChunks.push('</');
+			commandChunks.push(meta.type);
+			commandChunks.push('></commands>');
+
+			var data = {
+				input: {
+					id: uuid.v4(),
+					destination: 'separate',
+					commands: commandChunks.join(''),
+					actors: meta.actors
+				}
+			};
+			var requestData = 'type=build&data=' + encodeURIComponent(JSON.stringify(data));
+			
+			return requestData;
+		};
 		
 		return FilmText;
 	})(eve.EventEmitter);
 	
 	filmlang.FilmText = FilmText;
 	
-})(filmlang, eve);
+})(filmlang, eve, uuid);
