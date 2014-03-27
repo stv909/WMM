@@ -12,7 +12,7 @@ var analytics = analytics || {};
 		a.async = 1;
 		a.src = g;
 		m.parentNode.insertBefore(a, m);
-	})(window, document, 'script', '//stats.g.doubleclick.net/dc.js', 'ga');
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
 	ga('create', 'UA-46127802-2', 'bazelevscontent.net');
 	ga('send', 'pageview');

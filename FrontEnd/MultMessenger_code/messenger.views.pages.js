@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, settings, uuid, async, Q, html, analytics) {
+(function(messenger, abyss, template, settings, uuid, async, Q, html, analytics, filmlang) {
 	
 	var View = abyss.View;
 	
@@ -12,6 +12,8 @@ var messenger = messenger || {};
 	var UpdateMessageDialogView = messenger.views.UpdateMessageDialogView;
 	var CharactersDialogView = messenger.views.CharactersDialogView;
 	var ImageSelectDialogView = messenger.views.ImageSelectDialogView;
+	
+	var FilmText = filmlang.FilmText;
 
 	var AnswerPageView = function() {
 		AnswerPageView.super.apply(this);
@@ -348,65 +350,71 @@ var messenger = messenger || {};
 	};
 	EditPageView.prototype._createCharacterView = function(layerActorElem) {
 		var rawMeta = layerActorElem.dataset.meta;
-		var meta = JSON.parse(rawMeta);
-		var self = this;
+		var filmText = new FilmText(rawMeta);
+		console.log(rawMeta);
+		console.log(JSON.stringify(filmText.toMeta()));
+		// var rawMeta = layerActorElem.dataset.meta;
+		// var meta = JSON.parse(rawMeta);
+		// var self = this;
 
-		var layerId = layerActorElem.className.split(' ')[0];
-		var phrases = [];
-		var hints = [];
-		var commands = meta.commands;
+		// var layerId = layerActorElem.className.split(' ')[0];
+		// var phrases = [];
+		// var hints = [];
+		// var commands = meta.commands;
 
-		var startPos = commands.indexOf('</', startPos);
-		var endPos = 0;
-		while(startPos >= 0)
-		{
-			startPos = commands.indexOf('>', startPos) + 1;
-			if (startPos > 0)
-			{
-				var end = commands.indexOf('<', startPos);
-				if (end === -1)
-					end = commands.length;
-				if (startPos > 0 && end > startPos)
-				{
-					hints.push(commands.substring(endPos, startPos));
-					phrases.push(commands.substring(startPos, end));
-					endPos = end;
-				}
-			}
-			startPos = commands.indexOf('</', startPos);
-		}
-		hints.push(commands.substring(endPos, commands.length));
+		// var startPos = commands.indexOf('</', startPos);
+		// var endPos = 0;
+		// while(startPos >= 0)
+		// {
+		// 	startPos = commands.indexOf('>', startPos) + 1;
+		// 	if (startPos > 0)
+		// 	{
+		// 		var end = commands.indexOf('<', startPos);
+		// 		if (end === -1)
+		// 			end = commands.length;
+		// 		if (startPos > 0 && end > startPos)
+		// 		{
+		// 			hints.push(commands.substring(endPos, startPos));
+		// 			phrases.push(commands.substring(startPos, end));
+		// 			endPos = end;
+		// 		}
+		// 	}
+		// 	startPos = commands.indexOf('</', startPos);
+		// }
+		// hints.push(commands.substring(endPos, commands.length));
 
-		var characterData = {
-			layer: layerActorElem,
-			layerId: layerId,
-			actors: meta.actors,
-			phrases: phrases,
-			hints: hints,
-			type: meta.type
-		};
+		// var characterData = {
+		// 	layer: layerActorElem,
+		// 	layerId: layerId,
+		// 	actors: meta.actors,
+		// 	phrases: phrases,
+		// 	hints: hints,
+		// 	type: meta.type
+		// };
+		
+		// console.log(characterData);
 
-		var characterView = new CharacterView(characterData, this.characters, this.charactersDialogView);
-		characterView.attachTo(this.characterCollectionElem);
-		characterView.on('validate', function() {
-			if (self.isValid()) {
-				self.wrapElem.classList.add('hidden');
-				self.trigger('status:validate');
-			} else {
-				self.wrapElem.classList.remove('hidden');
-				self.trigger('status:invalidate');
-			}
-		});
-		characterView.on('invalidate', function() {
-			if (self.isValid()) {
-				self.wrapElem.classList.add('hidden');
-				self.trigger('status:validate');
-			} else {
-				self.wrapElem.classList.remove('hidden');
-				self.trigger('status:invalidate');
-			}
-		});
-		this.characterViewCollection.push(characterView);
+		// var characterView = new CharacterView(characterData, this.characters, this.charactersDialogView);
+		// characterView.attachTo(this.characterCollectionElem);
+		// characterView.on('validate', function() {
+		// 	if (self.isValid()) {
+		// 		self.wrapElem.classList.add('hidden');
+		// 		self.trigger('status:validate');
+		// 	} else {
+		// 		self.wrapElem.classList.remove('hidden');
+		// 		self.trigger('status:invalidate');
+		// 	}
+		// });
+		// characterView.on('invalidate', function() {
+		// 	if (self.isValid()) {
+		// 		self.wrapElem.classList.add('hidden');
+		// 		self.trigger('status:validate');
+		// 	} else {
+		// 		self.wrapElem.classList.remove('hidden');
+		// 		self.trigger('status:invalidate');
+		// 	}
+		// });
+		// this.characterViewCollection.push(characterView);
 	};
 	EditPageView.prototype._parseLayerTypeCustomImage = function(rootElem) {
 		var layerImageElems = rootElem.getElementsByClassName('layerType_customImg');
@@ -505,6 +513,8 @@ var messenger = messenger || {};
 				actors: meta.actors
 			}
 		};
+		
+		console.log(requestData);
 
 		var url = settings.animationServiceUrl;
 		var data = 'type=build&data=' + encodeURIComponent(JSON.stringify(requestData));
@@ -526,4 +536,4 @@ var messenger = messenger || {};
 	messenger.views.SelectPageView = SelectPageView;
 	messenger.views.EditPageView = EditPageView;
 	
-})(messenger, abyss, template, settings, uuid, async, Q, html, analytics);
+})(messenger, abyss, template, settings, uuid, async, Q, html, analytics, filmlang);

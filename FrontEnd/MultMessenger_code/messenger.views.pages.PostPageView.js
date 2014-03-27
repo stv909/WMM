@@ -1,3 +1,5 @@
+var messenger = messenger || {};
+
 (function(messenger, eve, abyss, template, analytics) {
 	
 	var UserView = messenger.views.UserView;
@@ -390,4 +392,4 @@
 	messenger.views = messenger.views || {};
 	messenger.views.PostPageView = PostPageView;
 	
-})(messenger || (messenger = {}), eve, abyss, template, analytics);
+})(messenger, eve, abyss, template, analytics);
