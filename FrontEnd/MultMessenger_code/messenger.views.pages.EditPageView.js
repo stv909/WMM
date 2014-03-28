@@ -356,6 +356,7 @@
 			var self = this;
 			
 			this.elem = template.create('animation-type-item-template', { className: 'animation-type-item' });
+			this.elem.title = model.text;
 			this.iconElem = this.elem.getElementsByClassName('icon')[0];
 			this.iconElem.src = model.image;
 			
