@@ -776,17 +776,20 @@ body {
 }
 #moods-dialog,
 #actions-dialog,
-#gags-dialog {
+#gags-dialog,
+#animation-types-dialog {
   font-size: 12px;
 }
 #moods-dialog .title-holder,
 #actions-dialog .title-holder,
-#gags-dialog .title-holder {
+#gags-dialog .title-holder,
+#animation-types-dialog .title-holder {
   position: relative;
 }
 #moods-dialog .cross,
 #actions-dialog .cross,
-#gags-dialog .cross {
+#gags-dialog .cross,
+#animation-types-dialog .cross {
   width: 12px;
   height: 12px;
   line-height: 12px;
@@ -800,12 +803,14 @@ body {
 }
 #moods-dialog .cross:hover,
 #actions-dialog .cross:hover,
-#gags-dialog .cross:hover {
+#gags-dialog .cross:hover,
+#animation-types-dialog .cross:hover {
   box-shadow: 0 0 2px #f00;
 }
 #moods-dialog .cross:active,
 #actions-dialog .cross:active,
-#gags-dialog .cross:active {
+#gags-dialog .cross:active,
+#animation-types-dialog .cross:active {
   background-color: #f00;
   box-shadow: 0 0 2px #f00;
   color: #fff;

@@ -36,8 +36,15 @@ var data = data || {};
 		{ value: 'sun', text: 'сияю' }
 	];
 	
+	var AnimationTypeCollection = [
+		{ value: 'pose', image: '', text: 'Отрисовать первый кадр анимации' },
+		{ value: 'avatar', image: '', text: 'Отрисовать только голову персонажа' },
+		{ value: 'dialog', image: '', text: 'Полная анимация' }
+	];
+	
 	data.MoodCollection = MoodCollection;
 	data.GagCollection = GagCollection;
 	data.ActionCollection = ActionCollection;
+	data.AnimationTypeCollection = AnimationTypeCollection;
 	
 })(data);

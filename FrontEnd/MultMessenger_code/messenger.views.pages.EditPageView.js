@@ -42,6 +42,7 @@
 			this.gagsDialogView = new GagsDialogView();
 			this.moodsDialogView = new MoodsDialogView();
 			this.actionsDialogView = new ActionsDialogView();
+			this.animationTypesDialogView = new AnimationTypesDialogView();
 			
 			this.characters = [];
 			this.filmTexts = [];
@@ -83,6 +84,9 @@
 			});
 			this.elem.getElementsByClassName('test3')[0].addEventListener('click', function() {
 				self.actionsDialogView.show('Idle');
+			});
+			this.elem.getElementsByClassName('test4')[0].addEventListener('click', function() {
+				self.animationTypesDialogView.show();
 			});
 		}
 		
@@ -344,6 +348,42 @@
 		return ActionItemView;
 	})(ItemView);
 	
+	var AnimationTypeItemView = (function(base) {
+		eve.extend(AnimationTypeItemView, base)
+		
+		function AnimationTypeItemView(model) {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.elem = template.create('animation-type-item-template', { className: 'animation-type-item' });
+			
+			this.deselect();
+			
+			var elemClickListener = function(event) {
+				if (!self.selected) {
+					self.select();
+				}	
+			};
+			
+			this.elem.addEventListener('click', elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', elemClickListener);
+			});
+		}
+		
+		AnimationTypeItemView.prototype.select = function(silent) {
+			base.prototype.select.apply(this, arguments);
+			if (!silent) {
+				this.trigger({
+					type: 'select:animation-type',
+					animationType: this.model
+				});
+			}
+		};
+		
+		return AnimationTypeItemView;
+	})(ItemView);
+	
 	var MoodsDialogView = (function(base) {
 		eve.extend(MoodsDialogView, base);
 		
@@ -529,6 +569,68 @@
 		};
 		
 		return ActionsDialogView;
+	})(DialogView);
+	
+	var AnimationTypesDialogView = (function(base) {
+		eve.extend(AnimationTypesDialogView, base);
+		
+		function AnimationTypesDialogView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.dialogWindowElem = document.getElementById('animation-types-dialog');
+			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+			this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
+			
+			this.animationTypeItemViews = {};
+			this.animationTypeItemViewSelectListener = function(event) {
+				var animationType = event.animationType;
+				self.trigger({
+					type: 'select:animation-type',
+					animationType: animationType
+				});
+				self.hide();
+			};
+			this.initializeAnimationTypeItemViews();
+			
+			var crossElementClickListener = function(event) {
+				self.hide();
+			};
+			
+			this.crossElem.addEventListener('click', crossElementClickListener);
+			
+			this.once('dispose', function() {
+				self.crossElem.removeEventListener('click', crossElementClickListener);
+			});
+		}
+		
+		AnimationTypesDialogView.prototype.initializeAnimationTypeItemViews = function() {
+			data.AnimationTypeCollection.forEach(function(animationType) {
+				this.addAnimationTypeItemView(animationType);
+			}, this);
+		};
+		AnimationTypesDialogView.prototype.addAnimationTypeItemView = function(animationType) {
+			var animationTypeItemView = new AnimationTypeItemView(animationType);
+			animationTypeItemView.attachTo(this.contentElem);
+			animationTypeItemView.on('select:animation-type', this.animationTypeItemViewSelectListener);
+			this.animationTypeItemViews[animationType.value] = animationTypeItemView;
+		};
+		AnimationTypesDialogView.prototype.show = function(animationTypeValue) {
+			base.prototype.show.apply(this, arguments);
+			Object.keys(this.animationTypeItemViews).forEach(function(key) {
+				this.animationTypeItemViews[key].deselect();
+			}, this);
+			var animationTypeItemView = this.animationTypeItemViews[animationTypeValue];
+			if (animationTypeItemView) {
+				animationTypeItemView.select(true);
+			}
+		};
+		AnimationTypesDialogView.prototype.hide = function() {
+			base.prototype.hide.apply(this, arguments);
+			this.off('select:animation-type');
+		};
+		
+		return AnimationTypesDialogView;
 	})(DialogView);
 	
 	messenger.views.EditPageView = EditPageView;
