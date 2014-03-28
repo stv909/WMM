@@ -37,9 +37,9 @@ var data = data || {};
 	];
 	
 	var AnimationTypeCollection = [
-		{ value: 'pose', image: '', text: 'Отрисовать первый кадр анимации' },
-		{ value: 'avatar', image: '', text: 'Отрисовать только голову персонажа' },
-		{ value: 'dialog', image: '', text: 'Полная анимация' }
+		{ value: 'dialog', image: 'animations/animation.png', text: 'Полная анимация' },
+		{ value: 'pose', image: 'animations/pose.png', text: 'Отрисовать первый кадр анимации' },
+		{ value: 'avatar', image: 'animations/avatar.png', text: 'Отрисовать только голову персонажа' }
 	];
 	
 	data.MoodCollection = MoodCollection;

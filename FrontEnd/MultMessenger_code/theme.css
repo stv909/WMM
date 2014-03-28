@@ -880,13 +880,13 @@ body {
 }
 #gags-dialog .gag-item.normal:hover {
   background-color: #5b5;
-  border: 1px solid #282;
+  border: 1px solid #5b5;
   color: #fff;
   text-shadow: 0 0 2px #666;
 }
 #gags-dialog .gag-item.chosen {
   background-color: #5b5;
-  border: 1px solid #282;
+  border: 1px solid #5b5;
   color: #fff;
   text-shadow: 0 0 2px #666;
   cursor: default;
@@ -911,16 +911,46 @@ body {
   cursor: pointer;
 }
 #actions-dialog .action-item.normal:hover {
-  background-color: #939;
-  border: 1px solid #606;
+  background-color: #28f;
+  border: 1px solid #28f;
   color: #fff;
   text-shadow: 0 0 2px #666;
 }
 #actions-dialog .action-item.chosen {
-  background-color: #939;
-  border: 1px solid #606;
+  background-color: #28f;
+  border: 1px solid #28f;
   color: #fff;
   text-shadow: 0 0 2px #666;
+  cursor: default;
+}
+#animation-types-dialog {
+  width: 280px;
+}
+#animation-types-dialog .content {
+  margin-top: 9px;
+  margin-bottom: 9px;
+}
+#animation-types-dialog .animation-type-item {
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+  margin: 3px;
+  border: 1px solid #fff;
+  border-radius: 2px;
+}
+#animation-types-dialog .animation-type-item .icon {
+  width: 100%;
+  height: 100%;
+}
+#animation-types-dialog .animation-type-item.normal {
+  cursor: pointer;
+}
+#animation-types-dialog .animation-type-item.normal:hover {
+  border: 1px solid #888;
+}
+#animation-types-dialog .animation-type-item.chosen {
+  border: 1px solid #28f;
+  box-shadow: 0 0 1px #28f;
   cursor: default;
 }
 #image-select-dialog {

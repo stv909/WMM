@@ -86,7 +86,7 @@
 				self.actionsDialogView.show('Idle');
 			});
 			this.elem.getElementsByClassName('test4')[0].addEventListener('click', function() {
-				self.animationTypesDialogView.show();
+				self.animationTypesDialogView.show('avatar');
 			});
 		}
 		
@@ -356,6 +356,8 @@
 			var self = this;
 			
 			this.elem = template.create('animation-type-item-template', { className: 'animation-type-item' });
+			this.iconElem = this.elem.getElementsByClassName('icon')[0];
+			this.iconElem.src = model.image;
 			
 			this.deselect();
 			
