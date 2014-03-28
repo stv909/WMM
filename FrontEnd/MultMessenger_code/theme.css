@@ -812,7 +812,7 @@ body {
 }
 #moods-dialog {
   width: 360px;
-  height: 122px;
+  height: 123px;
 }
 #moods-dialog .content {
   height: 90px;
@@ -833,6 +833,11 @@ body {
 }
 #moods-dialog .mood-item.normal:hover {
   border: 1px solid #888;
+}
+#moods-dialog .mood-item.chosen {
+  border: 1px solid #28f;
+  box-shadow: 0 0 1px #28f;
+  cursor: default;
 }
 #moods-dialog .mood-item .icon {
   display: width 100%;

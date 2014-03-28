@@ -1,4 +1,4 @@
-(function(messenger, eve, abyss, template, filmlang, settings, analytics) {
+(function(messenger, eve, abyss, template, filmlang, data, settings, analytics) {
 	
 	var PageView = messenger.views.PageView;
 	var MessageEditorView = messenger.views.MessageEditorView;
@@ -179,7 +179,7 @@
 			filmText.on('validate', this.validateListener);
 			filmText.on('invalidate', this.validateListener);
 			filmText.on('dispose', function() {
-				
+				//kill views
 			});
 			this.filmTexts.push(filmText);
 			
@@ -206,6 +206,7 @@
 		
 		function MoodItemView(mood) {
 			base.apply(this, arguments);
+			var self = this;
 			
 			this.elem = template.create('mood-item-template', { className: 'mood-item' });
 			this.elem.classList.add('normal');
@@ -213,7 +214,39 @@
 			
 			this.iconElem.textContent = mood.icon;
 			this.iconElem.classList.add(mood.value);
+			
+			this.model = mood;
+			this.selected = false;
+			this.deselect();
+			
+			var elemClickListener = function(event) {
+				if (!self.selected) {
+					self.select();
+				}
+			};
+			
+			this.elem.addEventListener('click', elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', elemClickListener);	
+			});
 		}
+		
+		MoodItemView.prototype.select = function(silent) {
+			this.elem.classList.add('chosen');
+			this.elem.classList.remove('normal');
+			this.selected = true;
+			if (!silent) {
+				this.trigger({
+					type: 'select:mood',
+					mood: this.model
+				});
+			}
+		};
+		MoodItemView.prototype.deselect = function() {
+			this.elem.classList.remove('chosen');
+			this.elem.classList.add('normal');
+			this.selected = false;
+		};
 		
 		return MoodItemView;
 	})(abyss.View);
@@ -229,9 +262,16 @@
 			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
 			this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
 			
-			this.moodItemViews = [];
+			this.moodItemViews = {};
+			this.moodItemViewSelectListener = function(event) {
+				var mood = event.mood;
+				self.trigger({
+					type: 'select:mood',
+					mood: mood
+				});
+				self.hide();
+			};
 			this.initializeMoodItemViews();
-			
 			
 			var crossElementClickListener = function(event) {
 				self.hide();
@@ -245,16 +285,29 @@
 		}
 		
 		MoodsDialogView.prototype.initializeMoodItemViews = function() {
-			this.addMoodItemView({ icon: ':-|', value: 'calm' });
-			this.addMoodItemView({ icon: '>:(', value: 'angry' });
-			this.addMoodItemView({ icon: ':-(', value: 'sad' });
-			this.addMoodItemView({ icon: ':-)', value: 'happy' });
-			this.addMoodItemView({ icon: ':-0', value: 'amaze' });
+			data.MoodCollection.forEach(function(mood) {
+				this.addMoodItemView(mood);
+			}, this);
 		};
 		MoodsDialogView.prototype.addMoodItemView = function(mood) {
 			var moodItemView = new MoodItemView(mood);
 			moodItemView.attachTo(this.contentElem);
-			this.moodItemViews.push(moodItemView);
+			moodItemView.on('select:mood', this.moodItemViewSelectListener);
+			this.moodItemViews[mood.value] = moodItemView;
+		};
+		MoodsDialogView.prototype.show = function(moodValue) {
+			base.prototype.show.apply(this, arguments);
+			Object.keys(this.moodItemViews).forEach(function(key) {
+				this.moodItemViews[key].deselect();
+			}, this);
+			var moodItemView = this.moodItemViews[moodValue];
+			if (moodItemView) {
+				moodItemView.select(true);
+			}
+		};
+		MoodsDialogView.prototype.hide = function() {
+			base.prototype.hide.apply(this, arguments);
+			this.off('select:mood');
 		};
 		
 		return MoodsDialogView;
@@ -311,4 +364,4 @@
 	
 	messenger.views.EditPageView = EditPageView;
 	
-})(messenger, eve, abyss, template, filmlang, settings, analytics);
+})(messenger, eve, abyss, template, filmlang, data, settings, analytics);
