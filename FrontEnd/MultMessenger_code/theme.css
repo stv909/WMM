@@ -854,6 +854,70 @@ body {
   color: #000;
   box-shadow: 0 0 5px #ddd;
 }
+#gags-dialog {
+  width: 370px;
+}
+#gags-dialog .content {
+  margin-top: 9px;
+  margin-bottom: 9px;
+}
+#gags-dialog .gag-item {
+  padding: 6px 12px 6px 12px;
+  margin: 3px;
+  border: 1px solid #ddd;
+  display: inline-block;
+  -webkit-user-select: none;
+  user-select: none;
+  border-radius: 2px;
+}
+#gags-dialog .gag-item.normal {
+  cursor: pointer;
+}
+#gags-dialog .gag-item.normal:hover {
+  background-color: #5b5;
+  border: 1px solid #282;
+  color: #fff;
+  text-shadow: 0 0 2px #666;
+}
+#gags-dialog .gag-item.chosen {
+  background-color: #5b5;
+  border: 1px solid #282;
+  color: #fff;
+  text-shadow: 0 0 2px #666;
+  cursor: default;
+}
+#actions-dialog {
+  width: 370px;
+}
+#actions-dialog .content {
+  margin-top: 9px;
+  margin-bottom: 9px;
+}
+#actions-dialog .action-item {
+  padding: 6px 12px 6px 12px;
+  margin: 3px;
+  border: 1px solid #ddd;
+  display: inline-block;
+  -webkit-user-select: none;
+  user-select: none;
+  border-radius: 2px;
+}
+#actions-dialog .action-item.normal {
+  cursor: pointer;
+}
+#actions-dialog .action-item.normal:hover {
+  background-color: #939;
+  border: 1px solid #606;
+  color: #fff;
+  text-shadow: 0 0 2px #666;
+}
+#actions-dialog .action-item.chosen {
+  background-color: #939;
+  border: 1px solid #606;
+  color: #fff;
+  text-shadow: 0 0 2px #666;
+  cursor: default;
+}
 #image-select-dialog {
   font-size: 12px;
   width: 720px;

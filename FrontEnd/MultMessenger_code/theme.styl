@@ -704,6 +704,56 @@ html, body
 			line-height 40px
 			color black
 			box-shadow 0 0 5px #ddd
+#gags-dialog
+	width 370px
+	.content
+		margin-top 9px
+		margin-bottom 9px
+	.gag-item
+		padding 6px 12px 6px 12px
+		margin 3px
+		border 1px solid #ddd
+		display inline-block
+		user-select(none)
+		border-radius 2px
+		&.normal
+			cursor pointer
+			&:hover
+				background-color #5b5 
+				border 1px solid #5b5 -#333
+				color white
+				text-shadow 0 0 2px #666
+		&.chosen
+			background-color #5b5
+			border 1px solid #5b5 -#333
+			color white
+			text-shadow 0 0 2px #666
+			cursor default
+#actions-dialog
+	width 370px
+	.content 
+		margin-top 9px
+		margin-bottom 9px
+	.action-item
+		padding 6px 12px 6px 12px
+		margin 3px
+		border 1px solid #ddd
+		display inline-block
+		user-select(none)
+		border-radius 2px
+		&.normal
+			cursor pointer
+			&:hover
+				background-color #939 
+				border 1px solid #939 -#333
+				color white
+				text-shadow 0 0 2px #666
+		&.chosen
+			background-color #939
+			border 1px solid #939 -#333
+			color white
+			text-shadow 0 0 2px #666
+			cursor default	
 #image-select-dialog
 	font-size 12px
 	width 720px

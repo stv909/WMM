@@ -76,13 +76,13 @@
 			});
 			
 			this.elem.getElementsByClassName('test1')[0].addEventListener('click', function() {
-				self.moodsDialogView.show();
+				self.moodsDialogView.show('happy');
 			});
 			this.elem.getElementsByClassName('test2')[0].addEventListener('click', function() {
-				self.gagsDialogView.show();	
+				self.gagsDialogView.show('laugh');	
 			});
 			this.elem.getElementsByClassName('test3')[0].addEventListener('click', function() {
-				self.actionsDialogView.show();
+				self.actionsDialogView.show('Idle');
 			});
 		}
 		
@@ -278,6 +278,7 @@
 			var self = this;
 			
 			this.elem = template.create('gag-item-template', { className: 'gag-item' });
+			this.elem.textContent = this.model.text;
 			
 			this.deselect();
 			
@@ -314,6 +315,7 @@
 			var self = this;
 			
 			this.elem = template.create('action-item-template', { className: 'action-item' });
+			this.elem.textContent = model.text;
 			
 			this.deselect();
 			
@@ -333,7 +335,7 @@
 			base.prototype.select.apply(this, arguments);
 			if (!silent) {
 				this.trigger({
-					type: 'select:gag',
+					type: 'select:action',
 					action: this.model
 				});
 			}
@@ -452,7 +454,7 @@
 		GagsDialogView.prototype.show = function(gagValue) {
 			base.prototype.show.apply(this, arguments);
 			Object.keys(this.gagItemViews).forEach(function(key) {
-				this.gagItemViews[key].deslect();	
+				this.gagItemViews[key].deselect();	
 			}, this);
 			var gagItemView = this.gagItemViews[gagValue];
 			if (gagItemView) {
