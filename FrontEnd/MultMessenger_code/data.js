@@ -42,9 +42,25 @@ var data = data || {};
 		{ value: 'avatar', image: 'animations/avatar.png', text: 'Отрисовать только голову персонажа' }
 	];
 	
+	var CharacterCollection = [
+		{ value: 'borac', image: 'characters/borac.png' },
+		{ value: 'bruce', image: 'characters/bruce.png' },
+		{ value: 'duke', image: 'characters/duke.png' },
+		{ value: 'jack', image: 'characters/jack.png' },
+		{ value: 'joe', image: 'characters/joe.png' },
+		{ value: 'kate', image: 'characters/kate.png' },
+		{ value: 'lara', image: 'characters/lara.png' },
+		{ value: 'madone', image: 'characters/madone.png' },
+		{ value: 'marina', image: 'characters/marina.png' },
+		{ value: 'ostap', image: 'characters/ostap.png' },
+		{ value: 'pete', image: 'characters/pete.png' },
+		{ value: 'swann', image: 'characters/swann.png' }
+	];
+	
 	data.MoodCollection = MoodCollection;
 	data.GagCollection = GagCollection;
 	data.ActionCollection = ActionCollection;
 	data.AnimationTypeCollection = AnimationTypeCollection;
+	data.CharacterCollection = CharacterCollection;
 	
 })(data);

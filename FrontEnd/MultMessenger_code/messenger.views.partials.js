@@ -396,51 +396,6 @@ var messenger = messenger || {};
 	EmptyReplyView.prototype = Object.create(View.prototype);
 	EmptyReplyView.prototype.constructor = EmptyReplyView;
 	
-	var CharacterItemView = function(characterItem) {
-		CharacterItemView.super.apply(this);
-		var self = this;
-		
-		this.elem = template.create('character-item-template', { className: 'character-item' });
-		this.characterImageElem = this.elem.getElementsByClassName('character-image')[0];
-		
-		this.characterItem = characterItem;
-		this.selected = false;
-
-		this.characterImageElem.src = characterItem.image;
-		
-		this.deselect();
-		
-		var elemClickListener = function(event) {
-			if (!self.selected) {
-				self.select();
-			}		
-		};
-		
-		this.elem.addEventListener('click', elemClickListener);
-		this.once('dispose', function(event) {
-			self.elem.removeEventListener('click', elemClickListener);
-		});
-	};
-	CharacterItemView.super = View;
-	CharacterItemView.prototype = Object.create(View.prototype);
-	CharacterItemView.prototype.constructor = CharacterItemView;
-	CharacterItemView.prototype.select = function(silent) {
-		this.elem.classList.remove('normal');
-		this.elem.classList.add('chosen');
-		if (!silent) {
-			this.trigger({
-				type: 'select:character',
-				character: this.characterItem
-			});
-		}
-		this.selected = true;
-	};
-	CharacterItemView.prototype.deselect = function() {
-		this.elem.classList.remove('chosen');
-		this.elem.classList.add('normal');
-		this.selected = false;
-	};
-	
 	var ImageItemView = function(layerImageElem, imageSelectDialog) {
 		ImageItemView.super.apply(this);
 		var self = this;
@@ -573,7 +528,6 @@ var messenger = messenger || {};
 	messenger.views.MessagePatternView = MessagePatternView;
 	messenger.views.MessageEditorView = MessageEditorView;
 	messenger.views.CharacterView = CharacterView;
-	messenger.views.CharacterItemView = CharacterItemView;
 	messenger.views.ImageItemView = ImageItemView;
 	messenger.views.PhotoItemView = PhotoItemView;
 

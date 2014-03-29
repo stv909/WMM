@@ -7,7 +7,6 @@ window.onload = function() {
 	
 	var ContactRepository = messenger.repository.ContactRepository;
 	
-	var CharacterStorage = messenger.storage.CharacterStorage;
 	var MessageStorage = messenger.storage.MessageStorage;
 
 	var SelectPageView = messenger.views.SelectPageView;
@@ -94,7 +93,6 @@ window.onload = function() {
 		this.chatClientWrapper = new ChatClientWrapper(this.chatClient);
 		
 		this.messageStorage = new MessageStorage(this.chatClientWrapper);
-		this.characterStorage = new CharacterStorage();
 		
 		this.contactRepository = new ContactRepository();
 
@@ -224,10 +222,6 @@ window.onload = function() {
 		});
 		this.messageStorage.on('end:messages', function() {
 			self.selectPageView.hideMessageLoading();	
-		});
-		this.characterStorage.on('update:characters', function(event) {
-			var characters = event.characters;
-			self.editPageView.setCharacters(characters);
 		});
 		(function() {
 			var users = null;
@@ -542,10 +536,7 @@ window.onload = function() {
 		var self = this;
 		
 		VK.initAsync().then(function() {
-			var contactRepositoryPromise = self.contactRepository.initializeAsync();
-			var characterStoragePromise = self.characterStorage.initializeAsync();
-			var promises = [contactRepositoryPromise, characterStoragePromise];
-			return Q.all(promises);
+			return self.contactRepository.initializeAsync();
 		}).then(function() {
 			var owner = self.contactRepository.owner;
 			var vkId = Helpers.buildVkId(owner);

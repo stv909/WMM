@@ -6,7 +6,6 @@
 	
 	var DialogView = messenger.views.DialogView;
 	var UpdateMessageDialogView = messenger.views.UpdateMessageDialogView;
-	var CharactersDialogView = messenger.views.CharactersDialogView;
 	var ImageSelectDialogView = messenger.views.ImageSelectDialogView;
 	
 	var FilmText = filmlang.FilmText;
@@ -44,7 +43,6 @@
 			this.actionsDialogView = new ActionsDialogView();
 			this.animationTypesDialogView = new AnimationTypesDialogView();
 			
-			this.characters = [];
 			this.filmTexts = [];
 			
 			this.messageEditorView = new MessageEditorView();
@@ -86,7 +84,7 @@
 				self.actionsDialogView.show('Idle');
 			});
 			this.elem.getElementsByClassName('test4')[0].addEventListener('click', function() {
-				self.animationTypesDialogView.show('avatar');
+				self.charactersDialogView.show('swann');
 			});
 		}
 		
@@ -387,6 +385,44 @@
 		return AnimationTypeItemView;
 	})(ItemView);
 	
+	var CharacterItemView = (function(base) {
+		eve.extend(CharacterItemView, base);
+		
+		function CharacterItemView(model) {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.elem = template.create('character-item-template', { className: 'character-item' });
+			this.characterImageElem = this.elem.getElementsByClassName('character-image')[0];
+			this.characterImageElem.src = this.model.image;
+			
+			this.deselect();
+			
+			var elemClickListener = function(event) {
+				if (!self.selected) {
+					self.select();
+				}	
+			};
+			
+			this.elem.addEventListener('click', elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', elemClickListener);
+			});
+		}
+		
+		CharacterItemView.prototype.select = function(silent) {
+			base.prototype.select.apply(this, arguments);
+			if (!silent) {
+				this.trigger({
+					type: 'select:character',
+					character: this.model
+				});
+			}
+		};
+		
+		return CharacterItemView;
+	})(ItemView);
+	
 	var MoodsDialogView = (function(base) {
 		eve.extend(MoodsDialogView, base);
 		
@@ -634,6 +670,68 @@
 		};
 		
 		return AnimationTypesDialogView;
+	})(DialogView);
+	
+	var CharactersDialogView = (function(base) {
+		eve.extend(CharactersDialogView, base);
+		
+		function CharactersDialogView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.dialogWindowElem = document.getElementById('characters-dialog');
+			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
+			this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
+			
+			this.characterItemViews = {};
+			this.characterItemViewSelectListener = function(event) {
+				var character = event.character;
+				self.trigger({
+					type: 'select:character',
+					character: character
+				});
+				self.hide();
+			};
+			this.initalizeCharacterItemViews();
+			
+			var crossElementClickListener = function(event) {
+				self.hide();
+			};
+			
+			this.crossElem.addEventListener('click', crossElementClickListener);
+			
+			this.once('dispose', function() {
+				self.crossElem.removeEventListener('click', crossElementClickListener);
+			});
+		}
+		
+		CharactersDialogView.prototype.initalizeCharacterItemViews = function() {
+			data.CharacterCollection.forEach(function(character) {
+				this.addCharacterItemView(character);
+			}, this);
+		};
+		CharactersDialogView.prototype.addCharacterItemView = function(character) {
+			var characterItemView = new CharacterItemView(character);
+			characterItemView.attachTo(this.contentElem);
+			characterItemView.on('select:character', this.characterItemViewSelectListener);
+			this.characterItemViews[character.value] = characterItemView;
+		};
+		CharactersDialogView.prototype.show = function(characterValue) {
+			base.prototype.show.apply(this, arguments);
+			Object.keys(this.characterItemViews).forEach(function(key) {
+				this.characterItemViews[key].deselect();
+			}, this);
+			var characterItemView = this.characterItemViews[characterValue];
+			if (characterItemView) {
+				characterItemView.select(true);
+			}
+		};
+		CharactersDialogView.prototype.hide = function() {
+			base.prototype.hide.apply(this, arguments);
+			this.off('select:character');
+		};
+		
+		return CharactersDialogView;
 	})(DialogView);
 	
 	messenger.views.EditPageView = EditPageView;
