@@ -86,6 +86,9 @@
 			this.elem.getElementsByClassName('test4')[0].addEventListener('click', function() {
 				self.charactersDialogView.show('swann');
 			});
+			this.elem.getElementsByClassName('test5')[0].addEventListener('click', function() {
+				self.animationTypesDialogView.show('avatar');
+			});
 		}
 		
 		EditPageView.prototype.setCharacters = function(characters) {
@@ -212,16 +215,40 @@
 	var ItemView = (function(base) {
 		eve.extend(ItemView, base);
 		
-		function ItemView(model) {
+		function ItemView(model, itemName) {
 			base.apply(this, arguments);
+			
+			var self = this;
+			var templateName = [itemName, 'template'].join('-');
+			
+			this.elem = template.create(templateName, { className: itemName });
 			this.selected = false;
 			this.model = model;
+			this.deselect();
+			this.bindData();
+			
+			var elemClickListener = function(event) {
+				if (!self.selected) {
+					self.select();
+				}
+			};
+			
+			this.elem.addEventListener('click', elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', elemClickListener);	
+			});
 		}
 		
-		ItemView.prototype.select = function() {
+		ItemView.prototype.select = function(silent) {
 			this.elem.classList.add('chosen');
 			this.elem.classList.remove('normal');
 			this.selected = true;
+			if (!silent) {
+				this.trigger({
+					type: 'select',
+					model: this.model
+				});
+			}
 		};
 		ItemView.prototype.deselect = function() {
 			this.elem.classList.remove('chosen');
@@ -236,37 +263,13 @@
 		eve.extend(MoodItemView, base);
 		
 		function MoodItemView(model) {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.elem = template.create('mood-item-template', { className: 'mood-item' });
-			this.iconElem = this.elem.getElementsByClassName('icon')[0];
-			
-			this.iconElem.textContent = model.icon;
-			this.iconElem.classList.add(model.value);
-			
-			this.deselect();
-			
-			var elemClickListener = function(event) {
-				if (!self.selected) {
-					self.select();
-				}
-			};
-			
-			this.elem.addEventListener('click', elemClickListener);
-			this.once('dispose', function() {
-				self.elem.removeEventListener('click', elemClickListener);	
-			});
+			base.call(this, model, 'mood-item');
 		}
 		
-		MoodItemView.prototype.select = function(silent) {
-			base.prototype.select.apply(this, arguments);
-			if (!silent) {
-				this.trigger({
-					type: 'select:mood',
-					mood: this.model
-				});
-			}
+		MoodItemView.prototype.bindData = function() {
+			this.iconElem = this.elem.getElementsByClassName('icon')[0];
+			this.iconElem.textContent = this.model.icon;
+			this.iconElem.classList.add(this.model.value);
 		};
 		
 		return MoodItemView;
@@ -276,34 +279,11 @@
 		eve.extend(GagItemView, base);
 		
 		function GagItemView(model) {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.elem = template.create('gag-item-template', { className: 'gag-item' });
-			this.elem.textContent = this.model.text;
-			
-			this.deselect();
-			
-			var elemClickListener = function(event) {
-				if (!self.selected) {
-					self.select();
-				}
-			};
-			
-			this.elem.addEventListener('click', elemClickListener);
-			this.once('dispose', function() {
-				self.elem.removeEventListener('click', elemClickListener);
-			});
+			base.call(this, model, 'gag-item');
 		}
 		
-		GagItemView.prototype.select = function(silent) {
-			base.prototype.select.apply(this, arguments);
-			if (!silent) {
-				this.trigger({
-					type: 'select:gag',
-					gag: this.model
-				});
-			}
+		GagItemView.prototype.bindData = function() {
+			this.elem.textContent = this.model.text;	
 		};
 		
 		return GagItemView;
@@ -313,34 +293,11 @@
 		eve.extend(ActionItemView, base);
 		
 		function ActionItemView(model) {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.elem = template.create('action-item-template', { className: 'action-item' });
-			this.elem.textContent = model.text;
-			
-			this.deselect();
-			
-			var elemClickListener = function(event) {
-				if (!self.selected) {
-					self.select();
-				}
-			};
-			
-			this.elem.addEventListener('click', elemClickListener);
-			this.once('dispose', function() {
-				self.elem.removeEventListener('click', elemClickListener);
-			});
+			base.call(this, model, 'action-item');
 		}
 		
-		ActionItemView.prototype.select = function(silent) {
-			base.prototype.select.apply(this, arguments);
-			if (!silent) {
-				this.trigger({
-					type: 'select:action',
-					action: this.model
-				});
-			}
+		ActionItemView.prototype.bindData = function() {
+			this.elem.textContent = this.model.text;
 		};
 		
 		return ActionItemView;
@@ -350,36 +307,13 @@
 		eve.extend(AnimationTypeItemView, base)
 		
 		function AnimationTypeItemView(model) {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.elem = template.create('animation-type-item-template', { className: 'animation-type-item' });
-			this.elem.title = model.text;
-			this.iconElem = this.elem.getElementsByClassName('icon')[0];
-			this.iconElem.src = model.image;
-			
-			this.deselect();
-			
-			var elemClickListener = function(event) {
-				if (!self.selected) {
-					self.select();
-				}	
-			};
-			
-			this.elem.addEventListener('click', elemClickListener);
-			this.once('dispose', function() {
-				self.elem.removeEventListener('click', elemClickListener);
-			});
+			base.call(this, model, 'animation-type-item');
 		}
 		
-		AnimationTypeItemView.prototype.select = function(silent) {
-			base.prototype.select.apply(this, arguments);
-			if (!silent) {
-				this.trigger({
-					type: 'select:animation-type',
-					animationType: this.model
-				});
-			}
+		AnimationTypeItemView.prototype.bindData = function() {
+			this.elem.title = this.model.text;
+			this.iconElem = this.elem.getElementsByClassName('icon')[0];
+			this.iconElem.src = this.model.image;
 		};
 		
 		return AnimationTypeItemView;
@@ -389,61 +323,38 @@
 		eve.extend(CharacterItemView, base);
 		
 		function CharacterItemView(model) {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.elem = template.create('character-item-template', { className: 'character-item' });
-			this.characterImageElem = this.elem.getElementsByClassName('character-image')[0];
-			this.characterImageElem.src = this.model.image;
-			
-			this.deselect();
-			
-			var elemClickListener = function(event) {
-				if (!self.selected) {
-					self.select();
-				}	
-			};
-			
-			this.elem.addEventListener('click', elemClickListener);
-			this.once('dispose', function() {
-				self.elem.removeEventListener('click', elemClickListener);
-			});
+			base.call(this, model, 'character-item');
 		}
 		
-		CharacterItemView.prototype.select = function(silent) {
-			base.prototype.select.apply(this, arguments);
-			if (!silent) {
-				this.trigger({
-					type: 'select:character',
-					character: this.model
-				});
-			}
+		CharacterItemView.prototype.bindData = function() {
+			this.characterImageElem = this.elem.getElementsByClassName('character-image')[0];
+			this.characterImageElem.src= this.model.image;
 		};
 		
 		return CharacterItemView;
 	})(ItemView);
 	
-	var MoodsDialogView = (function(base) {
-		eve.extend(MoodsDialogView, base);
+	var ItemsDialogView = (function(base) {
+		eve.extend(ItemsDialogView, base);
 		
-		function MoodsDialogView() {
+		function ItemsDialogView(dialogName) {
 			base.apply(this, arguments);
 			var self = this;
 			
-			this.dialogWindowElem = document.getElementById('moods-dialog');
+			this.dialogWindowElem = document.getElementById(dialogName);
 			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
 			this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
 			
-			this.moodItemViews = {};
-			this.moodItemViewSelectListener = function(event) {
-				var mood = event.mood;
+			this.itemViews = {};
+			this.itemViewSelectListener = function(event) {
+				var item = event.model;
 				self.trigger({
-					type: 'select:mood',
-					mood: mood
+					type: 'select:item',
+					item: item
 				});
 				self.hide();
 			};
-			this.initializeMoodItemViews();
+			this.initializeItemViews();
 			
 			var crossElementClickListener = function(event) {
 				self.hide();
@@ -456,7 +367,32 @@
 			});
 		}
 		
-		MoodsDialogView.prototype.initializeMoodItemViews = function() {
+		ItemsDialogView.prototype.show = function(moodValue) {
+			base.prototype.show.apply(this, arguments);
+			Object.keys(this.itemViews).forEach(function(key) {
+				this.itemViews[key].deselect();
+			}, this);
+			var itemView = this.itemViews[moodValue];
+			if (itemView) {
+				itemView.select(true);
+			}
+		};
+		ItemsDialogView.prototype.hide = function() {
+			base.prototype.hide.apply(this, arguments);
+			this.off('select:item');
+		};
+		
+		return ItemsDialogView;
+	})(DialogView);
+	
+	var MoodsDialogView = (function(base) {
+		eve.extend(MoodsDialogView, base);
+		
+		function MoodsDialogView() {
+			base.call(this, 'moods-dialog');
+		}
+		
+		MoodsDialogView.prototype.initializeItemViews = function() {
 			data.MoodCollection.forEach(function(mood) {
 				this.addMoodItemView(mood);
 			}, this);
@@ -464,62 +400,21 @@
 		MoodsDialogView.prototype.addMoodItemView = function(mood) {
 			var moodItemView = new MoodItemView(mood);
 			moodItemView.attachTo(this.contentElem);
-			moodItemView.on('select:mood', this.moodItemViewSelectListener);
-			this.moodItemViews[mood.value] = moodItemView;
-		};
-		MoodsDialogView.prototype.show = function(moodValue) {
-			base.prototype.show.apply(this, arguments);
-			Object.keys(this.moodItemViews).forEach(function(key) {
-				this.moodItemViews[key].deselect();
-			}, this);
-			var moodItemView = this.moodItemViews[moodValue];
-			if (moodItemView) {
-				moodItemView.select(true);
-			}
-		};
-		MoodsDialogView.prototype.hide = function() {
-			base.prototype.hide.apply(this, arguments);
-			this.off('select:mood');
+			moodItemView.on('select', this.itemViewSelectListener);
+			this.itemViews[mood.value] = moodItemView;
 		};
 		
 		return MoodsDialogView;
-		
-	})(DialogView);
+	})(ItemsDialogView);
 	
 	var GagsDialogView = (function(base) {
 		eve.extend(GagsDialogView, base);
 		
 		function GagsDialogView() {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.dialogWindowElem = document.getElementById('gags-dialog');
-			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
-			this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
-			
-			this.gagItemViews = {};
-			this.gagItemViewSelectListener = function(event) {
-				var gag = event.gag;
-				self.trigger({
-					type: 'select:gag',
-					gag: gag
-				});
-				self.hide();
-			};
-			this.initializeGagItemViews();
-			
-			var crossElementClickListener = function(event) {
-				self.hide();	
-			};
-			
-			this.crossElem.addEventListener('click', crossElementClickListener);
-			
-			this.once('dispose', function() {
-				self.crossElem.removeEventListener('click', crossElementClickListener);
-			});
+			base.call(this, 'gags-dialog');
 		}
 		
-		GagsDialogView.prototype.initializeGagItemViews = function() {
+		GagsDialogView.prototype.initializeItemViews = function() {
 			data.GagCollection.forEach(function(gag) {
 				this.addGagItemView(gag);
 			}, this);
@@ -527,61 +422,21 @@
 		GagsDialogView.prototype.addGagItemView = function(gag) {
 			var gagItemView = new GagItemView(gag);
 			gagItemView.attachTo(this.contentElem);
-			gagItemView.on('select:gag', this.gagItemViewSelectListener);
-			this.gagItemViews[gag.value] = gagItemView;
-		};
-		GagsDialogView.prototype.show = function(gagValue) {
-			base.prototype.show.apply(this, arguments);
-			Object.keys(this.gagItemViews).forEach(function(key) {
-				this.gagItemViews[key].deselect();	
-			}, this);
-			var gagItemView = this.gagItemViews[gagValue];
-			if (gagItemView) {
-				gagItemView.select(true);
-			}
-		};
-		GagsDialogView.prototype.hide = function() {
-			base.prototype.hide.apply(this, arguments);
-			this.off('select:gag');
+			gagItemView.on('select', this.itemViewSelectListener);
+			this.itemViews[gag.value] = gagItemView;
 		};
 		
 		return GagsDialogView;
-	})(DialogView);
+	})(ItemsDialogView);
 	
 	var ActionsDialogView = (function(base) {
 		eve.extend(ActionsDialogView, base);
 		
 		function ActionsDialogView() {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.dialogWindowElem = document.getElementById('actions-dialog');
-			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
-			this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
-			
-			this.actionItemViews = {};
-			this.actionItemViewSelectListener = function(event) {
-				var action = event.action;
-				self.trigger({
-					type: 'select:action',
-					action: action
-				});
-				self.hide();
-			};
-			this.initializeActionItemViews();
-			
-			var crossElementClickListener = function(event) {
-				self.hide();
-			};
-			
-			this.crossElem.addEventListener('click', crossElementClickListener);
-			
-			this.once('dispose', function() {
-				self.crossElem.removeEventListener('click', crossElementClickListener);
-			});
+			base.call(this, 'actions-dialog');
 		}
 		
-		ActionsDialogView.prototype.initializeActionItemViews = function() {
+		ActionsDialogView.prototype.initializeItemViews = function() {
 			data.ActionCollection.forEach(function(action) {
 				this.addActionItemView(action);
 			}, this);
@@ -589,61 +444,21 @@
 		ActionsDialogView.prototype.addActionItemView = function(action) {
 			var actionItemView = new ActionItemView(action);
 			actionItemView.attachTo(this.contentElem);
-			actionItemView.on('select:action', this.actionItemViewSelectListener);
-			this.actionItemViews[action.value] = actionItemView;
-		};
-		ActionsDialogView.prototype.show = function(actionValue) {
-			base.prototype.show.apply(this, arguments);
-			Object.keys(this.actionItemViews).forEach(function(key) {
-				this.actionItemViews[key].deselect();
-			}, this);
-			var actionItemView = this.actionItemViews[actionValue];
-			if (actionItemView) {
-				actionItemView.select(true);
-			}
-		};
-		ActionsDialogView.prototype.hide = function() {
-			base.prototype.hide.apply(this, arguments);
-			this.off('select:action');
+			actionItemView.on('select', this.itemViewSelectListener);
+			this.itemViews[action.value] = actionItemView;
 		};
 		
 		return ActionsDialogView;
-	})(DialogView);
+	})(ItemsDialogView);
 	
 	var AnimationTypesDialogView = (function(base) {
 		eve.extend(AnimationTypesDialogView, base);
 		
 		function AnimationTypesDialogView() {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.dialogWindowElem = document.getElementById('animation-types-dialog');
-			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
-			this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
-			
-			this.animationTypeItemViews = {};
-			this.animationTypeItemViewSelectListener = function(event) {
-				var animationType = event.animationType;
-				self.trigger({
-					type: 'select:animation-type',
-					animationType: animationType
-				});
-				self.hide();
-			};
-			this.initializeAnimationTypeItemViews();
-			
-			var crossElementClickListener = function(event) {
-				self.hide();
-			};
-			
-			this.crossElem.addEventListener('click', crossElementClickListener);
-			
-			this.once('dispose', function() {
-				self.crossElem.removeEventListener('click', crossElementClickListener);
-			});
+			base.call(this, 'animation-types-dialog');
 		}
 		
-		AnimationTypesDialogView.prototype.initializeAnimationTypeItemViews = function() {
+		AnimationTypesDialogView.prototype.initializeItemViews = function() {
 			data.AnimationTypeCollection.forEach(function(animationType) {
 				this.addAnimationTypeItemView(animationType);
 			}, this);
@@ -651,61 +466,21 @@
 		AnimationTypesDialogView.prototype.addAnimationTypeItemView = function(animationType) {
 			var animationTypeItemView = new AnimationTypeItemView(animationType);
 			animationTypeItemView.attachTo(this.contentElem);
-			animationTypeItemView.on('select:animation-type', this.animationTypeItemViewSelectListener);
-			this.animationTypeItemViews[animationType.value] = animationTypeItemView;
-		};
-		AnimationTypesDialogView.prototype.show = function(animationTypeValue) {
-			base.prototype.show.apply(this, arguments);
-			Object.keys(this.animationTypeItemViews).forEach(function(key) {
-				this.animationTypeItemViews[key].deselect();
-			}, this);
-			var animationTypeItemView = this.animationTypeItemViews[animationTypeValue];
-			if (animationTypeItemView) {
-				animationTypeItemView.select(true);
-			}
-		};
-		AnimationTypesDialogView.prototype.hide = function() {
-			base.prototype.hide.apply(this, arguments);
-			this.off('select:animation-type');
+			animationTypeItemView.on('select', this.itemViewSelectListener);
+			this.itemViews[animationType.value] = animationTypeItemView;
 		};
 		
 		return AnimationTypesDialogView;
-	})(DialogView);
+	})(ItemsDialogView);
 	
 	var CharactersDialogView = (function(base) {
 		eve.extend(CharactersDialogView, base);
 		
 		function CharactersDialogView() {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.dialogWindowElem = document.getElementById('characters-dialog');
-			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
-			this.contentElem = this.dialogWindowElem.getElementsByClassName('content')[0];
-			
-			this.characterItemViews = {};
-			this.characterItemViewSelectListener = function(event) {
-				var character = event.character;
-				self.trigger({
-					type: 'select:character',
-					character: character
-				});
-				self.hide();
-			};
-			this.initalizeCharacterItemViews();
-			
-			var crossElementClickListener = function(event) {
-				self.hide();
-			};
-			
-			this.crossElem.addEventListener('click', crossElementClickListener);
-			
-			this.once('dispose', function() {
-				self.crossElem.removeEventListener('click', crossElementClickListener);
-			});
+			base.call(this, 'characters-dialog');
 		}
 		
-		CharactersDialogView.prototype.initalizeCharacterItemViews = function() {
+		CharactersDialogView.prototype.initializeItemViews = function() {
 			data.CharacterCollection.forEach(function(character) {
 				this.addCharacterItemView(character);
 			}, this);
@@ -713,26 +488,12 @@
 		CharactersDialogView.prototype.addCharacterItemView = function(character) {
 			var characterItemView = new CharacterItemView(character);
 			characterItemView.attachTo(this.contentElem);
-			characterItemView.on('select:character', this.characterItemViewSelectListener);
-			this.characterItemViews[character.value] = characterItemView;
-		};
-		CharactersDialogView.prototype.show = function(characterValue) {
-			base.prototype.show.apply(this, arguments);
-			Object.keys(this.characterItemViews).forEach(function(key) {
-				this.characterItemViews[key].deselect();
-			}, this);
-			var characterItemView = this.characterItemViews[characterValue];
-			if (characterItemView) {
-				characterItemView.select(true);
-			}
-		};
-		CharactersDialogView.prototype.hide = function() {
-			base.prototype.hide.apply(this, arguments);
-			this.off('select:character');
+			characterItemView.on('select', this.itemViewSelectListener);
+			this.itemViews[character.value] = characterItemView;
 		};
 		
 		return CharactersDialogView;
-	})(DialogView);
+	})(ItemsDialogView);
 	
 	messenger.views.EditPageView = EditPageView;
 	
