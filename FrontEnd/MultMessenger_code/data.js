@@ -4,7 +4,7 @@ var data = data || {};
 	
 	var MoodCollection = {
 		calm: { value: 'calm', icon: ":-|" }, 
-		angry: { value: "angry", icon: ">:(" }, 
+		anger: { value: "anger", icon: ">:(" }, 
 		sad: { value: "sad", icon: ":-(" }, 
 		happy: { value: "happy", icon: ":-)" }, 
 		amaze: { value: "amaze", icon: ":-0" }

@@ -285,7 +285,12 @@
 			});
 		};
 		FilmTextView.prototype._createMoodView = function(commandItem) {
+			var moodView = new MoodView(commandItem, this.moodsDialogView);
+			moodView.attachTo(this.filmTextItemsElem);
 			
+			commandItem.once('dispose', function() {
+				moodView.dispose();	
+			});
 		};
 		FilmTextView.prototype._createGagView = function(commandItem) {
 			var gagView = new GagView(commandItem, this.gagsDialogView);
@@ -511,7 +516,43 @@
 		
 		function MoodView(model, moodsDialogView) {
 			base.apply(this, arguments);
+			var self = this;
+			
+			this.model = model;
+			this.moodsDialogView = moodsDialogView;
+			console.log(model);
+			this.elem = template.create('mood-template', { className: 'mood film-text-item' });
+			this.iconElem = this.elem.getElementsByClassName('icon')[0];
+			this.bindData(data.MoodCollection[this.model.value]);
+			
+			this.model.on('validate', function(event) {
+				var value = event.value;
+				self.elem.classList.remove('invalid');
+				self.bindData(data.MoodCollection[value]);
+			});
+			this.model.on('invalidate', function(event) {
+				var value = event.value;
+				self.elem.classList.add('invalid');
+				self.bindData(data.MoodCollection[value]);
+			});
+			
+			var elemClickListener = function() {
+				self.moodsDialogView.once('select:item', function(event) {
+					var mood = event.item;
+					self.model.setValue(mood.value);
+				});
+				self.moodsDialogView.show(self.model.value);
+			};
+			this.elem.addEventListener('click', elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', elemClickListener);	
+			});
 		}
+		
+		MoodView.prototype.bindData = function(mood) {
+			this.iconElem.textContent = mood.icon;
+			this.iconElem.className = ['icon', mood.value].join(' ');
+		};
 		
 		return MoodView;
 	})(abyss.View)

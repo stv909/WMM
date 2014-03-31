@@ -358,10 +358,14 @@ html, body
 				padding-right 12px
 				margin-bottom 4px
 				margin-right 2px
+			.mood 
+				margin-bottom 4px
+				margin-right 2px
 			.text
 				font-family monospace
 				height 33px
 				margin-left 0
+				max-width 100%
 				border 1px solid aspect-color
 				&:hover
 					border 1px solid aspect-color
@@ -371,15 +375,16 @@ html, body
 					color #333
 				&.invalid
 					background-color #ff6
-			.gag, .action
+			.gag, .action, .mood
 				display inline-block
 				cursor pointer
 				box-sizing(border-box)
 				user-select(none)
 				text-align center
-				color white
 				height 33px
 				line-height 33px
+			.gag, .action
+				color white
 				border-radius 2px
 				text-shadow 0 0 2px #666
 				&.invalid
@@ -392,6 +397,21 @@ html, body
 				background-color aspect-color
 				&:hover
 					box-shadow 0 0 2px aspect-color
+			.mood
+				border-radius 2px
+				&:hover
+					.icon
+						box-shadow 0 0 2px #ffc944 -#333
+				.icon
+					color black
+					width 31px
+					height 31px
+					border-radius 16px
+					transform rotate(90deg)
+					font-size 16px
+					line-height 28px
+				&.invalid
+					background-color #ff6 !important
 #post-page
 	font-size 0
 	position absolute
@@ -1081,7 +1101,7 @@ html, body
 .happy, .calm, .amaze
 	background-color #ffc944
 	border 1px solid #ffc944 -#333
-.angry 
+.anger 
 	background-color #eb0542
 	border 1px solid #eb0542 - #333
 .sad
