@@ -388,7 +388,7 @@
 	})(abyss.View);
 	
 	var ActionView = (function(base) {
-		base.extend(ActionView, base);
+		eve.extend(ActionView, base);
 		
 		function ActionView(model, actionsDialogView) {
 			base.apply(this, arguments);
