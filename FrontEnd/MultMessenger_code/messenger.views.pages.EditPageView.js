@@ -31,7 +31,7 @@
 			this.imagesSectionElem = this.imagesElem.getElementsByClassName('section')[0];
 			this.imagesCollectionElem = this.imagesElem.getElementsByClassName('collection')[0];
 	
-			this.characterCollectionElem = this.elem.getElementsByClassName('character-collection')[0];
+			this.textsElem = this.elem.getElementsByClassName('texts')[0];
 			
 			this.imageItemViewCollection = [];
 	
@@ -56,11 +56,11 @@
 			});
 			
 			this.validateListener = function() {
-				var isInvalid = true;
+				var isValid = false;
 				self.filmTexts.forEach(function(filmText) {
-					isInvalid = isInvalid || !filmText.isValid;		
+					isValid = isValid || filmText.isValid;		
 				});
-				if (isInvalid) {
+				if (isValid) {
 					self.wrapElem.classList.add('hidden');
 				} else {
 					self.wrapElem.classList.remove('hidden');
@@ -73,31 +73,11 @@
 				});
 				analytics.send('editor', 'update_cancel');
 			});
-			
-			this.elem.getElementsByClassName('test1')[0].addEventListener('click', function() {
-				self.moodsDialogView.show('happy');
-			});
-			this.elem.getElementsByClassName('test2')[0].addEventListener('click', function() {
-				self.gagsDialogView.show('laugh');	
-			});
-			this.elem.getElementsByClassName('test3')[0].addEventListener('click', function() {
-				self.actionsDialogView.show('Idle');
-			});
-			this.elem.getElementsByClassName('test4')[0].addEventListener('click', function() {
-				self.charactersDialogView.show('swann');
-			});
-			this.elem.getElementsByClassName('test5')[0].addEventListener('click', function() {
-				self.animationTypesDialogView.show('avatar');
+			this.updateElem.addEventListener('click', function() {
+				
 			});
 		}
 		
-		EditPageView.prototype.setCharacters = function(characters) {
-			var self = this;
-			this.characters	= characters;
-			this.characters.forEach(function(character) {
-				self.charactersDialogView.addCharacterItem(character);	
-			});
-		};
 		EditPageView.prototype.setMessage = function(message) {
 			this.messageEditorView.setModel(message);
 			this.trigger('status:validate');
@@ -185,16 +165,20 @@
 		EditPageView.prototype._createFilmTextView = function(actorElem) {
 			var meta = actorElem.dataset.meta;
 			var filmText = new FilmText(meta);
-			var filmTextView = new FilmTextView(filmText);
+			var filmTextView = new FilmTextView(filmText,
+				this.charactersDialogView,
+				this.animationTypesDialogView,
+				this.gagsDialogView,
+				this.actionsDialogView,
+				this.moodsDialogView);
 			
+			filmTextView.attachTo(this.textsElem);
 			filmText.on('validate', this.validateListener);
 			filmText.on('invalidate', this.validateListener);
-			filmText.on('dispose', function() {
-				//kill views
+			filmText.once('dispose', function() {
+				filmTextView.dispose();
 			});
 			this.filmTexts.push(filmText);
-			
-			console.log(filmText);
 		};
 		
 		return EditPageView;
@@ -203,13 +187,92 @@
 	var FilmTextView = (function(base) {
 		eve.extend(FilmTextView, base);
 		
-		function FilmTextView(model) {
+		function FilmTextView(model, charactersDialogView, animationTypesDialogView, gagsDialogView, actionsDialogView, moodsDialogView) {
 			base.apply(this, arguments);
+			var self = this;
 			
 			this.model = model;
+			this.charactersDialogView = charactersDialogView;
+			this.animationTypesDialogView = animationTypesDialogView;
+			this.gagsDialogView = gagsDialogView;
+			this.actionsDialogView = actionsDialogView;
+			this.moodsDialogView = moodsDialogView;
+			
+			this.elem = template.create('film-text-template', { className: 'film-text' });
+			this.characterHolderElem = this.elem.getElementsByClassName('character-holder')[0];
+			this.filmTextItemsElem = this.elem.getElementsByClassName('film-text-items')[0];
+			
+			this.initializeViews();
 		}
 		
+		FilmTextView.prototype.initializeViews = function() {
+			var actorItem = this.model.actorItems[0];
+			var characterView = new CharacterView(actorItem, this.charactersDialogView);
+			
+			characterView.attachTo(this.characterHolderElem);
+			actorItem.once('dispose', function() {
+				characterView.dispose();
+			});
+		};
+		
 		return FilmTextView;
+	})(abyss.View);
+	
+	var CharacterView = (function(base) {
+		eve.extend(CharacterView, base);
+		
+		function CharacterView(model, charactersDialogView) {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.model = model;
+			this.charactersDialogView = charactersDialogView;
+			
+			this.elem = template.create('character-template', { className: 'character' });
+			this.elem.style.marginBottom = '8px';
+			this.characterImageElem = this.elem.getElementsByClassName('character-image')[0];
+			this.characterNameElem = this.elem.getElementsByClassName('character-name')[0];
+
+			var character = data.CharacterCollection[this.model.value.character];
+			this.bindData(character);
+			
+			this.model.on('validate', function(event) {
+				var value = event.value;
+				var character = data.CharacterCollection[value.character];
+				self.elem.classList.remove('invalid');
+				self.bindData(character);
+			});
+			this.model.on('invalidate', function(event) {
+				var value = event.value;
+				var character = data.CharacterCollection[value.character];
+				self.elem.classList.add('invalid');
+				self.bindData(character);
+			});
+			
+			var elemClickListener = function(event) {
+				self.charactersDialogView.once('select:item', function(event) {
+					var item = event.item;
+					var value = {
+						name: self.model.value.name,
+						character: item.value
+					};
+					self.model.setValue(value);
+				});
+				self.charactersDialogView.show(self.model.value.character);
+			};
+			
+			this.elem.addEventListener('click', elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', elemClickListener);
+			});
+		}
+		
+		CharacterView.prototype.bindData = function(character) {
+			this.characterImageElem.src = character.image;
+			this.characterNameElem.textContent = character.value;
+		};
+		
+		return CharacterView;
 	})(abyss.View);
 	
 	var ItemView = (function(base) {
@@ -393,8 +456,8 @@
 		}
 		
 		MoodsDialogView.prototype.initializeItemViews = function() {
-			data.MoodCollection.forEach(function(mood) {
-				this.addMoodItemView(mood);
+			Object.keys(data.MoodCollection).forEach(function(key) {
+				this.addMoodItemView(data.MoodCollection[key]);
 			}, this);
 		};
 		MoodsDialogView.prototype.addMoodItemView = function(mood) {
@@ -415,8 +478,8 @@
 		}
 		
 		GagsDialogView.prototype.initializeItemViews = function() {
-			data.GagCollection.forEach(function(gag) {
-				this.addGagItemView(gag);
+			Object.keys(data.GagCollection).forEach(function(key) {
+				this.addGagItemView(data.GagCollection[key]);
 			}, this);
 		};
 		GagsDialogView.prototype.addGagItemView = function(gag) {
@@ -437,8 +500,8 @@
 		}
 		
 		ActionsDialogView.prototype.initializeItemViews = function() {
-			data.ActionCollection.forEach(function(action) {
-				this.addActionItemView(action);
+			Object.keys(data.ActionCollection).forEach(function(key) {
+				this.addActionItemView(data.ActionCollection[key]);
 			}, this);
 		};
 		ActionsDialogView.prototype.addActionItemView = function(action) {
@@ -459,8 +522,8 @@
 		}
 		
 		AnimationTypesDialogView.prototype.initializeItemViews = function() {
-			data.AnimationTypeCollection.forEach(function(animationType) {
-				this.addAnimationTypeItemView(animationType);
+			Object.keys(data.AnimationTypeCollection).forEach(function(key) {
+				this.addAnimationTypeItemView(data.AnimationTypeCollection[key]);
 			}, this);
 		};
 		AnimationTypesDialogView.prototype.addAnimationTypeItemView = function(animationType) {
@@ -481,8 +544,8 @@
 		}
 		
 		CharactersDialogView.prototype.initializeItemViews = function() {
-			data.CharacterCollection.forEach(function(character) {
-				this.addCharacterItemView(character);
+			Object.keys(data.CharacterCollection).forEach(function(key) {
+				this.addCharacterItemView(data.CharacterCollection[key]);
 			}, this);
 		};
 		CharactersDialogView.prototype.addCharacterItemView = function(character) {

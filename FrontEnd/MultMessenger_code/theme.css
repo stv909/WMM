@@ -297,11 +297,29 @@ body {
   left: 0;
   right: 0;
 }
-#edit-page .message-wrapper {
-  position: relative;
-  margin-left: 16px;
+#edit-page >div {
+  display: table;
+  width: 100%;
+  height: 100%;
+  table-layout: fixed;
 }
-#edit-page .message-wrapper .wrap {
+#edit-page .message-holder,
+#edit-page .editor-holder {
+  display: table-cell;
+  position: relative;
+  vertical-align: top;
+}
+#edit-page .message-holder {
+  width: 462px;
+}
+#edit-page .message-holder .prewrapper {
+  margin-left: 24px;
+  margin-top: 16px;
+}
+#edit-page .message-holder .prewrapper .message-wrapper {
+  position: relative;
+}
+#edit-page .message-holder .prewrapper .wrap {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -310,37 +328,89 @@ body {
   z-index: 20;
   background-color: rgba(255,255,255,0.9);
 }
-#edit-page .message-wrapper .controls {
+#edit-page .message-holder .prewrapper .controls {
   display: table;
   width: 100%;
   height: 100%;
 }
-#edit-page .message-wrapper .controls .line {
+#edit-page .message-holder .prewrapper .controls .line {
   display: table-cell;
   vertical-align: middle;
 }
-#edit-page .message-editor {
-  position: absolute;
-  top: 16px;
-  bottom: 0;
-  left: 8px;
-  right: 0;
-  display: inline-block;
-  vertical-align: top;
+#edit-page .editor-holder {
+  height: 100%;
 }
-#edit-page .container {
+#edit-page .editor-holder .editor {
+  position: relative;
   width: 100%;
+  height: 100%;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-#edit-page .title {
-  font-weight: bold;
-  color: #333;
-  font-size: 14px;
-  padding-top: 10px;
-  padding-bottom: 6px;
-  height: 16px;
-  text-align: center;
+#edit-page .editor-holder .editor .wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 16px 0 2px;
+}
+#edit-page .editor-holder .memos,
+#edit-page .editor-holder .images,
+#edit-page .editor-holder .texts {
+  margin-bottom: 4px;
+}
+#edit-page .editor-holder .section {
+  margin-bottom: 4px;
+}
+#edit-page .editor-holder .texts {
+  width: 100%;
+  display: table;
+  table-layout: fixed;
+}
+#edit-page .editor-holder .texts .film-text {
+  font-size: 12px;
+  display: table-row;
+}
+#edit-page .editor-holder .texts .film-text .character-holder,
+#edit-page .editor-holder .texts .film-text .film-text-items {
+  display: table-cell;
+}
+#edit-page .editor-holder .texts .film-text .character-holder {
+  width: 100px;
+}
+#edit-page .editor-holder .character {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  height: 33px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#edit-page .editor-holder .character:hover,
+#edit-page .editor-holder .character:active {
+  border: 1px solid #28f;
+  box-shadow: 0 0 2px #28f !important;
+}
+#edit-page .editor-holder .character.invalid {
+  background-color: #ffd;
+  box-shadow: 0 0 2px #ffd;
+}
+#edit-page .editor-holder .character .character-image,
+#edit-page .editor-holder .character .character-name {
+  display: inline-block;
+  height: 31px;
+  vertical-align: top;
+}
+#edit-page .editor-holder .character .character-image {
+  margin-left: 4px;
+}
+#edit-page .editor-holder .character .character-name {
+  line-height: 31px;
 }
 #post-page {
   font-size: 0;
@@ -1178,12 +1248,6 @@ body {
   margin-bottom: 8px;
   border: 1px solid #fff;
 }
-.memos {
-  margin-bottom: 10px;
-}
-.images {
-  margin-bottom: 10px;
-}
 .image-item {
   font-size: 0;
   padding: 2px;
@@ -1201,45 +1265,6 @@ body {
 .image-item.ready:hover {
   border: 1px solid #888;
 }
-.characters {
-  width: 100%;
-  padding: 0;
-  margin: 0 0 10px;
-  border-collapse: collapse;
-}
-.characters td {
-  padding: 0;
-}
-.characters tr {
-  vertical-align: top;
-}
-.characters .actor-wrapper {
-  width: 100px;
-  padding-right: 8px;
-}
-.actor {
-  border: 1px solid #ddd;
-  border-radius: 2px;
-  height: 31px;
-  vertical-align: middle;
-  cursor: pointer;
-}
-.actor:hover {
-  border: 1px solid #888;
-}
-.actor .actor-image {
-  width: 30px;
-  height: 31px;
-  margin-left: 4px;
-}
-.actor .actor-name {
-  height: 31px;
-  line-height: 31px;
-  font-size: 12px;
-  display: inline-block;
-  vertical-align: top;
-  margin-left: 6px;
-}
 .controls {
   float: right;
   text-align: center;
@@ -1250,9 +1275,6 @@ body {
 }
 .controls .button-special {
   margin-right: 10px;
-}
-.invalid {
-  background-color: #ffd !important;
 }
 .cell {
   display: table-cell;

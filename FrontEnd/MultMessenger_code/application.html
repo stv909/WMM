@@ -70,46 +70,43 @@
 	</div>
 </template>
 <template id="edit-page-template" style="display: none">
-	<button class="test1">Test1</button>
-	<button class="test2">Test2</button>
-	<button class="test3">Test3</button>
-	<button class="test4">Test4</button>
-	<button class="test5">Test5</button>
-	<div class="message-editor">
-		<div class="container">
-			<div class="message-wrapper">
-				<div class="wrap">
-					<div class="controls">
-						<div class="line">
-							<div class="button-special update">Обновить</div>
-							<div class="button-special reset">Отмена</div>
+	<div>
+		<div class="message-holder">
+			<div class="prewrapper">
+				<div class="message-wrapper">
+					<div class="wrap">
+						<div class="controls">
+							<div class="line">
+								<div class="button-special update">Обновить</div>
+								<div class="button-special reset">Отмена</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="tools">
-				<div class="memos">
-					<div class="section">Надписи</div>
-					<div class="collection"></div>
-				</div>
-				<div class="images">
-					<div class="section">Изображения</div>
-					<div class="collection"></div>
-				</div>
-				<table class="characters">
-					<thead>
-						<tr>
-							<td class="character">
+		</div>
+		<div class="editor-holder">
+			<div class="editor">
+				<div class="wrapper">
+					<div class="memos">
+						<div class="section">Надписи</div>
+						<div class="collection"></div>
+					</div>
+					<div class="images">
+						<div class="section">Изображения</div>
+						<div class="collection"></div>
+					</div>
+					<div class="texts">
+						<div class="film-text">
+							<div class="character-holder">
 								<div class="section">Персонажи</div>
-							</td>
-							<td class="reply">
+							</div>
+							<div clas="film-text-items">
 								<div class="section">Реплики</div>
-							</td>
-						</tr>
-					</thead>
-					<tbody class="character-collection">
-					</tbody>
-				</table>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -153,6 +150,10 @@
 		</div>
 	</div>
 </template>
+<template id="film-text-template" style="disply: none">
+	<div class="character-holder"></div>
+	<div class="film-text-items"></div>
+</template>
 <template id="contact-template" style="display: none">
 	<div class="photo-holder">
 		<img class="photo">
@@ -160,16 +161,8 @@
 	<div class="name"></div>
 </template>
 <template id="character-template" style="display: none">
-	<div class="actor-wrapper cell">
-	</div>
-	<div class="cell">
-		<div class="reply-wrapper">
-		</div>
-	</div>
-</template>
-<template id="actor-template" style="display:none">
-	<img class="actor-image">
-	<div class="actor-name"></div>
+	<img class="character-image">
+	<div class="character-name"></div>
 </template>
 <template id="image-item-template" style="display: none">
 	<div class="circularImageHolderG">

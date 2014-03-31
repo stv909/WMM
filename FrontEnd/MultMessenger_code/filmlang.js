@@ -5,23 +5,23 @@ var filmlang = filmlang || {};
 	var FilmTextItem =(function(base) {
 		eve.extend(FilmTextItem, base);
 		
-		function FilmTextItem(value) {
+		function FilmTextItem(value, equalFunc) {
 			base.apply(this, arguments);
 			this.value = value;
-			this.previousValue = null;
+			this.previousValue = value;
 			this.isValid = true;
+			this.equalFunc = equalFunc;
 		}
 		
-		FilmTextItem.prototype.setValue = function(value, equalFunc) {
-			equalFunc = equalFunc || function(v1, v2) {
+		FilmTextItem.prototype.setValue = function(value) {
+			this.equalFunc = this.equalFunc || function(v1, v2) {
 				return v1 === v2;	
 			};
-			if (equalFunc(value, this.previousValue)) {
+			if (this.equalFunc(value, this.previousValue)) {
 				this.previousValue = value;
 				this.value = value;
 				this.validate();
 			} else {
-				this.previousValue = this.value;
 				this.value = value;
 				this.invalidate();
 			}
@@ -49,7 +49,8 @@ var filmlang = filmlang || {};
 			});
 		};
 		FilmTextItem.prototype.dispose = function() {
-			this.off();	
+			this.trigger('dispose');
+			this.off();
 		};
 		
 		return FilmTextItem;
@@ -107,7 +108,13 @@ var filmlang = filmlang || {};
 		FilmText.prototype._extractActors = function(meta) {
 			var actors = meta.actors;
 			actors.forEach(function(actor) {
-				var actorItem = new FilmTextItem(actor);
+				var actorItem = new FilmTextItem(actor, function(v1, v2) {
+					if (!v1 || !v2) {
+						return false;
+					} else {
+						return (v1.value === v2.value && v1.character === v2.character);
+					}
+				});
 				actorItem.on('validate', this.validateListener);
 				actorItem.on('invalidate', this.validateListener);
 				this.actorItems.push(actorItem);
@@ -153,6 +160,8 @@ var filmlang = filmlang || {};
 			this.items.forEach(function(item) {
 				item.dispose();
 			});
+			this.trigger('dispose');
+			this.off();
 		};
 		FilmText.prototype.toMeta = function() {
 			var commands = this.commandItems.reduce(function(previousValue, commandItem) {
