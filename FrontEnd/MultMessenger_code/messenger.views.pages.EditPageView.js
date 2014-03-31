@@ -243,6 +243,28 @@
 		}
 		
 		FilmTextView.prototype.initializeViews = function() {
+			this._createCharacterView();
+			
+			this.model.commandItems.forEach(function(commandItem) {
+				switch (commandItem.type) {
+					case '#text':
+						this._createTextView(commandItem);
+						break;
+					case 'gag':
+						this._createGagView(commandItem);
+						break;
+					case 'action':
+						this._createActionView(commandItem);
+						break;
+					case 'mood':
+						this._createMoodView(commandItem);
+						break;
+					default:
+						break;
+				}
+			}, this);
+		};
+		FilmTextView.prototype._createCharacterView = function() {
 			var actorItem = this.model.actorItems[0];
 			var characterView = new CharacterView(actorItem, this.charactersDialogView);
 			
@@ -250,6 +272,21 @@
 			actorItem.once('dispose', function() {
 				characterView.dispose();
 			});
+		};
+		FilmTextView.prototype._createAnimationTypeView = function() {
+			var typeItem = this.model.typeItem;
+		};
+		FilmTextView.prototype._createTextView = function(commandItem) {
+			
+		};
+		FilmTextView.prototype._createMoodView = function(commandItem) {
+			
+		};
+		FilmTextView.prototype._createGagView = function(commandItem) {
+			
+		};
+		FilmTextView.prototype._createActionView = function(commandItem) {
+			
 		};
 		
 		return FilmTextView;
@@ -266,7 +303,6 @@
 			this.charactersDialogView = charactersDialogView;
 			
 			this.elem = template.create('character-template', { className: 'character' });
-			this.elem.style.marginBottom = '8px';
 			this.characterImageElem = this.elem.getElementsByClassName('character-image')[0];
 			this.characterNameElem = this.elem.getElementsByClassName('character-name')[0];
 
@@ -311,6 +347,65 @@
 		
 		return CharacterView;
 	})(abyss.View);
+	
+	var AnimationTypeView = (function(base) {
+		eve.extend(AnimationTypeView, base);
+		
+		function AnimationTypeView(model, animationTypesDialogView) {
+			base.apply(this, arguments);
+		}
+		
+		return AnimationTypeView;
+	})(abyss.View);
+	
+	var TextView = (function(base) {
+		eve.extend(TextView, base);
+		
+		function TextView(model) {
+			base.apply(this, arguments);
+			
+			this.model = model;
+			this.elem = document.createElement('input');
+			this.elem.type = 'text';
+			this.elem.className = this.model.value;
+			
+			this.once('dispose', function() {
+				
+			});
+		}
+		
+		return TextView;
+	})(abyss.View);
+	
+	var GagView = (function(base) {
+		eve.extend(GagView, base);
+		
+		function GagView(model, gagsDialogView) {
+			base.apply(this, arguments);
+		}
+		
+		return GagView;
+	})(abyss.View);
+	
+	var ActionView = (function(base) {
+		base.extend(ActionView, base);
+		
+		function ActionView(model, actionsDialogView) {
+			base.apply(this, arguments);
+		}
+		
+		return ActionView;	
+	})(abyss.View);
+	
+	var MoodView = (function(base) {
+		eve.extend(MoodView, base);
+		
+		function MoodView(model, moodsDialogView) {
+			base.apply(this, arguments);
+		}
+		
+		return MoodView;
+	})(abyss.View)
 	
 	var ItemView = (function(base) {
 		eve.extend(ItemView, base);
