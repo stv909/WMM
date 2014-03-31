@@ -45,38 +45,6 @@ var messenger = messenger || {};
 		this.off();	
 	};
 	
-	var CharacterStorage = function() {
-		CharacterStorage.super.apply(this);
-		this.forbiddenCharacters = ['urgant', 'svetlakov'];
-	};
-	CharacterStorage.super = EventEmitter;
-	CharacterStorage.prototype = Object.create(EventEmitter.prototype);
-	CharacterStorage.prototype.constructor = CharacterStorage;
-	CharacterStorage.prototype.initializeAsync = function() {
-		var self = this;
-		return async.requestAsync({
-			url: settings.characterListUrl,
-			method: 'GET',
-			data: null
-		}).then(function(rawData) {
-			var response = JSON.parse(rawData);
-			var charactersDict = response.characters;
-			var characters = [];
-			for (var key in charactersDict) {
-				if (self.forbiddenCharacters.indexOf(key) === -1) {
-					characters.push({
-						key: key,
-						image: ['./actors/', key, 'Actor.png'].join('')
-					});
-				}
-			}
-			self.trigger({
-				type: 'update:characters',
-				characters: characters
-			});
-		});
-	};
-	
 	var MessageStorage1 = function(chatClientWrapper) {
 		MessageStorage1.super.apply(this);
 		var self = this;
@@ -381,7 +349,6 @@ var messenger = messenger || {};
 	};
 	
 	messenger.storage = {
-		CharacterStorage: CharacterStorage,
 		PaginationCollection: PaginationCollection,
 		MessageStorage: MessageStorage1,
 		PhotoStorage: PhotoStorage,

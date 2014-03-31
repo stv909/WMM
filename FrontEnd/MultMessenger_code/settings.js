@@ -52,6 +52,7 @@ var settings = settings || {};
 	settings.animationServiceUrl = settings.animationServiceUrls[settings.version];
 	settings.groupUrl = 'https://vk.com/toome_mobi';
 	settings.vkContactBaseUrl = 'https://vk.com/id';
+	settings.abilityBaseUrl = 'https://bazelevshosting.net/MCM/';
 	settings.vkGroupBaseUrls = {
 		'page': 'https://vk.com/public',
 		'group': 'https://vk.com/club',

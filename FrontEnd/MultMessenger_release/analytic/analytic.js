@@ -195,7 +195,7 @@ window.onload = function() {
 		this.messageViews = {};
 		this.selectedMessageView = null;
 		
-		this.chatClient = new ChatClient('ws://www.bazelevscontent.net:9009/');
+		this.chatClient = new ChatClient('wss://www.bazelevscontent.net/9009/');
 		this.account = 'analytics';
 		
 		this.messageStorage = new MessageStorage();
@@ -248,6 +248,7 @@ window.onload = function() {
 			var endTimestamp = new Date(end).getTime();
 			
 			self.chatClient.once('message:messagedump', function(event) {
+				console.log(event);
 				var messagedump = event.response.messagedump;
 				if (typeof messagedump === 'string') {
 					self.statusElem.textContent = [messagedump, 'Reboot the app!!!'].join(' ');
@@ -256,6 +257,7 @@ window.onload = function() {
 				}
 			});
 			self.chatClient.once('message:retrieve', function(event) {
+				console.log(event);
 				self.messageStorage.clear();
 				html.scrollToTop(document.body);
 				var rawMessages = event.response.retrieve;

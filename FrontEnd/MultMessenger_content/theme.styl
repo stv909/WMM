@@ -9,7 +9,11 @@ user-select(value)
 box-sizing(value)
 	-moz-box-sizing value
 	box-sizing value
-	
+transform(value)
+	-webkit-transform value
+	-moz-transform value
+	-ms-transform value
+	transform value
 *
 	outline 0
 html, body
@@ -252,48 +256,179 @@ html, body
 	font-size 0
 	position absolute
 	overflow hidden
-	//padding-top 8px
 	top 0
 	bottom 0
 	left 0
 	right 0
-	.message-wrapper
-		position relative
-		margin-left 16px
-		.wrap
-			width 100%
-			height 100%
-			position absolute
-			top 0
-			left 0
-			z-index 20
-			background-color rgba(255, 255, 255, 0.9)
-		.controls
-			display table
-			width 100%
-			height 100%
-			.line
-				display table-cell
-				vertical-align middle
-	.message-editor
-		position absolute
-		top 16px
-		bottom 0
-		left 8px
-		right 0
-		display inline-block
-		vertical-align top
-	.container
+	>div
+		display table
 		width 100%
-		box-sizing(border-box)
-	.title
-		font-weight bold
-		color #333
-		font-size 14px
-		padding-top 10px
-		padding-bottom 6px
-		height 16px
-		text-align center
+		height 100%
+		table-layout fixed
+	.message-holder, .editor-holder
+		display table-cell
+		position relative
+		vertical-align top
+	.message-holder
+		width 462px
+		.prewrapper
+			margin-left 24px
+			margin-top 16px
+			.message-wrapper
+				position relative
+			.wrap
+				width 100%
+				height 100%
+				position absolute
+				top 0
+				left 0
+				z-index 20
+				background-color rgba(255, 255, 255, 0.9)
+			.controls
+				display table
+				width 100%
+				height 100%
+				.line
+					display table-cell
+					vertical-align middle
+	.editor-holder
+		height 100%
+		.editor
+			position relative
+			width 100%
+			height 100%
+			box-sizing(border-box)
+			.wrapper
+				position absolute
+				top 0
+				bottom 0
+				left 0
+				right 0
+				overflow-y auto
+				overflow-x	hidden
+				padding 16px 16px 0 2px
+		.memos, .images, .texts
+			margin-bottom 4px
+		.section
+			margin-bottom 4px
+		.texts
+			width 100%
+			display table
+			table-layout fixed
+			.film-text
+				font-size 12px
+				display	table-row
+				.character-holder, .film-text-items
+					display table-cell
+					vertical-align top
+				.character-holder
+					width 108px
+		.memo
+			width 100%
+		.character
+			box-sizing(border-box)
+			border 1px solid #ddd
+			border-radius 2px
+			height 33px
+			margin-bottom 8px
+			margin-right 8px
+			cursor pointer
+			user-select(none)
+			&:hover, &:active
+				border 1px solid aspect-color
+				box-shadow 0 0 2px aspect-color !important
+			&.invalid
+				background-color #ff6
+				box-shadow 0 0 2px #ff6
+			.character-image, .character-name
+				display inline-block
+				height 31px
+				vertical-align top
+			.character-image
+				margin-left 4px
+			.character-name
+				line-height 31px
+		.film-text-items
+			.film-text-item
+				&:last-child
+					margin-bottom 8px !important
+			.text, .gag, .action
+				vertical-align top
+				padding-left 12px
+				padding-right 12px
+				margin-bottom 4px
+				margin-right 2px
+			.mood, .animation-type
+				margin-bottom 4px
+				margin-right 2px
+				vertical-align top
+			.text
+				font-family monospace
+				height 33px
+				margin-left 0
+				max-width 100%
+				border 1px solid aspect-color
+				&:hover
+					border 1px solid aspect-color
+					color #666
+					box-shadow 0 0 2px aspect-color
+				&:focus
+					color #333
+				&.invalid
+					background-color #ff6
+			.gag, .action, .mood, .animation-type
+				display inline-block
+				cursor pointer
+				box-sizing(border-box)
+				user-select(none)
+				text-align center
+				height 33px
+				line-height 33px
+			.gag, .action
+				color white
+				border-radius 2px
+				text-shadow 0 0 2px #666
+				&.invalid
+					color #ff6 !important
+			.gag
+				background-color #5b5
+				&:hover
+					box-shadow 0 0 2px #5b5
+			.action
+				background-color aspect-color
+				&:hover
+					box-shadow 0 0 2px aspect-color
+			.mood
+				border-radius 2px
+				&:hover
+					.icon
+					.happy, .calm, .amaze
+						box-shadow 0 0 2px #ffc944 -#333
+					.anger 
+						box-shadow 0 0 2px #eb0542 - #333
+					.sad
+						box-shadow 0 0 2px #adcdec - #333
+				.icon
+					color black
+					width 31px
+					height 31px
+					border-radius 16px
+					transform rotate(90deg)
+					font-size 16px
+					line-height 28px
+				&.invalid
+					background-color #ff6 !important
+			.animation-type
+				border-radius 2px
+				width 33px
+				&.invalid
+					box-shadow 0 0 2px #ff6 !important
+				&:hover
+					box-shadow 0 0 2px aspect-color
+				.icon
+					border-radius 2px
+					width 100%
+					height 100%
 #post-page
 	font-size 0
 	position absolute
@@ -382,6 +517,7 @@ html, body
 								padding-top 6px
 								overflow auto
 						.query
+							width 100%
 							margin-right 12px
 							margin-top 12px
 							margin-bottom 4px
@@ -644,6 +780,135 @@ html, body
 			background-color #f00
 			box-shadow 0 0 2px #f00
 			color #fff
+#moods-dialog, #actions-dialog, #gags-dialog, #animation-types-dialog
+	font-size: 12px
+	.title-holder
+		position relative
+	.cross
+		width 12px
+		height 12px
+		line-height 12px
+		padding 4px
+		right 8px
+		top 7px
+		float right
+		position absolute
+		color #f00
+		border 1px solid #f00
+		&:hover
+			box-shadow 0 0 2px #f00
+		&:active
+			background-color #f00
+			box-shadow 0 0 2px #f00
+			color #fff
+#moods-dialog
+	width 360px
+	height 123px
+	.content
+		height 90px
+	.mood-item
+		width 48px
+		height 48px
+		display inline-block
+		user-select(none)
+		margin-top 12px
+		margin-left 3px
+		margin-right 3px
+		cursor pointer
+		border 1px solid white
+		border-radius 2px
+		padding 6px
+		&.normal
+			&:hover
+				border 1px solid #888
+		&.chosen
+			border 1px solid aspect-color
+			box-shadow 0 0 1px aspect-color
+			cursor default
+		.icon
+			display:
+			width 100%
+			height 100%
+			border-radius 24px
+			transform(rotate(90deg))
+			box-sizing(border-box)
+			font-size 26px
+			line-height 40px
+			color black
+			box-shadow 0 0 5px #ddd
+#gags-dialog
+	width 370px
+	.content
+		margin-top 9px
+		margin-bottom 9px
+	.gag-item
+		padding 6px 12px 6px 12px
+		margin 3px
+		border 1px solid #ddd
+		display inline-block
+		user-select(none)
+		border-radius 2px
+		&.normal
+			cursor pointer
+			&:hover
+				background-color #5b5 
+				border 1px solid #5b5
+				color white
+				text-shadow 0 0 2px #666
+		&.chosen
+			background-color #5b5
+			border 1px solid #5b5
+			color white
+			text-shadow 0 0 2px #666
+			cursor default
+#actions-dialog
+	width 370px
+	.content 
+		margin-top 9px
+		margin-bottom 9px
+	.action-item
+		padding 6px 12px 6px 12px
+		margin 3px
+		border 1px solid #ddd
+		display inline-block
+		user-select(none)
+		border-radius 2px
+		&.normal
+			cursor pointer
+			&:hover
+				background-color aspect-color 
+				border 1px solid aspect-color
+				color white
+				text-shadow 0 0 2px #666
+		&.chosen
+			background-color aspect-color
+			border 1px solid aspect-color
+			color white
+			text-shadow 0 0 2px #666
+			cursor default
+#animation-types-dialog
+	width 280px
+	.content
+		margin-top 9px
+		margin-bottom 9px
+	.animation-type-item
+		display inline-block
+		width 64px
+		height 64px
+		margin 3px
+		border 1px solid white
+		border-radius 2px
+		.icon
+			width 100%
+			height 100%
+		&.normal
+			cursor pointer
+			&:hover
+				border 1px solid #888
+		&.chosen
+			border 1px solid aspect-color
+			box-shadow 0 0 1px aspect-color
+			cursor default
 #image-select-dialog
 	font-size 12px
 	width 720px
@@ -807,7 +1072,7 @@ html, body
 	font-size 12px
 	padding 8px
 	border 1px solid #ddd
-	width 100%
+	//width 100%
 	margin-bottom 8px
 	box-sizing(border-box)
 	border-radius 2px
@@ -824,10 +1089,6 @@ html, body
 	padding 8px
 	margin-bottom 8px
 	border 1px solid #fff
-.memos
-	margin-bottom 10px
-.images
-	margin-bottom 10px
 .image-item
 	font-size 0
 	padding 2px
@@ -842,37 +1103,6 @@ html, body
 		cursor pointer
 		&:hover
 			border 1px solid #888
-.characters
-	width 100%
-	padding 0
-	margin 0 0 10px
-	border-collapse collapse
-	td
-		padding 0
-	tr
-		vertical-align top
-	.actor-wrapper
-		width 100px
-		padding-right 8px
-.actor
-	border 1px solid #ddd
-	border-radius 2px
-	height 31px
-	vertical-align middle
-	cursor pointer
-	&:hover
-		border 1px solid #888
-	.actor-image
-		width 30px
-		height 31px
-		margin-left 4px
-	.actor-name
-		height 31px
-		line-height 31px
-		font-size 12px
-		display inline-block
-		vertical-align top
-		margin-left 6px
 .controls
 	float right
 	text-align center
@@ -881,13 +1111,20 @@ html, body
 		margin-right 0 !important
 	.button-special
 		margin-right 10px
-.invalid
-	background-color #ffffdd !important
 .cell
 	display table-cell
 	vertical-align top
 .closed
 	opacity 0.5
+.happy, .calm, .amaze
+	background-color #ffc944
+	border 1px solid #ffc944 -#333
+.anger 
+	background-color #eb0542
+	border 1px solid #eb0542 - #333
+.sad
+	background-color #adcdec
+	border 1px solid #adcdec - #333
 @-webkit-keyframes pulse
 	0%
 		-webkit-box-shadow 0 0 50px rgba(aspect-color, 0.0)

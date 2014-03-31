@@ -32,7 +32,23 @@ var async = async || {};
 
 		return promise;
 	};
+	
+	var requestSync = function(options) {
+		var url = options.url;
+		var method = options.method;
+		var data = options.data;
+		var headers = options.headers || [];
+		var request = new XMLHttpRequest();
+		
+		request.open(method, url, false);
+		headers.forEach(function(header) {
+			request.setRequestHeader(header.key, header.value);
+		});
+		request.send(data);
+		return request.responseText;
+	};
 
 	async.requestAsync = requestAsync;
+	async.requestSync = requestSync;
 
 })(async, Q);
