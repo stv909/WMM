@@ -161,7 +161,7 @@
 		EditPageView.prototype._createTextElem = function(layerTextElem) {
 			var elem = document.createElement('input');
 	
-			elem.className = 'text';
+			elem.className = 'text memo';
 			elem.type = 'text';
 			elem.value = layerTextElem.textContent;
 	
@@ -277,13 +277,23 @@
 			var typeItem = this.model.typeItem;
 		};
 		FilmTextView.prototype._createTextView = function(commandItem) {
+			var textView = new TextView(commandItem);
+			textView.attachTo(this.filmTextItemsElem);
 			
+			commandItem.once('dispose', function() {
+				textView.dispose();
+			});
 		};
 		FilmTextView.prototype._createMoodView = function(commandItem) {
 			
 		};
 		FilmTextView.prototype._createGagView = function(commandItem) {
+			var gagView = new GagView(commandItem, this.gagsDialogView);
+			gagView.attachTo(this.filmTextItemsElem);
 			
+			commandItem.once('dispose', function() {
+				gagView.dispose();	
+			});
 		};
 		FilmTextView.prototype._createActionView = function(commandItem) {
 			
@@ -363,16 +373,40 @@
 		
 		function TextView(model) {
 			base.apply(this, arguments);
+			var self = this;
 			
 			this.model = model;
 			this.elem = document.createElement('input');
 			this.elem.type = 'text';
-			this.elem.className = this.model.value;
+			this.elem.className = 'text film-text-item';
+			this.bindData(this.model.value);
 			
+			this.model.on('validate', function(event) {
+				var value = event.value;
+				self.bindData(value);
+				self.elem.classList.remove('invalid');
+			});
+			this.model.on('invalidate', function(event) {
+				var value = event.value;
+				self.bindData(value);
+				self.elem.classList.add('invalid');
+			});
+			
+			var elemInputListener = function() {
+				var value = self.elem.value;
+				self.model.setValue(value);
+			};
+			
+			this.elem.addEventListener('input', elemInputListener);
 			this.once('dispose', function() {
-				
+				self.elem.removeEventListener('input', elemInputListener);
 			});
 		}
+		
+		TextView.prototype.bindData = function(value) {
+			this.elem.value = value;
+			this.elem.size = value.length > 0 ? value.length : 1;
+		};
 		
 		return TextView;
 	})(abyss.View);
@@ -382,7 +416,42 @@
 		
 		function GagView(model, gagsDialogView) {
 			base.apply(this, arguments);
+			var self = this;
+			
+			this.model = model;
+			this.gagsDialogView = gagsDialogView;
+			
+			this.elem = document.createElement('div');
+			this.elem.className = 'gag film-text-item';
+			this.bindData(data.GagCollection[this.model.value]);
+			
+			this.model.on('validate', function(event) {
+				var value = event.value;
+				self.elem.classList.remove('invalid');
+				self.bindData(data.GagCollection[value]);
+			});
+			this.model.on('invalidate', function(event) {
+				var value = event.value;
+				self.elem.classList.add('invalid');
+				self.bindData(data.GagCollection[value]);
+			});
+			
+			var elemClickListener = function() {
+				self.gagsDialogView.once('select:item', function(event) {
+					var gag = event.item;
+					self.model.setValue(gag.value);
+				});
+				self.gagsDialogView.show(self.model.value);
+			};
+			this.elem.addEventListener('click', elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', elemClickListener);	
+			});
 		}
+		
+		GagView.prototype.bindData = function(gag) {
+			this.elem.textContent = gag.text;
+		};
 		
 		return GagView;
 	})(abyss.View);

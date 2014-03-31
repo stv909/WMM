@@ -377,9 +377,13 @@ body {
 #edit-page .editor-holder .texts .film-text .character-holder,
 #edit-page .editor-holder .texts .film-text .film-text-items {
   display: table-cell;
+  vertical-align: top;
 }
 #edit-page .editor-holder .texts .film-text .character-holder {
-  width: 100px;
+  width: 108px;
+}
+#edit-page .editor-holder .memo {
+  width: 100%;
 }
 #edit-page .editor-holder .character {
   -moz-box-sizing: border-box;
@@ -388,6 +392,7 @@ body {
   border-radius: 2px;
   height: 33px;
   margin-bottom: 8px;
+  margin-right: 8px;
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
@@ -398,8 +403,8 @@ body {
   box-shadow: 0 0 2px #28f !important;
 }
 #edit-page .editor-holder .character.invalid {
-  background-color: #ffd;
-  box-shadow: 0 0 2px #ffd;
+  background-color: #ff6;
+  box-shadow: 0 0 2px #ff6;
 }
 #edit-page .editor-holder .character .character-image,
 #edit-page .editor-holder .character .character-name {
@@ -412,6 +417,47 @@ body {
 }
 #edit-page .editor-holder .character .character-name {
   line-height: 31px;
+}
+#edit-page .editor-holder .film-text-items .film-text-item:last-child {
+  margin-bottom: 8px !important;
+}
+#edit-page .editor-holder .film-text-items .text,
+#edit-page .editor-holder .film-text-items .gag,
+#edit-page .editor-holder .film-text-items .action {
+  vertical-align: top;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-bottom: 2px;
+  margin-right: 2px;
+}
+#edit-page .editor-holder .film-text-items .text {
+  font-family: monospace;
+  height: 33px;
+  margin-left: 0;
+}
+#edit-page .editor-holder .film-text-items .text.invalid {
+  background-color: #ff6;
+}
+#edit-page .editor-holder .film-text-items .gag {
+  display: inline-block;
+  cursor: pointer;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+  text-align: center;
+  background-color: #5b5;
+  color: #fff;
+  height: 33px;
+  line-height: 33px;
+  border-radius: 2px;
+  text-shadow: 0 0 2px #666;
+}
+#edit-page .editor-holder .film-text-items .gag:hover {
+  box-shadow: 0 0 2px #5b5;
+}
+#edit-page .editor-holder .film-text-items .gag.invalid {
+  color: #ff6 !important;
 }
 #post-page {
   font-size: 0;
@@ -1227,7 +1273,6 @@ body {
   font-size: 12px;
   padding: 8px;
   border: 1px solid #ddd;
-  width: 100%;
   margin-bottom: 8px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
