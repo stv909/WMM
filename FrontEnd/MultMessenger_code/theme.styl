@@ -356,30 +356,42 @@ html, body
 				vertical-align top
 				padding-left 12px
 				padding-right 12px
-				margin-bottom 2px
+				margin-bottom 4px
 				margin-right 2px
 			.text
 				font-family monospace
 				height 33px
 				margin-left 0
+				border 1px solid aspect-color
+				&:hover
+					border 1px solid aspect-color
+					color #666
+					box-shadow 0 0 2px aspect-color
+				&:focus
+					color #333
 				&.invalid
 					background-color #ff6
-			.gag
+			.gag, .action
 				display inline-block
 				cursor pointer
 				box-sizing(border-box)
 				user-select(none)
 				text-align center
-				background-color #5b5
 				color white
 				height 33px
 				line-height 33px
 				border-radius 2px
 				text-shadow 0 0 2px #666
-				&:hover
-					box-shadow 0 0 2px #5b5
 				&.invalid
 					color #ff6 !important
+			.gag
+				background-color #5b5
+				&:hover
+					box-shadow 0 0 2px #5b5
+			.action
+				background-color aspect-color
+				&:hover
+					box-shadow 0 0 2px aspect-color
 #post-page
 	font-size 0
 	position absolute

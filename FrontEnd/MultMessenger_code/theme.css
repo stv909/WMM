@@ -427,18 +427,28 @@ body {
   vertical-align: top;
   padding-left: 12px;
   padding-right: 12px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   margin-right: 2px;
 }
 #edit-page .editor-holder .film-text-items .text {
   font-family: monospace;
   height: 33px;
   margin-left: 0;
+  border: 1px solid #28f;
+}
+#edit-page .editor-holder .film-text-items .text:hover {
+  border: 1px solid #28f;
+  color: #666;
+  box-shadow: 0 0 2px #28f;
+}
+#edit-page .editor-holder .film-text-items .text:focus {
+  color: #333;
 }
 #edit-page .editor-holder .film-text-items .text.invalid {
   background-color: #ff6;
 }
-#edit-page .editor-holder .film-text-items .gag {
+#edit-page .editor-holder .film-text-items .gag,
+#edit-page .editor-holder .film-text-items .action {
   display: inline-block;
   cursor: pointer;
   -moz-box-sizing: border-box;
@@ -446,18 +456,27 @@ body {
   -webkit-user-select: none;
   user-select: none;
   text-align: center;
-  background-color: #5b5;
   color: #fff;
   height: 33px;
   line-height: 33px;
   border-radius: 2px;
   text-shadow: 0 0 2px #666;
 }
+#edit-page .editor-holder .film-text-items .gag.invalid,
+#edit-page .editor-holder .film-text-items .action.invalid {
+  color: #ff6 !important;
+}
+#edit-page .editor-holder .film-text-items .gag {
+  background-color: #5b5;
+}
 #edit-page .editor-holder .film-text-items .gag:hover {
   box-shadow: 0 0 2px #5b5;
 }
-#edit-page .editor-holder .film-text-items .gag.invalid {
-  color: #ff6 !important;
+#edit-page .editor-holder .film-text-items .action {
+  background-color: #28f;
+}
+#edit-page .editor-holder .film-text-items .action:hover {
+  box-shadow: 0 0 2px #28f;
 }
 #post-page {
   font-size: 0;

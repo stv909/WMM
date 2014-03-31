@@ -296,7 +296,12 @@
 			});
 		};
 		FilmTextView.prototype._createActionView = function(commandItem) {
+			var actionView = new ActionView(commandItem, this.actionsDialogView);
+			actionView.attachTo(this.filmTextItemsElem);
 			
+			commandItem.once('dispose', function() {
+				actionView.dispose();	
+			});
 		};
 		
 		return FilmTextView;
@@ -461,7 +466,42 @@
 		
 		function ActionView(model, actionsDialogView) {
 			base.apply(this, arguments);
+			var self = this;
+			
+			this.model = model;
+			this.actionsDialogView = actionsDialogView;
+			
+			this.elem = document.createElement('div');
+			this.elem.className = 'action film-text-item';
+			this.bindData(data.ActionCollection[this.model.value]);
+			
+			this.model.on('validate', function(event) {
+				var value = event.value;
+				self.elem.classList.remove('invalid');
+				self.bindData(data.ActionCollection[value]);
+			});
+			this.model.on('invalidate', function(event) {
+				var value = event.value;
+				self.elem.classList.add('invalid');
+				self.bindData(data.ActionCollection[value]);
+			});
+			
+			var elemClickListener = function() {
+				self.actionsDialogView.once('select:item', function(event) {
+					var action = event.item;
+					self.model.setValue(action.value);
+				});
+				self.actionsDialogView.show(self.model.value);
+			};
+			this.elem.addEventListener('click', elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', elemClickListener);	
+			});
 		}
+		
+		ActionView.prototype.bindData = function(action) {
+			this.elem.textContent = action.text;
+		};
 		
 		return ActionView;	
 	})(abyss.View);
