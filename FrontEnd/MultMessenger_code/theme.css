@@ -490,8 +490,17 @@ body {
 #edit-page .editor-holder .film-text-items .mood {
   border-radius: 2px;
 }
-#edit-page .editor-holder .film-text-items .mood:hover .icon {
+#edit-page .editor-holder .film-text-items .mood:hover .icon,
+#edit-page .editor-holder .film-text-items .mood:hover .happy,
+#edit-page .editor-holder .film-text-items .mood:hover .calm,
+#edit-page .editor-holder .film-text-items .mood:hover .amaze {
   box-shadow: 0 0 2px #cc9611;
+}
+#edit-page .editor-holder .film-text-items .mood:hover .anger {
+  box-shadow: 0 0 2px #b8000f;
+}
+#edit-page .editor-holder .film-text-items .mood:hover .sad {
+  box-shadow: 0 0 2px #7a9ab9;
 }
 #edit-page .editor-holder .film-text-items .mood .icon {
   color: #000;
