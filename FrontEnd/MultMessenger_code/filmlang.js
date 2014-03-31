@@ -60,9 +60,10 @@ var filmlang = filmlang || {};
 	var FilmText = (function(base) {
 		eve.extend(FilmText, base);
 		
-		function FilmText(meta) {
+		function FilmText(meta, actorElem) {
 			base.apply(this, arguments);
 			var self = this;
+			this.actorElem = actorElem;
 			
 			this.imageItem = null;
 			this.typeItem = null;

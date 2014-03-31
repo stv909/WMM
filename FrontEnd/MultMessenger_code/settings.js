@@ -1,7 +1,7 @@
 var settings = settings || {};
 
 (function(settings) {
-	settings.version = 'release'; //can be: 'dev' | 'content' | 'release'
+	settings.version = 'dev'; //can be: 'dev' | 'content' | 'release'
 	
 	settings.publicIds = {
 		'dev': 'public.9205ef2d-4a2c-49dd-8203-f33a3ceac6c9',

@@ -1,4 +1,4 @@
-(function(messenger, eve, abyss, template, filmlang, data, settings, analytics) {
+(function(messenger, eve, abyss, template, filmlang, data, settings, analytics, Q, async) {
 	
 	var PageView = messenger.views.PageView;
 	var MessageEditorView = messenger.views.MessageEditorView;
@@ -56,14 +56,16 @@
 			});
 			
 			this.validateListener = function() {
-				var isValid = false;
+				var isInvalid = false;
 				self.filmTexts.forEach(function(filmText) {
-					isValid = isValid || filmText.isValid;		
+					isInvalid = isInvalid || !filmText.isValid;		
 				});
-				if (isValid) {
-					self.wrapElem.classList.add('hidden');
-				} else {
+				if (isInvalid) {
 					self.wrapElem.classList.remove('hidden');
+					self.trigger('status:invalidate');
+				} else {
+					self.wrapElem.classList.add('hidden');
+					self.trigger('status:validate');
 				}
 			};
 			
@@ -74,7 +76,40 @@
 				analytics.send('editor', 'update_cancel');
 			});
 			this.updateElem.addEventListener('click', function() {
+				var invalidFilmTexts = self.filmTexts.filter(function(filmText) {
+					return !filmText.isValid;
+				});
+				var requestPairs = invalidFilmTexts.map(function(filmText) {
+					var request = async.requestAsync({
+						url: settings.animationServiceUrl,
+						data: filmText.toAnimationRequestData(),
+						method: 'POST',
+						headers: [{
+							key: 'Content-Type',
+							value: 'text/html'
+						}]
+					});
+					return Q.all([filmText, request]);
+				});
 				
+				Q.all(requestPairs).then(function(values) {
+					values.forEach(function(value) {
+						var filmText = value[0];
+						var rawResponse = value[1];
+						var response = JSON.parse(rawResponse);
+						var actorElem = filmText.actorElem;
+						actorElem.src = settings.layerImageStoreBaseUrl + response.output.images[0];
+						actorElem.dataset.meta = JSON.stringify(filmText.toMeta());
+						filmText.validate();
+					});
+					self.updateMessageDialogView.setMode('complete');
+					analytics.send('editor', 'edit_update', 'success');
+				}).catch(function(error) {
+					console.log(error);
+					self.updateMessageDialogView.setMode('fail');
+					analytics.send('editor', 'edit_update', 'fail');
+				});
+				self.updateMessageDialogView.show();
 			});
 		}
 		
@@ -83,7 +118,9 @@
 			this.trigger('status:validate');
 		};
 		EditPageView.prototype.reset = function() {
-			
+			this.filmTexts.forEach(function(filmText) {
+				filmText.reset();
+			});
 		};
 		EditPageView.prototype.clear = function() {
 			this.wrapElem.classList.add('hidden');
@@ -164,7 +201,7 @@
 		};
 		EditPageView.prototype._createFilmTextView = function(actorElem) {
 			var meta = actorElem.dataset.meta;
-			var filmText = new FilmText(meta);
+			var filmText = new FilmText(meta, actorElem);
 			var filmTextView = new FilmTextView(filmText,
 				this.charactersDialogView,
 				this.animationTypesDialogView,
@@ -560,4 +597,4 @@
 	
 	messenger.views.EditPageView = EditPageView;
 	
-})(messenger, eve, abyss, template, filmlang, data, settings, analytics);
+})(messenger, eve, abyss, template, filmlang, data, settings, analytics, Q, async);
