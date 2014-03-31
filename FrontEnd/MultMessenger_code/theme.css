@@ -430,9 +430,11 @@ body {
   margin-bottom: 4px;
   margin-right: 2px;
 }
-#edit-page .editor-holder .film-text-items .mood {
+#edit-page .editor-holder .film-text-items .mood,
+#edit-page .editor-holder .film-text-items .animation-type {
   margin-bottom: 4px;
   margin-right: 2px;
+  vertical-align: top;
 }
 #edit-page .editor-holder .film-text-items .text {
   font-family: monospace;
@@ -454,7 +456,8 @@ body {
 }
 #edit-page .editor-holder .film-text-items .gag,
 #edit-page .editor-holder .film-text-items .action,
-#edit-page .editor-holder .film-text-items .mood {
+#edit-page .editor-holder .film-text-items .mood,
+#edit-page .editor-holder .film-text-items .animation-type {
   display: inline-block;
   cursor: pointer;
   -moz-box-sizing: border-box;
@@ -516,6 +519,21 @@ body {
 }
 #edit-page .editor-holder .film-text-items .mood.invalid {
   background-color: #ff6 !important;
+}
+#edit-page .editor-holder .film-text-items .animation-type {
+  border-radius: 2px;
+  width: 33px;
+}
+#edit-page .editor-holder .film-text-items .animation-type.invalid {
+  box-shadow: 0 0 2px #ff6 !important;
+}
+#edit-page .editor-holder .film-text-items .animation-type:hover {
+  box-shadow: 0 0 2px #28f;
+}
+#edit-page .editor-holder .film-text-items .animation-type .icon {
+  border-radius: 2px;
+  width: 100%;
+  height: 100%;
 }
 #post-page {
   font-size: 0;

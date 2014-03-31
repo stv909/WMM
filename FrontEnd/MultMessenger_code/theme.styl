@@ -358,9 +358,10 @@ html, body
 				padding-right 12px
 				margin-bottom 4px
 				margin-right 2px
-			.mood 
+			.mood, .animation-type
 				margin-bottom 4px
 				margin-right 2px
+				vertical-align top
 			.text
 				font-family monospace
 				height 33px
@@ -375,7 +376,7 @@ html, body
 					color #333
 				&.invalid
 					background-color #ff6
-			.gag, .action, .mood
+			.gag, .action, .mood, .animation-type
 				display inline-block
 				cursor pointer
 				box-sizing(border-box)
@@ -415,9 +416,19 @@ html, body
 					transform rotate(90deg)
 					font-size 16px
 					line-height 28px
-					
 				&.invalid
 					background-color #ff6 !important
+			.animation-type
+				border-radius 2px
+				width 33px
+				&.invalid
+					box-shadow 0 0 2px #ff6 !important
+				&:hover
+					box-shadow 0 0 2px aspect-color
+				.icon
+					border-radius 2px
+					width 100%
+					height 100%
 #post-page
 	font-size 0
 	position absolute

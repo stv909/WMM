@@ -264,6 +264,7 @@
 		
 		FilmTextView.prototype.initializeViews = function() {
 			this._createCharacterView();
+			this._createAnimationTypeView();
 			
 			this.model.commandItems.forEach(function(commandItem) {
 				switch (commandItem.type) {
@@ -280,7 +281,6 @@
 						this._createMoodView(commandItem);
 						break;
 					default:
-						console.log('unsupported command item ' + commandItem.type);
 						break;
 				}
 			}, this);
@@ -296,6 +296,12 @@
 		};
 		FilmTextView.prototype._createAnimationTypeView = function() {
 			var typeItem = this.model.typeItem;
+			var animationTypeView = new AnimationTypeView(typeItem, this.animationTypesDialogView);
+			
+			animationTypeView.attachTo(this.filmTextItemsElem);
+			typeItem.once('dispose', function() {
+				animationTypeView.dispose();
+			});
 		};
 		FilmTextView.prototype._createTextView = function(commandItem) {
 			var textView = new TextView(commandItem);
@@ -394,7 +400,43 @@
 		
 		function AnimationTypeView(model, animationTypesDialogView) {
 			base.apply(this, arguments);
+			var self = this;
+			
+			this.model = model;
+			this.animationTypesDialogView = animationTypesDialogView;
+
+			this.elem = template.create('animation-type-template', { className: 'animation-type film-text-item' });
+			this.iconElem = this.elem.getElementsByClassName('icon')[0];
+			this.bindData(data.AnimationTypeCollection[this.model.value]);
+			
+			this.model.on('validate', function(event) {
+				var value = event.value;
+				self.elem.classList.remove('invalid');
+				self.bindData(data.AnimationTypeCollection[value]);
+			});
+			this.model.on('invalidate', function(event) {
+				var value = event.value;
+				self.elem.classList.add('invalid');
+				self.bindData(data.AnimationTypeCollection[value]);
+			});
+			
+			var elemClickListener = function() {
+				self.animationTypesDialogView.once('select:item', function(event) {
+					var animationType = event.item;
+					self.model.setValue(animationType.value);
+				});
+				self.animationTypesDialogView.show(self.model.value);
+			};
+			this.elem.addEventListener('click', elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', elemClickListener);	
+			});
 		}
+		
+		AnimationTypeView.prototype.bindData = function(animationType) {
+			this.iconElem.src = animationType.minImage;
+			this.elem.title = animationType.text;
+		};
 		
 		return AnimationTypeView;
 	})(abyss.View);

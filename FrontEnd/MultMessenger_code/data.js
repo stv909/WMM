@@ -37,9 +37,9 @@ var data = data || {};
 	};
 	
 	var AnimationTypeCollection = {
-		dialog: { value: 'dialog', image: 'animations/animation.png', text: 'Полная анимация' },
-		pose: { value: 'pose', image: 'animations/pose.png', text: 'Отрисовать первый кадр анимации' },
-		avatar: { value: 'avatar', image: 'animations/avatar.png', text: 'Отрисовать только голову персонажа' }
+		dialog: { value: 'dialog', image: 'animations/animation.png', minImage: 'animations/animationMin.png', text: 'Полная анимация' },
+		pose: { value: 'pose', image: 'animations/pose.png', minImage: 'animations/poseMin.png', text: 'Отрисовать первый кадр анимации' },
+		avatar: { value: 'avatar', image: 'animations/avatar.png', minImage: 'animations/avatarMin.png', text: 'Отрисовать только голову персонажа' }
 	};
 	
 	var CharacterCollection = {
