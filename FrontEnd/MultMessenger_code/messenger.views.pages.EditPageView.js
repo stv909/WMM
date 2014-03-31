@@ -30,6 +30,9 @@
 			this.imagesElem = this.elem.getElementsByClassName('images')[0];
 			this.imagesSectionElem = this.imagesElem.getElementsByClassName('section')[0];
 			this.imagesCollectionElem = this.imagesElem.getElementsByClassName('collection')[0];
+			
+			this.editorElem = this.elem.getElementsByClassName('editor')[0];
+			this.editorWrapperElem = this.editorElem.getElementsByClassName('wrapper')[0];
 	
 			this.textsElem = this.elem.getElementsByClassName('texts')[0];
 			
@@ -111,6 +114,23 @@
 				});
 				self.updateMessageDialogView.show();
 			});
+			
+			var wheelListener = function(event) {
+	            var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
+	            var isIE = Math.abs(delta) >= 120;
+	            var scrollPending = isIE ? delta / 2 : 0;
+	            if (delta < 0 && (self.editorWrapperElem.scrollTop + scrollPending) <= 0) {
+					self.editorWrapperElem.scrollTop = 0;
+					event.preventDefault();
+	            }
+	            else if (delta > 0 && (self.editorWrapperElem.scrollTop + scrollPending >= (self.editorWrapperElem.scrollHeight - self.editorWrapperElem.offsetHeight))) {
+					self.editorWrapperElem.scrollTop = self.editorWrapperElem.scrollHeight - self.editorWrapperElem.offsetHeight;
+					event.preventDefault();
+	            }
+			};
+			
+			this.editorWrapperElem.addEventListener('DOMMouseScroll', wheelListener, false);
+			this.editorWrapperElem.addEventListener('mousewheel', wheelListener, false);
 		}
 		
 		EditPageView.prototype.setMessage = function(message) {
@@ -260,6 +280,7 @@
 						this._createMoodView(commandItem);
 						break;
 					default:
+						console.log('unsupported command item ' + commandItem.type);
 						break;
 				}
 			}, this);
@@ -520,7 +541,7 @@
 			
 			this.model = model;
 			this.moodsDialogView = moodsDialogView;
-			console.log(model);
+
 			this.elem = template.create('mood-template', { className: 'mood film-text-item' });
 			this.iconElem = this.elem.getElementsByClassName('icon')[0];
 			this.bindData(data.MoodCollection[this.model.value]);
