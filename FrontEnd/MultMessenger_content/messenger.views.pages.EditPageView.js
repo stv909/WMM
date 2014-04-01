@@ -386,6 +386,7 @@
 					self.model.setValue(value);
 				});
 				self.charactersDialogView.show(self.model.value.character);
+				analytics.send('editor', 'edit_character');
 			};
 			
 			this.elem.addEventListener('click', elemClickListener);
@@ -433,6 +434,7 @@
 					self.model.setValue(animationType.value);
 				});
 				self.animationTypesDialogView.show(self.model.value);
+				analytics.send('editor', 'edit_smile', 'edit_type');
 			};
 			this.elem.addEventListener('click', elemClickListener);
 			this.once('dispose', function() {
@@ -475,6 +477,7 @@
 			var elemInputListener = function() {
 				var value = self.elem.value;
 				self.model.setValue(value);
+				analytics.send('editor', 'edit_phrase');
 			};
 			
 			this.elem.addEventListener('input', elemInputListener);
@@ -527,6 +530,7 @@
 					self.model.setValue(gag.value);
 				});
 				self.gagsDialogView.show(self.model.value);
+				analytics.send('editor', 'edit_smile', 'edit_gag');
 			};
 			this.elem.addEventListener('click', elemClickListener);
 			this.once('dispose', function() {
@@ -575,6 +579,7 @@
 					self.model.setValue(action.value);
 				});
 				self.actionsDialogView.show(self.model.value);
+				analytics.send('editor', 'edit_smile', 'edit_action');
 			};
 			this.elem.addEventListener('click', elemClickListener);
 			this.once('dispose', function() {
@@ -623,6 +628,7 @@
 					self.model.setValue(mood.value);
 				});
 				self.moodsDialogView.show(self.model.value);
+				analytics.send('editor', 'edit_smile', 'edit_mood');
 			};
 			this.elem.addEventListener('click', elemClickListener);
 			this.once('dispose', function() {
