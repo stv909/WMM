@@ -137,7 +137,7 @@ window.onload = function() {
 			var content = self.editPageView.getMessageContent();
 			var message = MessageFactory.create(
 				uuid.v4(),
-				content,
+				Helpers.normalizeMessageContent(content),
 				Helpers.buildVkId(account),
 				Helpers.buildVkId(companion)
 			);

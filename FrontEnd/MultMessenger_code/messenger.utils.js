@@ -28,6 +28,47 @@ var messenger = messenger || {};
 			} else {
 				return 'friend';
 			}
+		},
+		normalizeMessageContent: function(content) {
+			var wkTransformPattern = /(-webkit-transform:([^;]*);)/g;
+			var mozTransformPattern = /(-moz-transform:([^;]*);)/g;
+			var msTransformPattern = /(-ms-transform:([^;]*);)/g;
+			var transformPattern = /([^-]transform:([^;]*);)/g;
+			var wkTransformRepeatPattern = /(\s*-webkit-transform:([^;]*);\s*)+/g;
+			
+			var buildWkTransform = function(transformValue) {
+				return ['-webkit-transform:', transformValue, ';'].join('');
+			};
+			var buildMozTransform = function(transformValue) {
+				return ['-moz-transform:', transformValue, ';'].join('');
+			};
+			var buildMsTransform = function(transformValue) {
+				return ['-ms-transform:', transformValue, ';'].join('');
+			};
+			var buildTransform = function(transformValue) {
+				return ['transform:', transformValue, ';'].join('');
+			};
+			var replaceTransform = function(match, transform, transformValue) {
+				return [
+					buildWkTransform(transformValue), 
+					buildMozTransform(transformValue),
+					buildMsTransform(transformValue),
+					buildTransform(transformValue)
+				].join(' ');
+			};
+			var replaceWkTransform = function(match, transform, transformValue) {
+				return buildWkTransform(transformValue);
+			};
+			
+			return content
+					.replace(mozTransformPattern, replaceWkTransform)
+					.replace(msTransformPattern, replaceWkTransform)
+					.replace(transformPattern, replaceWkTransform)
+					.replace(wkTransformRepeatPattern, replaceTransform)
+					.replace(mozTransformPattern, replaceWkTransform)
+					.replace(msTransformPattern, replaceWkTransform)
+					.replace(transformPattern, replaceWkTransform)
+					.replace(wkTransformRepeatPattern, replaceTransform);
 		}
 	};
 	

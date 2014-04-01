@@ -21,7 +21,9 @@ var data = data || {};
 		puke: { value: 'puke', text: 'болею' }, 
 		razz: { value: 'razz', text: 'дразнюсь' },
 		cake1left: { value: 'cake1left', text: 'кидаюсь тортом влево' },
-		cake1right: { value: 'cake1right', text: 'кидаюсь тортом вправо' }
+		cake1right: { value: 'cake1right', text: 'кидаюсь тортом вправо' },
+		kiss1left: { value: 'kiss1left', text: 'целую слева' },
+		kiss1right: { value: 'kiss1right', text: 'целую справа' }
 	};
 	
 	var ActionCollection = {
