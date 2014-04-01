@@ -5,6 +5,7 @@ window.onload = function() {
 	
 	var MessageStorage = messenger.storage.MessageStorage;
 
+	var MainMenuView = messenger.views.MainMenuView;
 	var SelectPageView = messenger.views.SelectPageView;
 	var EditPageView = messenger.views.EditPageView;
 	var PostPageView = messenger.views.PostPageView;
@@ -68,6 +69,8 @@ window.onload = function() {
 	var MessengerApplication = function() {
 		MessengerApplication.super.apply(this);
 		var self = this;
+		
+		this.rootElem = document.getElementById('root');
 
 		this.selectElem = document.getElementById('select');
 		this.editElem = document.getElementById('edit');
@@ -88,6 +91,7 @@ window.onload = function() {
 		
 		this.contactRepository = new ContactRepository();
 
+		this.mainMenuView = new MainMenuView();
 		this.selectPageView = new SelectPageView();
 		this.editPageView = new EditPageView();
 		this.postPageView = new PostPageView();
@@ -241,6 +245,7 @@ window.onload = function() {
 	MessengerApplication.prototype.initializeViews = function() {
 		var self = this;
 
+		this.mainMenuView.attachTo(this.rootElem);
 		this.selectPageView.attachTo(this.pageContainerElem);
 		this.editPageView.attachTo(this.pageContainerElem);
 		this.postPageView.attachTo(this.pageContainerElem);

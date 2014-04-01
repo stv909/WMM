@@ -17,6 +17,11 @@ transform(value)
 *
 	outline 0
 html, body
+	font-family 'Open Sans', Verdana
+	text-rendering optimizeLegibility
+	color default-font-color
+	background-color #fff
+/*html, body
 	position absolute
 	top 0
 	bottom 0
@@ -29,7 +34,14 @@ html, body
 	color default-font-color
 	background-color #fff
 	text-rendering optimizeLegibility
-	overflow-x hidden
+	overflow-x hidden*/
+#root
+	position absolute
+	display block
+	top 0
+	bottom 0
+	left 0
+	right 0
 ::-webkit-scrollbar
 	width 8px
 	height 8px
@@ -38,6 +50,105 @@ html, body
 	background-color #ddd
 .hidden
 	display none !important
+.main-menu
+	position fixed
+	height 36px
+	line-height 36px
+	width 920px
+	box-sizing(border-box)
+	user-select(none)
+	z-index 10
+	font-size 12px
+	text-align center
+	background-color white
+	box-shadow 0 0 6px #888
+	.container 
+		position relative
+		margin-left 12px
+		margin-right 12px
+		box-sizing(content-box)
+		vertical-align top
+		text-align center
+	.logo
+		position absolute
+		left 12px
+		font-size 14px !important
+		font-weight bold
+		color #333
+		cursor pointer
+		&:hover
+			color aspect-color
+		.logo-pic
+			position relative
+			top 3px
+			width 22px
+			height 16px
+			border-radius 4px
+			background-color aspect-color
+			display inline-block
+			&:after
+				position absolute
+				top 16px
+				left 4px
+				content ""
+				border-top 5px solid aspect-color
+				border-right 5px solid transparent
+	.items
+		display inline-block
+	.info
+		position absolute
+		right 0
+		height 36px
+		display inline-block
+		.group
+			display inline-block
+			height 32px
+			margin-top 2px
+			margin-right 8px
+			padding-right 8px
+			user-select(none)
+			cursor pointer
+			color #fff
+			background-color #5b5
+			text-shadow 0 0 2px #666
+			border-radius 2px
+			&:hover
+				background-color #4a4
+			&:active
+				background-color #393
+		.bender
+			width 32px
+			height 32px
+		.group-text
+			display inline-block
+			height 32px
+			line-height 12px
+			vertical-align top
+			padding-top 4px
+			padding-bottom 4px
+			box-sizing(border-box)
+	.main-menu-item
+		display inline-block
+		//height 32px
+		//line-height 32px
+		//margin-top 2px
+		//margin-left 4px
+		//margin-right 4px
+		padding-left 12px
+		padding-right 12px
+		box-sizing(border-box)
+		//border 1px solid #ddd
+		//border-radius 2px
+		&.chosen
+			cursor default
+			color white
+			background-color aspect-color
+			//border 1px solid aspect-color
+			text-shadow 0 0 2px #666
+		&.normal
+			cursor pointer
+			&:hover
+				color aspect-color
 #menu
 	user-select(none)
 	position fixed
@@ -201,12 +312,13 @@ html, body
 		margin-left 1px
 		margin-top 8px
 		text-align center
-		height 64px
+		height 122px
 		vertical-align middle
 		display flex
 		justify-content center
 		align-content center
 		flex-direction column
+		-webkit-animation min-pulse 0.75s infinite ease-in-out
 #select-page
 	font-size 0
 	overflow hidden
@@ -519,12 +631,13 @@ html, body
 							margin-left 1px
 							margin-top 8px
 							text-align center
-							height 64px
+							height 122px
 							vertical-align middle
 							display flex
 							justify-content center
 							align-content center
 							flex-direction column
+							-webkit-animation min-pulse 0.75s infinite ease-in-out
 					.search-place
 						padding-right 20px
 						>.prewrapper
@@ -1140,3 +1253,10 @@ html, body
 		-webkit-box-shadow 0 0 50px rgba(aspect-color, 1.0)
 	100%
 		-webkit-box-shadow 0 0 50px rgba(aspect-color, 0.0)
+@-webkit-keyframes min-pulse
+	0%
+		-webkit-box-shadow 0 0 15px rgba(aspect-color, 0.0)
+	50% 
+		-webkit-box-shadow 0 0 15px rgba(aspect-color, 1.0)
+	100%
+		-webkit-box-shadow 0 0 15px rgba(aspect-color, 0.0)
