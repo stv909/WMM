@@ -1,10 +1,6 @@
 window.onload = function() {
 	var EventEmitter = eve.EventEmitter;
 
-	var MessageModel = messenger.models.MessageModel;
-	var ContactModel = messenger.models.ContactModel;
-	var MessageCollection = messenger.models.MessageCollection;
-	
 	var ContactRepository = messenger.repository.ContactRepository;
 	
 	var MessageStorage = messenger.storage.MessageStorage;
@@ -19,13 +15,10 @@ window.onload = function() {
 	var PreloadDialogView = messenger.views.PreloadDialogView;
 	var ErrorDialogView = messenger.views.ErrorDialogView;
 	var MessagePatternView = messenger.views.MessagePatternView;
-	var ContactView = messenger.views.ContactView;
 	
 	var VkTools = messenger.utils.VkTools;
 	var ChatClientWrapper = messenger.utils.ChatClientWrapper;
 	var Helpers = messenger.utils.Helpers;
-	
-	var ErrorCodes = errors.ErrorCodes;
 
 	var ChatClient = chat.ChatClient;
 	var MessageFactory = chat.MessageFactory;
@@ -86,7 +79,6 @@ window.onload = function() {
 		this.pageElem = document.getElementById('page');
 		this.pageContainerElem = document.getElementById('page-container');
 		this.logoElem = document.getElementById('logo');
-		this.nextElem = document.getElementById('next');
 
 		this.navigation = new Navigation();
 		this.chatClient = new ChatClient(settings.chatUrl);
@@ -124,11 +116,6 @@ window.onload = function() {
 			self.navigation.setMode('post');
 		};
 
-		this.currentNextElemClickListener = null;
-		this.nextElemStandardClickListener = function(event) {
-			var nextMode = self.navigation.getNextMode();
-			self.navigation.setMode(nextMode);
-		};
 		this.nextElemPostClickListener = function(event) {
 			self.postDialogView.show();
 
@@ -178,10 +165,6 @@ window.onload = function() {
 				console.error(error);
 				analytics.send('post', action, VkTools.formatError(error));
 			});
-		};
-		this.nextElemAnswerClickListener = function(event) {
-			self.navigation.setMode('select');
-			analytics.send('answer', 'answer_msg');
 		};
 		
 		this.currentShowAskMessageDialog = null;
@@ -391,11 +374,6 @@ window.onload = function() {
 			self.editPageView.hide();
 			self.postPageView.show();
 			self.answerPageView.hide();
-
-			self.nextElem.textContent = 'Отправить сообщение';
-			self.nextElem.removeEventListener('click', self.currentNextElemClickListener);
-			self.nextElem.addEventListener('click', self.nextElemPostClickListener);
-			self.currentNextElemClickListener = self.nextElemPostClickListener;
 		});
 		this.askMessageDialogView.on('click:cancel', function(event) {
 			self.navigation.setMode('edit');
@@ -431,11 +409,6 @@ window.onload = function() {
 			self.answerPageView.show();
 
 			self.skipDialogView.setText('Вы уверены, что не хотите ответить на сообщение?');
-
-			self.nextElem.textContent = 'Ответить';
-			self.nextElem.removeEventListener('click', self.currentNextElemClickListener);
-			self.nextElem.addEventListener('click', self.nextElemAnswerClickListener);
-			self.currentNextElemClickListener = self.nextElemAnswerClickListener;
 		});
 		this.navigation.on('mode:select', function(event) {
 			self.selectElem.classList.remove('hidden');
@@ -457,11 +430,6 @@ window.onload = function() {
 			self.editPageView.hide();
 			self.postPageView.hide();
 			self.answerPageView.hide();
-
-			self.nextElem.textContent = 'Далее';
-			self.nextElem.removeEventListener('click', self.currentNextElemClickListener);
-			self.nextElem.addEventListener('click', self.nextElemStandardClickListener);
-			self.currentNextElemClickListener = self.nextElemStandardClickListener;
 		});
 		this.navigation.on('mode:edit', function(event) {
 			self.selectElem.classList.add('normal');
@@ -480,11 +448,6 @@ window.onload = function() {
 			self.editPageView.show();
 			self.postPageView.hide();
 			self.answerPageView.hide();
-
-			self.nextElem.textContent = 'Далее';
-			self.nextElem.removeEventListener('click', self.currentNextElemClickListener);
-			self.nextElem.addEventListener('click', self.nextElemStandardClickListener);
-			self.currentNextElemClickListener = self.nextElemStandardClickListener;
 		});
 		this.navigation.on('mode:post', function(event) {
 			self.currentShowAskMessageDialog();
