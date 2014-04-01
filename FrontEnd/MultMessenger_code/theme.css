@@ -221,6 +221,20 @@ body {
   margin-top: 0;
   margin-left: 0;
 }
+#answer-page .answer {
+  width: 122px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-left: 1px;
+  margin-top: 8px;
+  text-align: center;
+  height: 64px;
+  vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
 #select-page {
   font-size: 0;
   overflow: hidden;
@@ -626,6 +640,20 @@ body {
   width: 100%;
   margin-top: 12px;
   margin-bottom: 0;
+}
+#post-page >div .container .contact-search >div .receiver-place .send {
+  width: 122px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-left: 1px;
+  margin-top: 8px;
+  text-align: center;
+  height: 64px;
+  vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
 }
 #post-page >div .container .contact-search >div .search-place {
   padding-right: 20px;

@@ -22,15 +22,26 @@ var messenger = messenger || {};
 		this.elem = template.create('answer-page-template', { id: 'answer-page' });
 		this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
 		this.contactWrapElem = this.elem.getElementsByClassName('contact-wrapper')[0];
+		this.contactHolderElem = this.contactWrapElem.getElementsByClassName('contact-holder')[0];
+		this.answerElem = this.contactWrapElem.getElementsByClassName('answer')[0];
 
 		this.messageEditorView = new MessageEditorView();
 		this.messageEditorView.attachTo(this.messageWrapperElem);
 
 		this.userView = new UserView();
-		this.userView.attachTo(this.contactWrapElem);
+		this.userView.attachTo(this.contactHolderElem);
 		this.userView.select();
 
 		this.hide();
+		
+		var answerElemClickListener = function(event) {
+			self.trigger('click:answer');
+		};
+		
+		this.answerElem.addEventListener('click', answerElemClickListener);
+		this.once('dispose', function() {
+			self.answerElem.remove('click', answerElemClickListener);	
+		});
 	};
 	AnswerPageView.super = View;
 	AnswerPageView.prototype = Object.create(View.prototype);

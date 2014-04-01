@@ -78,8 +78,15 @@
 		}
 		
 		PostPageView.prototype.initializeViews = function() {
+			var self = this;
 			this.friendSearchView.attachTo(this.containerElem);
 			this.groupSearchView.attachTo(this.containerElem);
+			this.groupSearchView.on('click:send', function() {
+				self.trigger('click:send');
+			});
+			this.friendSearchView.on('click:send', function() {
+				self.trigger('click:send');
+			});
 		};
 		PostPageView.prototype.setMode = function(mode) {
 			this.mode = mode;
@@ -121,6 +128,7 @@
 			
 			this.elem = template.create('contact-search-template', { className: 'contact-search' });
 			this.receiverHolderElem = this.elem.getElementsByClassName('receiver-holder')[0];
+			this.sendElem = this.elem.getElementsByClassName('send')[0];
 			this.sectionElem = this.elem.getElementsByClassName('section')[0];
 			this.queryElem = this.elem.getElementsByClassName('query')[0];
 			this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
@@ -144,15 +152,20 @@
 					event.preventDefault();
 				}
 			};
+			var sendElemClickListener = function(event) {
+				self.trigger('click:send');
+			};
 			
 			this.loadElem.addEventListener('click', loadElemClickListener);
 			this.wrapperElem.addEventListener('DOMMouseScroll', wheelListener, false);
 			this.wrapperElem.addEventListener('mousewheel', wheelListener, false);
+			this.sendElem.addEventListener('click', sendElemClickListener);
 			
 			this.once('dispose', function() {
 				self.loadElem.removeEventListener('click', loadElemClickListener);	
 				self.wrapperElem.removeEventListener('DOMMouseScroll', wheelListener);
 				self.wrapperElem.removeEventListener('mousewheel', wheelListener);
+				self.sendElem.removeEventListener('click', sendElemClickListener);
 			});
 		}
 		

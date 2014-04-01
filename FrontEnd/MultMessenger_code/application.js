@@ -116,57 +116,6 @@ window.onload = function() {
 			self.navigation.setMode('post');
 		};
 
-		this.nextElemPostClickListener = function(event) {
-			self.postDialogView.show();
-
-			var account = self.contactRepository.owner;
-			var companion = self.contactRepository.selected;
-			var content = self.editPageView.getMessageContent();
-			var message = MessageFactory.create(
-				uuid.v4(),
-				Helpers.normalizeMessageContent(content),
-				Helpers.buildVkId(account),
-				Helpers.buildVkId(companion)
-			);
-			var messageTarget = Helpers.getMessageTarget(account, companion);
-			var action = ['post', messageTarget].join('_');
-			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
-			
-			self.chatClientWrapper.nowAsync().then(function(timestamp) {
-				VkTools.checkPostAccess(companion);
-				self.postDialogView.setText('Этап 2 из 5: Сохранение сообщения...');
-				message.timestamp = timestamp;
-				return self.chatClientWrapper.sendMessageAsync(message);
-			}).then(function() {
-				self.postDialogView.setText('Этап 3 из 5: Создание превью...');
-				return VkTools.getWallPhotoUploadUrlAsync();
-			}).then(function(uploadUrl) {
-				return VkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
-			}).then(function(response) {
-				self.postDialogView.setText('Этап 4 из 5: Сохранение превью в альбоме...');
-				var uploadResult = response.uploadResult;
-				var image = response.image;
-				message.preview = image;
-				self.chatClient.notifyMessage(message);
-				uploadResult.v = 5.12;
-				return VK.apiAsync('photos.saveWallPhoto', uploadResult);
-			}).then(function(response) {
-				self.postDialogView.setText('Этап 5 из 5: Публикация сообщения на стене...');
-				var imageId = VkTools.getUploadedFileId(response);
-				var ownerId = companion.get('id');
-				var senderId = account.get('id');
-				var postData = VkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
-				return VK.apiAsync('wall.post', postData);
-			}).then(function() {
-				self.postDialogView.setMode('complete');
-				analytics.send('post', action, 'success');
-			}).catch(function(error) {
-				self.postDialogView.setMode('fail', error);
-				console.error(error);
-				analytics.send('post', action, VkTools.formatError(error));
-			});
-		};
-		
 		this.currentShowAskMessageDialog = null;
 		this.validShowAskMessageDialog = function() {
 			self.askMessageDialogView.trigger('click:ok');
@@ -297,6 +246,9 @@ window.onload = function() {
 		this.postPageView.attachTo(this.pageContainerElem);
 		this.answerPageView.attachTo(this.pageContainerElem);
 
+		this.answerPageView.on('click:answer', function(event) {
+			self.navigation.setMode('select');
+		});
 		this.selectPageView.on('select:message', function(event) {
 			var message = event.message;
 			self.messageStorage.selectMessage(message);
@@ -336,6 +288,56 @@ window.onload = function() {
 			window.location.hash = '';
 			self.navigation.setMode('select');
 			analytics.send('answer', 'browse_tape');
+		});
+		this.postPageView.on('click:send', function(event) {
+			self.postDialogView.show();
+
+			var account = self.contactRepository.owner;
+			var companion = self.contactRepository.selected;
+			var content = self.editPageView.getMessageContent();
+			var message = MessageFactory.create(
+				uuid.v4(),
+				Helpers.normalizeMessageContent(content),
+				Helpers.buildVkId(account),
+				Helpers.buildVkId(companion)
+			);
+			var messageTarget = Helpers.getMessageTarget(account, companion);
+			var action = ['post', messageTarget].join('_');
+			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
+			
+			self.chatClientWrapper.nowAsync().then(function(timestamp) {
+				VkTools.checkPostAccess(companion);
+				self.postDialogView.setText('Этап 2 из 5: Сохранение сообщения...');
+				message.timestamp = timestamp;
+				return self.chatClientWrapper.sendMessageAsync(message);
+			}).then(function() {
+				self.postDialogView.setText('Этап 3 из 5: Создание превью...');
+				return VkTools.getWallPhotoUploadUrlAsync();
+			}).then(function(uploadUrl) {
+				return VkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
+			}).then(function(response) {
+				self.postDialogView.setText('Этап 4 из 5: Сохранение превью в альбоме...');
+				var uploadResult = response.uploadResult;
+				var image = response.image;
+				message.preview = image;
+				self.chatClient.notifyMessage(message);
+				uploadResult.v = 5.12;
+				return VK.apiAsync('photos.saveWallPhoto', uploadResult);
+			}).then(function(response) {
+				self.postDialogView.setText('Этап 5 из 5: Публикация сообщения на стене...');
+				var imageId = VkTools.getUploadedFileId(response);
+				var ownerId = companion.get('id');
+				var senderId = account.get('id');
+				var postData = VkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
+				return VK.apiAsync('wall.post', postData);
+			}).then(function() {
+				self.postDialogView.setMode('complete');
+				analytics.send('post', action, 'success');
+			}).catch(function(error) {
+				self.postDialogView.setMode('fail', error);
+				console.error(error);
+				analytics.send('post', action, VkTools.formatError(error));
+			});	
 		});
 		this.postPageView.friendSearchView.on('search:users', function(event) {
 			self.contactRepository.searchUsers(event.text);
