@@ -118,8 +118,8 @@ html, body
 		height 32px
 		line-height 32px
 		margin-top 3px
-		padding-left 36px
-		padding-right 36px
+		padding-left 32px
+		padding-right 32px
 		box-sizing(border-box)
 		color #333
 		&.chosen
@@ -159,14 +159,75 @@ html, body
 	height 100%
 .postcard-menu
 	position absolute
-	height 38px
+	height 48px
 	width 920px
 	box-sizing(border-box)
 	user-select(none)
 	z-index 10
-	font-size 12px
+	font-size 0
 	text-align center
 	background-color white
+	.breadcrumbs
+		display inline-block
+		border 1px solid aspect-color
+		background-color aspect-color
+		margin-top 8px
+		border-radius 3px
+	.postcard-menu-item
+		position relative
+		display inline-block
+		height 32px
+		line-height 32px
+		box-sizing(border-box)
+		vertical-align top
+		background-color white
+		margin-right 1px
+		margin-left 32px
+		padding-right 16px
+		font-size 12px
+		color #333
+		&.normal
+			cursor pointer
+			&:hover
+				color aspect-color
+		&.chosen
+			color white
+			background-color aspect-color
+			text-shadow 0 0 2px #666
+			&:before
+				border 16px solid aspect-color
+				border-left 16px solid transparent
+			&:after
+				border 16px solid transparent
+				border-left 16px solid aspect-color
+		&:before
+			position:absolute;
+			top 0
+			left -32px
+			content ""
+			border 16px solid white
+			border-left 16px solid transparent
+		&:after
+			position absolute
+			top 0
+			right -32px
+			content ""
+			border 16px solid transparent
+			border-left 16px solid white
+		&:first-child
+			margin-left 0
+			padding-left 32px
+			border-top-left-radius 2px
+			border-bottom-left-radius 2px
+			&:before
+				display none
+		&:last-child
+			margin-right 0
+			padding-right 32px
+			border-top-right-radius 2px
+			border-bottom-right-radius 2px
+			&:after
+				display none
 #menu
 	user-select(none)
 	position fixed

@@ -176,12 +176,108 @@
 		
 		function PostcardMenuView() {
 			base.apply(this, arguments);
+			var self = this;
 			
-			this.elem = document.createElement('div');
-			this.elem.classList.add('postcard-menu');
+			this.elem = template.create('postcard-menu-template', { className: 'postcard-menu' });
+			this.breadcrumbsElem = this.elem.getElementsByClassName('breadcrumbs')[0];
+			
+			this.itemViews = [];
+			this.selectedItemView = null;
+			
+			this.selectItemView = null;
+			this.editItemView = null;
+			this.postItemView = null;
+			
+			this.initializeItemViews();
+			
+			this.once('dispose', function() {
+				self.itemViews.forEach(function(itemView) {
+					itemView.dispose();	
+				});
+			});
 		}
 		
+		PostcardMenuView.prototype.initializeItemViews = function() {
+			var self = this;
+			
+			this.selectItemView = new PostcardMenuItemView('1. Выбери мульт!');
+			this.editItemView = new PostcardMenuItemView('2. Переделай по-своему!');
+			this.postItemView = new PostcardMenuItemView('3. Отправь на стену!');
+			
+			this.selectItemView.on('select', function() {
+				self.trigger('click:select');
+				self.chooseItemView(self.selectItemView);
+			});
+			this.editItemView.on('select', function() {
+				self.trigger('click:edit');
+				self.chooseItemView(self.editItemView);
+			});
+			this.postItemView.on('select', function() {
+				self.trigger('click:post');
+				self.chooseItemView(self.postItemView);
+			});
+			
+			this.selectItemView.attachTo(this.breadcrumbsElem);
+			this.editItemView.attachTo(this.breadcrumbsElem);
+			this.postItemView.attachTo(this.breadcrumbsElem);
+			
+			this.itemViews.push(this.selectItemView);
+			this.itemViews.push(this.editItemView);
+			this.itemViews.push(this.postItemView);
+		};
+		PostcardMenuView.prototype.chooseItemView = function(itemView) {
+			if (this.selectedItemView) {
+				this.selectedItemView.deselect();
+				this.selectedItemView = null;
+			}
+			this.selectedItemView = itemView;
+		};
+		
 		return PostcardMenuView;
+	})(abyss.View);
+	
+	var PostcardMenuItemView = (function(base) {
+		eve.extend(PostcardMenuItemView, base);
+		
+		function PostcardMenuItemView(text) {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.elem = document.createElement('div');
+			this.elem.classList.add('postcard-menu-item');
+			this.setText(text);
+			
+			this.selected = false;
+			this.deselect();
+			
+			this.elemClickListener = function(event) {
+				if (!self.selected) {
+					self.select();
+				}
+			};
+			this.elem.addEventListener('click', this.elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', self.elemClickListener);
+			});
+		}
+		
+		PostcardMenuItemView.prototype.select = function() {
+			this.selected = true;
+			this.elem.classList.add('chosen');
+			this.elem.classList.remove('normal');
+			this.trigger('select');
+		};
+		PostcardMenuItemView.prototype.deselect = function() {
+			this.selected = false;
+			this.elem.classList.add('normal');
+			this.elem.classList.remove('chosen');
+			this.trigger('deselect');
+		};
+		PostcardMenuItemView.prototype.setText = function(text) {
+			this.elem.textContent = text;
+		};
+		
+		return PostcardMenuItemView;
 	})(abyss.View);
 	
 	messenger.views = messenger.views || {};
