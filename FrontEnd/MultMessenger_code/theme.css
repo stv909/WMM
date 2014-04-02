@@ -138,8 +138,11 @@ body {
 }
 .main-menu .main-menu-item {
   display: inline-block;
-  padding-left: 12px;
-  padding-right: 12px;
+  height: 32px;
+  line-height: 32px;
+  margin-top: 2px;
+  padding-left: 16px;
+  padding-right: 16px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
@@ -154,6 +157,50 @@ body {
 }
 .main-menu .main-menu-item.normal:hover {
   color: #28f;
+}
+.main-menu .main-menu-item.postcard-item {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+.main-menu .main-menu-item.postcard-item.chosen {
+  border-top: 1px solid #28f;
+  border-bottom: 1px solid #28f;
+  border-left: 1px solid #28f;
+}
+.main-menu .main-menu-item.lobby-item {
+  border: 1px solid #ddd;
+  padding-right: 20px;
+}
+.main-menu .main-menu-item.lobby-item.chosen {
+  border: 1px solid #28f;
+}
+.main-menu .main-menu-item.conversation-item {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+.main-menu .main-menu-item.conversation-item.chosen {
+  border-top: 1px solid #28f;
+  border-bottom: 1px solid #28f;
+  border-right: 1px solid #28f;
+}
+.main-container {
+  position: absolute;
+  top: 36px;
+  bottom: 0;
+  width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.postcard {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 #menu {
   -webkit-user-select: none;

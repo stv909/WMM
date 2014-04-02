@@ -1,5 +1,7 @@
 (function(messenger, eve, abyss, template, settings, analytics) {
 	
+	var PageView = messenger.views.PageView;
+	
 	var MainMenuView = (function(base) {
 		eve.extend(MainMenuView, base);
 		
@@ -17,7 +19,7 @@
 			this.initializeItemViews();
 			
 			this.logoElemClickListener = function(event) {
-
+				self.trigger('click:logo');
 			};
 			this.groupElemClickListener = function(event) {
 				window.open(settings.groupUrl, '_blank');
@@ -45,6 +47,10 @@
 			postcardItemView.attachTo(this.itemsElem);
 			dialogItemView.attachTo(this.itemsElem);
 			conversationItemView.attachTo(this.itemsElem);
+			
+			postcardItemView.setClass('postcard-item');
+			dialogItemView.setClass('lobby-item');
+			conversationItemView.setClass('conversation-item');
 			
 			postcardItemView.on('select', function(event) {
 				self.trigger('click:postcard');
@@ -112,11 +118,63 @@
 			this.elem.classList.remove('chosen');
 			this.trigger('deselect');
 		};
+		MainMenuItemView.prototype.setClass = function(className) {
+			this.elem.classList.add(className);
+		};
 		
 		return MainMenuItemView;
 	})(abyss.View);
 	
+	var MainContainerView = (function(base) {
+		eve.extend(MainContainerView, base);
+		
+		function MainContainerView() {
+			base.apply(this, arguments);
+			
+			this.elem = document.createElement('div');
+			this.elem.classList.add('main-container');
+		}
+		
+		return MainContainerView;
+	})(abyss.View);
+	
+	var PostcardView = (function(base) {
+		eve.extend(PostcardView, base);
+		
+		function PostcardView() {
+			base.apply(this, arguments);
+			
+			this.elem = document.createElement('div');
+			this.elem.classList.add('postcard');
+		}
+		
+		return PostcardView;
+	})(PageView);
+	
+	var LobbyView = (function(base) {
+		eve.extend(LobbyView, base);
+		
+		function LobbyView() {
+			base.apply(this, arguments);
+		}
+		
+		return LobbyView;
+	})(PageView);
+	
+	var ConversationView = (function(base) {
+		eve.extend(ConversationView, base);
+		
+		function ConversationView() {
+			base.apply(this, arguments);
+		}
+		
+		return ConversationView;
+	})(PageView);
+	
 	messenger.views = messenger.views || {};
 	messenger.views.MainMenuView = MainMenuView;
+	messenger.views.MainContainerView = MainContainerView;
+	messenger.views.PostcardView = PostcardView;
+	messenger.views.ConversationView = ConversationView;
 	
 })(messenger, eve, abyss, template, settings, analytics);
