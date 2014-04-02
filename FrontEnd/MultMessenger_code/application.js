@@ -7,6 +7,7 @@ window.onload = function() {
 
 	var MainMenuView = messenger.views.MainMenuView;
 	var MainContainerView = messenger.views.MainContainerView;
+	var PostcardMenuView = messenger.views.PostcardMenuView;
 	var PostcardView = messenger.views.PostcardView;
 	
 	var SelectPageView = messenger.views.SelectPageView;
@@ -97,6 +98,7 @@ window.onload = function() {
 		this.mainMenuView = new MainMenuView();
 		this.mainContainerView = new MainContainerView();
 		this.postcardView = new PostcardView();
+		this.postcardMenuView = new PostcardMenuView();
 		
 		this.selectPageView = new SelectPageView();
 		this.editPageView = new EditPageView();
@@ -254,6 +256,7 @@ window.onload = function() {
 		this.mainMenuView.attachTo(this.rootElem);
 		this.mainContainerView.attachTo(this.rootElem);
 		this.postcardView.attachTo(this.mainContainerView.elem);
+		this.postcardMenuView.attachTo(this.postcardView.elem);
 		
 		this.selectPageView.attachTo(this.pageContainerElem);
 		this.editPageView.attachTo(this.pageContainerElem);

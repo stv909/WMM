@@ -171,10 +171,25 @@
 		return ConversationView;
 	})(PageView);
 	
+	var PostcardMenuView = (function(base) {
+		eve.extend(PostcardMenuView, base);
+		
+		function PostcardMenuView() {
+			base.apply(this, arguments);
+			
+			this.elem = document.createElement('div');
+			this.elem.classList.add('postcard-menu');
+		}
+		
+		return PostcardMenuView;
+	})(abyss.View);
+	
 	messenger.views = messenger.views || {};
 	messenger.views.MainMenuView = MainMenuView;
 	messenger.views.MainContainerView = MainContainerView;
 	messenger.views.PostcardView = PostcardView;
+	messenger.views.PostcardMenuView = PostcardMenuView;
+	messenger.views.LobbyView = LobbyView;
 	messenger.views.ConversationView = ConversationView;
 	
 })(messenger, eve, abyss, template, settings, analytics);
