@@ -360,22 +360,6 @@ body {
   border-top: 10px solid #28f;
   border-bottom: 10px solid #28f;
 }
-#page {
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  overflow-y: auto;
-  display: block;
-  position: absolute;
-  top: 36px;
-  bottom: 0;
-  width: 100%;
-}
-#page-container {
-  font-size: 0 !important;
-  margin: 0 auto;
-  height: 100%;
-  position: relative;
-}
 #answer-page .container {
   display: inline-block;
   margin-top: 16px;
@@ -479,7 +463,7 @@ body {
   font-size: 0;
   position: absolute;
   overflow: hidden;
-  top: 0;
+  top: 38px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -725,7 +709,7 @@ body {
 #post-page {
   font-size: 0;
   position: absolute;
-  top: 0;
+  top: 38px;
   bottom: 0;
   right: 0;
   left: 0;

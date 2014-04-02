@@ -258,10 +258,10 @@ window.onload = function() {
 		this.postcardView.attachTo(this.mainContainerView.elem);
 		this.postcardMenuView.attachTo(this.postcardView.elem);
 		
+		this.answerPageView.attachTo(this.postcardView.elem);
 		this.selectPageView.attachTo(this.postcardView.elem);
 		this.editPageView.attachTo(this.postcardView.elem);
 		this.postPageView.attachTo(this.postcardView.elem);
-		this.answerPageView.attachTo(this.postcardView.elem);
 		
 		this.mainMenuView.on('click:postcard', function() {
 			self.postcardView.show();
@@ -271,6 +271,25 @@ window.onload = function() {
 		});
 		this.mainMenuView.on('click:conversation', function() {
 			self.postcardView.hide();
+		});
+		
+		this.postcardMenuView.on('click:select', function() {
+			self.answerPageView.hide();
+			self.selectPageView.show();
+			self.editPageView.hide();
+			self.postPageView.hide();
+		});
+		this.postcardMenuView.on('click:edit', function() {
+			self.answerPageView.hide();
+			self.selectPageView.hide();
+			self.editPageView.show();
+			self.postPageView.hide();
+		});
+		this.postcardMenuView.on('click:post', function() {
+			self.answerPageView.hide();
+			self.selectPageView.hide();
+			self.editPageView.hide();
+			self.postPageView.show();
 		});
 
 		this.answerPageView.on('click:answer', function(event) {
