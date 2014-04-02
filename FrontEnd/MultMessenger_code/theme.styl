@@ -168,7 +168,7 @@ html, body
 	font-size 0
 	text-align center
 	background-color white
-	box-shadow 0 0 2px #888
+	box-shadow 0 0 4px #888
 	.breadcrumbs
 		display inline-block
 		border 1px solid aspect-color
@@ -252,6 +252,7 @@ html, body
 	box-sizing(content-box)
 #logo
 	position absolute
+	display inline-block
 	left 0
 	font-size 14px !important
 	font-weight bold
@@ -259,8 +260,6 @@ html, body
 	cursor pointer
 	&:hover
 		color aspect-color
-#logo, #breadcrumbs
-	display inline-block
 #logo-pic
 	top 3px
 	width 22px
@@ -311,56 +310,6 @@ html, body
 	border-left 16px solid #fff
 	border-top 10px solid aspect-color
 	border-bottom 10px solid aspect-color
-#breadcrumbs
-	display inline-block
-	font-size 0
-	margin-left 48px
-	.chosen
-		color #fff
-		background-color aspect-color
-		text-shadow 0 0 2px #666
-	.normal
-		&:hover
-			color aspect-color !important
-#status
-	position absolute
-	right 0
-	display inline-block
-	height 36px
-#online
-	color white
-	border-radius 3px
-	background-color #55bb55
-	border 1px solid #55bb55
-	width 4px
-	height 4px
-	display inline-block
-	vertical-align top
-	margin-top 15px
-	&.invalid
-		background-color #f00 !important
-		border 1px solid #f00
-#disconnect
-	line-height 16px
-	padding 4px 8px 4px 8px
-#select, #edit, #post
-	font-size 12px
-	cursor pointer
-	display: inline-block
-	padding-right 6px
-	padding-left 6px
-	position relative
-	&.chosen:after
-		content ""
-		top 0
-		right 0
-		margin-right -12px
-		position absolute
-		border-left 12px solid aspect-color
-		border-top 18px solid transparent
-		border-bottom 18px solid transparent
-#edit, #post
-	margin-left 12px
 #page
 	box-sizing(border-box)
 	overflow-y auto
