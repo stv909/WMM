@@ -47,7 +47,8 @@ html, body
 	font-size 12px
 	text-align center
 	background-color white
-	box-shadow 0 0 6px #888
+	&.shadow
+		box-shadow 0 0 2px #888
 	.container 
 		position relative
 		margin-left 12px
@@ -159,7 +160,7 @@ html, body
 	height 100%
 .postcard-menu
 	position absolute
-	height 48px
+	height 38px
 	width 920px
 	box-sizing(border-box)
 	user-select(none)
@@ -167,11 +168,12 @@ html, body
 	font-size 0
 	text-align center
 	background-color white
+	box-shadow 0 0 2px #888
 	.breadcrumbs
 		display inline-block
 		border 1px solid aspect-color
 		background-color aspect-color
-		margin-top 8px
+		//margin-top 2px
 		border-radius 3px
 	.postcard-menu-item
 		position relative
@@ -402,7 +404,7 @@ html, body
 	font-size 0
 	overflow hidden
 	position absolute
-	top 0
+	top 38px
 	bottom 0
 	left 0
 	right 0
@@ -435,13 +437,13 @@ html, body
 		text-align center
 		font-weight bold
 		left 0
-		top 36px
+		top 0
 		width 100%
 		margin 0 auto
 		height 36px
 		line-height 36px
 		box-sizing(border-box)
-		position fixed
+		position relative
 		z-index 9
 		background-color #fccd59
 		color #fff

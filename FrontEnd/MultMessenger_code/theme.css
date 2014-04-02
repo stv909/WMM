@@ -40,7 +40,9 @@ body {
   font-size: 12px;
   text-align: center;
   background-color: #fff;
-  box-shadow: 0 0 6px #888;
+}
+.main-menu.shadow {
+  box-shadow: 0 0 2px #888;
 }
 .main-menu .container {
   position: relative;
@@ -179,7 +181,7 @@ body {
 }
 .postcard-menu {
   position: absolute;
-  height: 48px;
+  height: 38px;
   width: 920px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -189,12 +191,12 @@ body {
   font-size: 0;
   text-align: center;
   background-color: #fff;
+  box-shadow: 0 0 2px #888;
 }
 .postcard-menu .breadcrumbs {
   display: inline-block;
   border: 1px solid #28f;
   background-color: #28f;
-  margin-top: 8px;
   border-radius: 3px;
 }
 .postcard-menu .postcard-menu-item {
@@ -477,7 +479,7 @@ body {
   font-size: 0;
   overflow: hidden;
   position: absolute;
-  top: 0;
+  top: 38px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -517,14 +519,14 @@ body {
   text-align: center;
   font-weight: bold;
   left: 0;
-  top: 36px;
+  top: 0;
   width: 100%;
   margin: 0 auto;
   height: 36px;
   line-height: 36px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  position: fixed;
+  position: relative;
   z-index: 9;
   background-color: #fccd59;
   color: #fff;

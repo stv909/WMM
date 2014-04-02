@@ -258,10 +258,20 @@ window.onload = function() {
 		this.postcardView.attachTo(this.mainContainerView.elem);
 		this.postcardMenuView.attachTo(this.postcardView.elem);
 		
-		this.selectPageView.attachTo(this.pageContainerElem);
-		this.editPageView.attachTo(this.pageContainerElem);
-		this.postPageView.attachTo(this.pageContainerElem);
-		this.answerPageView.attachTo(this.pageContainerElem);
+		this.selectPageView.attachTo(this.postcardView.elem);
+		this.editPageView.attachTo(this.postcardView.elem);
+		this.postPageView.attachTo(this.postcardView.elem);
+		this.answerPageView.attachTo(this.postcardView.elem);
+		
+		this.mainMenuView.on('click:postcard', function() {
+			self.postcardView.show();
+		});
+		this.mainMenuView.on('click:dialog', function() {
+			self.postcardView.hide();	
+		});
+		this.mainMenuView.on('click:conversation', function() {
+			self.postcardView.hide();
+		});
 
 		this.answerPageView.on('click:answer', function(event) {
 			self.navigation.setMode('select');

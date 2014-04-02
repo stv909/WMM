@@ -55,14 +55,17 @@
 			postcardItemView.on('select', function(event) {
 				self.trigger('click:postcard');
 				self.selectItemView(postcardItemView);
+				self.enableShadow(false);
 			});
 			dialogItemView.on('select', function(event) {
 				self.trigger('click:dialog');
 				self.selectItemView(dialogItemView);
+				self.enableShadow(true);
 			});
 			conversationItemView.on('select', function(event) {
 				self.trigger('click:conversation');
 				self.selectItemView(conversationItemView);
+				self.enableShadow(true);
 			});
 			postcardItemView.select();
 			
@@ -76,6 +79,13 @@
 				this.selectedItemView = null;
 			}
 			this.selectedItemView = itemView;
+		};
+		MainMenuView.prototype.enableShadow = function(enable) {
+			if (enable) {
+				this.elem.classList.add('shadow');
+			} else {
+				this.elem.classList.remove('shadow');
+			}	
 		};
 		
 		return MainMenuView;
@@ -224,6 +234,8 @@
 			this.itemViews.push(this.selectItemView);
 			this.itemViews.push(this.editItemView);
 			this.itemViews.push(this.postItemView);
+			
+			this.selectItemView.select();
 		};
 		PostcardMenuView.prototype.chooseItemView = function(itemView) {
 			if (this.selectedItemView) {
