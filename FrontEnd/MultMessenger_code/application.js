@@ -28,66 +28,12 @@ window.onload = function() {
 	var ChatClient = chat.ChatClient;
 	var MessageFactory = chat.MessageFactory;
 
-	var Navigation = function() {
-		Navigation.super.apply(this);
-		this.mode = null;
-	};
-	Navigation.super = EventEmitter;
-	Navigation.prototype = Object.create(EventEmitter.prototype);
-	Navigation.prototype.constructor = Navigation;
-	Navigation.prototype.setMode = function(mode) {
-		if (this.mode !== mode) {
-			this.mode = mode;
-			this.trigger({
-				type: 'mode',
-				mode: this.mode
-			});
-			this.trigger({
-				type: ['mode', mode].join(':')
-			});
-		}
-	};
-	Navigation.prototype.getNextMode = function() {
-		if (this.mode === 'select') {
-			return 'edit';
-		} else if (this.mode === 'edit') {
-			return 'post';
-		} else if (this.mode === 'post') {
-			return 'friends';
-		} else if (this.mode === 'answer') {
-			return 'answer';
-		}
-	};
-	Navigation.prototype.mapModeToAnalytic = function(mode) {
-		if (mode === 'select') {
-			return 'tape';
-		} else if (mode === 'edit') {
-			return 'editor';
-		} else if (mode === ' answer') {
-			return 'answer';
-		} else {
-			return 'friends';
-		}
-	};
-
 	var MessengerApplication = function() {
 		MessengerApplication.super.apply(this);
 		var self = this;
 		
 		this.rootElem = document.getElementById('root');
 
-		this.selectElem = document.getElementById('select');
-		this.editElem = document.getElementById('edit');
-		this.postElem = document.getElementById('post');
-		this.onlineElem = document.getElementById('online');
-		this.groupElem = document.getElementById('group');
-		this.disconnectElem = document.getElementById('disconnect');
-
-		this.pageElem = document.getElementById('page');
-		this.pageContainerElem = document.getElementById('page-container');
-		this.logoElem = document.getElementById('logo');
-
-		this.navigation = new Navigation();
 		this.chatClient = new ChatClient(settings.chatUrl);
 		this.chatClientWrapper = new ChatClientWrapper(this.chatClient);
 		
@@ -110,24 +56,6 @@ window.onload = function() {
 		this.askMessageDialogView = new AskMessageDialogView();
 		this.errorDialogView = new ErrorDialogView();
 
-		this.currentLogoElemClickListener = null;
-		this.logoElemStandardClickListener = function(event) {
-			self.navigation.setMode('select');
-		};
-		this.logoElemAnswerClickListener = function(event) {
-			self.skipDialogView.show();
-		};
-
-		this.selectElemClickListener = function(event) {
-			self.navigation.setMode('select');
-		};
-		this.editElemClickListener = function(event) {
-			self.navigation.setMode('edit');
-		};
-		this.postElemClickListener = function(event) {
-			self.navigation.setMode('post');
-		};
-
 		this.currentShowAskMessageDialog = null;
 		this.validShowAskMessageDialog = function() {
 			self.askMessageDialogView.trigger('click:ok');
@@ -140,7 +68,6 @@ window.onload = function() {
 		this.initializeStorage();
 		this.initializeChatClient();
 		this.initializeViews();
-		this.initializeNavigation();
 		this.initializeSettings();
 		this.initializeStartupData();
 	};
@@ -234,13 +161,13 @@ window.onload = function() {
 		};
 		
 		this.on('online', function() {
-			self.onlineElem.classList.remove('invalid');
+			//self.onlineElem.classList.remove('invalid');
 			setTimeout(function() {
 				checkOnline();
 			}, 2500);
 		});
 		this.on('offline', function() {
-			self.onlineElem.classList.add('invalid');
+			//self.onlineElem.classList.add('invalid');
 			setTimeout(function() {
 				reconnect();
 			}, 5000);
@@ -255,21 +182,28 @@ window.onload = function() {
 
 		this.mainMenuView.attachTo(this.rootElem);
 		this.mainContainerView.attachTo(this.rootElem);
+		this.answerPageView.attachTo(this.mainContainerView.elem);
 		this.postcardView.attachTo(this.mainContainerView.elem);
 		this.postcardMenuView.attachTo(this.postcardView.elem);
 		
-		this.answerPageView.attachTo(this.postcardView.elem);
 		this.selectPageView.attachTo(this.postcardView.elem);
 		this.editPageView.attachTo(this.postcardView.elem);
 		this.postPageView.attachTo(this.postcardView.elem);
 		
+		this.mainMenuView.on('click:answer', function() {
+			self.answerPageView.show();
+			self.postcardView.hide();
+		});
 		this.mainMenuView.on('click:postcard', function() {
+			self.answerPageView.hide();
 			self.postcardView.show();
 		});
 		this.mainMenuView.on('click:dialog', function() {
+			self.answerPageView.hide();
 			self.postcardView.hide();	
 		});
 		this.mainMenuView.on('click:conversation', function() {
+			self.answerPageView.hide();
 			self.postcardView.hide();
 		});
 		
@@ -291,10 +225,12 @@ window.onload = function() {
 			self.editPageView.hide();
 			self.postPageView.show();
 		});
+		this.postcardMenuView.selectItemView.select();
 
 		this.answerPageView.on('click:answer', function(event) {
-			self.navigation.setMode('select');
+			self.mainMenuView.postcardItemView.select();
 		});
+		
 		this.selectPageView.on('select:message', function(event) {
 			var message = event.message;
 			self.messageStorage.selectMessage(message);
@@ -314,27 +250,27 @@ window.onload = function() {
 			self.messageStorage.appendPreloadedMessages();	
 			analytics.send('tape', 'msg_load_new', 'success');
 		});
-		this.postDialogView.on('click:close', function(event) {
-			if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
-				self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
-				self.postPageView.setMode('friend');
-				self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
-				self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
-				self.currentLogoElemClickListener = self.logoElemStandardClickListener;
-				window.location.hash = '';
-			}
-			self.navigation.setMode('select');
-		});
-		this.skipDialogView.on('click:ok', function(event) {
-			self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
-			self.postPageView.setMode('friend');
-			self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
-			self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
-			self.currentLogoElemClickListener = self.logoElemStandardClickListener;
-			window.location.hash = '';
-			self.navigation.setMode('select');
-			analytics.send('answer', 'browse_tape');
-		});
+		
+		// this.postDialogView.on('click:close', function(event) {
+		// 	if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
+		// 		self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
+		// 		self.postPageView.setMode('friend');
+		// 		self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
+		// 		self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
+		// 		self.currentLogoElemClickListener = self.logoElemStandardClickListener;
+		// 		window.location.hash = '';
+		// 	}
+		// });
+		// this.skipDialogView.on('click:ok', function(event) {
+		// 	self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
+		// 	self.postPageView.setMode('friend');
+		// 	self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
+		// 	self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
+		// 	self.currentLogoElemClickListener = self.logoElemStandardClickListener;
+		// 	window.location.hash = '';
+		// 	analytics.send('answer', 'browse_tape');
+		// });
+		
 		this.postPageView.on('click:send', function(event) {
 			self.postDialogView.show();
 
@@ -397,6 +333,7 @@ window.onload = function() {
 		this.postPageView.groupSearchView.on('select:group', function(event) {
 			self.contactRepository.selected = event.group;
 		});
+		
 		this.editPageView.on('status:validate', function() {
 			self.currentShowAskMessageDialog = self.validShowAskMessageDialog;
 		});
@@ -404,102 +341,33 @@ window.onload = function() {
 			self.currentShowAskMessageDialog = self.invalidShowAskMessageDialog;
 		});
 		this.askMessageDialogView.on('click:ok', function(event) {
-			self.editPageView.reset();
+			// self.editPageView.reset();
 			
-			self.selectElem.classList.add('normal');
-			self.selectElem.classList.remove('chosen');
-			self.selectElem.addEventListener('click', self.selectElemClickListener);
+			// self.selectElem.classList.add('normal');
+			// self.selectElem.classList.remove('chosen');
+			// self.selectElem.addEventListener('click', self.selectElemClickListener);
 
-			self.editElem.classList.add('normal');
-			self.editElem.classList.remove('chosen');
-			self.editElem.addEventListener('click', self.editElemClickListener);
+			// self.editElem.classList.add('normal');
+			// self.editElem.classList.remove('chosen');
+			// self.editElem.addEventListener('click', self.editElemClickListener);
 
-			self.postElem.classList.remove('normal');
-			self.postElem.classList.add('chosen');
-			self.postElem.removeEventListener('click', self.postElemClickListener);
+			// self.postElem.classList.remove('normal');
+			// self.postElem.classList.add('chosen');
+			// self.postElem.removeEventListener('click', self.postElemClickListener);
 
-			self.selectPageView.hide();
-			self.editPageView.hide();
-			self.postPageView.show();
-			self.answerPageView.hide();
+			// self.selectPageView.hide();
+			// self.editPageView.hide();
+			// self.postPageView.show();
+			// self.answerPageView.hide();
 		});
 		this.askMessageDialogView.on('click:cancel', function(event) {
-			self.navigation.setMode('edit');
+			//self.navigation.setMode('edit');
 		});
 		
-		this.groupElem.addEventListener('click', function() {
-			window.open(settings.groupUrl, '_blank');
-			analytics.send('app_start', 'app_go_group');
-		});
-	};
-	MessengerApplication.prototype.initializeNavigation = function() {
-		var self = this;
-
-		this.navigation.on('mode:answer', function(event) {
-			self.selectElem.classList.add('hidden');
-			self.selectElem.classList.add('normal');
-			self.selectElem.classList.remove('chosen');
-			self.selectElem.addEventListener('click', self.selectElemClickListener);
-
-			self.editElem.classList.add('hidden');
-			self.editElem.classList.add('normal');
-			self.editElem.classList.remove('chosen');
-			self.editElem.addEventListener('click', self.editElemClickListener);
-
-			self.postElem.classList.add('hidden');
-			self.postElem.classList.add('normal');
-			self.postElem.classList.remove('chosen');
-			self.postElem.addEventListener('click', self.postElemClickListener);
-
-			self.selectPageView.hide();
-			self.editPageView.hide();
-			self.postPageView.hide();
-			self.answerPageView.show();
-
-			self.skipDialogView.setText('Вы уверены, что не хотите ответить на сообщение?');
-		});
-		this.navigation.on('mode:select', function(event) {
-			self.selectElem.classList.remove('hidden');
-			self.selectElem.classList.remove('normal');
-			self.selectElem.classList.add('chosen');
-			self.selectElem.removeEventListener('click', self.selectElemClickListener);
-
-			self.editElem.classList.remove('hidden');
-			self.editElem.classList.add('normal');
-			self.editElem.classList.remove('chosen');
-			self.editElem.addEventListener('click', self.editElemClickListener);
-
-			self.postElem.classList.remove('hidden');
-			self.postElem.classList.add('normal');
-			self.postElem.classList.remove('chosen');
-			self.postElem.addEventListener('click', self.postElemClickListener);
-
-			self.selectPageView.show();
-			self.editPageView.hide();
-			self.postPageView.hide();
-			self.answerPageView.hide();
-		});
-		this.navigation.on('mode:edit', function(event) {
-			self.selectElem.classList.add('normal');
-			self.selectElem.classList.remove('chosen');
-			self.selectElem.addEventListener('click', self.selectElemClickListener);
-
-			self.editElem.classList.remove('normal');
-			self.editElem.classList.add('chosen');
-			self.editElem.removeEventListener('click', self.editElemClickListener);
-
-			self.postElem.classList.add('normal');
-			self.postElem.classList.remove('chosen');
-			self.postElem.addEventListener('click', self.postElemClickListener);
-
-			self.selectPageView.hide();
-			self.editPageView.show();
-			self.postPageView.hide();
-			self.answerPageView.hide();
-		});
-		this.navigation.on('mode:post', function(event) {
-			self.currentShowAskMessageDialog();
-		});
+		// this.groupElem.addEventListener('click', function() {
+		// 	window.open(settings.groupUrl, '_blank');
+		// 	analytics.send('app_start', 'app_go_group');
+		// });
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
 		var parseHash = function(hash) {
@@ -530,17 +398,12 @@ window.onload = function() {
 		var hash = searchSettings.hash ? decodeURIComponent(searchSettings.hash) : null;
 
 		if (hash) {
-			this.navigation.setMode('answer');
-			this.logoElem.addEventListener('click', this.logoElemAnswerClickListener);
-			this.currentLogoElemClickListener = this.logoElemAnswerClickListener;
-			
+			this.mainMenuView.answerItemView.select();
 			var settings = parseHash(hash);
 			this.contactRepository.setSenderId(settings.senderId);
 			this.messageStorage.setSenderMessageId(settings.messageId);
 		} else {
-			this.navigation.setMode('select');
-			this.logoElem.addEventListener('click', this.logoElemStandardClickListener);
-			this.currentLogoElemClickListener = this.logoElemStandardClickListener;
+			this.mainMenuView.postcardItemView.select();
 		}
 	};
 	MessengerApplication.prototype.initializeStartupData = function() {

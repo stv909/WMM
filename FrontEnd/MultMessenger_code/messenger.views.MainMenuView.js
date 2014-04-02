@@ -16,6 +16,12 @@
 			
 			this.itemViews = [];
 			this.selectedItemView = null;
+			
+			this.postcardItemView = null;
+			this.dialogItemView = null;
+			this.conversationItemView = null;
+			this.answerItemView = null;
+			
 			this.initializeItemViews();
 			
 			this.logoElemClickListener = function(event) {
@@ -40,38 +46,44 @@
 		
 		MainMenuView.prototype.initializeItemViews = function() {
 			var self = this;
-			var postcardItemView = new MainMenuItemView('Открытки');
-			var dialogItemView = new MainMenuItemView('Диалоги');
-			var conversationItemView = new MainMenuItemView('Петр Иванов');
+			this.postcardItemView = new MainMenuItemView('Открытки');
+			this.dialogItemView = new MainMenuItemView('Диалоги');
+			this.conversationItemView = new MainMenuItemView('Петр Иванов');
+			this.answerItemView = new MainMenuItemView('#answer');
 			
-			postcardItemView.attachTo(this.itemsElem);
-			dialogItemView.attachTo(this.itemsElem);
-			conversationItemView.attachTo(this.itemsElem);
+			this.postcardItemView.attachTo(this.itemsElem);
+			this.dialogItemView.attachTo(this.itemsElem);
+			this.conversationItemView.attachTo(this.itemsElem);
 			
-			postcardItemView.setClass('postcard-item');
-			dialogItemView.setClass('lobby-item');
-			conversationItemView.setClass('conversation-item');
+			this.postcardItemView.setClass('postcard-item');
+			this.dialogItemView.setClass('lobby-item');
+			this.conversationItemView.setClass('conversation-item');
 			
-			postcardItemView.on('select', function(event) {
+			this.postcardItemView.on('select', function(event) {
 				self.trigger('click:postcard');
-				self.selectItemView(postcardItemView);
+				self.selectItemView(self.postcardItemView);
 				self.enableShadow(false);
 			});
-			dialogItemView.on('select', function(event) {
+			this.dialogItemView.on('select', function(event) {
 				self.trigger('click:dialog');
-				self.selectItemView(dialogItemView);
+				self.selectItemView(self.dialogItemView);
 				self.enableShadow(true);
 			});
-			conversationItemView.on('select', function(event) {
+			this.conversationItemView.on('select', function(event) {
 				self.trigger('click:conversation');
-				self.selectItemView(conversationItemView);
+				self.selectItemView(self.conversationItemView);
 				self.enableShadow(true);
 			});
-			postcardItemView.select();
+			this.answerItemView.on('select', function(event) {
+				self.trigger('click:answer');
+				self.selectItemView(self.answerItemView);
+				self.enableShadow(true);
+			});
 			
-			this.itemViews.push(postcardItemView);
-			this.itemViews.push(dialogItemView);
-			this.itemViews.push(conversationItemView);
+			this.itemViews.push(this.postcardItemView);
+			this.itemViews.push(this.dialogItemView);
+			this.itemViews.push(this.conversationItemView);
+			this.itemViews.push(this.answerItemView);
 		};
 		MainMenuView.prototype.selectItemView = function(itemView) {
 			if (this.selectedItemView) {
@@ -156,6 +168,7 @@
 			
 			this.elem = document.createElement('div');
 			this.elem.classList.add('postcard');
+			this.elem.classList.add('hidden');
 		}
 		
 		return PostcardView;
@@ -234,8 +247,6 @@
 			this.itemViews.push(this.selectItemView);
 			this.itemViews.push(this.editItemView);
 			this.itemViews.push(this.postItemView);
-			
-			this.selectItemView.select();
 		};
 		PostcardMenuView.prototype.chooseItemView = function(itemView) {
 			if (this.selectedItemView) {

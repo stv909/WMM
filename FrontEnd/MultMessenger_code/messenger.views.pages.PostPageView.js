@@ -42,7 +42,7 @@
 			base.apply(this, arguments);
 			var self = this;
 			
-			this.elem = template.create('post-page-template', { id: 'post-page' });
+			this.elem = template.create('post-page-template', { id: 'post-page', className: 'hidden' });
 			this.tabsElem = this.elem.getElementsByClassName('tabs')[0];
 			this.friendTabElem = this.tabsElem.getElementsByClassName('friend')[0];
 			this.groupTabElem = this.tabsElem.getElementsByClassName('group')[0];
@@ -68,6 +68,7 @@
 			
 			this.initializeViews();
 			this.setMode('friend');
+			//this.hide();
 			
 			this.once('dispose', function() {
 				self.friendSearchView.dispose();

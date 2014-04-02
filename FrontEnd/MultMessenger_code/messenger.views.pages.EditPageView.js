@@ -17,7 +17,7 @@
 			base.apply(this, arguments);
 			var self = this;
 			
-			this.elem = template.create('edit-page-template', { id: 'edit-page' });
+			this.elem = template.create('edit-page-template', { id: 'edit-page', className: 'hidden' });
 			this.resetElem = this.elem.getElementsByClassName('reset')[0];
 			this.updateElem = this.elem.getElementsByClassName('update')[0];
 			this.messageWrapperElem = this.elem.getElementsByClassName('message-wrapper')[0];
