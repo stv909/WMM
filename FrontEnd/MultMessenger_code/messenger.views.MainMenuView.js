@@ -197,6 +197,10 @@
 		
 		function ConversationView() {
 			base.apply(this, arguments);
+			
+			this.elem = document.createElement('div');
+			this.elem.classList.add('conversation');
+			this.elem.classList.add('hidden');
 		}
 		
 		return ConversationView;
@@ -319,6 +323,85 @@
 		return PostcardMenuItemView;
 	})(abyss.View);
 	
+	var ConversationMenuView = (function(base) {
+		eve.extend(ConversationMenuView, base);
+		
+		function ConversationMenuView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.elem = template.create('conversation-menu-template', { className: 'conversation-menu' });
+			this.itemsElem = this.elem.getElementsByClassName('items')[0];
+			
+			this.itemViews = [];
+			this.textItemView = null;
+			this.postcardItemView = null;
+			this.filmtextItemView = null;
+			this.initializeItemViews();
+			
+			this.once('dispose', function() {
+				self.itemViews.forEach(function(itemView) {
+					itemView.dispose();	
+				});
+			});
+		}
+		
+		ConversationMenuView.prototype.initializeItemViews = function() {
+			var self = this;
+			
+			this.filmtextItemView = new ConversationMenuItemView('МультТекст');
+			this.postcardItemView = new ConversationMenuItemView('Открытка');
+			this.textItemView = new ConversationMenuItemView('Текст');
+			
+			this.filmtextItemView.attachTo(this.itemsElem);
+			this.postcardItemView.attachTo(this.itemsElem);
+			this.textItemView.attachTo(this.itemsElem);
+			
+			this.filmtextItemView.on('click', function() {
+				self.trigger('click:filmtext');
+			});
+			this.postcardItemView.on('click', function() {
+				self.trigger('click:postcard');
+			});
+			this.textItemView.on('click', function() {
+				self.trigger('click:text');	
+			});
+			
+			this.itemViews.push(this.filmtextItemView);
+			this.itemViews.push(this.postcardItemView);
+			this.itemViews.push(this.textItemView);
+		};
+		
+		return ConversationMenuView;
+	})(abyss.View);
+	
+	var ConversationMenuItemView = (function(base) {
+		eve.extend(ConversationMenuItemView, base);
+		
+		function ConversationMenuItemView(text) {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.elem = document.createElement('div');
+			this.elem.classList.add('conversation-menu-item');
+			this.elem.classList.add('button-special');
+			this.setText(text);
+			
+			this.elemClickListener = function(event) {
+				self.trigger('click');
+			};
+			this.elem.addEventListener('click', this.elemClickListener);
+			this.once('dispose', function() {
+				self.elem.removeEventListener('click', self.elemClickListener);
+			});
+		}
+		ConversationMenuItemView.prototype.setText = function(text) {
+			this.elem.textContent = text;
+		};
+		
+		return ConversationMenuItemView;
+	})(abyss.View);
+	
 	messenger.views = messenger.views || {};
 	messenger.views.MainMenuView = MainMenuView;
 	messenger.views.MainContainerView = MainContainerView;
@@ -326,5 +409,6 @@
 	messenger.views.PostcardMenuView = PostcardMenuView;
 	messenger.views.LobbyView = LobbyView;
 	messenger.views.ConversationView = ConversationView;
+	messenger.views.ConversationMenuView = ConversationMenuView;
 	
 })(messenger, eve, abyss, template, settings, analytics);

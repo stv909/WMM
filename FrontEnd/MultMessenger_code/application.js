@@ -7,8 +7,10 @@ window.onload = function() {
 
 	var MainMenuView = messenger.views.MainMenuView;
 	var MainContainerView = messenger.views.MainContainerView;
-	var PostcardMenuView = messenger.views.PostcardMenuView;
 	var PostcardView = messenger.views.PostcardView;
+	var PostcardMenuView = messenger.views.PostcardMenuView;
+	var ConversationView = messenger.views.ConversationView;
+	var ConversationMenuView = messenger.views.ConversationMenuView;
 	
 	var SelectPageView = messenger.views.SelectPageView;
 	var EditPageView = messenger.views.EditPageView;
@@ -45,6 +47,8 @@ window.onload = function() {
 		this.mainContainerView = new MainContainerView();
 		this.postcardView = new PostcardView();
 		this.postcardMenuView = new PostcardMenuView();
+		this.conversationView = new ConversationView();
+		this.conversationMenuView = new ConversationMenuView();
 		
 		this.selectPageView = new SelectPageView();
 		this.editPageView = new EditPageView();
@@ -227,6 +231,8 @@ window.onload = function() {
 		this.answerPageView.attachTo(this.mainContainerView.elem);
 		this.postcardView.attachTo(this.mainContainerView.elem);
 		this.postcardMenuView.attachTo(this.postcardView.elem);
+		this.conversationView.attachTo(this.mainContainerView.elem);
+		this.conversationMenuView.attachTo(this.conversationView.elem);
 		
 		this.selectPageView.attachTo(this.postcardView.elem);
 		this.editPageView.attachTo(this.postcardView.elem);
@@ -235,6 +241,7 @@ window.onload = function() {
 		this.mainMenuView.on('click:answer', function() {
 			self.answerPageView.show();
 			self.postcardView.hide();
+			self.conversationView.hide();
 		});
 		this.mainMenuView.on('click:logo', function() {
 			self.currentSkipAnswerAsync().then(function() {
@@ -246,6 +253,7 @@ window.onload = function() {
 			self.currentSkipAnswerAsync().then(function() {
 				self.answerPageView.hide();
 				self.postcardView.show();
+				self.conversationView.hide();
 			}).catch(function() {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.mainMenuView.restore();
@@ -256,6 +264,7 @@ window.onload = function() {
 			self.currentSkipAnswerAsync().then(function() {
 				self.answerPageView.hide();
 				self.postcardView.hide();
+				self.conversationView.hide();
 			}).catch(function() {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.mainMenuView.restore();
@@ -266,6 +275,7 @@ window.onload = function() {
 			self.currentSkipAnswerAsync().then(function() {
 				self.answerPageView.hide();
 				self.postcardView.hide();
+				self.conversationView.show();
 			}).catch(function() {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.mainMenuView.restore();
@@ -298,6 +308,16 @@ window.onload = function() {
 			});
 		});
 		this.postcardMenuView.selectItemView.select();
+		
+		this.conversationMenuView.on('click:filmtext', function() {
+			alert('filmtext');	
+		});
+		this.conversationMenuView.on('click:text', function() {
+			alert('text');
+		});
+		this.conversationMenuView.on('click:postcard', function() {
+			alert('postcard');
+		});
 
 		this.answerPageView.on('click:answer', function(event) {
 			self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;

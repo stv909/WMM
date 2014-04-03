@@ -1,6 +1,6 @@
 aspect-color = #28f
 active-aspect-color = #26d
-default-font-color = #666
+default-font-color = #333
 default-width = 920px
 
 user-select(value)
@@ -230,26 +230,29 @@ html, body
 			border-bottom-right-radius 2px
 			&:after
 				display none
-#menu
-	user-select(none)
-	position fixed
-	top 0
-	font-size 12px
+.conversation
+	position relative
+	width 100%
+	height 100%
+.conversation-menu
+	position absolute
+	height 51px
 	width 920px
 	box-sizing(border-box)
-	height 36px
-	line-height 36px
-	vertical-align middle
 	z-index 10
-	background-color #fff
-	box-shadow 0 0 6px #888
-#menu-container
-	vertical-align top
-	position relative
+	font-size 0
 	text-align center
-	margin-left 12px
-	margin-right 12px
-	box-sizing(content-box)
+	background-color white
+	box-shadow 0 0 4px white
+	font-size 12px
+	.items
+		margin-top 8px
+		display inline-block
+	.conversation-menu-item
+		margin-left 2px
+		margin-right 2px
+		padding-left 16px
+		padding-right 16px
 #logo
 	position absolute
 	display inline-block

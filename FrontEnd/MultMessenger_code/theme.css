@@ -13,7 +13,7 @@ html,
 body {
   font-family: 'Open Sans', Verdana;
   text-rendering: optimizeLegibility;
-  color: #666;
+  color: #333;
   background-color: #fff;
 }
 #root {
@@ -267,30 +267,33 @@ body {
 .postcard-menu .postcard-menu-item:last-child:after {
   display: none;
 }
-#menu {
-  -webkit-user-select: none;
-  user-select: none;
-  position: fixed;
-  top: 0;
-  font-size: 12px;
+.conversation {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.conversation-menu {
+  position: absolute;
+  height: 51px;
   width: 920px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  height: 36px;
-  line-height: 36px;
-  vertical-align: middle;
   z-index: 10;
-  background-color: #fff;
-  box-shadow: 0 0 6px #888;
-}
-#menu-container {
-  vertical-align: top;
-  position: relative;
+  font-size: 0;
   text-align: center;
-  margin-left: 12px;
-  margin-right: 12px;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
+  background-color: #fff;
+  box-shadow: 0 0 4px #fff;
+  font-size: 12px;
+}
+.conversation-menu .items {
+  margin-top: 8px;
+  display: inline-block;
+}
+.conversation-menu .conversation-menu-item {
+  margin-left: 2px;
+  margin-right: 2px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 #logo {
   position: absolute;
