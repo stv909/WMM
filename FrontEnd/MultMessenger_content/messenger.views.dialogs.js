@@ -215,9 +215,10 @@ var messenger = messenger || {};
 
 		var readyElemClickListener = function(event) {
 			self.hide();
-			if (self.complete) {
-				self.trigger('click:close');
-			}
+			self.trigger({
+				type: 'click:close',
+				success: self.complete
+			});
 		};
 
 		this.readyElem.addEventListener('click', readyElemClickListener);

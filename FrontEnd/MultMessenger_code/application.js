@@ -50,20 +50,62 @@ window.onload = function() {
 		this.editPageView = new EditPageView();
 		this.postPageView = new PostPageView();
 		this.answerPageView = new AnswerPageView();
+		
 		this.postDialogView = new PostDialogView();
 		this.skipDialogView = new SkipDialogView();
 		this.preloadDialogView = new PreloadDialogView();
 		this.askMessageDialogView = new AskMessageDialogView();
 		this.errorDialogView = new ErrorDialogView();
 
-		this.currentShowAskMessageDialog = null;
-		this.validShowAskMessageDialog = function() {
-			self.askMessageDialogView.trigger('click:ok');
+		this.currentSkipAnswerAsync = null;
+		this.emptySkipAnswerAsync = function() {
+			return Q.resolve(true);	
 		};
-		this.invalidShowAskMessageDialog = function() {
+		this.requestedSkipAnswerAsync = function() {
+			var deferred = Q.defer();
+			
+			var cancelListener = function() {
+				self.skipDialogView.off('click:ok', okListener);
+				deferred.reject();
+			};
+			var okListener = function() {
+				self.skipDialogView.off('click:cancel', cancelListener);
+				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
+				deferred.resolve();
+			};
+			
+			self.skipDialogView.once('click:cancel', cancelListener);
+			self.skipDialogView.once('click:ok', okListener);
+			self.skipDialogView.setText('Вы уверены, что не хотите ответить на сообщение?');
+			self.skipDialogView.show();
+			
+			return deferred.promise;
+		};
+		
+		this.currentSkipUpdateAsync = null;
+		this.emptySkipUpdateAsync = function() {
+			return Q.resolve(true);
+		};
+		this.requestedSkipUpdateAsync = function() {
+			var deferred = Q.defer();
+			
+			var cancelListener = function() {
+				self.askMessageDialogView.off('click:ok', okListener);
+				deferred.reject();
+			};
+			var okListener = function() {
+				self.askMessageDialogView.off('click:cancel', cancelListener);
+				self.currentSkipAnswerAsync = self.emptySkipUpdateAsync;
+				deferred.resolve();
+			};
+			
+			self.askMessageDialogView.once('click:cancel', cancelListener);
+			self.askMessageDialogView.once('click:ok', okListener);
 			self.askMessageDialogView.show();
+			
+			return deferred.promise;
 		};
-
+		
 		this.preloadDialogView.show();
 		this.initializeStorage();
 		this.initializeChatClient();
@@ -194,17 +236,41 @@ window.onload = function() {
 			self.answerPageView.show();
 			self.postcardView.hide();
 		});
+		this.mainMenuView.on('click:logo', function() {
+			self.currentSkipAnswerAsync().then(function() {
+				self.mainMenuView.postcardItemView.select();
+				self.postcardMenuView.selectItemView.select();
+			});
+		});
 		this.mainMenuView.on('click:postcard', function() {
-			self.answerPageView.hide();
-			self.postcardView.show();
+			self.currentSkipAnswerAsync().then(function() {
+				self.answerPageView.hide();
+				self.postcardView.show();
+			}).catch(function() {
+				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
+				self.mainMenuView.restore();
+				self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
+			});
 		});
 		this.mainMenuView.on('click:dialog', function() {
-			self.answerPageView.hide();
-			self.postcardView.hide();	
+			self.currentSkipAnswerAsync().then(function() {
+				self.answerPageView.hide();
+				self.postcardView.hide();
+			}).catch(function() {
+				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
+				self.mainMenuView.restore();
+				self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
+			});
 		});
 		this.mainMenuView.on('click:conversation', function() {
-			self.answerPageView.hide();
-			self.postcardView.hide();
+			self.currentSkipAnswerAsync().then(function() {
+				self.answerPageView.hide();
+				self.postcardView.hide();
+			}).catch(function() {
+				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
+				self.mainMenuView.restore();
+				self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
+			});
 		});
 		
 		this.postcardMenuView.on('click:select', function() {
@@ -220,15 +286,23 @@ window.onload = function() {
 			self.postPageView.hide();
 		});
 		this.postcardMenuView.on('click:post', function() {
-			self.answerPageView.hide();
-			self.selectPageView.hide();
-			self.editPageView.hide();
-			self.postPageView.show();
+			self.currentSkipUpdateAsync().then(function() {
+				self.answerPageView.hide();
+				self.selectPageView.hide();
+				self.editPageView.hide();
+				self.postPageView.show();
+			}).catch(function() {
+				self.currentSkipUpdateAsync = self.emptySkipUpdateAsync;
+				self.postcardMenuView.editItemView.select();
+				self.currentSkipUpdateAsync = self.requestedSkipUpdateAsync;
+			});
 		});
 		this.postcardMenuView.selectItemView.select();
 
 		this.answerPageView.on('click:answer', function(event) {
+			self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 			self.mainMenuView.postcardItemView.select();
+			self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
 		});
 		
 		this.selectPageView.on('select:message', function(event) {
@@ -251,29 +325,27 @@ window.onload = function() {
 			analytics.send('tape', 'msg_load_new', 'success');
 		});
 		
-		// this.postDialogView.on('click:close', function(event) {
-		// 	if (self.currentLogoElemClickListener === self.logoElemAnswerClickListener) {
-		// 		self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
-		// 		self.postPageView.setMode('friend');
-		// 		self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
-		// 		self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
-		// 		self.currentLogoElemClickListener = self.logoElemStandardClickListener;
-		// 		window.location.hash = '';
-		// 	}
-		// });
-		// this.skipDialogView.on('click:ok', function(event) {
-		// 	self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
-		// 	self.postPageView.setMode('friend');
-		// 	self.logoElem.removeEventListener('click', self.logoElemAnswerClickListener);
-		// 	self.logoElem.addEventListener('click', self.logoElemStandardClickListener);
-		// 	self.currentLogoElemClickListener = self.logoElemStandardClickListener;
-		// 	window.location.hash = '';
-		// 	analytics.send('answer', 'browse_tape');
-		// });
+		this.postDialogView.on('click:close', function(event) {
+			if (self.currentSkipAnswerAsync === self.requestedSkipAnswerAsync) {
+				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
+				self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
+				self.postPageView.setMode('friend');
+				self.postcardMenuView.selectItemView.select();
+				window.location.hash = '';
+			}	
+		});
+		
+		this.skipDialogView.on('click:ok', function(event) {
+			self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
+			self.postPageView.setMode('friend');
+			self.postcardMenuView.selectItemView.select();
+			window.location.hash = '';
+			analytics.send('answer', 'browse_tape');
+		});
 		
 		this.postPageView.on('click:send', function(event) {
 			self.postDialogView.show();
-
+			
 			var account = self.contactRepository.owner;
 			var companion = self.contactRepository.selected;
 			var content = self.editPageView.getMessageContent();
@@ -335,33 +407,14 @@ window.onload = function() {
 		});
 		
 		this.editPageView.on('status:validate', function() {
-			self.currentShowAskMessageDialog = self.validShowAskMessageDialog;
+			self.currentSkipUpdateAsync = self.emptySkipUpdateAsync;
 		});
 		this.editPageView.on('status:invalidate', function() {
-			self.currentShowAskMessageDialog = self.invalidShowAskMessageDialog;
+			self.currentSkipUpdateAsync = self.requestedSkipUpdateAsync;
 		});
-		this.askMessageDialogView.on('click:ok', function(event) {
-			// self.editPageView.reset();
-			
-			// self.selectElem.classList.add('normal');
-			// self.selectElem.classList.remove('chosen');
-			// self.selectElem.addEventListener('click', self.selectElemClickListener);
-
-			// self.editElem.classList.add('normal');
-			// self.editElem.classList.remove('chosen');
-			// self.editElem.addEventListener('click', self.editElemClickListener);
-
-			// self.postElem.classList.remove('normal');
-			// self.postElem.classList.add('chosen');
-			// self.postElem.removeEventListener('click', self.postElemClickListener);
-
-			// self.selectPageView.hide();
-			// self.editPageView.hide();
-			// self.postPageView.show();
-			// self.answerPageView.hide();
-		});
-		this.askMessageDialogView.on('click:cancel', function(event) {
-			//self.navigation.setMode('edit');
+		
+		this.askMessageDialogView.on('click:ok', function() {
+			self.editPageView.reset();
 		});
 		
 		// this.groupElem.addEventListener('click', function() {
@@ -398,11 +451,13 @@ window.onload = function() {
 		var hash = searchSettings.hash ? decodeURIComponent(searchSettings.hash) : null;
 
 		if (hash) {
-			this.mainMenuView.answerItemView.select();
 			var settings = parseHash(hash);
 			this.contactRepository.setSenderId(settings.senderId);
 			this.messageStorage.setSenderMessageId(settings.messageId);
+			this.currentSkipAnswerAsync = this.requestedSkipAnswerAsync;
+			this.mainMenuView.answerItemView.select();
 		} else {
+			this.currentSkipAnswerAsync = this.emptySkipAnswerAsync;
 			this.mainMenuView.postcardItemView.select();
 		}
 	};

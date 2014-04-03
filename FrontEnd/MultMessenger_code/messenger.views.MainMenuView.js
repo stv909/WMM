@@ -15,6 +15,7 @@
 			this.itemsElem = this.elem.getElementsByClassName('items')[0];
 			
 			this.itemViews = [];
+			this.previousSelectedItemView = null;
 			this.selectedItemView = null;
 			
 			this.postcardItemView = null;
@@ -86,17 +87,24 @@
 			this.itemViews.push(this.answerItemView);
 		};
 		MainMenuView.prototype.selectItemView = function(itemView) {
-			if (this.selectedItemView) {
-				this.selectedItemView.deselect();
-				this.selectedItemView = null;
+			if (this.selectedItemView !== itemView) {
+				if (this.selectedItemView) {
+					this.selectedItemView.deselect();
+					this.previousSelectedItemView = this.selectedItemView;
+				}
+				this.selectedItemView = itemView;
 			}
-			this.selectedItemView = itemView;
 		};
 		MainMenuView.prototype.enableShadow = function(enable) {
 			if (enable) {
 				this.elem.classList.add('shadow');
 			} else {
 				this.elem.classList.remove('shadow');
+			}	
+		};
+		MainMenuView.prototype.restore = function() {
+			if (this.previousSelectedItemView) {
+				this.previousSelectedItemView.select();
 			}	
 		};
 		
@@ -205,6 +213,7 @@
 			this.breadcrumbsElem = this.elem.getElementsByClassName('breadcrumbs')[0];
 			
 			this.itemViews = [];
+			this.previousSelectedItemView = null;
 			this.selectedItemView = null;
 			
 			this.selectItemView = null;
@@ -249,11 +258,18 @@
 			this.itemViews.push(this.postItemView);
 		};
 		PostcardMenuView.prototype.chooseItemView = function(itemView) {
-			if (this.selectedItemView) {
-				this.selectedItemView.deselect();
-				this.selectedItemView = null;
+			if (this.selectedItemView !== itemView) {
+				if (this.selectedItemView) {
+					this.selectedItemView.deselect();
+					this.previousSelectedItemView = this.selectedItemView;
+				}
+				this.selectedItemView = itemView;
 			}
-			this.selectedItemView = itemView;
+		};
+		PostcardMenuView.prototype.restore = function() {
+			if (this.previousSelectedItemView) {
+				this.previousSelectedItemView.select();
+			}	
 		};
 		
 		return PostcardMenuView;

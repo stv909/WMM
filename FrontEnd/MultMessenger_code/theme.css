@@ -1042,7 +1042,7 @@ body {
   line-height: 140px;
 }
 #ask-message-dialog .status {
-  line-height: 22px;
+  line-height: 12px;
   white-space: pre;
   vertical-align: middle;
   display: inline-block;
