@@ -145,7 +145,6 @@
 			var queryElemInputListener = function(event) {
 				self.queryElemObserver.set(self.queryElem.value);	
 			};
-			
 			this.queryElem.addEventListener('input', queryElemInputListener);
 			
 			this.once('dispose', function() {
@@ -153,6 +152,11 @@
 				self.queryElem.removeEventListener('input', queryElemInputListener);
 			});
 		}
+		
+		LobbyView.prototype.show = function() {
+			base.prototype.show.apply(this, arguments);
+			this.trigger('show');
+		};
 		
 		return LobbyView;
 	})(PageView);

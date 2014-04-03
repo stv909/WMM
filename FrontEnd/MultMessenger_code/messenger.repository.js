@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, abyss, VK, text, settings) {
+(function(messenger, eve, abyss, VK, Q, text, settings) {
 	
 	var UserModel = messenger.models.UserModel;
 	var GroupModel = messenger.models.GroupModel;
@@ -170,8 +170,28 @@ var messenger = messenger || {};
 		
 	})(eve.EventEmitter);
 	
+	var ChatRepository = (function(base) {
+		eve.extend(ChatRepository, base);
+		
+		function ChatRepository(chatClientWrapper) {
+			base.apply(this, arguments);
+			
+			this.chatClientWrapper = chatClientWrapper;
+			this.messages = [];
+		}
+		
+		ChatRepository.prototype.loadTapeMessagesAsync = function() {
+			return this.chatClientWrapper.loadTapeAsync().then(function(tape) {
+				console.log(tape);
+			});
+		};
+		
+		return ChatRepository;
+	})(eve.EventEmitter);
+	
 	messenger.repository = messenger.repository || {};
 	messenger.repository.Pagination = Pagination;
 	messenger.repository.ContactRepository = ContactRepository;
+	messenger.repository.ChatRepository = ChatRepository;
 	
-})(messenger, eve, abyss, VK, text, settings);
+})(messenger, eve, abyss, VK, Q, text, settings);

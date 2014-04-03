@@ -1,8 +1,6 @@
 window.onload = function() {
 	var EventEmitter = eve.EventEmitter;
 
-	var ContactRepository = messenger.repository.ContactRepository;
-	
 	var MessageStorage = messenger.storage.MessageStorage;
 
 	var PostDialogView = messenger.views.PostDialogView;
@@ -30,7 +28,8 @@ window.onload = function() {
 		
 		this.messageStorage = new MessageStorage(this.chatClientWrapper);
 		
-		this.contactRepository = new ContactRepository();
+		this.contactRepository = new messenger.repository.ContactRepository();
+		this.chatRepository = new messenger.repository.ChatRepository(this.chatClientWrapper);
 
 		this.mainMenuView = new messenger.views.MainMenuView();
 		this.mainContainerView = new messenger.views.MainContainerView();
@@ -50,6 +49,7 @@ window.onload = function() {
 		this.preloadDialogView = new PreloadDialogView();
 		this.askMessageDialogView = new AskMessageDialogView();
 		this.errorDialogView = new ErrorDialogView();
+		this.prepareChatDialogView = new messenger.views.PrepareChatDialogView();
 
 		this.currentSkipAnswerAsync = null;
 		this.emptySkipAnswerAsync = function() {
@@ -369,6 +369,25 @@ window.onload = function() {
 			alert('text');
 		});
 		
+		this.onceLobbyViewShowHandler = function() {
+			self.prepareChatDialogView.show();
+			self.chatRepository.loadTapeMessagesAsync().then(function() {
+				throw new Error();
+				self.currentLobbyViewShowHandler = self.emptyLobbyViewShowHandler;
+				self.prepareChatDialogView.setMode('complete');
+			}).catch(function(error) {
+				self.prepareChatDialogView.setMode('fail');
+				self.prepareChatDialogView.once('click:close', function() {
+					self.mainMenuView.postcardItemView.select();
+				});
+			});
+		};
+		this.emptyLobbyViewShowHandler = function() { };
+		this.currentLobbyViewShowHandler = this.onceLobbyViewShowHandler;
+		
+		this.lobbyView.on('show', function() {
+			self.currentLobbyViewShowHandler();
+		});
 		this.lobbyView.on('search:users', function(event) {
 			console.log(event.text);
 		});

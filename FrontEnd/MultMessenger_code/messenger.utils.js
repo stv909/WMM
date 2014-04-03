@@ -254,6 +254,17 @@ var messenger = messenger || {};
 		
 		return task.promise;
 	};
+	ChatClientWrapper.prototype.loadTapeAsync = function() {
+		var task = this._createRequestTask(true);
+		
+		this.chatClient.once('message:tape', function(event) {
+			var tape = event.response.tape;
+			task.resolve(tape);
+		});
+		this.chatClient.tape();
+		
+		return task.promise;
+	};
 	
 	messenger.utils = {
 		VkTools: VkTools,
