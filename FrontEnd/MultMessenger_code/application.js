@@ -5,17 +5,6 @@ window.onload = function() {
 	
 	var MessageStorage = messenger.storage.MessageStorage;
 
-	var MainMenuView = messenger.views.MainMenuView;
-	var MainContainerView = messenger.views.MainContainerView;
-	var PostcardView = messenger.views.PostcardView;
-	var PostcardMenuView = messenger.views.PostcardMenuView;
-	var ConversationView = messenger.views.ConversationView;
-	var ConversationMenuView = messenger.views.ConversationMenuView;
-	var TapePageView = messenger.views.TapePageView;
-	var SelectPageView = messenger.views.SelectPageView;
-	var EditPageView = messenger.views.EditPageView;
-	var PostPageView = messenger.views.PostPageView;
-	var AnswerPageView = messenger.views.AnswerPageView;
 	var PostDialogView = messenger.views.PostDialogView;
 	var SkipDialogView = messenger.views.SkipDialogView;
 	var AskMessageDialogView = messenger.views.AskMessageDialogView;
@@ -43,17 +32,18 @@ window.onload = function() {
 		
 		this.contactRepository = new ContactRepository();
 
-		this.mainMenuView = new MainMenuView();
-		this.mainContainerView = new MainContainerView();
-		this.postcardView = new PostcardView();
-		this.postcardMenuView = new PostcardMenuView();
-		this.conversationView = new ConversationView();
-		this.conversationMenuView = new ConversationMenuView();
-		this.tapePageView = new TapePageView();
-		this.selectPageView = new SelectPageView();
-		this.editPageView = new EditPageView();
-		this.postPageView = new PostPageView();
-		this.answerPageView = new AnswerPageView();
+		this.mainMenuView = new messenger.views.MainMenuView();
+		this.mainContainerView = new messenger.views.MainContainerView();
+		this.postcardView = new messenger.views.PostcardView();
+		this.postcardMenuView = new messenger.views.PostcardMenuView();
+		this.conversationView = new messenger.views.ConversationView();
+		this.conversationMenuView = new messenger.views.ConversationMenuView();
+		this.lobbyView = new messenger.views.LobbyView();
+		this.tapePageView = new messenger.views.TapePageView();
+		this.selectPageView = new messenger.views.SelectPageView();
+		this.editPageView = new messenger.views.EditPageView();
+		this.postPageView = new messenger.views.PostPageView();
+		this.answerPageView = new messenger.views.AnswerPageView();
 		
 		this.postDialogView = new PostDialogView();
 		this.skipDialogView = new SkipDialogView();
@@ -234,6 +224,7 @@ window.onload = function() {
 		this.conversationView.attachTo(this.mainContainerView.elem);
 		this.conversationMenuView.attachTo(this.conversationView.elem);
 		this.tapePageView.attachTo(this.conversationView.elem);
+		this.lobbyView.attachTo(this.mainContainerView.elem);
 		
 		this.selectPageView.attachTo(this.postcardView.elem);
 		this.editPageView.attachTo(this.postcardView.elem);
@@ -247,6 +238,7 @@ window.onload = function() {
 		};
 		this.chatPostClickHandler = function() {
 			self.postcardView.hide();
+			self.lobbyView.hide();
 			self.conversationView.show();
 			self.mainMenuView.enableShadow(true);
 		};
@@ -259,6 +251,7 @@ window.onload = function() {
 		};
 		this.chatPostcardClickHandler = function() {
 			self.answerPageView.hide();
+			self.lobbyView.hide();
 			self.postcardView.show();
 			self.conversationView.hide();
 			
@@ -274,6 +267,7 @@ window.onload = function() {
 		this.mainMenuView.on('click:answer', function() {
 			self.answerPageView.show();
 			self.postcardView.hide();
+			self.lobbyView.hide();
 			self.conversationView.hide();
 		});
 		this.mainMenuView.on('click:logo', function() {
@@ -295,6 +289,7 @@ window.onload = function() {
 			self.currentSkipAnswerAsync().then(function() {
 				self.answerPageView.hide();
 				self.postcardView.hide();
+				self.lobbyView.show();
 				self.conversationView.hide();
 			}).catch(function() {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
@@ -306,6 +301,7 @@ window.onload = function() {
 			self.currentSkipAnswerAsync().then(function() {
 				self.answerPageView.hide();
 				self.postcardView.hide();
+				self.lobbyView.hide();
 				self.conversationView.show();
 			}).catch(function() {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
@@ -372,7 +368,10 @@ window.onload = function() {
 		this.conversationMenuView.on('click:text', function() {
 			alert('text');
 		});
-
+		
+		this.lobbyView.on('search:users', function(event) {
+			console.log(event.text);
+		});
 		this.answerPageView.on('click:answer', function(event) {
 			self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 			self.mainMenuView.postcardItemView.select();
@@ -397,24 +396,6 @@ window.onload = function() {
 		this.selectPageView.on('click:preload', function(event) {
 			self.messageStorage.appendPreloadedMessages();	
 			analytics.send('tape', 'msg_load_new', 'success');
-		});
-		
-		this.postDialogView.on('click:close', function(event) {
-			if (self.currentSkipAnswerAsync === self.requestedSkipAnswerAsync) {
-				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
-				self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
-				self.postPageView.setMode('friend');
-				self.postcardMenuView.selectItemView.select();
-				window.location.hash = '';
-			}	
-		});
-		
-		this.skipDialogView.on('click:ok', function(event) {
-			self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
-			self.postPageView.setMode('friend');
-			self.postcardMenuView.selectItemView.select();
-			window.location.hash = '';
-			analytics.send('answer', 'browse_tape');
 		});
 		
 		this.postPageView.on('click:send', function(event) {
@@ -487,6 +468,22 @@ window.onload = function() {
 			self.currentSkipUpdateAsync = self.requestedSkipUpdateAsync;
 		});
 		
+		this.postDialogView.on('click:close', function(event) {
+			if (self.currentSkipAnswerAsync === self.requestedSkipAnswerAsync) {
+				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
+				self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
+				self.postPageView.setMode('friend');
+				self.postcardMenuView.selectItemView.select();
+				window.location.hash = '';
+			}	
+		});
+		this.skipDialogView.on('click:ok', function(event) {
+			self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
+			self.postPageView.setMode('friend');
+			self.postcardMenuView.selectItemView.select();
+			window.location.hash = '';
+			analytics.send('answer', 'browse_tape');
+		});
 		this.askMessageDialogView.on('click:ok', function() {
 			self.editPageView.reset();
 		});

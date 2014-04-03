@@ -182,16 +182,6 @@
 		return PostcardView;
 	})(PageView);
 	
-	var LobbyView = (function(base) {
-		eve.extend(LobbyView, base);
-		
-		function LobbyView() {
-			base.apply(this, arguments);
-		}
-		
-		return LobbyView;
-	})(PageView);
-	
 	var ConversationView = (function(base) {
 		eve.extend(ConversationView, base);
 		
@@ -250,14 +240,23 @@
 			this.selectItemView.on('select', function() {
 				self.trigger('click:select');
 				self.chooseItemView(self.selectItemView);
+				self.selectItemView.enableFlicker(false);
+				self.editItemView.enableFlicker(true);
+				self.postItemView.enableFlicker(false);
 			});
 			this.editItemView.on('select', function() {
 				self.trigger('click:edit');
 				self.chooseItemView(self.editItemView);
+				self.selectItemView.enableFlicker(false);
+				self.editItemView.enableFlicker(false);
+				self.postItemView.enableFlicker(true);
 			});
 			this.postItemView.on('select', function() {
 				self.trigger('click:post');
 				self.chooseItemView(self.postItemView);
+				self.selectItemView.enableFlicker(false);
+				self.editItemView.enableFlicker(false);
+				self.postItemView.enableFlicker(false);
 			});
 			
 			this.selectItemView.attachTo(this.breadcrumbsElem);
@@ -331,6 +330,13 @@
 		};
 		PostcardMenuItemView.prototype.setText = function(text) {
 			this.elem.textContent = text;
+		};
+		PostcardMenuItemView.prototype.enableFlicker = function(enable) {
+			if (enable) {
+				this.elem.classList.add('flicker');
+			} else {
+				this.elem.classList.remove('flicker');
+			}
 		};
 		
 		return PostcardMenuItemView;
@@ -432,7 +438,6 @@
 	messenger.views.MainContainerView = MainContainerView;
 	messenger.views.PostcardView = PostcardView;
 	messenger.views.PostcardMenuView = PostcardMenuView;
-	messenger.views.LobbyView = LobbyView;
 	messenger.views.ConversationView = ConversationView;
 	messenger.views.ConversationMenuView = ConversationMenuView;
 	messenger.views.TapePageView = TapePageView;

@@ -120,6 +120,43 @@
 		return PostPageView;
 	})(PageView);
 	
+	var LobbyView = (function(base) {
+		eve.extend(LobbyView, base);
+		
+		function LobbyView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.elem = template.create('lobby-template', { id: 'lobby' });
+			this.queryElem = this.elem.getElementsByClassName('query')[0];
+			this.contactsHolderElem = this.elem.getElementsByClassName('contacts-holder')[0];
+			
+			this.hide();
+			
+			this.queryElemObserver = new DelayedObserver(this.queryElem.value);
+			this.queryElemObserver.on('change:value', function(event) {
+				self.trigger({
+					type: 'search:users',
+					text: event.value
+				});
+				analytics.send('friends', 'friends_search');
+			});
+			
+			var queryElemInputListener = function(event) {
+				self.queryElemObserver.set(self.queryElem.value);	
+			};
+			
+			this.queryElem.addEventListener('input', queryElemInputListener);
+			
+			this.once('dispose', function() {
+				self.queryElemObserver.off();
+				self.queryElem.removeEventListener('input', queryElemInputListener);
+			});
+		}
+		
+		return LobbyView;
+	})(PageView);
+	
 	var SearchView = (function(base) {
 		eve.extend(SearchView, base);
 		
@@ -385,5 +422,6 @@
 	})(SearchView);
 	
 	messenger.views.PostPageView = PostPageView;
+	messenger.views.LobbyView = LobbyView;
 	
 })(messenger, eve, abyss, template, analytics);
