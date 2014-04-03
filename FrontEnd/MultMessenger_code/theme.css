@@ -282,6 +282,7 @@ body {
   background-color: #f00;
   border-radius: 2px;
   cursor: pointer;
+  text-shadow: 0 0 2px #666;
 }
 .postcard-menu .cancel:hover {
   background-color: #e00;

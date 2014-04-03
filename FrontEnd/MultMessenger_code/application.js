@@ -248,6 +248,7 @@ window.onload = function() {
 		this.chatPostClickHandler = function() {
 			self.postcardView.hide();
 			self.conversationView.show();
+			self.mainMenuView.enableShadow(true);
 		};
 		this.currentPostClickHandler = this.defaultPostClickHandler;
 		
@@ -338,6 +339,7 @@ window.onload = function() {
 			self.conversationView.show();
 			self.postcardView.hide();
 			self.postcardMenuView.hideCancel();
+			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
 			self.postcardMenuView.postItemView.setText('3. Отправь на стену!');
 			self.mainMenuView.enableShadow(true);
 			self.currentPostClickHandler = self.defaultPostClickHandler;
