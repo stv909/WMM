@@ -11,7 +11,7 @@ window.onload = function() {
 	var PostcardMenuView = messenger.views.PostcardMenuView;
 	var ConversationView = messenger.views.ConversationView;
 	var ConversationMenuView = messenger.views.ConversationMenuView;
-	
+	var TapePageView = messenger.views.TapePageView;
 	var SelectPageView = messenger.views.SelectPageView;
 	var EditPageView = messenger.views.EditPageView;
 	var PostPageView = messenger.views.PostPageView;
@@ -49,7 +49,7 @@ window.onload = function() {
 		this.postcardMenuView = new PostcardMenuView();
 		this.conversationView = new ConversationView();
 		this.conversationMenuView = new ConversationMenuView();
-		
+		this.tapePageView = new TapePageView();
 		this.selectPageView = new SelectPageView();
 		this.editPageView = new EditPageView();
 		this.postPageView = new PostPageView();
@@ -233,10 +233,42 @@ window.onload = function() {
 		this.postcardMenuView.attachTo(this.postcardView.elem);
 		this.conversationView.attachTo(this.mainContainerView.elem);
 		this.conversationMenuView.attachTo(this.conversationView.elem);
+		this.tapePageView.attachTo(this.conversationView.elem);
 		
 		this.selectPageView.attachTo(this.postcardView.elem);
 		this.editPageView.attachTo(this.postcardView.elem);
 		this.postPageView.attachTo(this.postcardView.elem);
+		
+		this.defaultPostClickHandler = function() {
+			self.answerPageView.hide();
+			self.selectPageView.hide();
+			self.editPageView.hide();
+			self.postPageView.show();
+		};
+		this.chatPostClickHandler = function() {
+			self.postcardView.hide();
+			self.conversationView.show();
+		};
+		this.currentPostClickHandler = this.defaultPostClickHandler;
+		
+		this.defaultPostcardClickHandler = function() {
+			self.answerPageView.hide();
+			self.postcardView.show();
+			self.conversationView.hide();
+		};
+		this.chatPostcardClickHandler = function() {
+			self.answerPageView.hide();
+			self.postcardView.show();
+			self.conversationView.hide();
+			
+			self.postcardMenuView.hideCancel();
+			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
+			self.postcardMenuView.postItemView.setText('3. Отправь на стену!');
+			self.postcardMenuView.selectItemView.select();
+			self.currentPostClickHandler = self.defaultPostClickHandler;
+			self.currentPostcardClickHandler = self.defaultPostcardClickHandler;
+		};
+		this.currentPostcardClickHandler = this.defaultPostcardClickHandler;
 		
 		this.mainMenuView.on('click:answer', function() {
 			self.answerPageView.show();
@@ -251,9 +283,7 @@ window.onload = function() {
 		});
 		this.mainMenuView.on('click:postcard', function() {
 			self.currentSkipAnswerAsync().then(function() {
-				self.answerPageView.hide();
-				self.postcardView.show();
-				self.conversationView.hide();
+				self.currentPostcardClickHandler();
 			}).catch(function() {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.mainMenuView.restore();
@@ -297,26 +327,48 @@ window.onload = function() {
 		});
 		this.postcardMenuView.on('click:post', function() {
 			self.currentSkipUpdateAsync().then(function() {
-				self.answerPageView.hide();
-				self.selectPageView.hide();
-				self.editPageView.hide();
-				self.postPageView.show();
+				self.currentPostClickHandler();
 			}).catch(function() {
 				self.currentSkipUpdateAsync = self.emptySkipUpdateAsync;
 				self.postcardMenuView.editItemView.select();
 				self.currentSkipUpdateAsync = self.requestedSkipUpdateAsync;
 			});
 		});
+		this.postcardMenuView.on('click:cancel', function() {
+			self.conversationView.show();
+			self.postcardView.hide();
+			self.postcardMenuView.hideCancel();
+			self.postcardMenuView.postItemView.setText('3. Отправь на стену!');
+			self.mainMenuView.enableShadow(true);
+			self.currentPostClickHandler = self.defaultPostClickHandler;
+			self.currentPostcardClickHandler = self.defaultPostcardClickHandler;
+		});
 		this.postcardMenuView.selectItemView.select();
 		
 		this.conversationMenuView.on('click:filmtext', function() {
-			alert('filmtext');	
+			self.conversationView.hide();
+			self.postcardView.show();
+			self.postcardMenuView.selectItemView.select();
+			self.postcardMenuView.showCancel();
+			self.mainMenuView.enableShadow(false);
+			self.postcardMenuView.editItemView.setText('2. Напиши сценарий!');
+			self.postcardMenuView.postItemView.setText('3. Отправь в чат!');
+			self.currentPostClickHandler = self.chatPostClickHandler;
+			self.currentPostcardClickHandler = self.chatPostcardClickHandler;
+		});
+		this.conversationMenuView.on('click:postcard', function() {
+			self.conversationView.hide();
+			self.postcardView.show();
+			self.postcardMenuView.selectItemView.select();
+			self.postcardMenuView.showCancel();
+			self.mainMenuView.enableShadow(false);
+			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
+			self.postcardMenuView.postItemView.setText('3. Отправь в чат!');
+			self.currentPostClickHandler = self.chatPostClickHandler;
+			self.currentPostcardClickHandler = self.chatPostcardClickHandler;
 		});
 		this.conversationMenuView.on('click:text', function() {
 			alert('text');
-		});
-		this.conversationMenuView.on('click:postcard', function() {
-			alert('postcard');
 		});
 
 		this.answerPageView.on('click:answer', function(event) {

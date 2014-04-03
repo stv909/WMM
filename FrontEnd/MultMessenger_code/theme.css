@@ -267,6 +267,28 @@ body {
 .postcard-menu .postcard-menu-item:last-child:after {
   display: none;
 }
+.postcard-menu .cancel {
+  position: absolute;
+  top: 0;
+  right: 8px;
+  height: 34px;
+  line-height: 34px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding-left: 16px;
+  padding-right: 16px;
+  font-size: 12px;
+  color: #fff;
+  background-color: #f00;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.postcard-menu .cancel:hover {
+  background-color: #e00;
+}
+.postcard-menu .cancel:active {
+  background-color: #d00;
+}
 .conversation {
   position: relative;
   width: 100%;
@@ -274,7 +296,7 @@ body {
 }
 .conversation-menu {
   position: absolute;
-  height: 51px;
+  height: 47px;
   width: 920px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -286,7 +308,7 @@ body {
   font-size: 12px;
 }
 .conversation-menu .items {
-  margin-top: 8px;
+  margin-top: 6px;
   display: inline-block;
 }
 .conversation-menu .conversation-menu-item {
@@ -362,6 +384,15 @@ body {
   border-left: 16px solid #fff;
   border-top: 10px solid #28f;
   border-bottom: 10px solid #28f;
+}
+#tape-page {
+  font-size: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 47px;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 #answer-page .container {
   display: inline-block;

@@ -215,6 +215,7 @@
 			
 			this.elem = template.create('postcard-menu-template', { className: 'postcard-menu' });
 			this.breadcrumbsElem = this.elem.getElementsByClassName('breadcrumbs')[0];
+			this.cancelElem = this.elem.getElementsByClassName('cancel')[0];
 			
 			this.itemViews = [];
 			this.previousSelectedItemView = null;
@@ -226,10 +227,16 @@
 			
 			this.initializeItemViews();
 			
+			var cancelElemClickListener = function() {
+				self.trigger('click:cancel');	
+			};
+			
+			this.cancelElem.addEventListener('click', cancelElemClickListener);
 			this.once('dispose', function() {
 				self.itemViews.forEach(function(itemView) {
 					itemView.dispose();	
 				});
+				self.cancelElem.removeEventListener('click', cancelElemClickListener);
 			});
 		}
 		
@@ -274,6 +281,12 @@
 			if (this.previousSelectedItemView) {
 				this.previousSelectedItemView.select();
 			}	
+		};
+		PostcardMenuView.prototype.showCancel = function() {
+			this.cancelElem.classList.remove('hidden');
+		};
+		PostcardMenuView.prototype.hideCancel = function() {
+			this.cancelElem.classList.add('hidden');
 		};
 		
 		return PostcardMenuView;
@@ -402,6 +415,18 @@
 		return ConversationMenuItemView;
 	})(abyss.View);
 	
+	var TapePageView = (function(base) {
+		eve.extend(TapePageView, base);
+		
+		function TapePageView() {
+			base.apply(this, arguments);
+			
+			this.elem = template.create('tape-page-template', { id: 'tape-page' });
+		}
+		
+		return TapePageView;
+	})(PageView);
+	
 	messenger.views = messenger.views || {};
 	messenger.views.MainMenuView = MainMenuView;
 	messenger.views.MainContainerView = MainContainerView;
@@ -410,5 +435,6 @@
 	messenger.views.LobbyView = LobbyView;
 	messenger.views.ConversationView = ConversationView;
 	messenger.views.ConversationMenuView = ConversationMenuView;
+	messenger.views.TapePageView = TapePageView;
 	
 })(messenger, eve, abyss, template, settings, analytics);
