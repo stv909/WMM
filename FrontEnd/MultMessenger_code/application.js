@@ -380,7 +380,6 @@ window.onload = function() {
 		this.prepareDialogsHandler = function() {
 			self.prepareChatDialogView.show();
 			self.chatRepository.loadTapeMessagesAsync().then(function() {
-				//throw new Error();
 				self.currentPrepareDialogsHandler = self.emptyPrepareDialogsHandler;
 				self.prepareChatDialogView.setMode('complete');
 			}).catch(function(error) {

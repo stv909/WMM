@@ -181,7 +181,7 @@ var messenger = messenger || {};
 		
 		ContactRepository.prototype.getUserByVkid = function(vkId) {
 			var users = this.userSearch.objects;
-			var id = parseInt(vkId.substring(4));
+			var id = parseInt(vkId.substring(4), 10);
 			var user = null;
 			for (var i = 0; i < users.length; i++) {
 				if (users[i].get('id') === id) {
