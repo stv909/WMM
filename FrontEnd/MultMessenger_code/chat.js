@@ -155,7 +155,10 @@ var chat = chat || {};
 		this.socket.send('scrape');
 	};
 	ChatClient.prototype.store = function(tag, id, data) {
-		var tagId = [tag, id].join('.');
+		var chunks = [];
+		if (tag) chunks.push(tag);
+		if (id) chunks.push(id);
+		var tagId = chunks.join('.');
 
 		this.socket.send('store');
 		this.socket.send(tagId);

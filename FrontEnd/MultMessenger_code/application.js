@@ -2,12 +2,7 @@ window.onload = function() {
 	var EventEmitter = eve.EventEmitter;
 
 	var MessageStorage = messenger.storage.MessageStorage;
-
-	var PostDialogView = messenger.views.PostDialogView;
-	var SkipDialogView = messenger.views.SkipDialogView;
-	var AskMessageDialogView = messenger.views.AskMessageDialogView;
-	var PreloadDialogView = messenger.views.PreloadDialogView;
-	var ErrorDialogView = messenger.views.ErrorDialogView;
+	
 	var MessagePatternView = messenger.views.MessagePatternView;
 	
 	var VkTools = messenger.utils.VkTools;
@@ -44,11 +39,11 @@ window.onload = function() {
 		this.postPageView = new messenger.views.PostPageView();
 		this.answerPageView = new messenger.views.AnswerPageView();
 		
-		this.postDialogView = new PostDialogView();
-		this.skipDialogView = new SkipDialogView();
-		this.preloadDialogView = new PreloadDialogView();
-		this.askMessageDialogView = new AskMessageDialogView();
-		this.errorDialogView = new ErrorDialogView();
+		this.postDialogView = new messenger.views.PostDialogView();
+		this.skipDialogView = new messenger.views.SkipDialogView();
+		this.preloadDialogView = new messenger.views.PreloadDialogView();
+		this.askMessageDialogView = new messenger.views.AskMessageDialogView();
+		this.errorDialogView = new messenger.views.ErrorDialogView();
 		this.prepareChatDialogView = new messenger.views.PrepareChatDialogView();
 
 		this.currentSkipAnswerAsync = null;
@@ -130,6 +125,19 @@ window.onload = function() {
 		this.messageStorage.on('end:messages', function() {
 			self.selectPageView.hideMessageLoading();	
 		});
+		
+		this.chatRepository.on('empty:last-contact', function() {
+			var chatContact = self.contactRepository.getFirstNonOwnUser();
+			self.mainMenuView.conversationItemView.setText(chatContact.getFullName());
+			self.chatRepository.setContact(chatContact);
+		});
+		this.chatRepository.on('update:last-contact', function(event) {
+			var lastContactId = event.lastContactId;
+			var chatContact = self.contactRepository.getUserByVkid(lastContactId);
+			self.mainMenuView.conversationItemView.setText(chatContact.getFullName());
+			self.chatRepository.setContact(chatContact);
+		});
+		
 		(function() {
 			var users = null;
 			var groups = null;
@@ -369,11 +377,11 @@ window.onload = function() {
 			alert('text');
 		});
 		
-		this.onceLobbyViewShowHandler = function() {
+		this.prepareDialogsHandler = function() {
 			self.prepareChatDialogView.show();
 			self.chatRepository.loadTapeMessagesAsync().then(function() {
-				throw new Error();
-				self.currentLobbyViewShowHandler = self.emptyLobbyViewShowHandler;
+				//throw new Error();
+				self.currentPrepareDialogsHandler = self.emptyPrepareDialogsHandler;
 				self.prepareChatDialogView.setMode('complete');
 			}).catch(function(error) {
 				self.prepareChatDialogView.setMode('fail');
@@ -382,15 +390,20 @@ window.onload = function() {
 				});
 			});
 		};
-		this.emptyLobbyViewShowHandler = function() { };
-		this.currentLobbyViewShowHandler = this.onceLobbyViewShowHandler;
+		this.emptyPrepareDialogsHandler = function() { };
+		this.currentPrepareDialogsHandler = this.prepareDialogsHandler;
 		
 		this.lobbyView.on('show', function() {
-			self.currentLobbyViewShowHandler();
+			self.currentPrepareDialogsHandler();
 		});
 		this.lobbyView.on('search:users', function(event) {
 			console.log(event.text);
 		});
+		
+		this.conversationView.on('show', function() {
+			self.currentPrepareDialogsHandler();
+		});
+		
 		this.answerPageView.on('click:answer', function(event) {
 			self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 			self.mainMenuView.postcardItemView.select();
@@ -506,11 +519,6 @@ window.onload = function() {
 		this.askMessageDialogView.on('click:ok', function() {
 			self.editPageView.reset();
 		});
-		
-		// this.groupElem.addEventListener('click', function() {
-		// 	window.open(settings.groupUrl, '_blank');
-		// 	analytics.send('app_start', 'app_go_group');
-		// });
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
 		var parseHash = function(hash) {
@@ -560,6 +568,10 @@ window.onload = function() {
 			var owner = self.contactRepository.owner;
 			var vkId = Helpers.buildVkId(owner);
 			return self.chatClientWrapper.connectAndLoginAsync(vkId);
+		}).then(function() {
+			var owner = self.contactRepository.owner;
+			var vkId = Helpers.buildVkId(owner);
+			return self.chatRepository.loadSettingsAsync(vkId);
 		}).then(function() {
 			return self.messageStorage.loadMessagesAsync();
 		}).then(function() {

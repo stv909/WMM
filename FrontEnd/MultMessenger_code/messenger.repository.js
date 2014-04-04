@@ -166,6 +166,33 @@ var messenger = messenger || {};
 			});
 		};
 		
+		ContactRepository.prototype.getFirstNonOwnUser = function(query) {
+			var users = this.userSearch.objects;
+			var user = null;
+			for (var i = 0; i < users.length; i++) {
+				if (users[i] !== this.owner) {
+					user = users[i];
+					break;
+				}
+			}
+			user = user || this.owner;
+			return user;
+		};
+		
+		ContactRepository.prototype.getUserByVkid = function(vkId) {
+			var users = this.userSearch.objects;
+			var id = parseInt(vkId.substring(4));
+			var user = null;
+			for (var i = 0; i < users.length; i++) {
+				if (users[i].get('id') === id) {
+					user = users[i];
+					break;
+				}
+			}
+			user = user || this.owner;
+			return user;
+		};
+		
 		return ContactRepository;
 		
 	})(eve.EventEmitter);
@@ -177,6 +204,8 @@ var messenger = messenger || {};
 			base.apply(this, arguments);
 			
 			this.chatClientWrapper = chatClientWrapper;
+			this.ownProfile = null;
+			this.contact = null;
 			this.messages = [];
 		}
 		
@@ -184,6 +213,35 @@ var messenger = messenger || {};
 			return this.chatClientWrapper.loadTapeAsync().then(function(tape) {
 				console.log(tape);
 			});
+		};
+		ChatRepository.prototype.loadSettingsAsync = function(profileId) {
+			var self = this;
+			return this.chatClientWrapper.getProfileAsync(profileId).then(function(profile) {
+				var value = profile.value || {};
+				value.settings = value.settings || {};
+				value.profileId = profileId;
+				self.ownProfile = value;
+				
+				if (!self.ownProfile.settings.lastContactId) {
+					self.trigger({
+						type: 'empty:last-contact'
+					});
+				} else {
+				
+					self.trigger({
+						type: 'update:last-contact',
+						lastContactId: self.ownProfile.settings.lastContactId
+					});
+				}
+			});
+		};
+		ChatRepository.prototype.setContact = function(contact) {
+			this.contact = contact;
+			this.ownProfile.settings.lastContactId = messenger.utils.Helpers.buildVkId(contact);
+			this.chatClientWrapper.saveProfileAsync(this.ownProfile.profileId, JSON.stringify(this.ownProfile));
+		};
+		ChatRepository.prototype.getContact = function() {
+			return this.contact;
 		};
 		
 		return ChatRepository;

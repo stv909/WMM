@@ -228,6 +228,21 @@ var messenger = messenger || {};
 		
 		return task.promise;
 	};
+	ChatClientWrapper.prototype.getProfileAsync = function(profileId) {
+		var task = this._createRequestTask(true);
+		
+		this.chatClient.once('message:retrieve', function(event) {
+			var profile = event.response.retrieve[0];
+			task.resolve(profile);
+		});
+		this.chatClient.retrieve(profileId);
+		
+		return task.promise;
+	};
+	ChatClientWrapper.prototype.saveProfileAsync = function(profileId, data) {
+		this.chatClient.store(null, profileId, data);
+		return Q.resolve(true);
+	};
 	ChatClientWrapper.prototype.nowAsync = function() {
 		var task = this._createRequestTask(true);
 		

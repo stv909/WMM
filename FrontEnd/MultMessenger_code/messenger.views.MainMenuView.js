@@ -151,6 +151,9 @@
 		MainMenuItemView.prototype.setClass = function(className) {
 			this.elem.classList.add(className);
 		};
+		MainMenuItemView.prototype.setText = function(text) {
+			this.elem.textContent = text;	
+		};
 		
 		return MainMenuItemView;
 	})(abyss.View);
@@ -192,6 +195,11 @@
 			this.elem.classList.add('conversation');
 			this.elem.classList.add('hidden');
 		}
+		
+		ConversationView.prototype.show = function() {
+			base.prototype.show.apply(this, arguments);
+			this.trigger('show');
+		};
 		
 		return ConversationView;
 	})(PageView);
