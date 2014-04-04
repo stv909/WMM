@@ -133,7 +133,7 @@ window.onload = function() {
 		});
 		this.chatRepository.on('update:last-contact', function(event) {
 			var lastContactId = event.lastContactId;
-			var chatContact = self.contactRepository.getUserByVkid(lastContactId);
+			var chatContact = self.contactRepository.getChatUserByVkid(lastContactId);
 			self.mainMenuView.conversationItemView.setText(chatContact.getFullName());
 			self.chatRepository.setContact(chatContact);
 		});
@@ -146,8 +146,27 @@ window.onload = function() {
 		
 		(function() {
 			var users = null;
+			var chatUsers = null;
 			var groups = null;
 			
+			self.contactRepository.on('search:chat-users', function(event) {
+				if (chatUsers) chatUsers.dispose();
+				self.lobbyView.clear();
+				self.lobbyView.showLoader();
+				self.lobbyView.off('click:load');
+				self.lobbyView.on('click:load', function() {
+					chatUsers.next();	
+				});
+				chatUsers = event.chatUsers;
+				chatUsers.on('paginate:item', function(event) {
+					var user = event.item;
+					self.lobbyView.addUser(user);
+				});
+				chatUsers.on('paginate:end', function(event) {
+					self.lobbyView.hideLoader();
+				});
+				chatUsers.next();
+			});
 			self.contactRepository.on('search:users', function(event) {
 				if (users) users.dispose();
 				self.postPageView.friendSearchView.clear();
@@ -388,6 +407,7 @@ window.onload = function() {
 			self.chatRepository.loadTapeMessagesAsync().then(function() {
 				self.currentPrepareDialogsHandler = self.emptyPrepareDialogsHandler;
 				self.prepareChatDialogView.setMode('complete');
+				self.contactRepository.searchChatUsers('');
 			}).catch(function(error) {
 				self.prepareChatDialogView.setMode('fail');
 				self.prepareChatDialogView.once('click:close', function() {
@@ -403,7 +423,13 @@ window.onload = function() {
 			self.currentPrepareDialogsHandler();
 		});
 		this.lobbyView.on('search:users', function(event) {
-			console.log(event.text);
+			self.contactRepository.searchChatUsers(event.text);
+		});
+		this.lobbyView.on('select:user', function(event) {
+			var user = event.user;	
+			self.chatRepository.setContact(user);
+			self.mainMenuView.conversationItemView.setText(user.getFullName());
+			self.mainMenuView.conversationItemView.select();
 		});
 		
 		this.conversationView.on('show', function() {

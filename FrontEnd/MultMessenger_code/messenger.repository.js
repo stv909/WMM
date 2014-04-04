@@ -58,6 +58,7 @@ var messenger = messenger || {};
 			
 			this.groupSearch = null;
 			this.userSearch = null;
+			this.chatUserSearch = null;
 			
 			this.owner = null;
 			this.sender = null;
@@ -100,9 +101,15 @@ var messenger = messenger || {};
 					if (friendCount) {
 						return loadFriendsAsync(count, offset + friendCount);
 					} else {
+						var chatUserCollection = userCollection.filter(function(user) {
+							return user !== self.owner;
+						});
 						self.userSearch = new TextSearch(userCollection, function(user) {
 							return [user.get('firstName'), user.get('lastName')];
 						});
+						self.chatUserSearch = new TextSearch(chatUserCollection, function(user) {
+							return [user.get('firstName'), user.get('lastName')];	
+						}, true);
 					}
 				});
 			};
@@ -156,6 +163,16 @@ var messenger = messenger || {};
 			});
 		};
 		
+		ContactRepository.prototype.searchChatUsers = function(query) {
+			var users = this.chatUserSearch.search(query);
+			var paginableUsers = new Pagination(users);
+			paginableUsers.count = 35;
+			this.trigger({
+				type: 'search:chat-users',
+				chatUsers: paginableUsers
+			});
+		};
+		
 		ContactRepository.prototype.searchGroups = function(query) {
 			var groups = this.groupSearch.search(query);
 			var paginableGroups = new Pagination(groups);
@@ -179,16 +196,10 @@ var messenger = messenger || {};
 			return user;
 		};
 		
-		ContactRepository.prototype.getUserByVkid = function(vkId) {
-			var users = this.userSearch.objects;
+		ContactRepository.prototype.getChatUserByVkid = function(vkId) {
 			var id = parseInt(vkId.substring(4), 10);
-			var user = null;
-			for (var i = 0; i < users.length; i++) {
-				if (users[i].get('id') === id) {
-					user = users[i];
-					break;
-				}
-			}
+			var user = this.chatUserSearch.getObjectById(id);
+			console.log(user, vkId);
 			user = user || this.owner;
 			return user;
 		};
