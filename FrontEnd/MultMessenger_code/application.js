@@ -383,6 +383,7 @@ window.onload = function() {
 				self.currentPrepareDialogsHandler = self.emptyPrepareDialogsHandler;
 				self.prepareChatDialogView.setMode('complete');
 			}).catch(function(error) {
+				console.log(error);
 				self.prepareChatDialogView.setMode('fail');
 				self.prepareChatDialogView.once('click:close', function() {
 					self.mainMenuView.postcardItemView.select();

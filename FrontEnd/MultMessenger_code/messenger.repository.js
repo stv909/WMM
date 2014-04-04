@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, abyss, VK, Q, text, settings) {
+(function(messenger, eve, abyss, VK, Q, text, settings, base64) {
 	
 	var UserModel = messenger.models.UserModel;
 	var GroupModel = messenger.models.GroupModel;
@@ -210,8 +210,16 @@ var messenger = messenger || {};
 		}
 		
 		ChatRepository.prototype.loadTapeMessagesAsync = function() {
+			var self = this;
 			return this.chatClientWrapper.loadTapeAsync().then(function(tape) {
-				console.log(tape);
+				var messageIds = tape.map(function(item) {
+					return item.id;
+				});
+				var rawMessagesPromise = self.chatClientWrapper.getMessagesAsync(messageIds);
+				return Q.all([tape, rawMessagesPromise]);
+			}).spread(function(tape, rawMessages) {
+				var chatMessages = rawMessages.map(ChatMessageModel.fromRaw);
+				console.log(chatMessages);
 			});
 		};
 		ChatRepository.prototype.loadSettingsAsync = function(profileId) {
@@ -247,9 +255,53 @@ var messenger = messenger || {};
 		return ChatRepository;
 	})(eve.EventEmitter);
 	
+	var ChatMessageModel = (function(base) {
+		eve.extend(ChatMessageModel, base);
+		
+		function ChatMessageModel() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.on('change:preview', function(event) {
+				var preview = event.value;
+				if (preview) {
+					self.set('type', 'mult');
+				} else {
+					self.set('type', 'text');
+				}
+			});
+			this.on('remove:preview', function() {
+				self.set('type', 'text');
+			});
+		}
+		
+		ChatMessageModel.prototype.isValid = function() {
+			return !!this.get('content');	
+		};
+		
+		ChatMessageModel.fromRaw = function(rawMessage) {
+			var message = new ChatMessageModel();
+			
+			var value = rawMessage.value || {};
+			
+			message.set({
+				id: value.id,
+				timestamp: value.timestamp,
+				content: value.content ? base64.decode(value.content) : null,
+				preview: value.preview,
+				from: value.from,
+				to: value.to
+			});
+			
+			return message;
+		};
+		
+		return ChatMessageModel;
+	})(abyss.Model);
+	
 	messenger.repository = messenger.repository || {};
 	messenger.repository.Pagination = Pagination;
 	messenger.repository.ContactRepository = ContactRepository;
 	messenger.repository.ChatRepository = ChatRepository;
 	
-})(messenger, eve, abyss, VK, Q, text, settings);
+})(messenger, eve, abyss, VK, Q, text, settings, base64);
