@@ -96,11 +96,23 @@ var messenger = messenger || {};
 						self.unreadElem.classList.add('hidden');
 					}
 				};
+				var updateOnlineStatus = function(online) {
+					if (online) {
+						self.elem.classList.remove('closed');
+					} else {
+						self.elem.classList.add('closed');
+					}
+				};
 				this.model.on('change:unread', function(event) {
 					var unread = event.value;
 					updateUnreadElem(unread);
 				});
+				this.model.on('change:online', function(event) {
+					var online = event.online;
+					updateOnlineStatus(online);
+				});
 				updateUnreadElem(this.model.get('unread'));
+				updateOnlineStatus(this.model.get('online'));
 			} else {
 				if (this.model.get('canPost')) {
 					this.elem.classList.remove('closed');
