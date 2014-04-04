@@ -206,7 +206,7 @@ var messenger = messenger || {};
 			this.chatClientWrapper = chatClientWrapper;
 			this.ownProfile = null;
 			this.contact = null;
-			this.messages = [];
+			this.messages = {};
 		}
 		
 		ChatRepository.prototype.loadTapeMessagesAsync = function() {
@@ -215,11 +215,24 @@ var messenger = messenger || {};
 				var messageIds = tape.map(function(item) {
 					return item.id;
 				});
+				var idToShown = {};
+				tape.forEach(function(item) {
+					idToShown[item.id] = item.shown;
+				});
 				var rawMessagesPromise = self.chatClientWrapper.getMessagesAsync(messageIds);
-				return Q.all([tape, rawMessagesPromise]);
-			}).spread(function(tape, rawMessages) {
+				return Q.all([idToShown, rawMessagesPromise]);
+			}).spread(function(idToShown, rawMessages) {
 				var chatMessages = rawMessages.map(ChatMessageModel.fromRaw);
-				console.log(chatMessages);
+				chatMessages = chatMessages.filter(function(chatMessage) {
+					return chatMessage.isValid();	
+				});
+				chatMessages.forEach(function(chatMessage) {
+					var msgId = ['msg', chatMessage.get('id')].join('.');
+					chatMessage.set('shown', idToShown[msgId]);
+				});
+				chatMessages.forEach(function(chatMessage) {
+					self.addMessage(chatMessage);
+				});
 			});
 		};
 		ChatRepository.prototype.loadSettingsAsync = function(profileId) {
@@ -250,6 +263,28 @@ var messenger = messenger || {};
 		};
 		ChatRepository.prototype.getContact = function() {
 			return this.contact;
+		};
+		ChatRepository.prototype.addMessage = function(message) {
+			var messageId = message.get('id');
+			if (!this.hasMessage(messageId)) {
+				this.messages[messageId] = message;
+				this.trigger({
+					type: 'add:message',
+					message: message
+				});
+			}
+		};
+		ChatRepository.prototype.hasMessage = function(messageId) {
+			return this.messages.hasOwnProperty(messageId);	
+		};
+		ChatRepository.prototype.removeMessage = function(messageId) {
+			if (this.hasMessage(messageId)) {
+				delete this.messages[messageId];
+				this.trigger({
+					type: 'remove:message',
+					messageId: messageId
+				});
+			}
 		};
 		
 		return ChatRepository;

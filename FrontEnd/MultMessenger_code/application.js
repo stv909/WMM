@@ -137,6 +137,12 @@ window.onload = function() {
 			self.mainMenuView.conversationItemView.setText(chatContact.getFullName());
 			self.chatRepository.setContact(chatContact);
 		});
+		this.chatRepository.on('add:message', function(event) {
+			var message = event.message;
+		});
+		this.chatRepository.on('remove:message', function(event) {
+			var messageId = event.messageId;
+		});
 		
 		(function() {
 			var users = null;
@@ -383,11 +389,11 @@ window.onload = function() {
 				self.currentPrepareDialogsHandler = self.emptyPrepareDialogsHandler;
 				self.prepareChatDialogView.setMode('complete');
 			}).catch(function(error) {
-				console.log(error);
 				self.prepareChatDialogView.setMode('fail');
 				self.prepareChatDialogView.once('click:close', function() {
 					self.mainMenuView.postcardItemView.select();
 				});
+				console.log(error);
 			});
 		};
 		this.emptyPrepareDialogsHandler = function() { };
