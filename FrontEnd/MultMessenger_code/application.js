@@ -145,6 +145,10 @@ window.onload = function() {
 			if (!shown && chatContact) {
 				var unread = chatContact.get('unread');
 				chatContact.set('unread', unread + 1);
+				message.once('change:shown', function(event) {
+					var unread = chatContact.get('unread');
+					chatContact.set('unread', unread - 1);
+				});
 			}
 		});
 		this.chatRepository.on('remove:message', function(event) {
