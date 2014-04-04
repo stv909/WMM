@@ -165,6 +165,17 @@ var messenger = messenger || {};
 		
 		ContactRepository.prototype.searchChatUsers = function(query) {
 			var users = this.chatUserSearch.search(query);
+			users = users.sort(function(user1, user2) {
+				var unread1 = user1.get('unread');
+				var unread2 = user2.get('unread');
+				if (unread1 < unread2) {
+					return 1;
+				} else if (unread1 > unread2) {
+					return -1;
+				} else {
+					return 0;
+				}
+			});
 			var paginableUsers = new Pagination(users);
 			paginableUsers.count = 35;
 			this.trigger({
