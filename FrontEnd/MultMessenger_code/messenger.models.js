@@ -22,7 +22,7 @@ var messenger = messenger || {};
 				lastName: rawUser.last_name,
 				photo: rawUser.photo_200 || rawUser.photo_100 || rawUser.photo_50,
 				canPost: rawUser.can_post,
-				unreadMessages: 0
+				unread: 0
 			});
 			
 			return user;
@@ -53,7 +53,7 @@ var messenger = messenger || {};
 		
 		UserModel.loadFriendsChunkAsync = function(count, offset) {
 			return VK.apiAsync('friends.get', {
-				user_id: 97383475,
+				//user_id: 97383475,
 				count: count,
 				offset: offset,
 				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),

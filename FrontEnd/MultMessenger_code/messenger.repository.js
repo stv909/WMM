@@ -199,7 +199,6 @@ var messenger = messenger || {};
 		ContactRepository.prototype.getChatUserByVkid = function(vkId) {
 			var id = parseInt(vkId.substring(4), 10);
 			var user = this.chatUserSearch.getObjectById(id);
-			console.log(user, vkId);
 			user = user || this.owner;
 			return user;
 		};

@@ -139,6 +139,13 @@ window.onload = function() {
 		});
 		this.chatRepository.on('add:message', function(event) {
 			var message = event.message;
+			var from = message.get('from');
+			var shown = message.get('shown');
+			var chatContact = self.contactRepository.getChatUserByVkid(from);
+			if (!shown && chatContact) {
+				var unread = chatContact.get('unread');
+				chatContact.set('unread', unread + 1);
+			}
 		});
 		this.chatRepository.on('remove:message', function(event) {
 			var messageId = event.messageId;

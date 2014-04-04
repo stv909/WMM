@@ -12,6 +12,7 @@ var messenger = messenger || {};
 			this.elem = template.create('contact-template', { className: 'contact' });
 			this.photoElem = this.elem.getElementsByClassName('photo')[0];
 			this.nameElem = this.elem.getElementsByClassName('name')[0];
+			this.unreadElem = this.elem.getElementsByClassName('unread')[0];
 			
 			this.selected = false;
 			
@@ -52,10 +53,11 @@ var messenger = messenger || {};
 	var UserView = (function(base) {
 		eve.extend(UserView, base);
 		
-		function UserView(model) {
+		function UserView(model, isChatUser) {
 			base.apply(this, arguments);
 			var self = this;
 			
+			this.isChatUser = isChatUser;
 			this.setModel(model);
 			this.deselect();
 			
@@ -79,19 +81,36 @@ var messenger = messenger || {};
 		
 		UserView.prototype.setModel = function(model) {
 			base.prototype.setModel.apply(this, arguments);
+			var self = this;
 
 			if (!this.model) {
 				return;
 			}
 			
+			if (this.isChatUser) {
+				var updateUnreadElem = function(unread) {
+					if (unread > 0) {
+						self.unreadElem.textContent = unread;
+						self.unreadElem.classList.remove('hidden');
+					} else {
+						self.unreadElem.classList.add('hidden');
+					}
+				};
+				this.model.on('change:unread', function(event) {
+					var unread = event.value;
+					updateUnreadElem(unread);
+				});
+				updateUnreadElem(this.model.get('unread'));
+			} else {
+				if (this.model.get('canPost')) {
+					this.elem.classList.remove('closed');
+				} else {
+					this.elem.classList.add('closed');
+				}
+			}
+			
 			this.photoElem.src = this.model.get('photo');
 			this.nameElem.textContent = this.model.getFullName();
-			
-			if (this.model.get('canPost')) {
-				this.elem.classList.remove('closed');
-			} else {
-				this.elem.classList.add('closed');
-			}
 		};
 		
 		return UserView;

@@ -1231,6 +1231,7 @@ html, body
 	padding-bottom 4px
 	box-sizing(border-box)
 .contact
+	position relative
 	vertical-align top
 	font-size 0
 	margin-left 1px
@@ -1265,6 +1266,16 @@ html, body
 		&:hover
 			color aspect-color
 			text-decoration underline
+	.unread
+		position absolute
+		top 12px
+		right 12px
+		padding 4px 8px 4px 8px
+		border-radius 2px
+		font-size 10px
+		background-color red
+		color white
+		box-shadow 0 0 4px #333
 .message-wrapper
 	display inline-block
 	height 100%

@@ -214,7 +214,7 @@
 			var id = user.get('id');
 			var userView = this.cachedUserViews[id];
 			if (!userView) {
-				userView = new UserView(user);
+				userView = new UserView(user, true);
 				userView.on('select', this.userViewSelectListener);
 				this.cachedUserViews[id] = userView;
 			}
