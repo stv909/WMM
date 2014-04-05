@@ -12,7 +12,15 @@
 			
 			this.cachedTapeViews = {};
 			this.currentTapeView = null;
+			
+			this._addShadowElem();
 		}
+		
+		ConversationView.prototype._addShadowElem = function() {
+			var shadowElem = document.createElement('div');
+			shadowElem.classList.add('shadow');
+			this.elem.appendChild(shadowElem);
+		};
 		
 		ConversationView.prototype.show = function() {
 			base.prototype.show.apply(this, arguments);
@@ -53,6 +61,7 @@
 		
 		function TapePageView(contactId) {
 			base.apply(this, arguments);
+			var self = this;
 			
 			this.elem = template.create('tape-page-template', { className: 'tape-page' });
 			this.contactId = contactId;
@@ -61,6 +70,23 @@
 			this.newTapeItems = [];
 			
 			this.addTapeItemHandler = this.addHiddenTapeItem;
+			
+			var wheelListener = function(event) {
+	            var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
+	            var isIE = Math.abs(delta) >= 120;
+	            var scrollPending = isIE ? delta / 2 : 0;
+	            if (delta < 0 && (self.elem.scrollTop + scrollPending) <= 0) {
+					self.elem.scrollTop = 0;
+					event.preventDefault();
+	            }
+	            else if (delta > 0 && (self.elem.scrollTop + scrollPending >= (self.elem.scrollHeight - self.elem.offsetHeight))) {
+					self.elem.scrollTop = self.elem.scrollHeight - self.elem.offsetHeight;
+					event.preventDefault();
+	            }
+			};
+			
+			this.elem.addEventListener('DOMMouseScroll', wheelListener, false);
+			this.elem.addEventListener('mousewheel', wheelListener, false);
 		}
 		
 		TapePageView.prototype.addTapeItem = function(chatMessage, contact) {
@@ -104,13 +130,46 @@
 		function TapeItemView(chatMessage, contact) {
 			base.apply(this, arguments);
 			
+			this.chatMessage = chatMessage;
+			this.contact = contact;
+			
 			this.elem = template.create('tape-item-template', { className: 'tape-item' });
 			this.contactHolderElem = this.elem.getElementsByClassName('contact-holder')[0];
 			this.messageHolderElem = this.elem.getElementsByClassName('message-holder')[0];
 			this.controlsHolderElem = this.elem.getElementsByClassName('controls-holder')[0];
+			
+			this.contactView = null;
+			this.messageView = null;
+			this.controlsView = null;
+			
+			this.initializeViews();
 		}
 		
+		TapeItemView.prototype.initializeViews = function() {
+			var userView = new messenger.views.UserView(this.contact);
+			
+			userView.disableUnreadCounter();
+			userView.disableSelecting();
+			userView.attachTo(this.contactHolderElem);
+			
+			if (this.chatMessage.isMult()) {
+				
+			} else {
+				userView.disablePhoto();
+			}
+		};
+		
 		return TapeItemView;
+	})(abyss.View);
+	
+	var MessageControlsView = (function(base) {
+		eve.extend(MessageControlsView, base);
+		
+		function MessageControlsView() {
+			base.apply(this, arguments);
+		}
+		
+		return MessageControlsView;
 	})(abyss.View);
 	
 	messenger.views = messenger.views || {};

@@ -153,7 +153,7 @@ window.onload = function() {
 			}
 			if (fromContact && toContact && fromContact !== toContact) {
 				if (fromContact !== ownerContact && toContact === ownerContact) {
-					self.conversationView.addTapeItem(fromContact.get('id'), message, toContact);
+					self.conversationView.addTapeItem(fromContact.get('id'), message, fromContact);
 				} else if (fromContact === ownerContact && toContact !== ownerContact) {
 					self.conversationView.addTapeItem(toContact.get('id'), message, fromContact);
 				}

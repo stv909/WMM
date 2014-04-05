@@ -331,6 +331,10 @@ var messenger = messenger || {};
 			});
 		}
 		
+		ChatMessageModel.prototype.isMult = function() {
+			return this.get('content').indexOf('class="tool_layerBackground"') !== -1;
+		};
+		
 		ChatMessageModel.prototype.isValid = function() {
 			return !!this.get('content');	
 		};

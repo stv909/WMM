@@ -51,6 +51,19 @@ var messenger = messenger || {};
 			this.model = model;
 		};
 		
+		ContactView.prototype.disableUnreadCounter = function() {
+			this.unreadElem.classList.add('super-hidden');
+		};
+		
+		ContactView.prototype.disableSelecting = function() {
+			this.selected = true;
+			this.elem.style.cursor = 'default';
+		};
+		
+		ContactView.prototype.disablePhoto = function() {
+			this.photoElem.classList.add('hidden');
+		};
+		
 		return ContactView;
 	})(abyss.View);
 	
