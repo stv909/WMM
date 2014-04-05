@@ -30,13 +30,15 @@ var text = text || {};
 		}
 	};
 	TextSearch.prototype.search = function(query) {
-		var data = this.objects;
+		var data;
 		var tokens = this._tokenizeQuery(query);
 		
 		if (tokens.length) {
 			var regExps = this._tokensToRegExps(tokens);
 			var indices = this._buildIndices(regExps);
 			data = this._buildData(indices);
+		} else {
+			data = this.objects.slice(0);
 		}
 
 		return data;

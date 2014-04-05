@@ -586,6 +586,18 @@ window.onload = function() {
 		this.askMessageDialogView.on('click:ok', function() {
 			self.editPageView.reset();
 		});
+		this.createMessageDialogView.on('click:send', function(event) {
+			var toContact = self.chatRepository.contact;
+			var fromContact = self.contactRepository.owner;
+			var chatMessage = new messenger.repository.ChatMessageModel();
+			chatMessage.set({
+				id: uuid.v4(),
+				content: event.text,
+				from: Helpers.buildVkId(fromContact),
+				to: Helpers.buildVkId(toContact)
+			});
+			self.chatRepository.addMessage(chatMessage);
+		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
 		var parseHash = function(hash) {

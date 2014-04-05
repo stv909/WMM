@@ -208,7 +208,7 @@ var messenger = messenger || {};
 		};
 		
 		ContactRepository.prototype.getChatUserByVkid = function(vkId) {
-			var id = parseInt(vkId.substring(4), 10);
+			var id = vkId.substring(4);
 			var user = this.chatUserSearch.getObjectById(id);
 			user = user || this.owner;
 			return user;
@@ -251,9 +251,9 @@ var messenger = messenger || {};
 					var timestamp1 = m1.get('timestamp');
 					var timestamp2 = m2.get('timestamp');
 					if (timestamp1 > timestamp2) {
-						return -1;
-					} else if (timestamp1 < timestamp2) {
 						return 1;
+					} else if (timestamp1 < timestamp2) {
+						return -1;
 					} else {
 						return 0;
 					}
@@ -372,5 +372,6 @@ var messenger = messenger || {};
 	messenger.repository.Pagination = Pagination;
 	messenger.repository.ContactRepository = ContactRepository;
 	messenger.repository.ChatRepository = ChatRepository;
+	messenger.repository.ChatMessageModel = ChatMessageModel;
 	
 })(messenger, eve, abyss, VK, Q, text, settings, base64);

@@ -571,11 +571,13 @@ body {
 .tape-page .tape-item .controls-holder {
   width: 140px;
 }
-.tape-page .tape-item .controls-holder .time,
 .tape-page .tape-item .controls-holder .wall,
 .tape-page .tape-item .controls-holder .url {
   display: block;
   margin-bottom: 6px;
+}
+.tape-page .tape-item .controls-holder .wall {
+  margin-top: 6px;
 }
 .tape-page .tape-item .controls-holder .time {
   font-size: 12px;

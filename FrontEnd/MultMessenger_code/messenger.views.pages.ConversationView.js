@@ -87,7 +87,7 @@
 		TapePageView.prototype.addNormalTapeItem = function(chatMessage, contact) {
 			var messageId = chatMessage.get('id');
 			var tapeItemView = new TapeItemView(chatMessage, contact);
-			tapeItemView.attachTo(this.elem);
+			tapeItemView.attachFirstTo(this.elem);
 			this.tapeItemViews[messageId] = tapeItemView;
 		};
 		TapePageView.prototype.addHiddenTapeItem = function(chatMessage, contact) {
@@ -231,7 +231,17 @@
 		};
 		MessageControlsView.prototype.updateTimeElem = function() {
 			var timestamp = this.message.get('timestamp');
-			this.timeElem.textContent = formatDate(timestamp);
+			var self = this;
+			if (timestamp) {
+				this.timeElem.textContent = formatDate(timestamp);
+			} else {
+				this.timeElem.textContent = 'Отправка...';
+				this.message.once('change:timestamp', function(event) {
+					var timestamp = event.value;
+					self.timeElem.textContent = formatDate(timestamp);
+				});
+			}
+			
 		};
 		
 		return MessageControlsView;
@@ -280,6 +290,11 @@
 			this.sendElem.addEventListener('click', sendClickListener);
 			this.messageTextElem.addEventListener('input', messageTextInputListener);
 		}
+		
+		CreateMessageDialogView.prototype.show = function() {
+			base.prototype.show.apply(this, arguments);
+			this.messageTextElem.focus();
+		};
 		
 		return CreateMessageDialogView;
 	})(messenger.views.DialogView);
