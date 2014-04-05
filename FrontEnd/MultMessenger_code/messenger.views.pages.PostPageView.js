@@ -154,13 +154,24 @@
 			
 			this.userViewSelectListener = function(event) {
 				var target = event.target;
-				if (self.selectedUserView) {
-					self.selectedUserView.deselect();
+				var options = event.options;
+				if (target !== self.selectedUserView) {
+					if (self.selectedUserView) {
+						self.selectedUserView.deselect();
+					}
+					self.selectedUserView = target;
+					self.trigger({
+						type: 'select:user',
+						user: self.selectedUserView.model,
+						options: options
+					});
 				}
-				self.selectedUserView = target;
+			};
+			this.userViewForceSelectListener = function(event) {
+				var target = event.target;
 				self.trigger({
-					type: 'select:user',
-					user: self.selectedUserView.model
+					type: 'select-force:user',
+					user: target.model
 				});
 			};
 			
@@ -208,12 +219,17 @@
 			userView.attachTo(this.contactsElem);
 			this.userViews[id] = userView;
 		};
+		LobbyView.prototype.selectUser = function(user) {
+			var userView = this._getOrCreateUserView(user);
+			userView.select('persist');
+		};
 		LobbyView.prototype._getOrCreateUserView = function(user) {
 			var id = user.get('id');
 			var userView = this.cachedUserViews[id];
 			if (!userView) {
 				userView = new UserView(user, true);
 				userView.on('select', this.userViewSelectListener);
+				userView.on('select-force', this.userViewForceSelectListener)
 				this.cachedUserViews[id] = userView;
 			}
 			return userView;

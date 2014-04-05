@@ -9,7 +9,6 @@ window.onload = function() {
 	var ChatClientWrapper = messenger.utils.ChatClientWrapper;
 	var Helpers = messenger.utils.Helpers;
 
-	var ChatClient = chat.ChatClient;
 	var MessageFactory = chat.MessageFactory;
 
 	var MessengerApplication = function() {
@@ -18,7 +17,7 @@ window.onload = function() {
 		
 		this.rootElem = document.getElementById('root');
 
-		this.chatClient = new ChatClient(settings.chatUrl);
+		this.chatClient = new chat.ChatClient(settings.chatUrl);
 		this.chatClientWrapper = new ChatClientWrapper(this.chatClient);
 		
 		this.messageStorage = new MessageStorage(this.chatClientWrapper);
@@ -33,7 +32,6 @@ window.onload = function() {
 		this.conversationView = new messenger.views.ConversationView();
 		this.conversationMenuView = new messenger.views.ConversationMenuView();
 		this.lobbyView = new messenger.views.LobbyView();
-		this.tapePageView = new messenger.views.TapePageView();
 		this.selectPageView = new messenger.views.SelectPageView();
 		this.editPageView = new messenger.views.EditPageView();
 		this.postPageView = new messenger.views.PostPageView();
@@ -269,7 +267,6 @@ window.onload = function() {
 		this.postcardMenuView.attachTo(this.postcardView.elem);
 		this.conversationView.attachTo(this.mainContainerView.elem);
 		this.conversationMenuView.attachTo(this.conversationView.elem);
-		this.tapePageView.attachTo(this.conversationView.elem);
 		this.lobbyView.attachTo(this.mainContainerView.elem);
 		
 		this.selectPageView.attachTo(this.postcardView.elem);
@@ -421,6 +418,7 @@ window.onload = function() {
 				self.currentPrepareDialogsHandler = self.emptyPrepareDialogsHandler;
 				self.prepareChatDialogView.setMode('complete');
 				self.contactRepository.searchChatUsers('');
+				self.lobbyView.selectUser(self.chatRepository.getContact());
 			}).catch(function(error) {
 				self.prepareChatDialogView.setMode('fail');
 				self.prepareChatDialogView.once('click:close', function() {
@@ -438,13 +436,26 @@ window.onload = function() {
 		this.lobbyView.on('search:users', function(event) {
 			self.contactRepository.searchChatUsers(event.text);
 		});
-		this.lobbyView.on('select:user', function(event) {
-			var user = event.user;	
+		this.lobbyView.once('select:user', function(event) {
+			var user = event.user;
+			var options = event.options;
+			
 			self.chatRepository.setContact(user);
-			self.mainMenuView.conversationItemView.setText(user.getFullName());
-			self.mainMenuView.conversationItemView.select();
+			self.conversationView.switchMessagesTape(user.get('id'));
+			if (options !== 'persist') {
+				self.mainMenuView.conversationItemView.setText(user.getFullName());
+				self.mainMenuView.conversationItemView.select();
+			}
+			
+			self.lobbyView.on('select-force:user', function(event) {
+				var user = event.user;
+				self.chatRepository.setContact(user);
+				self.conversationView.switchMessagesTape(user.get('id'));
+				self.mainMenuView.conversationItemView.setText(user.getFullName());
+				self.mainMenuView.conversationItemView.select();
+			});
 		});
-		
+
 		this.conversationView.on('show', function() {
 			self.currentPrepareDialogsHandler();
 		});

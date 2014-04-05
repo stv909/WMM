@@ -5,7 +5,7 @@ var messenger = messenger || {};
 	var ContactView = (function(base) {
 		eve.extend(ContactView, base);
 		
-		function ContactView(forceSelecting) {
+		function ContactView() {
 			base.apply(this, arguments);
 			var self = this;
 			
@@ -17,10 +17,8 @@ var messenger = messenger || {};
 			this.selected = false;
 			
 			var elemClick = function(event) {
-				if (forceSelecting) {
-					self.select();
-				}
-				else if (!self.selected) {
+				self.trigger('select-force');
+				if (!self.selected) {
 					self.select();
 				}
 			};
@@ -32,11 +30,14 @@ var messenger = messenger || {};
 			});
 		}
 		
-		ContactView.prototype.select = function() {
+		ContactView.prototype.select = function(options) {
 			this.selected = true;
 			this.elem.classList.remove('normal');
 			this.elem.classList.add('chosen');
-			this.trigger('select');
+			this.trigger({
+				type: 'select',
+				options: options
+			});
 		};
 		
 		ContactView.prototype.deselect = function() {
