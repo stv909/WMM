@@ -247,11 +247,20 @@ var messenger = messenger || {};
 				chatMessages = chatMessages.filter(function(chatMessage) {
 					return chatMessage.isValid();	
 				});
+				chatMessages.sort(function(m1, m2) {
+					var timestamp1 = m1.get('timestamp');
+					var timestamp2 = m2.get('timestamp');
+					if (timestamp1 > timestamp2) {
+						return -1;
+					} else if (timestamp1 < timestamp2) {
+						return 1;
+					} else {
+						return 0;
+					}
+				});
 				chatMessages.forEach(function(chatMessage) {
 					var msgId = ['msg', chatMessage.get('id')].join('.');
 					chatMessage.set('shown', idToShown[msgId]);
-				});
-				chatMessages.forEach(function(chatMessage) {
 					self.addMessage(chatMessage);
 				});
 			});

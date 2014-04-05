@@ -453,9 +453,21 @@ html, body
 	box-sizing(border-box)
 	.tape-item
 		font-size 12px
+		padding-bottom 6px
 		.contact-holder, .message-holder, .controls-holder
 			display: inline-block
 			vertical-align top
+		.message-holder
+			width 430px
+		.controls-holder
+			width 140px
+			.time, .wall, .url
+				display block
+				margin-bottom 6px
+			.time
+				font-size 12px
+				padding-top 8px
+				padding-bottom 8px
 #answer-page
 	.container
 		display inline-block

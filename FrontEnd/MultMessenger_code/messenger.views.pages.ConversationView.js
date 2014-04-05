@@ -129,6 +129,7 @@
 		
 		function TapeItemView(chatMessage, contact) {
 			base.apply(this, arguments);
+			var self = this;
 			
 			this.chatMessage = chatMessage;
 			this.contact = contact;
@@ -143,19 +144,30 @@
 			this.controlsView = null;
 			
 			this.initializeViews();
+			
+			this.once('dispose', function() {
+				self.contactView.dispose();
+				self.messageView.dispose();
+				self.controlsView.dispose();
+			});
 		}
 		
 		TapeItemView.prototype.initializeViews = function() {
-			var userView = new messenger.views.UserView(this.contact);
+			this.contactView = new messenger.views.UserView(this.contact);
+			this.controlsView = new MessageControlsView(this.chatMessage);
 			
-			userView.disableUnreadCounter();
-			userView.disableSelecting();
-			userView.attachTo(this.contactHolderElem);
+			this.contactView.disableUnreadCounter();
+			this.contactView.disableSelecting();
+			this.contactView.attachTo(this.contactHolderElem);
+			
+			this.controlsView.attachTo(this.controlsHolderElem);
 			
 			if (this.chatMessage.isMult()) {
 				
 			} else {
-				userView.disablePhoto();
+				this.contactView.disablePhoto();
+				this.controlsView.hideWallButton();
+				this.controlsView.hideUrlButton();
 			}
 		};
 		
@@ -165,9 +177,66 @@
 	var MessageControlsView = (function(base) {
 		eve.extend(MessageControlsView, base);
 		
-		function MessageControlsView() {
-			base.apply(this, arguments);
+		function normalizeNumber(number) {
+			if (number >= 10) {
+				return number.toString();
+			} else {
+				return ['0', number].join('');
+			}
 		}
+		function formatDate(timestamp) {
+			var date = new Date(timestamp);
+		
+			var day = normalizeNumber(date.getDay() + 1);
+			var month = normalizeNumber(date.getMonth() + 1);
+			var year = normalizeNumber(date.getFullYear() - 2000);
+		
+			var hours = normalizeNumber(date.getHours());
+			var minutes = normalizeNumber(date.getMinutes());
+		
+			var dateChunks = [day, '.', month, '.', year, ' ', hours, ':', minutes];
+			return dateChunks.join('');
+		}
+		
+		function MessageControlsView(message) {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.message = message;
+			
+			this.elem = template.create('message-controls-template', { className: 'message-controls' });
+			this.timeElem = this.elem.getElementsByClassName('time')[0];
+			this.wallElem = this.elem.getElementsByClassName('wall')[0];
+			this.urlElem = this.elem.getElementsByClassName('url')[0];
+			
+			this.updateTimeElem();
+			
+			var wallElemClickListener = function(event) {
+				self.trigger('click:wall');	
+			};
+			var urlElemClickListener = function(event) {
+				self.trigger('click:url');
+			};
+			
+			this.wallElem.addEventListener('click', wallElemClickListener);
+			this.urlElem.addEventListener('click', urlElemClickListener);
+			
+			this.once('dispose', function() {
+				self.wallElem.removeEventListener('click', wallElemClickListener);
+				self.urlElem.removeEventListener('click', urlElemClickListener);
+			});
+		}
+		
+		MessageControlsView.prototype.hideWallButton = function() {
+			this.wallElem.classList.add('hidden');
+		};
+		MessageControlsView.prototype.hideUrlButton = function() {
+			this.urlElem.classList.add('hidden');
+		};
+		MessageControlsView.prototype.updateTimeElem = function() {
+			var timestamp = this.message.get('timestamp');
+			this.timeElem.textContent = formatDate(timestamp);
+		};
 		
 		return MessageControlsView;
 	})(abyss.View);

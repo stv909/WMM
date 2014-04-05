@@ -538,12 +538,30 @@ body {
 }
 .tape-page .tape-item {
   font-size: 12px;
+  padding-bottom: 6px;
 }
 .tape-page .tape-item .contact-holder,
 .tape-page .tape-item .message-holder,
 .tape-page .tape-item .controls-holder {
   display: inline-block;
   vertical-align: top;
+}
+.tape-page .tape-item .message-holder {
+  width: 430px;
+}
+.tape-page .tape-item .controls-holder {
+  width: 140px;
+}
+.tape-page .tape-item .controls-holder .time,
+.tape-page .tape-item .controls-holder .wall,
+.tape-page .tape-item .controls-holder .url {
+  display: block;
+  margin-bottom: 6px;
+}
+.tape-page .tape-item .controls-holder .time {
+  font-size: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 #answer-page .container {
   display: inline-block;
