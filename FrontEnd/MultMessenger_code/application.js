@@ -291,7 +291,7 @@ window.onload = function() {
 			self.postcardView.hide();
 			self.lobbyView.hide();
 			self.conversationView.show();
-			self.mainMenuView.enableShadow(true);
+			//self.mainMenuView.enableShadow(true);
 		};
 		this.currentPostClickHandler = this.defaultPostClickHandler;
 		
@@ -342,6 +342,7 @@ window.onload = function() {
 				self.postcardView.hide();
 				self.lobbyView.show();
 				self.conversationView.hide();
+				self.mainMenuView.enableShadow(true);
 			}).catch(function() {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.mainMenuView.restore();
@@ -354,6 +355,7 @@ window.onload = function() {
 				self.postcardView.hide();
 				self.lobbyView.hide();
 				self.conversationView.show();
+				self.mainMenuView.enableShadow(false);
 			}).catch(function() {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.mainMenuView.restore();
@@ -388,7 +390,7 @@ window.onload = function() {
 			self.postcardMenuView.hideCancel();
 			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
 			self.postcardMenuView.postItemView.setText('3. Отправь на стену!');
-			self.mainMenuView.enableShadow(true);
+			//self.mainMenuView.enableShadow(true);
 			self.currentPostClickHandler = self.defaultPostClickHandler;
 			self.currentPostcardClickHandler = self.defaultPostcardClickHandler;
 		});

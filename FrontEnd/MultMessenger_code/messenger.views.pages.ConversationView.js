@@ -12,15 +12,7 @@
 			
 			this.cachedTapeViews = {};
 			this.currentTapeView = null;
-			
-			this._addShadowElem();
 		}
-		
-		ConversationView.prototype._addShadowElem = function() {
-			var shadowElem = document.createElement('div');
-			shadowElem.classList.add('shadow');
-			this.elem.appendChild(shadowElem);
-		};
 		
 		ConversationView.prototype.show = function() {
 			base.prototype.show.apply(this, arguments);
@@ -138,6 +130,7 @@
 			this.contactHolderElem = this.elem.getElementsByClassName('contact-holder')[0];
 			this.messageHolderElem = this.elem.getElementsByClassName('message-holder')[0];
 			this.controlsHolderElem = this.elem.getElementsByClassName('controls-holder')[0];
+			this.answerElem = this.elem.getElementsByClassName('answer')[0];
 			
 			this.contactView = null;
 			this.messageView = null;
@@ -158,12 +151,12 @@
 			
 			this.contactView.disableUnreadCounter();
 			this.contactView.disableSelecting();
-			this.contactView.attachTo(this.contactHolderElem);
+			this.contactView.attachFirstTo(this.contactHolderElem);
 			
 			this.controlsView.attachTo(this.controlsHolderElem);
 			
 			if (this.chatMessage.isMult()) {
-				
+				this.answerElem.classList.remove('hidden');
 			} else {
 				this.contactView.disablePhoto();
 				this.controlsView.hideWallButton();
