@@ -375,7 +375,7 @@ body {
 }
 .conversation-menu {
   position: absolute;
-  height: 47px;
+  height: 45px;
   width: 920px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -387,7 +387,7 @@ body {
   box-shadow: 0 0 2px #888;
 }
 .conversation-menu .items {
-  margin-top: 6px;
+  margin-top: 3px;
   display: inline-block;
 }
 .conversation-menu .conversation-menu-item {
@@ -519,7 +519,7 @@ body {
   font-size: 0;
   overflow-y: auto;
   position: absolute;
-  top: 47px;
+  top: 45px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -543,6 +543,9 @@ body {
   display: inline-block;
   vertical-align: top;
 }
+.tape-page .tape-item .contact-holder {
+  margin-right: 1px;
+}
 .tape-page .tape-item .contact-holder .answer {
   width: 122px;
   -moz-box-sizing: border-box;
@@ -550,7 +553,7 @@ body {
   margin-left: 1px;
   margin-top: 8px;
   text-align: center;
-  height: 46px;
+  height: 122px;
   vertical-align: middle;
   display: flex;
   justify-content: center;
@@ -1372,19 +1375,22 @@ body {
 #moods-dialog,
 #actions-dialog,
 #gags-dialog,
-#animation-types-dialog {
+#animation-types-dialog,
+#create-message-dialog {
   font-size: 12px;
 }
 #moods-dialog .title-holder,
 #actions-dialog .title-holder,
 #gags-dialog .title-holder,
-#animation-types-dialog .title-holder {
+#animation-types-dialog .title-holder,
+#create-message-dialog .title-holder {
   position: relative;
 }
 #moods-dialog .cross,
 #actions-dialog .cross,
 #gags-dialog .cross,
-#animation-types-dialog .cross {
+#animation-types-dialog .cross,
+#create-message-dialog .cross {
   width: 12px;
   height: 12px;
   line-height: 12px;
@@ -1399,13 +1405,15 @@ body {
 #moods-dialog .cross:hover,
 #actions-dialog .cross:hover,
 #gags-dialog .cross:hover,
-#animation-types-dialog .cross:hover {
+#animation-types-dialog .cross:hover,
+#create-message-dialog .cross:hover {
   box-shadow: 0 0 2px #f00;
 }
 #moods-dialog .cross:active,
 #actions-dialog .cross:active,
 #gags-dialog .cross:active,
-#animation-types-dialog .cross:active {
+#animation-types-dialog .cross:active,
+#create-message-dialog .cross:active {
   background-color: #f00;
   box-shadow: 0 0 2px #f00;
   color: #fff;
@@ -1595,6 +1603,39 @@ body {
   background-color: #f00;
   box-shadow: 0 0 2px #f00;
   color: #fff;
+}
+#create-message-dialog {
+  font-size: 12px;
+  width: 360px;
+  height: 220px;
+}
+#create-message-dialog .content {
+  height: 140px;
+  line-height: 140px;
+  padding: 8px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#create-message-dialog .status {
+  line-height: 22px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
+}
+#create-message-dialog .message-text {
+  width: 100%;
+  height: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  resize: none;
+  padding: 8px;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  border-radius: 2px;
+}
+#create-message-dialog .disabled {
+  cursor: default;
+  opacity: 0.5;
 }
 #preload-background {
   display: table;

@@ -43,6 +43,7 @@ window.onload = function() {
 		this.askMessageDialogView = new messenger.views.AskMessageDialogView();
 		this.errorDialogView = new messenger.views.ErrorDialogView();
 		this.prepareChatDialogView = new messenger.views.PrepareChatDialogView();
+		this.createMessageDialogView = new messenger.views.CreateMessageDialogView();
 
 		this.currentSkipAnswerAsync = null;
 		this.emptySkipAnswerAsync = function() {
@@ -419,7 +420,7 @@ window.onload = function() {
 			self.currentPostcardClickHandler = self.chatPostcardClickHandler;
 		});
 		this.conversationMenuView.on('click:text', function() {
-			alert('text');
+			self.createMessageDialogView.show();
 		});
 		
 		this.prepareDialogsHandler = function() {
