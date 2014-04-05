@@ -142,12 +142,14 @@ window.onload = function() {
 			var from = message.get('from');
 			var shown = message.get('shown');
 			var chatContact = self.contactRepository.getChatUserByVkid(from);
-			if (!shown && chatContact) {
+			if (!shown && chatContact && chatContact !== self.contactRepository.owner) {
 				var unread = chatContact.get('unread');
 				chatContact.set('unread', unread + 1);
+				self.mainMenuView.increaseUnreadCount();
 				message.once('change:shown', function(event) {
 					var unread = chatContact.get('unread');
 					chatContact.set('unread', unread - 1);
+					self.mainMenuView.decreaseUnreadCount();
 				});
 			}
 		});

@@ -103,6 +103,16 @@ body {
   text-shadow: 0 0 2px #666;
   background-color: #28f;
 }
+.main-menu .main-menu-item .unread {
+  display: inline;
+  margin-left: 8px;
+  padding: 4px 8px 4px 8px;
+  color: #fff;
+  font-size: 10px;
+  background-color: #f00;
+  box-shadow: 0 0 4px #666;
+  border-radius: 2px;
+}
 .main-menu .chats {
   margin-left: 12px;
   display: inline-block;
@@ -168,6 +178,9 @@ body {
 }
 .main-menu .chats .main-menu-item:last-child:after {
   display: none;
+}
+.main-menu .items {
+  margin-left: 32px;
 }
 .main-menu .items .main-menu-item {
   vertical-align: top;

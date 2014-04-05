@@ -26,6 +26,9 @@
 			
 			this.initializeItemViews();
 			
+			this.unreadCount = 0;
+			this.initializeUnreadElement();
+			
 			this.logoElemClickListener = function(event) {
 				self.trigger('click:logo');
 			};
@@ -86,6 +89,26 @@
 			this.itemViews.push(this.dialogItemView);
 			this.itemViews.push(this.conversationItemView);
 			this.itemViews.push(this.answerItemView);
+		};
+		MainMenuView.prototype.initializeUnreadElement = function() {
+			this.unreadElem = document.createElement('div');
+			this.unreadElem.classList.add('hidden');
+			this.unreadElem.classList.add('unread');
+			this.dialogItemView.elem.appendChild(this.unreadElem);
+		};
+		MainMenuView.prototype.increaseUnreadCount = function() {
+			this.unreadCount += 1;
+			this.unreadElem.textContent = this.unreadCount;
+			this.unreadElem.classList.remove('hidden');
+		};
+		MainMenuView.prototype.decreaseUnreadCount = function() {
+			this.unreadCount -= 1;
+			if (this.unreadCount > 0) {
+				this.unreadElem.textContent = this.unreadCount;
+				this.unreadElem.classList.remove('hidden');
+			} else {
+				this.unreadElem.classList.add('hidden');
+			}
 		};
 		MainMenuView.prototype.selectItemView = function(itemView) {
 			if (this.selectedItemView !== itemView) {
