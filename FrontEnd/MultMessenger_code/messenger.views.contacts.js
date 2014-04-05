@@ -5,7 +5,7 @@ var messenger = messenger || {};
 	var ContactView = (function(base) {
 		eve.extend(ContactView, base);
 		
-		function ContactView() {
+		function ContactView(forceSelecting) {
 			base.apply(this, arguments);
 			var self = this;
 			
@@ -17,7 +17,10 @@ var messenger = messenger || {};
 			this.selected = false;
 			
 			var elemClick = function(event) {
-				if (!self.selected) {
+				if (forceSelecting) {
+					self.select();
+				}
+				else if (!self.selected) {
 					self.select();
 				}
 			};
@@ -54,7 +57,7 @@ var messenger = messenger || {};
 		eve.extend(UserView, base);
 		
 		function UserView(model, isChatUser) {
-			base.apply(this, arguments);
+			base.call(this, isChatUser);
 			var self = this;
 			
 			this.isChatUser = isChatUser;

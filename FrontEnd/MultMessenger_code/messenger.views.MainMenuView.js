@@ -13,6 +13,7 @@
 			this.logoElem = this.elem.getElementsByClassName('logo')[0];
 			this.groupElem = this.elem.getElementsByClassName('group')[0];
 			this.itemsElem = this.elem.getElementsByClassName('items')[0];
+			this.chatsElem = this.elem.getElementsByClassName('chats')[0];
 			
 			this.itemViews = [];
 			this.previousSelectedItemView = null;
@@ -53,8 +54,8 @@
 			this.answerItemView = new MainMenuItemView('#answer');
 			
 			this.postcardItemView.attachTo(this.itemsElem);
-			this.dialogItemView.attachTo(this.itemsElem);
-			this.conversationItemView.attachTo(this.itemsElem);
+			this.dialogItemView.attachTo(this.chatsElem);
+			this.conversationItemView.attachTo(this.chatsElem);
 			
 			this.postcardItemView.setClass('postcard-item');
 			this.dialogItemView.setClass('lobby-item');

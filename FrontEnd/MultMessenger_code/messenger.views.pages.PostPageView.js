@@ -154,16 +154,14 @@
 			
 			this.userViewSelectListener = function(event) {
 				var target = event.target;
-				if (target !== self.selectedUserView) {
-					if (self.selectedUserView) {
-						self.selectedUserView.deselect();
-					}
-					self.selectedUserView = target;
-					self.trigger({
-						type: 'select:user',
-						user: self.selectedUserView.model
-					});
+				if (self.selectedUserView) {
+					self.selectedUserView.deselect();
 				}
+				self.selectedUserView = target;
+				self.trigger({
+					type: 'select:user',
+					user: self.selectedUserView.model
+				});
 			};
 			
 			var wheelListener = function(event) {

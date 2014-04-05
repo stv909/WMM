@@ -165,7 +165,7 @@ var messenger = messenger || {};
 		
 		ContactRepository.prototype.searchChatUsers = function(query) {
 			var users = this.chatUserSearch.search(query);
-			users = users.sort(function(user1, user2) {
+			users.sort(function(user1, user2) {
 				var unread1 = user1.get('unread');
 				var unread2 = user2.get('unread');
 				if (unread1 < unread2) {
