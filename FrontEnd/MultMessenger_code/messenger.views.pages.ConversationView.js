@@ -146,8 +146,9 @@
 		}
 		
 		TapeItemView.prototype.initializeViews = function() {
-			this.contactView = new messenger.views.UserView(this.contact);
+			this.contactView = new messenger.views.UserView(this.contact, true);
 			this.controlsView = new MessageControlsView(this.chatMessage);
+			
 			
 			this.contactView.disableUnreadCounter();
 			this.contactView.disableSelecting();
@@ -157,6 +158,8 @@
 			
 			if (this.chatMessage.isMult()) {
 				this.answerElem.classList.remove('hidden');
+				this.messageView = new messenger.views.MessagePatternView(this.chatMessage);
+				this.messageView.attachTo(this.messageHolderElem);
 			} else {
 				this.contactView.disablePhoto();
 				this.controlsView.hideWallButton();

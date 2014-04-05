@@ -357,7 +357,7 @@ var messenger = messenger || {};
 				id: value.id,
 				timestamp: value.timestamp,
 				content: value.content ? base64.decode(value.content) : null,
-				preview: value.preview,
+				preview: value.preview ? [settings.imageStoreBaseUrl, value.preview].join('') : null,
 				from: value.from,
 				to: value.to
 			});

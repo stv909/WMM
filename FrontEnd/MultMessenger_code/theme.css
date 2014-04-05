@@ -558,7 +558,12 @@ body {
   flex-direction: column;
 }
 .tape-page .tape-item .message-holder {
-  width: 430px;
+  font-size: 0;
+  width: 450px;
+  text-align: left;
+}
+.tape-page .tape-item .message-holder .message {
+  margin-left: 12px;
 }
 .tape-page .tape-item .controls-holder {
   width: 140px;
