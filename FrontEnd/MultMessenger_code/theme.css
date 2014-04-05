@@ -512,14 +512,24 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-#tape-page {
+.tape-page {
   font-size: 0;
-  overflow: hidden;
+  overflow-y: auto;
   position: absolute;
   top: 47px;
   bottom: 0;
   left: 0;
   right: 0;
+  text-align: center;
+}
+.tape-page .tape-item {
+  font-size: 12px;
+}
+.tape-page .tape-item .contact-holder,
+.tape-page .tape-item .message-holder,
+.tape-page .tape-item .controls-holder {
+  display: inline-block;
+  vertical-align: top;
 }
 #answer-page .container {
   display: inline-block;

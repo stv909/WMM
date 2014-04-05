@@ -431,14 +431,20 @@ html, body
 		.button-special
 			width 100%
 			box-sizing(border-box)
-#tape-page
+.tape-page
 	font-size 0
-	overflow hidden
+	overflow-y auto
 	position absolute
 	top 47px
 	bottom 0
 	left 0
 	right 0
+	text-align center
+	.tape-item
+		font-size 12px
+		.contact-holder, .message-holder, .controls-holder
+			display: inline-block
+			vertical-align top
 #answer-page
 	.container
 		display inline-block

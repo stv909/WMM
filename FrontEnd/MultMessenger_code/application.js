@@ -137,18 +137,26 @@ window.onload = function() {
 		});
 		this.chatRepository.on('add:message', function(event) {
 			var message = event.message;
-			var from = message.get('from');
 			var shown = message.get('shown');
-			var chatContact = self.contactRepository.getChatUserByVkid(from);
-			if (!shown && chatContact && chatContact !== self.contactRepository.owner) {
-				var unread = chatContact.get('unread');
-				chatContact.set('unread', unread + 1);
+			var fromContact = self.contactRepository.getChatUserByVkid(message.get('from'));
+			var toContact = self.contactRepository.getChatUserByVkid(message.get('to'));
+			var ownerContact = self.contactRepository.owner;
+			if (!shown && fromContact && fromContact !== ownerContact) {
+				var unread = fromContact.get('unread');
+				fromContact.set('unread', unread + 1);
 				self.mainMenuView.increaseUnreadCount();
 				message.once('change:shown', function(event) {
-					var unread = chatContact.get('unread');
-					chatContact.set('unread', unread - 1);
+					var unread = fromContact.get('unread');
+					fromContact.set('unread', unread - 1);
 					self.mainMenuView.decreaseUnreadCount();
 				});
+			}
+			if (fromContact && toContact && fromContact !== toContact) {
+				if (fromContact !== ownerContact && toContact === ownerContact) {
+					self.conversationView.addTapeItem(fromContact.get('id'), message, toContact);
+				} else if (fromContact === ownerContact && toContact !== ownerContact) {
+					self.conversationView.addTapeItem(toContact.get('id'), message, fromContact);
+				}
 			}
 		});
 		this.chatRepository.on('remove:message', function(event) {
@@ -441,7 +449,7 @@ window.onload = function() {
 			var options = event.options;
 			
 			self.chatRepository.setContact(user);
-			self.conversationView.switchMessagesTape(user.get('id'));
+			self.conversationView.switchMessageTape(user.get('id'));
 			if (options !== 'persist') {
 				self.mainMenuView.conversationItemView.setText(user.getFullName());
 				self.mainMenuView.conversationItemView.select();
@@ -450,7 +458,7 @@ window.onload = function() {
 			self.lobbyView.on('select-force:user', function(event) {
 				var user = event.user;
 				self.chatRepository.setContact(user);
-				self.conversationView.switchMessagesTape(user.get('id'));
+				self.conversationView.switchMessageTape(user.get('id'));
 				self.mainMenuView.conversationItemView.setText(user.getFullName());
 				self.mainMenuView.conversationItemView.select();
 			});
