@@ -246,6 +246,12 @@
 		LobbyView.prototype.showLoader = function() {
 			this.loadHolderElem.classList.remove('hidden');	
 		};
+		LobbyView.prototype.updateUserSearch = function() {
+			this.trigger({
+				type: 'search:users',
+				text: this.queryElem.value
+			});
+		};
 		
 		return LobbyView;
 	})(PageView);

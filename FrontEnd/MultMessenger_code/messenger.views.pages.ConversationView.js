@@ -131,6 +131,7 @@
 			this.messageHolderElem = this.elem.getElementsByClassName('message-holder')[0];
 			this.controlsHolderElem = this.elem.getElementsByClassName('controls-holder')[0];
 			this.answerElem = this.elem.getElementsByClassName('answer')[0];
+			this.answerElem.classList.add('hidden');
 			
 			this.contactView = null;
 			this.messageView = null;
@@ -168,7 +169,7 @@
 				this.contactView.disableSelecting();
 				this.contactView.attachFirstTo(this.contactHolderElem);
 				
-				this.answerElem.classList.remove('hidden');
+				//this.answerElem.classList.remove('hidden');
 				this.messageView = new messenger.views.MessagePatternView(this.chatMessage);
 				this.messageView.attachTo(this.messageHolderElem);
 			} else {
@@ -237,6 +238,9 @@
 				self.wallElem.removeEventListener('click', wallElemClickListener);
 				self.urlElem.removeEventListener('click', urlElemClickListener);
 			});
+			
+			this.hideWallButton();
+			this.hideUrlButton();
 		}
 		
 		MessageControlsView.prototype.hideWallButton = function() {

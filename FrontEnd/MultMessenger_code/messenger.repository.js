@@ -261,7 +261,7 @@ var messenger = messenger || {};
 				chatMessages.forEach(function(chatMessage) {
 					var msgId = ['msg', chatMessage.get('id')].join('.');
 					chatMessage.set('shown', idToShown[msgId]);
-					self.addMessage(chatMessage);
+					self.addMessage(chatMessage, true);
 				});
 			});
 		};
@@ -294,13 +294,14 @@ var messenger = messenger || {};
 		ChatRepository.prototype.getContact = function() {
 			return this.contact;
 		};
-		ChatRepository.prototype.addMessage = function(message) {
+		ChatRepository.prototype.addMessage = function(message, noSearch) {
 			var messageId = message.get('id');
 			if (!this.hasMessage(messageId)) {
 				this.messages[messageId] = message;
 				this.trigger({
 					type: 'add:message',
-					message: message
+					message: message,
+					noSearch: noSearch
 				});
 			}
 		};
