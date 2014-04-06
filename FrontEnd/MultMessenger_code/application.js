@@ -17,6 +17,7 @@ window.onload = function() {
 		var self = this;
 		
 		this.rootElem = document.getElementById('root');
+		this.newMessageSoundElem = document.getElementById('new-message-sound');
 
 		this.chatClient = new chat.ChatClient(settings.chatUrl);
 		this.chatClientWrapper = new ChatClientWrapper(this.chatClient);
@@ -680,12 +681,15 @@ window.onload = function() {
 	};
 	MessengerApplication.prototype.initializeMessaging = function() {
 		var self = this;
-		var processInputMessage = function(rawMessage) {
+		var processInputMessage = function(rawMessage, soundNotification) {
 			rawMessage.value = rawMessage.body;
 			var chatMessage = ChatMessageModel.fromRaw(rawMessage);
 			var chatMessageId = chatMessage.get('id');
 			if (chatMessage.isValid() && !self.chatRepository.hasMessage(chatMessageId)) {
 				self.chatRepository.addMessage(chatMessage);
+				if (soundNotification) {
+					self.newMessageSoundElem.play();
+				}
 			}
 		};
 		this.chatClient.on('message:sent', function(event) {
@@ -694,7 +698,8 @@ window.onload = function() {
 		});
 		this.chatClient.on('message:send', function(event) {
 			var rawMessage = event.response.send;
-			processInputMessage(rawMessage);
+			processInputMessage(rawMessage, true);
+			
 		});
 		this.chatClient.on('message:online', function(event) {
 			var online = event.response.online;
