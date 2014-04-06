@@ -537,6 +537,24 @@ body {
   padding-top: 12px;
   border-bottom: 1px solid #ddd;
 }
+.tape-page .tape-item .text-user {
+  width: 120px;
+  padding-left: 1px;
+  padding-right: 1px;
+}
+.tape-page .tape-item .text-user .name {
+  font-size: 12px;
+  white-space: pre-wrap;
+  padding-top: 8px;
+  cursor: pointer;
+}
+.tape-page .tape-item .text-user .name:hover {
+  color: #28f;
+  text-decoration: underline;
+}
+.tape-page .tape-item .text-user.offline {
+  opacity: 0.5;
+}
 .tape-page .tape-item .text-message {
   font-size: 0;
   margin-left: 13px;

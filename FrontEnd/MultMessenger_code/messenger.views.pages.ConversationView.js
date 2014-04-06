@@ -1,4 +1,4 @@
-(function(messenger, eve, abyss, template) {
+(function(messenger, eve, abyss, template, settings) {
 	
 	var ConversationView = (function(base) {
 		eve.extend(ConversationView, base);
@@ -146,24 +146,25 @@
 		}
 		
 		TapeItemView.prototype.initializeViews = function() {
-			this.contactView = new messenger.views.UserView(this.contact, true);
 			this.controlsView = new MessageControlsView(this.chatMessage);
-			
-			
-			this.contactView.disableUnreadCounter();
-			this.contactView.disableSelecting();
-			this.contactView.attachFirstTo(this.contactHolderElem);
-			
 			this.controlsView.attachTo(this.controlsHolderElem);
 			
 			if (this.chatMessage.isMult()) {
+				this.contactView = new messenger.views.UserView(this.contact, true);
+				this.contactView.disableUnreadCounter();
+				this.contactView.disableSelecting();
+				this.contactView.attachFirstTo(this.contactHolderElem);
+				
 				this.answerElem.classList.remove('hidden');
 				this.messageView = new messenger.views.MessagePatternView(this.chatMessage);
 				this.messageView.attachTo(this.messageHolderElem);
 			} else {
+				this.contactView = new TextUserView(this.contact);
+				this.contactView.attachTo(this.contactHolderElem);
+				
 				this.messageView = new TextMessageView(this.chatMessage);
 				this.messageView.attachTo(this.messageHolderElem);
-				this.contactView.disablePhoto();
+
 				this.controlsView.hideWallButton();
 				this.controlsView.hideUrlButton();
 			}
@@ -316,8 +317,45 @@
 		return TextMessageView;
 	})(abyss.View);
 	
+	var TextUserView = (function(base) {
+		eve.extend(TextUserView, base);
+		
+		function TextUserView(user) {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.model = user;
+			
+			this.elem = template.create('text-user-template', { className: 'text-user' });
+			this.nameElem = this.elem.getElementsByClassName('name')[0];
+			this.nameElem.textContent = this.model.getFullName();
+
+			var updateOnlineStatus = function(online) {
+				if (online) {
+					self.elem.classList.remove('offline');
+				} else {
+					self.elem.classList.add('offline');
+				}
+			};
+			var nameElemClickListener = function() {
+				var id = self.model.get('id');
+				var vkLink = [settings.vkContactBaseUrl, id].join('');
+				window.open(vkLink, '_blank');
+			};
+			
+			this.model.on('online', function(event) {
+				updateOnlineStatus(event.value);
+			});
+			updateOnlineStatus(this.model.get('online'));
+			
+			this.nameElem.addEventListener('click', nameElemClickListener);
+		}
+		
+		return TextUserView;
+	})(abyss.View);
+	
 	messenger.views = messenger.views || {};
 	messenger.views.ConversationView = ConversationView;
 	messenger.views.CreateMessageDialogView = CreateMessageDialogView;
 	
-})(messenger, eve, abyss, template);
+})(messenger, eve, abyss, template, settings);
