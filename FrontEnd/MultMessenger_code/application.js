@@ -597,6 +597,19 @@ window.onload = function() {
 				to: Helpers.buildVkId(toContact)
 			});
 			self.chatRepository.addMessage(chatMessage);
+			self.chatClientWrapper.nowAsync().then(function(timestamp) {
+				chatMessage.set('timestamp', timestamp);
+				var rawMessage = MessageFactory.create(
+					chatMessage.get('id'),
+					Helpers.normalizeMessageContent(chatMessage.get('content')),
+					chatMessage.get('from'),
+					chatMessage.get('to'),
+					chatMessage.get('timestamp')
+				);
+				return self.chatClientWrapper.sendMessageAsync(rawMessage);
+			}).catch(function() {
+				console.log(arguments);
+			});
 		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {

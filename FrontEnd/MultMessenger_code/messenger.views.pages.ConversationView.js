@@ -161,6 +161,8 @@
 				this.messageView = new messenger.views.MessagePatternView(this.chatMessage);
 				this.messageView.attachTo(this.messageHolderElem);
 			} else {
+				this.messageView = new TextMessageView(this.chatMessage);
+				this.messageView.attachTo(this.messageHolderElem);
 				this.contactView.disablePhoto();
 				this.controlsView.hideWallButton();
 				this.controlsView.hideUrlButton();
@@ -183,7 +185,7 @@
 		function formatDate(timestamp) {
 			var date = new Date(timestamp);
 		
-			var day = normalizeNumber(date.getDay() + 1);
+			var day = normalizeNumber(date.getUTCDate());
 			var month = normalizeNumber(date.getMonth() + 1);
 			var year = normalizeNumber(date.getFullYear() - 2000);
 		
@@ -298,6 +300,21 @@
 		
 		return CreateMessageDialogView;
 	})(messenger.views.DialogView);
+	
+	var TextMessageView = (function(base) {
+		eve.extend(TextMessageView, base);
+		
+		function TextMessageView(chatMessage) {
+			base.apply(this, arguments);
+			
+			this.elem = template.create('text-message-template', { className: 'text-message' });
+			this.contentElem = this.elem.getElementsByClassName('content')[0];
+			
+			this.contentElem.textContent = chatMessage.get('content');
+		}
+		
+		return TextMessageView;
+	})(abyss.View);
 	
 	messenger.views = messenger.views || {};
 	messenger.views.ConversationView = ConversationView;

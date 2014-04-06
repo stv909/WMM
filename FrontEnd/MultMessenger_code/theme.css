@@ -537,6 +537,17 @@ body {
   padding-top: 12px;
   border-bottom: 1px solid #ddd;
 }
+.tape-page .tape-item .text-message {
+  font-size: 0;
+  margin-left: 13px;
+}
+.tape-page .tape-item .text-message .content {
+  font-size: 12px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
 .tape-page .tape-item .contact-holder,
 .tape-page .tape-item .message-holder,
 .tape-page .tape-item .controls-holder {
