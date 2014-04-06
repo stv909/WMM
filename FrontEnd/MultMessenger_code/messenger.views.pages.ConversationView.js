@@ -283,10 +283,11 @@
 				self.sendElem.classList.add('disabled');
 			};
 			var sendClickListener = function() {
-				if (!emptyStringPattern.test(self.messageTextElem.value)) {
+				var value = self.messageTextElem.value;
+				if (!emptyStringPattern.test(value)) {
 					self.trigger({
 						type: 'click:send',
-						text: self.messageTextElem.value
+						text: value.replace(/\r?\n/g, '<br />')
 					});
 					self.hide();
 					self.messageTextElem.value = '';
@@ -324,7 +325,7 @@
 			this.elem = template.create('text-message-template', { className: 'text-message' });
 			this.contentElem = this.elem.getElementsByClassName('content')[0];
 			
-			this.contentElem.textContent = chatMessage.get('content');
+			this.contentElem.innerHTML = chatMessage.get('content');
 		}
 		
 		return TextMessageView;
