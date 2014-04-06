@@ -18,7 +18,7 @@ var data = data || {};
 		dance: { value: 'dance', text: 'танцую' },
 		exaltation: { value: 'exaltation', text: 'радуюсь' }, 
 		party: { value: 'party', text: 'праздную' }, 
-		puke: { value: 'puke', text: 'болею' }, 
+		puke: { value: 'puke', text: 'тошнит' }, 
 		razz: { value: 'razz', text: 'дразнюсь' },
 		cake1left: { value: 'cake1left', text: 'кидаюсь тортом влево' },
 		cake1right: { value: 'cake1right', text: 'кидаюсь тортом вправо' },
@@ -32,7 +32,7 @@ var data = data || {};
 		time: { value: 'time', text: 'тороплюсь' }, 
 		rulez: { value: 'rulez', text: 'одобряю', },
 		sucks: { value: 'sucks', text: 'осуждаю' }, 
-		applaud: { value: 'applaud', text: 'аплодирую' }, 
+		applaud: { value: 'applaud', text: 'хлопаю в ладоши' }, 
 		fool: { value: 'fool', text: 'возмущаюсь' }, 
 		hi: { value: 'hi', text: 'приветствую' }, 
 		sun: { value: 'sun', text: 'сияю' }

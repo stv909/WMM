@@ -42,7 +42,7 @@
 			base.apply(this, arguments);
 			var self = this;
 			
-			this.elem = template.create('post-page-template', { id: 'post-page' });
+			this.elem = template.create('post-page-template', { id: 'post-page', className: 'hidden' });
 			this.tabsElem = this.elem.getElementsByClassName('tabs')[0];
 			this.friendTabElem = this.tabsElem.getElementsByClassName('friend')[0];
 			this.groupTabElem = this.tabsElem.getElementsByClassName('group')[0];
@@ -68,6 +68,7 @@
 			
 			this.initializeViews();
 			this.setMode('friend');
+			//this.hide();
 			
 			this.once('dispose', function() {
 				self.friendSearchView.dispose();
@@ -78,8 +79,15 @@
 		}
 		
 		PostPageView.prototype.initializeViews = function() {
+			var self = this;
 			this.friendSearchView.attachTo(this.containerElem);
 			this.groupSearchView.attachTo(this.containerElem);
+			this.groupSearchView.on('click:send', function() {
+				self.trigger('click:send');
+			});
+			this.friendSearchView.on('click:send', function() {
+				self.trigger('click:send');
+			});
 		};
 		PostPageView.prototype.setMode = function(mode) {
 			this.mode = mode;
@@ -112,6 +120,142 @@
 		return PostPageView;
 	})(PageView);
 	
+	var LobbyView = (function(base) {
+		eve.extend(LobbyView, base);
+		
+		function LobbyView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.elem = template.create('lobby-template', { id: 'lobby' });
+			this.queryElem = this.elem.getElementsByClassName('query')[0];
+			this.contactsHolderElem = this.elem.getElementsByClassName('contacts-holder')[0];
+			this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
+			this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
+			this.loadElem = this.loadHolderElem.getElementsByClassName('load')[0];
+			
+			this.cachedUserViews = {};
+			this.userViews = {};
+			
+			this.hide();
+			
+			this.queryElemObserver = new DelayedObserver(this.queryElem.value);
+			this.queryElemObserver.on('change:value', function(event) {
+				self.trigger({
+					type: 'search:users',
+					text: event.value
+				});
+				analytics.send('friends', 'friends_search');
+			});
+			
+			this.cachedUserViews = {};
+			this.userViews = {};
+			this.selectedUserView = null;
+			
+			this.userViewSelectListener = function(event) {
+				var target = event.target;
+				var options = event.options;
+				if (target !== self.selectedUserView) {
+					if (self.selectedUserView) {
+						self.selectedUserView.deselect();
+					}
+					self.selectedUserView = target;
+					self.trigger({
+						type: 'select:user',
+						user: self.selectedUserView.model,
+						options: options
+					});
+				}
+			};
+			this.userViewForceSelectListener = function(event) {
+				var target = event.target;
+				self.trigger({
+					type: 'select-force:user',
+					user: target.model
+				});
+			};
+			
+			var wheelListener = function(event) {
+				var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
+				var isIE = Math.abs(delta) >= 120;
+				var scrollPending = isIE ? delta / 2 : 0;
+				if (delta < 0 && (self.contactsHolderElem.scrollTop + scrollPending) <= 0) {
+					self.contactsHolderElem.scrollTop = 0;
+					event.preventDefault();
+				}
+				else if (delta > 0 && (self.contactsHolderElem.scrollTop + scrollPending >= (self.contactsHolderElem.scrollHeight - self.contactsHolderElem.offsetHeight))) {
+					self.contactsHolderElem.scrollTop = self.contactsHolderElem.scrollHeight - self.contactsHolderElem.offsetHeight;
+					event.preventDefault();
+				}
+			};
+			var queryElemInputListener = function(event) {
+				self.queryElemObserver.set(self.queryElem.value);	
+			};
+			var loadElemClickListener = function(event) {
+				self.trigger('click:load');
+			};
+			
+			this.queryElem.addEventListener('input', queryElemInputListener);
+			this.contactsHolderElem.addEventListener('DOMMouseScroll', wheelListener, false);
+			this.contactsHolderElem.addEventListener('mousewheel', wheelListener, false);
+			this.loadElem.addEventListener('click', loadElemClickListener);
+			
+			this.once('dispose', function() {
+				self.queryElemObserver.off();
+				self.queryElem.removeEventListener('input', queryElemInputListener);
+				self.contactsHolderElem.addEventListener('DOMMouseScroll', wheelListener);
+				self.contactsHolderElem.addEventListener('mousewheel', wheelListener);
+				self.loadElem.addEventListener('click', loadElemClickListener);
+			});
+		}
+		
+		LobbyView.prototype.show = function() {
+			base.prototype.show.apply(this, arguments);
+			this.trigger('show');
+		};
+		LobbyView.prototype.addUser = function(user) {
+			var id = user.get('id');
+			var userView = this._getOrCreateUserView(user);
+			userView.attachTo(this.contactsElem);
+			this.userViews[id] = userView;
+		};
+		LobbyView.prototype.selectUser = function(user) {
+			var userView = this._getOrCreateUserView(user);
+			userView.select('persist');
+		};
+		LobbyView.prototype._getOrCreateUserView = function(user) {
+			var id = user.get('id');
+			var userView = this.cachedUserViews[id];
+			if (!userView) {
+				userView = new UserView(user, true);
+				userView.on('select', this.userViewSelectListener);
+				userView.on('select-force', this.userViewForceSelectListener)
+				this.cachedUserViews[id] = userView;
+			}
+			return userView;
+		};
+		LobbyView.prototype.clear = function() {
+			Object.keys(this.userViews).forEach(function(key) {
+				this.userViews[key].detach();
+			}, this);
+			this.userViews = {};
+		};
+		LobbyView.prototype.hideLoader = function() {
+			this.loadHolderElem.classList.add('hidden');
+		};
+		LobbyView.prototype.showLoader = function() {
+			this.loadHolderElem.classList.remove('hidden');	
+		};
+		LobbyView.prototype.updateUserSearch = function() {
+			this.trigger({
+				type: 'search:users',
+				text: this.queryElem.value
+			});
+		};
+		
+		return LobbyView;
+	})(PageView);
+	
 	var SearchView = (function(base) {
 		eve.extend(SearchView, base);
 		
@@ -121,6 +265,7 @@
 			
 			this.elem = template.create('contact-search-template', { className: 'contact-search' });
 			this.receiverHolderElem = this.elem.getElementsByClassName('receiver-holder')[0];
+			this.sendElem = this.elem.getElementsByClassName('send')[0];
 			this.sectionElem = this.elem.getElementsByClassName('section')[0];
 			this.queryElem = this.elem.getElementsByClassName('query')[0];
 			this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
@@ -144,15 +289,20 @@
 					event.preventDefault();
 				}
 			};
+			var sendElemClickListener = function(event) {
+				self.trigger('click:send');
+			};
 			
 			this.loadElem.addEventListener('click', loadElemClickListener);
 			this.wrapperElem.addEventListener('DOMMouseScroll', wheelListener, false);
 			this.wrapperElem.addEventListener('mousewheel', wheelListener, false);
+			this.sendElem.addEventListener('click', sendElemClickListener);
 			
 			this.once('dispose', function() {
 				self.loadElem.removeEventListener('click', loadElemClickListener);	
 				self.wrapperElem.removeEventListener('DOMMouseScroll', wheelListener);
 				self.wrapperElem.removeEventListener('mousewheel', wheelListener);
+				self.sendElem.removeEventListener('click', sendElemClickListener);
 			});
 		}
 		
@@ -371,5 +521,6 @@
 	})(SearchView);
 	
 	messenger.views.PostPageView = PostPageView;
+	messenger.views.LobbyView = LobbyView;
 	
 })(messenger, eve, abyss, template, analytics);

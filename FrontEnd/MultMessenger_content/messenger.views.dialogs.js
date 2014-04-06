@@ -202,6 +202,56 @@ var messenger = messenger || {};
 		}
 	};
 	
+	var PrepareChatDialogView = (function(base) {
+		eve.extend(PrepareChatDialogView, base);
+		
+		function PrepareChatDialogView() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.dialogWindowElem = document.getElementById('prepare-chat-dialog');
+			this.statusElem = this.dialogWindowElem.getElementsByClassName('status')[0];
+			this.readyElem = this.dialogWindowElem.getElementsByClassName('ready')[0];
+	
+			var readyElemClickListener = function(event) {
+				self.hide();
+				self.trigger('click:close');
+			};
+	
+			this.readyElem.addEventListener('click', readyElemClickListener);
+	
+			this.once('dispose', function() {
+				self.readyElem.removeEventListener('click', readyElemClickListener);
+			});
+		}
+		
+		PrepareChatDialogView.prototype.show = function() {
+			base.prototype.show.apply(this, arguments);
+			this.setMode('wait');
+		};
+		PrepareChatDialogView.prototype.setMode = function(mode) {
+			switch (mode) {
+				case 'wait':
+					this.dialogWindowElem.classList.remove('error');
+					this.statusElem.textContent = 'Подготовка диалогов...';
+					this.readyElem.classList.add('hidden');
+					break;
+				case 'complete':
+					this.dialogWindowElem.classList.remove('error');
+					this.readyElem.classList.remove('hidden');
+					this.hide();
+					break;
+				case 'fail':
+					this.dialogWindowElem.classList.add('error');
+					this.statusElem.textContent = 'Не удалось подготовить диалоги!\n Проверьте интернет-подключение и \nпопробуйте позже.';
+					this.readyElem.classList.remove('hidden');
+					break;
+			}	
+		};
+		
+		return PrepareChatDialogView;
+	})(messenger.views.DialogView);
+	
 	var PostDialogView = function() {
 		PostDialogView.super.apply(this);
 		var self = this;
@@ -215,10 +265,9 @@ var messenger = messenger || {};
 
 		var readyElemClickListener = function(event) {
 			self.hide();
-			self.trigger({
-				type: 'click:close',
-				success: self.complete
-			});
+			if (self.complete) {
+				self.trigger('click:close');
+			}
 		};
 
 		this.readyElem.addEventListener('click', readyElemClickListener);
@@ -411,5 +460,6 @@ var messenger = messenger || {};
 	messenger.views.UpdateMessageDialogView = UpdateMessageDialogView;
 	messenger.views.PostDialogView = PostDialogView;
 	messenger.views.ImageSelectDialogView = ImageSelectDialogView;
+	messenger.views.PrepareChatDialogView = PrepareChatDialogView;
 	
 })(messenger, abyss, template, errors, html, analytics);

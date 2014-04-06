@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, analytics, css, html) {
+(function(messenger, abyss, template, analytics, css, html, settings) {
 	
 	var View = abyss.View;
 	
@@ -46,7 +46,15 @@ var messenger = messenger || {};
 	MessageView.prototype.prepareCachedPreviewElem = function() {
 		this.cachedPreviewElem = document.createElement('div');
 		var imgElem = document.createElement('img');
-		imgElem.src = this.model.get('preview');
+		if (this.model.get('preview')) {
+			imgElem.src = this.model.get('preview');
+		} else {
+			imgElem.src = settings.emptyPreviewUrl;
+			this.model.once('change:preview', function(event) {
+				var preview = event.value;
+				imgElem.src = preview;
+			});
+		}
 		this.cachedPreviewElem.appendChild(imgElem);
 	};
 	MessageView.prototype.prepareCachedFullElem = function() {
@@ -250,4 +258,4 @@ var messenger = messenger || {};
 	messenger.views.ImageItemView = ImageItemView;
 	messenger.views.PhotoItemView = PhotoItemView;
 
-})(messenger, abyss, template, analytics, css, html);
+})(messenger, abyss, template, analytics, css, html, settings);

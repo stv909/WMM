@@ -4,20 +4,41 @@ var text = text || {};
 
 	var MAX_INT = 4294967295;
 
-	function TextSearch(objects, stringExtractor) {
+	function TextSearch(objects, stringExtractor, useIdIndex) {
 		this.objects = objects;
+		this.idIndices = null;
 		this.stringExtractor = stringExtractor || function(object) {
 			return object;
 		};
+		if (useIdIndex) {
+			this._buildIdIndices();
+		}
 	}
+	TextSearch.prototype._buildIdIndices = function() {
+		this.idIndices = {};
+		this.objects.forEach(function(object, position) {
+			var id = object.get('id');
+			this.idIndices[id] = position;
+		}, this);
+	};
+	TextSearch.prototype.getObjectById = function(id) {
+		if (this.idIndices) {
+			var position = this.idIndices[id];
+			return this.objects[position];
+		} else {
+			throw new Error('use id search has not been set');
+		}
+	};
 	TextSearch.prototype.search = function(query) {
-		var data = this.objects;
+		var data;
 		var tokens = this._tokenizeQuery(query);
 		
 		if (tokens.length) {
 			var regExps = this._tokensToRegExps(tokens);
 			var indices = this._buildIndices(regExps);
 			data = this._buildData(indices);
+		} else {
+			data = this.objects.slice(0);
 		}
 
 		return data;

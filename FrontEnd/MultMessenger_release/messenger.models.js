@@ -21,7 +21,9 @@ var messenger = messenger || {};
 				firstName: rawUser.first_name,
 				lastName: rawUser.last_name,
 				photo: rawUser.photo_200 || rawUser.photo_100 || rawUser.photo_50,
-				canPost: rawUser.can_post
+				canPost: rawUser.can_post,
+				unread: 0,
+				online: false
 			});
 			
 			return user;

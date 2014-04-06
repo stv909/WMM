@@ -414,7 +414,7 @@ window.onload = function() {
 			self.postcardMenuView.showCancel();
 			self.mainMenuView.enableShadow(false);
 			self.postcardMenuView.editItemView.setText('2. Напиши сценарий!');
-			self.postcardMenuView.postItemView.setText('3. Отправь в чат!');
+			self.postcardMenuView.postItemView.setText('3. Отправь в диалог!');
 			self.currentPostClickHandler = self.chatPostClickHandler;
 			self.currentPostcardClickHandler = self.chatPostcardClickHandler;
 		});
@@ -425,7 +425,7 @@ window.onload = function() {
 			self.postcardMenuView.showCancel();
 			self.mainMenuView.enableShadow(false);
 			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
-			self.postcardMenuView.postItemView.setText('3. Отправь в чат!');
+			self.postcardMenuView.postItemView.setText('3. Отправь в диалог!');
 			self.currentPostClickHandler = self.chatPostClickHandler;
 			self.currentPostcardClickHandler = self.chatPostcardClickHandler;
 		});

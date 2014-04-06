@@ -58,4 +58,5 @@ var settings = settings || {};
 		'group': 'https://vk.com/club',
 		'event': 'https://vk.com/event'
 	};
+	settings.emptyPreviewUrl = 'images/emptyPreview.png';
 })(settings);

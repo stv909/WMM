@@ -1,6 +1,6 @@
 aspect-color = #28f
 active-aspect-color = #26d
-default-font-color = #666
+default-font-color = #333
 default-width = 920px
 
 user-select(value)
@@ -16,50 +16,326 @@ transform(value)
 	transform value
 *
 	outline 0
-html, body
-	position absolute
-	top 0
-	bottom 0
-	left 0
-	right 0
-	margin 0
-	padding 0
-	display block
-	font-family 'Open Sans', Verdana
-	color default-font-color
-	background-color #fff
-	text-rendering optimizeLegibility
-	overflow-x hidden
 ::-webkit-scrollbar
 	width 8px
 	height 8px
 	margin 0 auto
 ::-webkit-scrollbar-thumb
 	background-color #ddd
+html, body
+	font-family 'Open Sans', Verdana
+	text-rendering optimizeLegibility
+	color default-font-color
+	background-color #fff
+#root
+	position absolute
+	display block
+	top 0
+	bottom 0
+	left 0
+	right 0
 .hidden
 	display none !important
-#menu
-	user-select(none)
-	position fixed
-	top 0
-	font-size 12px
+.super-hidden
+	display none !important
+.main-menu
+	position absolute
+	height 42px
+	line-height 42px
 	width 920px
 	box-sizing(border-box)
-	height 36px
-	line-height 36px
-	vertical-align middle
-	z-index 10
-	background-color #fff
-	box-shadow 0 0 6px #888
-#menu-container
-	vertical-align top
-	position relative
+	user-select(none)
+	z-index 20
+	font-size 12px
 	text-align center
-	margin-left 12px
-	margin-right 12px
-	box-sizing(content-box)
+	background-color white
+	&.shadow
+		box-shadow 0 0 2px #888
+	.container 
+		position relative
+		margin-left 12px
+		margin-right 12px
+		box-sizing(content-box)
+		vertical-align top
+		text-align center
+	.logo
+		position absolute
+		left 12px
+		font-size 14px !important
+		font-weight bold
+		color #333
+		cursor pointer
+		&:hover
+			color aspect-color
+		.logo-pic
+			position relative
+			top 3px
+			width 22px
+			height 16px
+			border-radius 4px
+			background-color aspect-color
+			display inline-block
+			&:after
+				position absolute
+				top 16px
+				left 4px
+				content ""
+				border-top 5px solid aspect-color
+				border-right 5px solid transparent
+	.items, .chats
+		display inline-block
+		vertical-align top
+		margin-top 4px
+	.main-menu-item
+		display inline-block
+		background-color white
+		&.normal
+			cursor pointer
+			&:hover
+				color aspect-color
+		&.chosen
+			cursor default
+			color white
+			text-shadow 0 0 2px #666
+			background-color aspect-color
+		.unread
+			display inline
+			margin-left 8px
+			padding 4px 8px 4px 8px
+			color white
+			font-size 10px
+			background-color red
+			//box-shadow 0 0 4px #666
+			border-radius 2px
+	.chats
+		margin-left 12px
+		display inline-block
+		border 1px solid aspect-color
+		background-color aspect-color
+		border-radius 3px
+		height 34px
+		box-sizing(border-box)
+		.main-menu-item
+			position relative
+			vertical-align top
+			height 32px
+			line-height 32px
+			margin-right 1px
+			margin-left 32px
+			padding-right 16px
+			&.chosen
+				color white
+				background-color aspect-color
+				text-shadow 0 0 2px #666
+				&:before
+					border 16px solid aspect-color
+					border-left 16px solid transparent
+				&:after
+					border 16px solid transparent
+					border-left 16px solid aspect-color
+			&:before
+				position:absolute;
+				top 0
+				left -32px
+				content ""
+				border 16px solid white
+				border-left 16px solid transparent
+			&:after
+				position absolute
+				top 0
+				right -32px
+				content ""
+				border 16px solid transparent
+				border-left 16px solid white
+			&:first-child
+				margin-left 0
+				padding-left 32px
+				border-top-left-radius 2px
+				border-bottom-left-radius 2px
+				&:before
+					display none
+			&:last-child
+				margin-right 0
+				padding-right 32px
+				border-top-right-radius 2px
+				border-bottom-right-radius 2px
+				&:after
+					display none
+	.items
+		margin-left 32px
+		.main-menu-item
+			vertical-align top
+			height 34px
+			line-height 34px
+			border 1px solid aspect-color
+			border-radius 2px
+			padding-left 32px
+			padding-right 32px
+			box-sizing(border-box)
+	.info
+		position absolute
+		right 0
+		height 36px
+		display inline-block
+		.group
+			display inline-block
+			height 34px
+			margin-top 4px
+			margin-right 8px
+			padding-right 8px
+			user-select(none)
+			cursor pointer
+			color #fff
+			background-color #5b5
+			text-shadow 0 0 2px #666
+			border-radius 2px
+			&:hover
+				background-color #4a4
+			&:active
+				background-color #393
+		.bender
+			width 34px
+			height 34px
+		.group-text
+			display inline-block
+			height 34px
+			line-height 12px
+			vertical-align top
+			padding-top 5px
+			padding-bottom 4px
+			box-sizing(border-box)
+.main-container
+	position absolute
+	top 42px
+	bottom 0
+	width 100%
+	box-sizing(border-box)
+.postcard
+	position relative
+	width 100%
+	height 100%
+.postcard-menu
+	position absolute
+	height 38px
+	width 920px
+	box-sizing(border-box)
+	user-select(none)
+	z-index 10
+	font-size 0
+	text-align center
+	background-color white
+	box-shadow 0 0 4px #888
+	.breadcrumbs
+		display inline-block
+		border 1px solid aspect-color
+		background-color aspect-color
+		border-radius 3px
+	.postcard-menu-item
+		position relative
+		display inline-block
+		height 32px
+		line-height 32px
+		box-sizing(border-box)
+		vertical-align top
+		background-color white
+		margin-right 1px
+		margin-left 32px
+		padding-right 16px
+		font-size 12px
+		color #333
+		&.flicker
+			-webkit-animation flicker 0.75s infinite ease-in-out
+			&:before
+				-webkit-animation flicker-non-left-border 0.75s infinite ease-in-out
+			&:after
+				-webkit-animation flicker-left-border 0.75s infinite ease-in-out
+		&.normal
+			cursor pointer
+			&:hover
+				color aspect-color
+		&.chosen
+			color white
+			background-color aspect-color
+			text-shadow 0 0 2px #666
+			&:before
+				border 16px solid aspect-color
+				border-left 16px solid transparent
+			&:after
+				border 16px solid transparent
+				border-left 16px solid aspect-color
+		&:before
+			position:absolute;
+			top 0
+			left -32px
+			content ""
+			border 16px solid white
+			border-left 16px solid transparent
+		&:after
+			position absolute
+			top 0
+			right -32px
+			content ""
+			border 16px solid transparent
+			border-left 16px solid white
+		&:first-child
+			margin-left 0
+			padding-left 32px
+			border-top-left-radius 2px
+			border-bottom-left-radius 2px
+			&:before
+				display none
+		&:last-child
+			margin-right 0
+			padding-right 32px
+			border-top-right-radius 2px
+			border-bottom-right-radius 2px
+			&:after
+				display none
+	.cancel
+		position absolute
+		top 0
+		right 8px
+		height 34px
+		line-height 34px
+		box-sizing(border-box)
+		padding-left 16px
+		padding-right 16px
+		font-size 12px
+		color white
+		background-color red
+		border-radius 2px
+		cursor pointer
+		text-shadow 0 0 2px #666
+		&:hover
+			background-color red - #111
+		&:active
+			background-color red - #222
+.conversation
+	position relative
+	width 100%
+	height 100%
+.conversation-menu
+	position absolute
+	height 45px
+	width 920px
+	box-sizing(border-box)
+	z-index 10
+	font-size 0
+	text-align center
+	background-color white
+	font-size 12px
+	box-shadow 0 0 2px #888
+	.items
+		margin-top 3px
+		display inline-block
+	.conversation-menu-item
+		margin-left 4px
+		margin-right 4px
+		padding-left 16px
+		padding-right 16px
 #logo
 	position absolute
+	display inline-block
 	left 0
 	font-size 14px !important
 	font-weight bold
@@ -67,8 +343,6 @@ html, body
 	cursor pointer
 	&:hover
 		color aspect-color
-#logo, #breadcrumbs
-	display inline-block
 #logo-pic
 	top 3px
 	width 22px
@@ -119,69 +393,140 @@ html, body
 	border-left 16px solid #fff
 	border-top 10px solid aspect-color
 	border-bottom 10px solid aspect-color
-#breadcrumbs
-	display inline-block
+#lobby
+	position relative
 	font-size 0
-	margin-left 48px
-	.chosen
-		color #fff
-		background-color aspect-color
-		text-shadow 0 0 2px #666
-	.normal
-		&:hover
-			color aspect-color !important
-#status
-	position absolute
-	right 0
-	display inline-block
-	height 36px
-#online
-	color white
-	border-radius 3px
-	background-color #55bb55
-	border 1px solid #55bb55
-	width 4px
-	height 4px
-	display inline-block
-	vertical-align top
-	margin-top 15px
-	&.invalid
-		background-color #f00 !important
-		border 1px solid #f00
-#disconnect
-	line-height 16px
-	padding 4px 8px 4px 8px
-#select, #edit, #post
-	font-size 12px
-	cursor pointer
-	display: inline-block
-	padding-right 6px
-	padding-left 6px
-	position relative
-	&.chosen:after
-		content ""
-		top 0
-		right 0
-		margin-right -12px
-		position absolute
-		border-left 12px solid aspect-color
-		border-top 18px solid transparent
-		border-bottom 18px solid transparent
-#edit, #post
-	margin-left 12px
-#page
-	box-sizing(border-box)
-	overflow-y auto
-	display block
-	position absolute
-	top 36px
-	bottom 48px
 	width 100%
-#page-container
-	font-size 0 !important
-	margin 0 auto
 	height 100%
-	position relative
+	.search-holder
+		position absolute
+		top 0
+		height 51px
+		width 100%
+		z-index 5
+		box-sizing(border-box)
+		padding-left 12px
+		padding-right 12px
+		.query
+			margin-top 12px
+			width 100%
+	.shadow
+		position absolute
+		top 51px
+		height 6px
+		width 100%
+		z-index 5
+		background-image linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%)
+	.contacts-holder
+		position absolute
+		top 51px
+		width 100%
+		bottom 0
+		padding 6px 12px 12px 12px
+		box-sizing(border-box)
+		overflow-y auto
+		.contacts
+			margin-left 16px
+	.load-holder
+		margin-top 18px
+		margin-bottom 18px
+		.button-special
+			width 100%
+			box-sizing(border-box)
+.tape-page
+	font-size 0
+	overflow-y auto
+	position absolute
+	top 45px
+	bottom 0
+	left 0
+	right 0
+	text-align center
+	padding-bottom 6px
+	box-sizing(border-box)
+	&::-webkit-scrollbar-track
+		&:vertical
+			border-left 1px solid #ddd
+	.tape-item
+		position relative
+		font-size 12px
+		padding-bottom 12px
+		padding-top 12px
+		border-bottom 1px solid #ddd
+		border-collapse separate
+		&.own
+			background-color #f8f8f8
+		&.unshown
+			&:before
+				position absolute
+				left 0
+				top 0
+				height 100%
+				content ""
+				border-left 5px solid #5b5
+		.contact
+			background-color white
+			border 1px solid #ddd
+		.text-user
+			width 100%
+			padding-left 1px
+			padding-right 1px
+			.name
+				font-size 12px
+				white-space: pre-wrap;
+				padding-top 8px
+				padding-bottom 8px
+				cursor pointer
+				&:hover
+					color aspect-color
+					text-decoration underline
+			&.offline
+				opacity 0.5
+		.text-message
+			font-size 0
+			margin-left 13px
+			.content
+				font-size 12px
+				margin-left 10px
+				margin-right 10px
+				margin-top 8px
+				margin-bottom 8 px
+		.contact-holder, .message-holder, .controls-holder
+			display: inline-block
+			vertical-align top
+		.contact-holder
+			width 130px
+			margin-right 1px
+			.answer
+				width 122px
+				box-sizing(border-box)
+				margin-left 4px
+				margin-top 8px
+				text-align center
+				height 122px
+				vertical-align middle
+				display flex
+				justify-content center
+				align-content center
+				flex-direction column
+				//-webkit-animation min-pulse 0.75s infinite ease-in-out
+		.message-holder
+			font-size 0
+			width 454px
+			text-align left
+			.message
+				margin-left 12px
+		.controls-holder
+			width 140px
+			.wall, .url
+				display block
+				margin-bottom 6px
+			.wall
+				margin-top 6px
+			.time
+				font-size 12px
+				padding-top 8px
+				padding-bottom 8px
 #answer-page
 	.container
 		display inline-block
@@ -195,11 +540,24 @@ html, body
 	.message
 		margin-top 0
 		margin-left 0
+	.answer
+		width 122px
+		box-sizing(border-box)
+		margin-left 1px
+		margin-top 8px
+		text-align center
+		height 122px
+		vertical-align middle
+		display flex
+		justify-content center
+		align-content center
+		flex-direction column
+		-webkit-animation min-pulse 0.75s infinite ease-in-out
 #select-page
 	font-size 0
 	overflow hidden
 	position absolute
-	top 0
+	top 38px
 	bottom 0
 	left 0
 	right 0
@@ -232,13 +590,13 @@ html, body
 		text-align center
 		font-weight bold
 		left 0
-		top 36px
+		top 0
 		width 100%
 		margin 0 auto
 		height 36px
 		line-height 36px
 		box-sizing(border-box)
-		position fixed
+		position relative
 		z-index 9
 		background-color #fccd59
 		color #fff
@@ -256,7 +614,7 @@ html, body
 	font-size 0
 	position absolute
 	overflow hidden
-	top 0
+	top 38px
 	bottom 0
 	left 0
 	right 0
@@ -432,7 +790,7 @@ html, body
 #post-page
 	font-size 0
 	position absolute
-	top 0
+	top 38px
 	bottom 0
 	right 0
 	left 0
@@ -501,6 +859,19 @@ html, body
 							width 100%
 							margin-top 12px
 							margin-bottom 0
+						.send
+							width 122px
+							box-sizing(border-box)
+							margin-left 1px
+							margin-top 8px
+							text-align center
+							height 122px
+							vertical-align middle
+							display flex
+							justify-content center
+							align-content center
+							flex-direction column
+							-webkit-animation min-pulse 0.75s infinite ease-in-out
 					.search-place
 						padding-right 20px
 						>.prewrapper
@@ -564,6 +935,7 @@ html, body
 	cursor pointer
 	border-radius 2px
 	font-size 12px
+	background-color white
 	&:hover
 		border 1px solid aspect-color
 		box-shadow 0 0 1px aspect-color
@@ -594,22 +966,6 @@ html, body
 .load-holder
 	text-align center
 	font-size 12px
-#footer
-	text-align center
-	position fixed
-	width default-width
-	bottom 0
-	font-size 12px
-	padding-top 6px
-	padding-bottom 6px
-	height 36px
-	background-color #fff
-	box-shadow 0 0 6px #888
-	.button-special
-		box-sizing(border-box)
-		line-height 34px
-		padding-top 0
-		padding-bottom 0
 #dialog-background
 	display table
 	position fixed
@@ -695,7 +1051,7 @@ html, body
 		white-space pre
 		vertical-align middle
 		display inline-block
-#ask-message-dialog
+#prepare-chat-dialog
 	font-size 12px
 	width 360px
 	height 220px
@@ -704,6 +1060,18 @@ html, body
 		line-height 140px
 	.status
 		line-height 22px
+		white-space pre
+		vertical-align middle
+		display inline-block
+#ask-message-dialog
+	font-size 12px
+	width 360px
+	height 220px
+	.content
+		height 140px
+		line-height 140px
+	.status
+		line-height 12px
 		white-space pre
 		vertical-align middle
 		display inline-block
@@ -780,7 +1148,7 @@ html, body
 			background-color #f00
 			box-shadow 0 0 2px #f00
 			color #fff
-#moods-dialog, #actions-dialog, #gags-dialog, #animation-types-dialog
+#moods-dialog, #actions-dialog, #gags-dialog, #animation-types-dialog, #create-message-dialog
 	font-size: 12px
 	.title-holder
 		position relative
@@ -946,6 +1314,32 @@ html, body
 			background-color #f00
 			box-shadow 0 0 2px #f00
 			color #fff
+#create-message-dialog
+	font-size 12px
+	width 360px
+	height 220px
+	.content
+		height 140px
+		line-height 140px
+		padding 8px
+		box-sizing(border-box)
+	.status
+		line-height 22px
+		white-space pre
+		vertical-align middle
+		display inline-block
+	.message-text
+		width 100%
+		height 100%
+		box-sizing(border-box)
+		resize none
+		padding 8px
+		border 1px solid #ddd
+		font-size 12px
+		border-radius 2px
+	.disabled
+		cursor default
+		opacity 0.5
 #preload-background
 	display table
 	position fixed
@@ -1006,6 +1400,7 @@ html, body
 	padding-bottom 4px
 	box-sizing(border-box)
 .contact
+	position relative
 	vertical-align top
 	font-size 0
 	margin-left 1px
@@ -1026,13 +1421,13 @@ html, body
 		cursor default
 	.photo
 		padding-top 10px
-		padding-bottom 5px
 		width 100px
 		height 100px
 	.name
 		margin-left 1px
 		margin-right 1px
 		font-size 10px
+		padding-top 5px
 		padding-bottom 5px
 		display inline-block
 		white-space pre-wrap
@@ -1040,6 +1435,16 @@ html, body
 		&:hover
 			color aspect-color
 			text-decoration underline
+	.unread
+		position absolute
+		top 12px
+		right 12px
+		padding 4px 8px 4px 8px
+		border-radius 2px
+		font-size 10px
+		background-color red
+		color white
+		box-shadow 0 0 4px #333
 .message-wrapper
 	display inline-block
 	height 100%
@@ -1072,7 +1477,6 @@ html, body
 	font-size 12px
 	padding 8px
 	border 1px solid #ddd
-	//width 100%
 	margin-bottom 8px
 	box-sizing(border-box)
 	border-radius 2px
@@ -1125,10 +1529,44 @@ html, body
 .sad
 	background-color #adcdec
 	border 1px solid #adcdec - #333
+@-webkit-keyframes flicker-left-border
+	0%
+		border-left-color rgba(white, 1.0)
+	50%
+		border-left-color rgba(white, 0.85)
+	100%
+		border-left-color rgba(white, 1.0)
+@-webkit-keyframes flicker-non-left-border
+	0%
+		border-right-color rgba(white, 1.0)
+		border-top-color rgba(white, 1.0)
+		border-bottom-color rgba(white, 1.0)
+	50%
+		border-right-color rgba(white, 0.85)
+		border-top-color rgba(white, 0.85)
+		border-bottom-color rgba(white, 0.85)
+	100%
+		border-right-color rgba(white, 1.0)
+		border-top-color rgba(white, 1.0)
+		border-bottom-color rgba(white, 1.0)
+@-webkit-keyframes flicker
+	0%
+		background-color rgba(white, 1.0)
+	50%
+		background-color rgba(white, 0.85)
+	100%
+		background-color rgba(white, 1.0)
 @-webkit-keyframes pulse
 	0%
-		-webkit-box-shadow 0 0 50px rgba(aspect-color, 0.0)
+		box-shadow 0 0 50px rgba(aspect-color, 0.0)
 	50% 
-		-webkit-box-shadow 0 0 50px rgba(aspect-color, 1.0)
+		box-shadow 0 0 50px rgba(aspect-color, 1.0)
 	100%
-		-webkit-box-shadow 0 0 50px rgba(aspect-color, 0.0)
+		box-shadow 0 0 50px rgba(aspect-color, 0.0)
+@-webkit-keyframes min-pulse
+	0%
+		box-shadow 0 0 15px rgba(aspect-color, 0.0)
+	50% 
+		box-shadow 0 0 15px rgba(aspect-color, 1.0)
+	100%
+		box-shadow 0 0 15px rgba(aspect-color, 0.0)

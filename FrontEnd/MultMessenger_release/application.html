@@ -25,6 +25,7 @@
 	<script src="settings.js"></script>
 	<script src="filmlang.js"></script>
 	<script src="data.js"></script>
+	<script src="messenger.utils.js"></script>
 	<script src="messenger.models.js"></script>
 	<script src="messenger.repository.js"></script>
 	<script src="messenger.storage.js"></script>
@@ -33,12 +34,15 @@
 	<script src="messenger.views.contacts.js"></script>
 	<script src="messenger.views.dialogs.js"></script>
 	<script src="messenger.views.pages.js"></script>
+	<script src="messenger.views.menus.js"></script>
+	<script src="messenger.views.MainMenuView.js"></script>
 	<script src="messenger.views.pages.EditPageView.js"></script>
 	<script src="messenger.views.pages.PostPageView.js"></script>
-	<script src="messenger.utils.js"></script>
+	<script src="messenger.views.pages.ConversationView.js"></script>
 	<script src="application.js"></script>
 </head>
 <body>
+<audio id="new-message-sound" src="newMessageSpace.wav" preload="auto" style="controls:none"></audio>
 <template id="message-template" style="display:none">
 	<div class="content">
 	</div>
@@ -49,6 +53,8 @@
 			<div>
 				<div class="section">Отправитель</div>
 			</div>
+			<div class="contact-holder"></div>
+			<div class="button-special answer">Ответить</div>
 		</div>
 		<div class="message-wrapper">
 		</div>
@@ -135,6 +141,7 @@
 		<div class="body">
 			<div class="receiver-place">
 				<div class="receiver-holder"></div>
+				<div class="button-special send">Отправить<br>мульт!</div>
 			</div>
 			<div class="search-place" style="padding-right: 0">
 				<div class="prewrapper">
@@ -161,6 +168,7 @@
 	<img class="icon">
 </template>
 <template id="contact-template" style="display: none">
+	<div class="unread hidden"></div>
 	<div class="photo-holder">
 		<img class="photo">
 	</div>
@@ -196,71 +204,66 @@
 <template id="character-item-template" style="display: none">
 	<img class="character-image">
 </template>
-<div id="menu">
-	<div id="menu-container">
-		<div id="logo">
-			<span>Мульт</span>
-			<div id="logo-pic">
-				<div id="arrow"></div>
-			</div>
-			<span>Мессенджер 2.0</span>
-			<span style="font-size: 9px; display: inline-block; vertical-align:top; margin-left: -2px;margin-top: -6px;">бета</span>
+<template id="main-menu-template" style="display: none">
+	<div class="logo">
+		<span>Мульт</span>
+		<div id="logo-pic">
+			<div id="arrow"></div>
 		</div>
-		<div id="breadcrumbs">
-			<div id="select">1. Выбери мульт!</div>
-			<div id="edit">2. Переделай по-своему!</div>
-			<div id="post">3. Отправь на стену!</div>
-		</div>
-		<div id="status">
-			<div id="group">
-				<img src="characters/ostap.png" id="bender">
-				<div id="group-text">новости<br>мульт-команды</div>
-			</div>
-			<div id="disconnect" class="button hidden">Отключиться</div>
-			<div id="online"></div>
-		</div>
+		<span>Мессенджер 2.0</span>
 	</div>
-</div>
-<div id="page">
-	<div id="page-container">
+	<div class="items"></div>
+	<div class="chats"></div>
+	<div class="info">
+		<div class="group">
+			<img src="characters/ostap.png" class="bender">
+			<div class="group-text">новости<br>мульт-команды</div>
+		</div>	
 	</div>
-</div>
-<div id="footer">
-	<div class="button-special" id="next">Далее</div>
-</div>
-<div id="preload-background">
-	<div class="wrapper">
-		<div class="info">
-			<div class="title">
-				<span>Мульт</span>
-				<div id="big-logo-pic">
-					<div id="big-arrow"></div>
-				</div>
-				<span>Мессенджер 2.0</span>
-				<span style="font-size: 12px; display: inline; vertical-align:top; margin-left: -6px;">бета</span>
-			</div>
-			<div class="content">
-				<div id="circularG">
-					<div id="circularG_1" class="circularG"></div>
-					<div id="circularG_2" class="circularG"></div>
-					<div id="circularG_3" class="circularG"></div>
-					<div id="circularG_4" class="circularG"></div>
-					<div id="circularG_5" class="circularG"></div>
-					<div id="circularG_6" class="circularG"></div>
-					<div id="circularG_7" class="circularG"></div>
-					<div id="circularG_8" class="circularG"></div>
-				</div>
-			</div>
+</template>
+<template id="postcard-menu-template" style="display: none">
+	<div class="breadcrumbs">
+	</div>
+	<div class="cancel hidden" style="padding-left:46px;padding-right:46px">Отмена</div>
+</template>
+<template id="conversation-menu-template" style="display: none">
+	<div class="items">
+		<span>Отправить сообщение:</span>
+	</div>
+</template>
+<template id="tape-page-template" style="display: none">
+</template>
+<template id="tape-item-template" style="display: none">
+	<div class="contact-holder">
+		<div class="answer button-special hidden">Ответить</div>
+	</div>
+	<div class="message-holder"></div>
+	<div class="controls-holder"></div>
+</template>
+<template id="lobby-template" style="display: none">
+	<div class="search-holder">
+		<input type="text" class="text query" placeholder="Найти друга">
+	</div>
+	<div class="shadow"></div>
+	<div class="contacts-holder">
+		<div class="contacts"></div>
+		<div class="load-holder hidden">
+			<div class="load button-special">Загрузить еще друзей...</div>
 		</div>
 	</div>
-	<div id="chrome">
-		<div class="powered">Разработано для</div>
-		<img class="chrome-image" src="images/chrome.png">
-		<img class="opera-image" src="images/opera.png">
-		<img class="safari-image" src="images/safari.png">
-		<img class="yandex-image" src="images/yandex.png">
-		<img class="firefox-image" src="images/firefox.png">
-	</div>
+</template>
+<template id="message-controls-template" style="display: none">
+	<div class="time"></div>
+	<div class="button wall">На стену</div>
+	<div class="button url">Получить ссылку</div>
+</template>
+<template id="text-message-template" style="display: none">
+	<div class="content"></div>
+</template>
+<template id="text-user-template" style="display: none">
+	<div class="name"></div>
+</template>
+<div id="root">
 </div>
 <div id="dialog-background" class="hidden">
 	<div class="dialog-wrapper">
@@ -298,12 +301,24 @@
 				<div class="ready button">Готово</div>
 			</div>
 		</div>
+		<div class="dialog-window hidden" id="prepare-chat-dialog">
+			<div class="title-holder">
+				<div class="title">Мульт-Мессенджер 2.0</div>
+			</div>
+			<div class="content">
+				<div class="status"></div>
+			</div>
+			<div class="controls-holder">
+				<div class="ready button">Готово</div>
+			</div>
+		</div>
 		<div class="dialog-window hidden" id="ask-message-dialog">
 			<div class="title-holder">
 				<div class="title">Сообщение не обновлено</div>
 			</div>
 			<div class="content">
-				<div class="status">Изменения не будут сохранены.<br>Все равно продолжить?</div>
+				<div class="status">Изменения не будут сохранены.
+					<br>Все равно продолжить?</div>
 			</div>
 			<div class="controls-holder">
 				<div class="ok button">Да</div>
@@ -326,8 +341,7 @@
 				<div class="title">Выбор персонажа</div>
 				<div class="cross button">X</div>
 			</div>
-			<div class="content">
-			</div>
+			<div class="content"></div>
 		</div>
 		<div class="dialog-window hidden" id="image-select-dialog">
 			<div class="title-holder">
@@ -345,36 +359,76 @@
 				<div class="title">Выбор эмоции</div>
 				<div class="cross button">X</div>
 			</div>
-			<div class="content">
-				
-			</div>
+			<div class="content"></div>
 		</div>
 		<div class="dialog-window hidden" id="gags-dialog">
 			<div class="title-holder">
 				<div class="title">Выбор гэга</div>
 				<div class="cross button">X</div>
 			</div>
-			<div class="content">
-				
-			</div>
+			<div class="content"></div>
 		</div>
 		<div class="dialog-window hidden" id="actions-dialog">
 			<div class="title-holder">
 				<div class="title">Выбор действия</div>
 				<div class="cross button">X</div>
 			</div>
-			<div class="content">
-			</div>
+			<div class="content"></div>
 		</div>
 		<div class="dialog-window hidden" id="animation-types-dialog">
 			<div class="title-holder">
 				<div class="title">Выбор типа анимации</div>
 				<div class="cross button">X</div>
 			</div>
+			<div class="content"></div>
+		</div>
+		<div class="dialog-window hidden" id="create-message-dialog">
+			<div class="title-holder">
+				<div class="title">Создание сообщения</div>
+				<div class="cross button">X</div>
+			</div>
 			<div class="content">
-				
+				<textarea class="message-text" value=""></textarea>
+			</div>
+			<div class="controls-holder">
+				<div class="send button-special disabled" style="-moz-box-sizing:border-box;box-sizing:border-box; width: 100%">Отправить (Enter)</div>
+				<div class="cancel button hidden">Отмена</div>
 			</div>
 		</div>
+	</div>
+</div>
+<div id="preload-background">
+	<div class="wrapper">
+		<div class="info">
+			<div class="title">
+				<span>Мульт</span>
+				<div id="big-logo-pic">
+					<div id="big-arrow"></div>
+				</div>
+				<span>Мессенджер 2.0</span>
+				<span style="font-size: 12px; display: inline; vertical-align:top; margin-left: -6px;">бета</span>
+			</div>
+			<div class="content">
+				<div id="circularG">
+					<div id="circularG_1" class="circularG"></div>
+					<div id="circularG_2" class="circularG"></div>
+					<div id="circularG_3" class="circularG"></div>
+					<div id="circularG_4" class="circularG"></div>
+					<div id="circularG_5" class="circularG"></div>
+					<div id="circularG_6" class="circularG"></div>
+					<div id="circularG_7" class="circularG"></div>
+					<div id="circularG_8" class="circularG"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="chrome">
+		<div class="powered">Разработано для</div>
+		<img class="chrome-image" src="images/chrome.png">
+		<img class="opera-image" src="images/opera.png">
+		<img class="safari-image" src="images/safari.png">
+		<img class="yandex-image" src="images/yandex.png">
+		<img class="firefox-image" src="images/firefox.png">
 	</div>
 </div>
 </body>

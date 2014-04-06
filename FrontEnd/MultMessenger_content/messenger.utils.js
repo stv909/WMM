@@ -89,7 +89,7 @@ var messenger = messenger || {};
 				url: messageShareUrl,
 				imageFormat: 'png',
 				scale: 1,
-				contentType: 'vkUpload'
+				contentType: uploadUrl ? 'vkUpload' : 'share'
 			};
 			var rawRequestData = JSON.stringify(requestData);
 			var options = {
@@ -153,7 +153,7 @@ var messenger = messenger || {};
 	
 	var ChatClientWrapper = function(chatClient) {
 		this.chatClient = chatClient;
-		this.operationTimeout = 60000;
+		this.operationTimeout = 600000;
 	};
 	ChatClientWrapper.prototype._createRequestTask = function(checkReadyState) {
 		var task = Q.defer();
@@ -228,6 +228,21 @@ var messenger = messenger || {};
 		
 		return task.promise;
 	};
+	ChatClientWrapper.prototype.getProfileAsync = function(profileId) {
+		var task = this._createRequestTask(true);
+		
+		this.chatClient.once('message:retrieve', function(event) {
+			var profile = event.response.retrieve[0];
+			task.resolve(profile);
+		});
+		this.chatClient.retrieve(profileId);
+		
+		return task.promise;
+	};
+	ChatClientWrapper.prototype.saveProfileAsync = function(profileId, data) {
+		this.chatClient.store(null, profileId, data);
+		return Q.resolve(true);
+	};
 	ChatClientWrapper.prototype.nowAsync = function() {
 		var task = this._createRequestTask(true);
 		
@@ -247,10 +262,21 @@ var messenger = messenger || {};
 			task.resolve(rawMessage);
 		});
 		this.chatClient.once('message:sent', function(event) {
-			var rawMessage = event.response.send;
+			var rawMessage = event.response.sent;
 			task.resolve(rawMessage);
 		});
 		this.chatClient.sendMessage(message);
+		
+		return task.promise;
+	};
+	ChatClientWrapper.prototype.loadTapeAsync = function() {
+		var task = this._createRequestTask(true);
+		
+		this.chatClient.once('message:tape', function(event) {
+			var tape = event.response.tape;
+			task.resolve(tape);
+		});
+		this.chatClient.tape();
 		
 		return task.promise;
 	};

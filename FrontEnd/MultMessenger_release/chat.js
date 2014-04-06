@@ -118,8 +118,6 @@ var chat = chat || {};
 			type = 'message:status';
 		} else if (response.broadcast) {
 			type = 'message:broadcast';
-		} else if (response.notify) {
-			type ='message:notify';
 		} else if (response.now) {
 			type = 'message:now';
 		} else if (response.subscribelist) {
@@ -139,7 +137,6 @@ var chat = chat || {};
 		} else {
 			console.log(response);
 		}
-
 		return type;
 	};
 	ChatClient.prototype.disconnect = function() {
@@ -155,7 +152,10 @@ var chat = chat || {};
 		this.socket.send('scrape');
 	};
 	ChatClient.prototype.store = function(tag, id, data) {
-		var tagId = [tag, id].join('.');
+		var chunks = [];
+		if (tag) chunks.push(tag);
+		if (id) chunks.push(id);
+		var tagId = chunks.join('.');
 
 		this.socket.send('store');
 		this.socket.send(tagId);
@@ -164,10 +164,6 @@ var chat = chat || {};
 	ChatClient.prototype.retrieve = function(idsString) {
 		this.socket.send('retrieve');
 		this.socket.send(idsString);
-	};
-	ChatClient.prototype.broadcast = function(fullDocumentId) {
-		this.socket.send('broadcast');
-		this.socket.send(fullDocumentId);
 	};
 	ChatClient.prototype.users = function() {
 		this.socket.send('users');
@@ -213,6 +209,21 @@ var chat = chat || {};
 		var contactModeId = contactModeIdArray.join('.');
 
 		this.socket.send('notify');
+		this.socket.send(tagId);
+		this.socket.send(contactModeId);
+	};
+	ChatClient.prototype.broadcast = function(tag, id, data, toUserId, contactMode) {
+		var tagIdArray = [tag, id];
+		var contactModeIdArray = [toUserId];
+
+		if (contactMode) {
+			contactModeIdArray.splice(0, 0, contactMode);
+		}
+
+		var tagId = tagIdArray.join('.');
+		var contactModeId = contactModeIdArray.join('.');
+
+		this.socket.send('broadcast');
 		this.socket.send(tagId);
 		this.socket.send(contactModeId);
 	};
@@ -306,6 +317,15 @@ var chat = chat || {};
 			this.store(tag, message.id, data);
 		}
 		this.notify(tag, message.id, data, message.group || message.to, contactMode);
+	};
+	ChatClient.prototype.broadcastMessage = function(message, contactMode, ignoreStore) {
+		var tag = 'msg';
+		var data = JSON.stringify(message);
+
+		if (!ignoreStore) {
+			this.store(tag, message.id, data);
+		}
+		this.broadcast(tag, message.id, data, message.group || message.to, contactMode);
 	};
 	ChatClient.prototype.saveTool = function(tool) {
 		var data = JSON.stringify(tool);

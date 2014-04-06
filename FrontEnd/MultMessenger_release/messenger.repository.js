@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, abyss, VK, text, settings) {
+(function(messenger, eve, abyss, VK, Q, text, settings, base64) {
 	
 	var UserModel = messenger.models.UserModel;
 	var GroupModel = messenger.models.GroupModel;
@@ -58,6 +58,7 @@ var messenger = messenger || {};
 			
 			this.groupSearch = null;
 			this.userSearch = null;
+			this.chatUserSearch = null;
 			
 			this.owner = null;
 			this.sender = null;
@@ -100,9 +101,15 @@ var messenger = messenger || {};
 					if (friendCount) {
 						return loadFriendsAsync(count, offset + friendCount);
 					} else {
+						var chatUserCollection = userCollection.filter(function(user) {
+							return user !== self.owner;
+						});
 						self.userSearch = new TextSearch(userCollection, function(user) {
 							return [user.get('firstName'), user.get('lastName')];
 						});
+						self.chatUserSearch = new TextSearch(chatUserCollection, function(user) {
+							return [user.get('firstName'), user.get('lastName')];	
+						}, true);
 					}
 				});
 			};
@@ -156,6 +163,27 @@ var messenger = messenger || {};
 			});
 		};
 		
+		ContactRepository.prototype.searchChatUsers = function(query) {
+			var users = this.chatUserSearch.search(query);
+			users.sort(function(user1, user2) {
+				var unread1 = user1.get('unread');
+				var unread2 = user2.get('unread');
+				if (unread1 < unread2) {
+					return 1;
+				} else if (unread1 > unread2) {
+					return -1;
+				} else {
+					return 0;
+				}
+			});
+			var paginableUsers = new Pagination(users);
+			paginableUsers.count = 35;
+			this.trigger({
+				type: 'search:chat-users',
+				chatUsers: paginableUsers
+			});
+		};
+		
 		ContactRepository.prototype.searchGroups = function(query) {
 			var groups = this.groupSearch.search(query);
 			var paginableGroups = new Pagination(groups);
@@ -166,12 +194,188 @@ var messenger = messenger || {};
 			});
 		};
 		
+		ContactRepository.prototype.getFirstNonOwnUser = function(query) {
+			var users = this.userSearch.objects;
+			var user = null;
+			for (var i = 0; i < users.length; i++) {
+				if (users[i] !== this.owner) {
+					user = users[i];
+					break;
+				}
+			}
+			user = user || this.owner;
+			return user;
+		};
+		
+		ContactRepository.prototype.getChatUserByVkid = function(vkId) {
+			var id = vkId.substring(4);
+			var user = this.chatUserSearch.getObjectById(id);
+			user = user || this.owner;
+			return user;
+		};
+		
 		return ContactRepository;
 		
 	})(eve.EventEmitter);
 	
+	var ChatRepository = (function(base) {
+		eve.extend(ChatRepository, base);
+		
+		function ChatRepository(chatClientWrapper) {
+			base.apply(this, arguments);
+			
+			this.chatClientWrapper = chatClientWrapper;
+			this.ownProfile = null;
+			this.contact = null;
+			this.messages = {};
+		}
+		
+		ChatRepository.prototype.loadTapeMessagesAsync = function() {
+			var self = this;
+			return this.chatClientWrapper.loadTapeAsync().then(function(tape) {
+				var messageIds = tape.map(function(item) {
+					return item.id;
+				});
+				var idToShown = {};
+				tape.forEach(function(item) {
+					idToShown[item.id] = item.shown;
+				});
+				var rawMessagesPromise = self.chatClientWrapper.getMessagesAsync(messageIds);
+				return Q.all([idToShown, rawMessagesPromise]);
+			}).spread(function(idToShown, rawMessages) {
+				var chatMessages = rawMessages.map(ChatMessageModel.fromRaw);
+				chatMessages = chatMessages.filter(function(chatMessage) {
+					return chatMessage.isValid();	
+				});
+				chatMessages.sort(function(m1, m2) {
+					var timestamp1 = m1.get('timestamp');
+					var timestamp2 = m2.get('timestamp');
+					if (timestamp1 > timestamp2) {
+						return 1;
+					} else if (timestamp1 < timestamp2) {
+						return -1;
+					} else {
+						return 0;
+					}
+				});
+				chatMessages.forEach(function(chatMessage) {
+					var msgId = ['msg', chatMessage.get('id')].join('.');
+					chatMessage.set('shown', idToShown[msgId]);
+					self.addMessage(chatMessage, true);
+				});
+			});
+		};
+		ChatRepository.prototype.loadSettingsAsync = function(profileId) {
+			var self = this;
+			return this.chatClientWrapper.getProfileAsync(profileId).then(function(profile) {
+				var value = profile.value || {};
+				value.settings = value.settings || {};
+				value.profileId = profileId;
+				self.ownProfile = value;
+				
+				if (!self.ownProfile.settings.lastContactId) {
+					self.trigger({
+						type: 'empty:last-contact'
+					});
+				} else {
+				
+					self.trigger({
+						type: 'update:last-contact',
+						lastContactId: self.ownProfile.settings.lastContactId
+					});
+				}
+			});
+		};
+		ChatRepository.prototype.setContact = function(contact) {
+			this.contact = contact;
+			this.ownProfile.settings.lastContactId = messenger.utils.Helpers.buildVkId(contact);
+			this.chatClientWrapper.saveProfileAsync(this.ownProfile.profileId, JSON.stringify(this.ownProfile));
+		};
+		ChatRepository.prototype.getContact = function() {
+			return this.contact;
+		};
+		ChatRepository.prototype.addMessage = function(message, noSearch) {
+			var messageId = message.get('id');
+			if (!this.hasMessage(messageId)) {
+				this.messages[messageId] = message;
+				this.trigger({
+					type: 'add:message',
+					message: message,
+					noSearch: noSearch
+				});
+			}
+		};
+		ChatRepository.prototype.getMessage = function(messageId) {
+			return this.messages[messageId];
+		};
+		ChatRepository.prototype.hasMessage = function(messageId) {
+			return this.messages.hasOwnProperty(messageId);	
+		};
+		ChatRepository.prototype.removeMessage = function(messageId) {
+			if (this.hasMessage(messageId)) {
+				delete this.messages[messageId];
+				this.trigger({
+					type: 'remove:message',
+					messageId: messageId
+				});
+			}
+		};
+		
+		return ChatRepository;
+	})(eve.EventEmitter);
+	
+	var ChatMessageModel = (function(base) {
+		eve.extend(ChatMessageModel, base);
+		
+		function ChatMessageModel() {
+			base.apply(this, arguments);
+			var self = this;
+			
+			this.on('change:preview', function(event) {
+				var preview = event.value;
+				if (preview) {
+					self.set('type', 'mult');
+				} else {
+					self.set('type', 'text');
+				}
+			});
+			this.on('remove:preview', function() {
+				self.set('type', 'text');
+			});
+		}
+		
+		ChatMessageModel.prototype.isMult = function() {
+			return this.get('content').indexOf('class="tool_layerBackground"') !== -1;
+		};
+		
+		ChatMessageModel.prototype.isValid = function() {
+			return !!this.get('content');	
+		};
+		
+		ChatMessageModel.fromRaw = function(rawMessage) {
+			var message = new ChatMessageModel();
+			
+			var value = rawMessage.value || {};
+			
+			message.set({
+				id: value.id,
+				timestamp: value.timestamp,
+				content: value.content ? base64.decode(value.content) : null,
+				preview: value.preview ? [settings.imageStoreBaseUrl, value.preview].join('') : null,
+				from: value.from,
+				to: value.to
+			});
+			
+			return message;
+		};
+		
+		return ChatMessageModel;
+	})(abyss.Model);
+	
 	messenger.repository = messenger.repository || {};
 	messenger.repository.Pagination = Pagination;
 	messenger.repository.ContactRepository = ContactRepository;
+	messenger.repository.ChatRepository = ChatRepository;
+	messenger.repository.ChatMessageModel = ChatMessageModel;
 	
-})(messenger, eve, abyss, VK, text, settings);
+})(messenger, eve, abyss, VK, Q, text, settings, base64);
