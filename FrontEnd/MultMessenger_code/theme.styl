@@ -454,6 +454,8 @@ html, body
 		padding-top 12px
 		border-bottom 1px solid #ddd
 		border-collapse separate
+		&.own
+			background-color #f8f8f8
 		&.unshown
 			&:before
 				position absolute
@@ -462,8 +464,11 @@ html, body
 				height 100%
 				content ""
 				border-left 5px solid #5b5
+		.contact
+			background-color white
+			border 1px solid #ddd
 		.text-user
-			width 120px
+			width 100%
 			padding-left 1px
 			padding-right 1px
 			.name
@@ -490,6 +495,7 @@ html, body
 			display: inline-block
 			vertical-align top
 		.contact-holder
+			width 130px
 			margin-right 1px
 			.answer
 				width 122px
@@ -506,7 +512,7 @@ html, body
 				//-webkit-animation min-pulse 0.75s infinite ease-in-out
 		.message-holder
 			font-size 0
-			width 450px
+			width 454px
 			text-align left
 			.message
 				margin-left 12px
@@ -929,6 +935,7 @@ html, body
 	cursor pointer
 	border-radius 2px
 	font-size 12px
+	background-color white
 	&:hover
 		border 1px solid aspect-color
 		box-shadow 0 0 1px aspect-color

@@ -539,6 +539,9 @@ body {
   border-bottom: 1px solid #ddd;
   border-collapse: separate;
 }
+.tape-page .tape-item.own {
+  background-color: #f8f8f8;
+}
 .tape-page .tape-item.unshown:before {
   position: absolute;
   left: 0;
@@ -547,8 +550,12 @@ body {
   content: "";
   border-left: 5px solid #5b5;
 }
+.tape-page .tape-item .contact {
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
 .tape-page .tape-item .text-user {
-  width: 120px;
+  width: 100%;
   padding-left: 1px;
   padding-right: 1px;
 }
@@ -584,6 +591,7 @@ body {
   vertical-align: top;
 }
 .tape-page .tape-item .contact-holder {
+  width: 130px;
   margin-right: 1px;
 }
 .tape-page .tape-item .contact-holder .answer {
@@ -602,7 +610,7 @@ body {
 }
 .tape-page .tape-item .message-holder {
   font-size: 0;
-  width: 450px;
+  width: 454px;
   text-align: left;
 }
 .tape-page .tape-item .message-holder .message {
@@ -1155,6 +1163,7 @@ body {
   cursor: pointer;
   border-radius: 2px;
   font-size: 12px;
+  background-color: #fff;
 }
 .button:hover {
   border: 1px solid #28f;

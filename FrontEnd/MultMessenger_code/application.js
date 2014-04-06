@@ -160,7 +160,8 @@ window.onload = function() {
 				if (fromContact !== ownerContact && toContact === ownerContact) {
 					self.conversationView.addTapeItem(fromContact.get('id'), message, fromContact);
 				} else if (fromContact === ownerContact && toContact !== ownerContact) {
-					message.set('shown', true); //own message always shown
+					message.set('shown', true);
+					message.set('own', true);
 					self.conversationView.addTapeItem(toContact.get('id'), message, fromContact);
 				}
 			}

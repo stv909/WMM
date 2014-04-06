@@ -147,6 +147,9 @@
 				};
 				this.elem.addEventListener('mousemove', elemMouseMoveListener);
 			}
+			if (this.chatMessage.get('own')) {
+				this.elem.classList.add('own');
+			}
 			
 			this.once('dispose', function() {
 				self.contactView.dispose();
