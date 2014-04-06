@@ -536,6 +536,10 @@ window.onload = function() {
 				var image = response.image;
 				message.preview = image;
 				self.chatClient.notifyMessage(message);
+				var chatMessage = self.chatRepository.getMessage(message.id);
+				if (chatMessage) {
+					chatMessage.set('preview', [settings.imageStoreBaseUrl, image].join(''));
+				}
 				uploadResult.v = 5.12;
 				return VK.apiAsync('photos.saveWallPhoto', uploadResult);
 			}).then(function(response) {
