@@ -304,6 +304,9 @@ var messenger = messenger || {};
 				});
 			}
 		};
+		ChatRepository.prototype.getMessage = function(messageId) {
+			return this.messages[messageId];
+		};
 		ChatRepository.prototype.hasMessage = function(messageId) {
 			return this.messages.hasOwnProperty(messageId);	
 		};

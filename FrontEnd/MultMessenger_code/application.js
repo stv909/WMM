@@ -296,6 +296,10 @@ window.onload = function() {
 			self.postcardView.hide();
 			self.lobbyView.hide();
 			self.conversationView.show();
+			self.trigger({
+				type: 'click:send',
+				text: self.editPageView.getMessageContent()
+			});
 		};
 		this.currentPostClickHandler = this.defaultPostClickHandler;
 		
@@ -571,11 +575,11 @@ window.onload = function() {
 		});
 		
 		this.postDialogView.on('click:close', function(event) {
+			self.postcardMenuView.selectItemView.select();
 			if (self.currentSkipAnswerAsync === self.requestedSkipAnswerAsync) {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.postPageView.friendSearchView.selectFriend(self.contactRepository.owner);
 				self.postPageView.setMode('friend');
-				self.postcardMenuView.selectItemView.select();
 				window.location.hash = '';
 			}	
 		});
@@ -610,6 +614,38 @@ window.onload = function() {
 					chatMessage.get('timestamp')
 				);
 				return self.chatClientWrapper.sendMessageAsync(rawMessage);
+			}).catch(function() {
+				console.log(arguments);
+			});
+		});
+		this.on('click:send', function(event) {
+			var toContact = self.chatRepository.contact;
+			var fromContact = self.contactRepository.owner;
+			var chatMessage = new messenger.repository.ChatMessageModel();
+			chatMessage.set({
+				id: uuid.v4(),
+				content: event.text,
+				from: Helpers.buildVkId(fromContact),
+				to: Helpers.buildVkId(toContact)
+			});
+			self.chatRepository.addMessage(chatMessage);
+			self.chatClientWrapper.nowAsync().then(function(timestamp) {
+				chatMessage.set('timestamp', timestamp);
+				var rawMessage = MessageFactory.create(
+					chatMessage.get('id'),
+					Helpers.normalizeMessageContent(chatMessage.get('content')),
+					chatMessage.get('from'),
+					chatMessage.get('to'),
+					chatMessage.get('timestamp')
+				);
+				return Q.all([rawMessage, self.chatClientWrapper.sendMessageAsync(rawMessage)]);
+			}).spread(function(rawMessage, response) {
+				var shareMessageUrl = VkTools.calculateMessageShareUrl(rawMessage.id);
+				return Q.all([rawMessage, VkTools.generatePreviewAsync(shareMessageUrl)]);
+			}).spread(function(rawMessage, response) {
+				chatMessage.set('preview', [settings.imageStoreBaseUrl, response.image].join(''));
+				rawMessage.preview = response.image;
+				self.chatClient.notifyMessage(rawMessage);
 			}).catch(function() {
 				console.log(arguments);
 			});
@@ -701,6 +737,20 @@ window.onload = function() {
 			var rawMessage = event.response.send;
 			processInputMessage(rawMessage, true);
 			
+		});
+		this.chatClient.on('message:notify', function(event) {
+			var notify = event.response.notify;
+			var body = notify.body;
+			if (notify.id.indexOf('msg.') === 0) {
+				do {
+					var preview = body.preview;
+					var id = body.id;
+					if (!preview || !id) break;
+					var message = self.chatRepository.getMessage(id);
+					if (!message) break;
+					message.set('preview', [settings.imageStoreBaseUrl, preview].join(''));
+				} while(false);
+			}
 		});
 		this.chatClient.on('message:online', function(event) {
 			var online = event.response.online;

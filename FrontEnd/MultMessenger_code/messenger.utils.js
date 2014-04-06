@@ -89,7 +89,7 @@ var messenger = messenger || {};
 				url: messageShareUrl,
 				imageFormat: 'png',
 				scale: 1,
-				contentType: 'vkUpload'
+				contentType: uploadUrl ? 'vkUpload' : 'share'
 			};
 			var rawRequestData = JSON.stringify(requestData);
 			var options = {
@@ -262,7 +262,7 @@ var messenger = messenger || {};
 			task.resolve(rawMessage);
 		});
 		this.chatClient.once('message:sent', function(event) {
-			var rawMessage = event.response.send;
+			var rawMessage = event.response.sent;
 			task.resolve(rawMessage);
 		});
 		this.chatClient.sendMessage(message);
