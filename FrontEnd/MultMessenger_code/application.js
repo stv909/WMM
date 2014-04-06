@@ -149,8 +149,10 @@ window.onload = function() {
 				self.mainMenuView.increaseUnreadCount();
 				message.once('change:shown', function(event) {
 					var unread = fromContact.get('unread');
+					var messageId = message.get('id');
 					fromContact.set('unread', unread - 1);
 					self.mainMenuView.decreaseUnreadCount();
+					self.chatClient.shown(['msg', messageId].join('.'));
 				});
 			}
 			if (fromContact && toContact && fromContact !== toContact) {
