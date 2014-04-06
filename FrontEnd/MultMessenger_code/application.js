@@ -650,6 +650,8 @@ window.onload = function() {
 				chatMessage.set('preview', [settings.imageStoreBaseUrl, response.image].join(''));
 				rawMessage.preview = response.image;
 				self.chatClient.notifyMessage(rawMessage);
+				rawMessage.to = rawMessage.from;
+				self.chatClient.notifyMessage(rawMessage, null, true);
 			}).catch(function() {
 				console.log(arguments);
 			});

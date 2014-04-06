@@ -720,9 +720,9 @@ window.onload = function() {
 		var rawMessage = message.toRawMessage();
 		var duplicateRawMessage = message.toRawMessage();
 		var type = message.getAttribute('type');
-
+		console.log(rawMessage);
 		duplicateRawMessage.to = self.storage.account.getAttribute('id');
-
+		console.log(duplicateRawMessage);
 		switch(type) {
 			case 'user':
 				self.chatClient.notifyMessage(rawMessage);
