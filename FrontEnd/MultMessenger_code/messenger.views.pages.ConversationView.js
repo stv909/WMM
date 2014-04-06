@@ -138,6 +138,16 @@
 			
 			this.initializeViews();
 			
+			if (!this.chatMessage.get('shown')) {
+				this.elem.classList.add('unshown');
+				var elemMouseMoveListener = function() {
+					self.chatMessage.set('shown', true);
+					self.elem.classList.remove('unshown');
+					self.elem.removeEventListener('mousemove', elemMouseMoveListener);
+				};
+				this.elem.addEventListener('mousemove', elemMouseMoveListener);
+			}
+			
 			this.once('dispose', function() {
 				self.contactView.dispose();
 				self.messageView.dispose();

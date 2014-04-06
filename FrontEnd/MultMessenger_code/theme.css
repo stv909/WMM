@@ -391,8 +391,8 @@ body {
   display: inline-block;
 }
 .conversation-menu .conversation-menu-item {
-  margin-left: 2px;
-  margin-right: 2px;
+  margin-left: 4px;
+  margin-right: 4px;
   padding-left: 16px;
   padding-right: 16px;
 }
@@ -532,10 +532,20 @@ body {
   border-left: 1px solid #ddd;
 }
 .tape-page .tape-item {
+  position: relative;
   font-size: 12px;
   padding-bottom: 12px;
   padding-top: 12px;
   border-bottom: 1px solid #ddd;
+  border-collapse: separate;
+}
+.tape-page .tape-item.unshown:before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  content: "";
+  border-left: 5px solid #5b5;
 }
 .tape-page .tape-item .text-user {
   width: 120px;
@@ -546,6 +556,7 @@ body {
   font-size: 12px;
   white-space: pre-wrap;
   padding-top: 8px;
+  padding-bottom: 8px;
   cursor: pointer;
 }
 .tape-page .tape-item .text-user .name:hover {

@@ -4,6 +4,7 @@ window.onload = function() {
 	var MessageStorage = messenger.storage.MessageStorage;
 	
 	var MessagePatternView = messenger.views.MessagePatternView;
+	var ChatMessageModel = messenger.repository.ChatMessageModel;
 	
 	var VkTools = messenger.utils.VkTools;
 	var ChatClientWrapper = messenger.utils.ChatClientWrapper;
@@ -156,6 +157,7 @@ window.onload = function() {
 				if (fromContact !== ownerContact && toContact === ownerContact) {
 					self.conversationView.addTapeItem(fromContact.get('id'), message, fromContact);
 				} else if (fromContact === ownerContact && toContact !== ownerContact) {
+					message.set('shown', true); //own message always shown
 					self.conversationView.addTapeItem(toContact.get('id'), message, fromContact);
 				}
 			}
@@ -250,13 +252,11 @@ window.onload = function() {
 		};
 		
 		this.on('online', function() {
-			//self.onlineElem.classList.remove('invalid');
 			setTimeout(function() {
 				checkOnline();
 			}, 2500);
 		});
 		this.on('offline', function() {
-			//self.onlineElem.classList.add('invalid');
 			setTimeout(function() {
 				reconnect();
 			}, 5000);
@@ -292,7 +292,6 @@ window.onload = function() {
 			self.postcardView.hide();
 			self.lobbyView.hide();
 			self.conversationView.show();
-			//self.mainMenuView.enableShadow(true);
 		};
 		this.currentPostClickHandler = this.defaultPostClickHandler;
 		
@@ -391,7 +390,6 @@ window.onload = function() {
 			self.postcardMenuView.hideCancel();
 			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
 			self.postcardMenuView.postItemView.setText('3. Отправь на стену!');
-			//self.mainMenuView.enableShadow(true);
 			self.currentPostClickHandler = self.defaultPostClickHandler;
 			self.currentPostcardClickHandler = self.defaultPostcardClickHandler;
 		});
@@ -430,6 +428,7 @@ window.onload = function() {
 				self.prepareChatDialogView.setMode('complete');
 				self.contactRepository.searchChatUsers('');
 				self.lobbyView.selectUser(self.chatRepository.getContact());
+				self.initializeMessaging();
 			}).catch(function(error) {
 				self.prepareChatDialogView.setMode('fail');
 				self.prepareChatDialogView.once('click:close', function() {
@@ -675,6 +674,25 @@ window.onload = function() {
 			analytics.send('app_start', 'app_fail');
 			console.error(error);
 			alert('Приносим извенение. В настоящий момент в работе приложения наблюдаются проблемы. Возможно вы используете неподдерживаемый браузер. Установите Chrome, Opera, YaBrowser или Safari');
+		});
+	};
+	MessengerApplication.prototype.initializeMessaging = function() {
+		var self = this;
+		var processInputMessage = function(rawMessage) {
+			rawMessage.value = rawMessage.body;
+			var chatMessage = ChatMessageModel.fromRaw(rawMessage);
+			var chatMessageId = chatMessage.get('id');
+			if (chatMessage.isValid() && !self.chatRepository.hasMessage(chatMessageId)) {
+				self.chatRepository.addMessage(chatMessage);
+			}
+		};
+		this.chatClient.on('message:sent', function(event) {
+			var rawMessage = event.response.sent;
+			processInputMessage(rawMessage);
+		});
+		this.chatClient.on('message:send', function(event) {
+			var rawMessage = event.response.send;
+			processInputMessage(rawMessage);
 		});
 	};
 
