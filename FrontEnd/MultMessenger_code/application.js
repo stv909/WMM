@@ -696,6 +696,15 @@ window.onload = function() {
 			var rawMessage = event.response.send;
 			processInputMessage(rawMessage);
 		});
+		this.chatClient.on('message:online', function(event) {
+			var online = event.response.online;
+			online.forEach(function(vkid) {
+				var user = self.contactRepository.getChatUserByVkid(vkid);	
+				user.set('online', true);
+				
+			});
+		});
+		this.chatClient.online();
 	};
 
 	var messengerApplication = new MessengerApplication();

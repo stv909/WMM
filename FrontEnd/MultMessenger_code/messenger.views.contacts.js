@@ -125,7 +125,7 @@ var messenger = messenger || {};
 					updateUnreadElem(unread);
 				});
 				this.model.on('change:online', function(event) {
-					var online = event.online;
+					var online = event.value;
 					updateOnlineStatus(online);
 				});
 				updateUnreadElem(this.model.get('unread'));

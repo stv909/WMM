@@ -353,7 +353,7 @@
 				window.open(vkLink, '_blank');
 			};
 			
-			this.model.on('online', function(event) {
+			this.model.on('change:online', function(event) {
 				updateOnlineStatus(event.value);
 			});
 			updateOnlineStatus(this.model.get('online'));
