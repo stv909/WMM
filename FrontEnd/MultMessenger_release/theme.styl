@@ -916,9 +916,13 @@ html, body
 		cursor pointer
 	&.normal:hover
 		border 1px solid #888
+		.play
+			display block
 	&.chosen
 		border 1px solid aspect-color
 		box-shadow 0 0 2px aspect-color
+		.play
+			display table-cell
 	.content
 		position relative
 		background-color #fff
@@ -928,6 +932,42 @@ html, body
 		overflow hidden
 		margin 10px
 		font-size 16px
+	&.normal
+		.play
+			display none
+			position absolute
+			width 403px
+			height 403px
+			line-height 403px
+			text-align center
+			vertical-align middle
+			left 0
+			top 0
+			background-color rgba(255, 255, 255, 0.5)
+		.icon
+			width 88px
+			height 64px
+			border-radius 16px
+			background-color aspect-color
+			position relative
+			display inline-block
+			&:after
+				content ""
+				position absolute
+				top 64px
+				left 16px
+				border-top 20px solid aspect-color
+				border-right 20px solid transparent
+			.arrow
+				position absolute
+				top 12px
+				left 32px
+				display inline-block
+				width 0
+				background-color white
+				border-left 32px solid #fff
+				border-top 20px solid aspect-color
+				border-bottom 20px solid aspect-color
 .button
 	user-select(none)
 	border 1px solid #ddd

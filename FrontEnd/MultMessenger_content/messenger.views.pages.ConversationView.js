@@ -1,4 +1,4 @@
-(function(messenger, eve, abyss, template, settings) {
+(function(messenger, eve, abyss, template, settings, analytics) {
 	
 	var ConversationView = (function(base) {
 		eve.extend(ConversationView, base);
@@ -296,6 +296,7 @@
 					self.hide();
 					self.messageTextElem.value = '';
 					self.sendElem.classList.add('disabled');
+					analytics.send('dialog', 'text_send');
 				}
 			};
 			var messageTextInputListener = function() {
@@ -388,4 +389,4 @@
 	messenger.views.ConversationView = ConversationView;
 	messenger.views.CreateMessageDialogView = CreateMessageDialogView;
 	
-})(messenger, eve, abyss, template, settings);
+})(messenger, eve, abyss, template, settings, analytics);

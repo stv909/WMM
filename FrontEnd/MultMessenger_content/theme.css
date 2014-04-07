@@ -1141,11 +1141,18 @@ body {
 .message.normal:hover {
   border: 1px solid #888;
 }
+.message.normal:hover .play {
+  display: block;
+}
 .message.chosen {
   border: 1px solid #28f;
   box-shadow: 0 0 2px #28f;
 }
+.message.chosen .play {
+  display: table-cell;
+}
 .message .content {
+  position: relative;
   background-color: #fff;
   display: inline-block;
   width: 403px;
@@ -1153,6 +1160,45 @@ body {
   overflow: hidden;
   margin: 10px;
   font-size: 16px;
+}
+.message.normal .play {
+  display: none;
+  position: absolute;
+  width: 403px;
+  height: 403px;
+  line-height: 403px;
+  text-align: center;
+  vertical-align: middle;
+  left: 0;
+  top: 0;
+  background-color: rgba(255,255,255,0.5);
+}
+.message.normal .icon {
+  width: 88px;
+  height: 64px;
+  border-radius: 16px;
+  background-color: #28f;
+  position: relative;
+  display: inline-block;
+}
+.message.normal .icon:after {
+  content: "";
+  position: absolute;
+  top: 64px;
+  left: 16px;
+  border-top: 20px solid #28f;
+  border-right: 20px solid transparent;
+}
+.message.normal .icon .arrow {
+  position: absolute;
+  top: 12px;
+  left: 32px;
+  display: inline-block;
+  width: 0;
+  background-color: #fff;
+  border-left: 32px solid #fff;
+  border-top: 20px solid #28f;
+  border-bottom: 20px solid #28f;
 }
 .button {
   -webkit-user-select: none;

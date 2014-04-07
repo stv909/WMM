@@ -145,7 +145,7 @@
 					type: 'search:users',
 					text: event.value
 				});
-				analytics.send('friends', 'friends_search');
+				analytics.send('dialog', 'dialog_friend_search');
 			});
 			
 			this.cachedUserViews = {};
@@ -193,6 +193,7 @@
 			};
 			var loadElemClickListener = function(event) {
 				self.trigger('click:load');
+				analytics.send('dialog', 'dialog_friend_load_more');
 			};
 			
 			this.queryElem.addEventListener('input', queryElemInputListener);
@@ -229,7 +230,10 @@
 			if (!userView) {
 				userView = new UserView(user, true);
 				userView.on('select', this.userViewSelectListener);
-				userView.on('select-force', this.userViewForceSelectListener)
+				userView.on('select-force', this.userViewForceSelectListener);
+				userView.setAnalytic(function() {
+					analytics.send('dialog', 'dialog_friend_select');
+				});
 				this.cachedUserViews[id] = userView;
 			}
 			return userView;

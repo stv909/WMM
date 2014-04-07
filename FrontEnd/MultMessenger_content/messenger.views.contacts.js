@@ -77,6 +77,9 @@ var messenger = messenger || {};
 			this.isChatUser = isChatUser;
 			this.setModel(model);
 			this.deselect();
+			this.analyticCallback = function() {
+				analytics.send('friends', 'friends_select');
+			};
 			
 			var nameElemClickListener = function(event) {
 				var id = self.model.get('id');
@@ -84,7 +87,7 @@ var messenger = messenger || {};
 				window.open(vkLink, '_blank');
 			};
 			var elemClickListener = function(event) {
-				analytics.send('friends', 'friends_select');	
+				self.analyticCallback();
 			};
 			
 			this.nameElem.addEventListener('click', nameElemClickListener);
@@ -140,6 +143,10 @@ var messenger = messenger || {};
 			
 			this.photoElem.src = this.model.get('photo');
 			this.nameElem.textContent = this.model.getFullName();
+		};
+		
+		UserView.prototype.setAnalytic = function(analyticCallback) {
+			this.analyticCallback = analyticCallback;
 		};
 		
 		return UserView;
