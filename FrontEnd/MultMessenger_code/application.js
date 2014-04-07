@@ -355,7 +355,7 @@ window.onload = function() {
 				self.lobbyView.show();
 				self.conversationView.hide();
 				self.mainMenuView.enableShadow(true);
-			}).catch(function() {
+			}).catch(function(error) {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.mainMenuView.restore();
 				self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
@@ -368,7 +368,7 @@ window.onload = function() {
 				self.lobbyView.hide();
 				self.conversationView.show();
 				self.mainMenuView.enableShadow(false);
-			}).catch(function() {
+			}).catch(function(error) {
 				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.mainMenuView.restore();
 				self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
@@ -441,11 +441,13 @@ window.onload = function() {
 				self.contactRepository.searchChatUsers('');
 				self.lobbyView.selectUser(self.chatRepository.getContact());
 				self.initializeMessaging();
+				analytics.send('dialog', 'dialog_success');
 			}).catch(function(error) {
 				self.prepareChatDialogView.setMode('fail');
 				self.prepareChatDialogView.once('click:close', function() {
 					self.mainMenuView.postcardItemView.select();
 				});
+				analytics.send('dialog', 'dialog_fail', VkTools.formatError(error));
 				console.log(error);
 			});
 		};
@@ -659,6 +661,7 @@ window.onload = function() {
 			}).catch(function() {
 				console.log(arguments);
 			});
+			analytics.send('dialog', 'card_send');
 		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {

@@ -375,6 +375,16 @@
 			this.itemViews.push(this.filmtextItemView);
 			this.itemViews.push(this.postcardItemView);
 			this.itemViews.push(this.textItemView);
+			
+			this.filmtextItemView.setAnalytic(function() {
+				analytics.send('dialog', 'filmtext_create');	
+			});
+			this.postcardItemView.setAnalytic(function() {
+				analytics.send('dialog', 'card_create');	
+			});
+			this.textItemView.setAnalytic(function() {
+				analytics.send('dialog', 'text_create');	
+			});
 		};
 		
 		return ConversationMenuView;
@@ -392,8 +402,11 @@
 			this.elem.classList.add('button-special');
 			this.setText(text);
 			
+			this.analyticCallback = function() { };
+			
 			this.elemClickListener = function(event) {
 				self.trigger('click');
+				self.analyticCallback();
 			};
 			this.elem.addEventListener('click', this.elemClickListener);
 			this.once('dispose', function() {
@@ -402,6 +415,9 @@
 		}
 		ConversationMenuItemView.prototype.setText = function(text) {
 			this.elem.textContent = text;
+		};
+		ConversationMenuItemView.prototype.setAnalytic = function(analyticCallback) {
+			this.analyticCallback = analyticCallback;
 		};
 		
 		return ConversationMenuItemView;

@@ -1146,6 +1146,7 @@ body {
   box-shadow: 0 0 2px #28f;
 }
 .message .content {
+  position: relative;
   background-color: #fff;
   display: inline-block;
   width: 403px;
