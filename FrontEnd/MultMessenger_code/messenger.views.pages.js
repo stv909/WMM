@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, settings, uuid, async, Q, html, analytics, filmlang) {
+(function(messenger, abyss, template, settings, async, Q, html, analytics, filmlang) {
 	
 	var View = abyss.View;
 	
@@ -204,4 +204,4 @@ var messenger = messenger || {};
 	messenger.views.AnswerPageView = AnswerPageView;
 	messenger.views.SelectPageView = SelectPageView;
 	
-})(messenger, abyss, template, settings, uuid, async, Q, html, analytics, filmlang);
+})(messenger, abyss, template, settings, async, Q, html, analytics, filmlang);

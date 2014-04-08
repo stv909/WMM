@@ -242,6 +242,15 @@ module aux {
 		return request.responseText;
 	}
 
+	export function uuid(): string {
+		var date = new Date().getTime();
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {
+			var rnd = (date + Math.random() * 16) % 16 | 0;
+			date = Math.floor(date / 16);
+			return (char === 'x' ? rnd : (rnd & 0x7 | 0x8)).toString(16);
+		});
+	}
+
 	initializeTemplates();
 
 }

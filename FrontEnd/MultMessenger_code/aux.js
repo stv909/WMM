@@ -214,6 +214,16 @@ var aux;
     }
     aux.requestSync = requestSync;
 
+    function uuid() {
+        var date = new Date().getTime();
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (char) {
+            var rnd = (date + Math.random() * 16) % 16 | 0;
+            date = Math.floor(date / 16);
+            return (char === 'x' ? rnd : (rnd & 0x7 | 0x8)).toString(16);
+        });
+    }
+    aux.uuid = uuid;
+
     initializeTemplates();
 })(aux || (aux = {}));
 //# sourceMappingURL=aux.js.map

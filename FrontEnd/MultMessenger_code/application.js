@@ -517,7 +517,7 @@ window.onload = function() {
 			var companion = self.contactRepository.selected;
 			var content = self.editPageView.getMessageContent();
 			var message = MessageFactory.create(
-				uuid.v4(),
+				aux.uuid(),
 				Helpers.normalizeMessageContent(content),
 				Helpers.buildVkId(account),
 				Helpers.buildVkId(companion)
@@ -608,7 +608,7 @@ window.onload = function() {
 			var fromContact = self.contactRepository.owner;
 			var chatMessage = new messenger.repository.ChatMessageModel();
 			chatMessage.set({
-				id: uuid.v4(),
+				id: aux.uuid(),
 				content: event.text,
 				from: Helpers.buildVkId(fromContact),
 				to: Helpers.buildVkId(toContact)
@@ -633,7 +633,7 @@ window.onload = function() {
 			var fromContact = self.contactRepository.owner;
 			var chatMessage = new messenger.repository.ChatMessageModel();
 			chatMessage.set({
-				id: uuid.v4(),
+				id: aux.uuid(),
 				content: event.text,
 				from: Helpers.buildVkId(fromContact),
 				to: Helpers.buildVkId(toContact)

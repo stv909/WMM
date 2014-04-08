@@ -1,6 +1,6 @@
 var filmlang = filmlang || {};
 
-(function(filmlang, eve, uuid) {
+(function(filmlang, eve, aux) {
 	
 	var FilmTextItem =(function(base) {
 		eve.extend(FilmTextItem, base);
@@ -201,7 +201,7 @@ var filmlang = filmlang || {};
 
 			var data = {
 				input: {
-					id: uuid.v4(),
+					id: aux.uuid(),
 					destination: 'separate',
 					commands: commandChunks.join(''),
 					actors: meta.actors
@@ -218,4 +218,4 @@ var filmlang = filmlang || {};
 	
 	filmlang.FilmText = FilmText;
 	
-})(filmlang, eve, uuid);
+})(filmlang, eve, aux);
