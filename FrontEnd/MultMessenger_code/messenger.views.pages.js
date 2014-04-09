@@ -32,7 +32,7 @@ var messenger = messenger || {};
 		
 		this.answerElem.addEventListener('click', answerElemClickListener);
 		this.once('dispose', function() {
-			self.answerElem.remove('click', answerElemClickListener);	
+			self.answerElem.remove('click', answerElemClickListener);
 		});
 	};
 	AnswerPageView.super = View;

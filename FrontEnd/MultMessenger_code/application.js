@@ -168,6 +168,7 @@ window.onload = function() {
 					message.set('own', true);
 					self.conversationView.addTapeItem(toContact.get('id'), message, fromContact);
 				}
+				self.trigger('enable:dialogs');
 			}
 		});
 		this.chatRepository.on('remove:message', function(event) {
@@ -348,7 +349,11 @@ window.onload = function() {
 				self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
 			});
 		});
-		this.mainMenuView.on('click:dialog', function() {
+
+		this.emptyClickDialogHandler = function() {
+			self.mainMenuView.restore();
+		};
+		this.standardClickDialogHandler = function() {
 			self.currentSkipAnswerAsync().then(function() {
 				self.answerPageView.hide();
 				self.postcardView.hide();
@@ -360,8 +365,16 @@ window.onload = function() {
 				self.mainMenuView.restore();
 				self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
 			});
+		};
+		this.currentClickDialogHandler = this.emptyClickDialogHandler;
+		this.mainMenuView.on('click:dialog', function() {
+			self.currentClickDialogHandler();
 		});
-		this.mainMenuView.on('click:conversation', function() {
+
+		this.emptyClickConversationHandler = function() {
+			self.mainMenuView.restore();
+		};
+		this.standardClickConversationHandler = function() {
 			self.currentSkipAnswerAsync().then(function() {
 				self.answerPageView.hide();
 				self.postcardView.hide();
@@ -373,6 +386,10 @@ window.onload = function() {
 				self.mainMenuView.restore();
 				self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
 			});
+		};
+		this.currentClickConversationHandler = this.emptyClickConversationHandler;
+		this.mainMenuView.on('click:conversation', function() {
+			self.currentClickConversationHandler();
 		});
 		
 		this.postcardMenuView.on('click:select', function() {
@@ -432,31 +449,7 @@ window.onload = function() {
 		this.conversationMenuView.on('click:text', function() {
 			self.createMessageDialogView.show();
 		});
-		
-		this.prepareDialogsHandler = function() {
-			self.prepareChatDialogView.show();
-			self.chatRepository.loadTapeMessagesAsync().then(function() {
-				self.currentPrepareDialogsHandler = self.emptyPrepareDialogsHandler;
-				self.prepareChatDialogView.setMode('complete');
-				self.contactRepository.searchChatUsers('');
-				self.lobbyView.selectUser(self.chatRepository.getContact());
-				self.initializeMessaging();
-				analytics.send('dialog', 'dialog_success');
-			}).catch(function(error) {
-				self.prepareChatDialogView.setMode('fail');
-				self.prepareChatDialogView.once('click:close', function() {
-					self.mainMenuView.postcardItemView.select();
-				});
-				analytics.send('dialog', 'dialog_fail', VkTools.formatError(error));
-				console.log(error);
-			});
-		};
-		this.emptyPrepareDialogsHandler = function() { };
-		this.currentPrepareDialogsHandler = this.prepareDialogsHandler;
-		
-		this.lobbyView.on('show', function() {
-			self.currentPrepareDialogsHandler();
-		});
+
 		this.lobbyView.on('search:users', function(event) {
 			self.contactRepository.searchChatUsers(event.text);
 		});
@@ -478,10 +471,6 @@ window.onload = function() {
 				self.mainMenuView.conversationItemView.setText(user.getFullName());
 				self.mainMenuView.conversationItemView.select();
 			});
-		});
-
-		this.conversationView.on('show', function() {
-			self.currentPrepareDialogsHandler();
 		});
 		
 		this.answerPageView.on('click:answer', function(event) {
@@ -663,6 +652,12 @@ window.onload = function() {
 			});
 			analytics.send('dialog', 'card_send');
 		});
+		this.once('enable:dialogs', function() {
+			console.log('enable');
+			self.currentClickConversationHandler = self.standardClickConversationHandler;
+			self.currentClickDialogHandler = self.standardClickDialogHandler;
+			self.mainMenuView.enableChats();
+		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
 		var parseHash = function(hash) {
@@ -722,6 +717,17 @@ window.onload = function() {
 			self.answerPageView.setContact(self.contactRepository.sender);
 			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
 			self.preloadDialogView.hide();
+			self.chatRepository.loadTapeMessagesAsync().then(function() {
+				self.contactRepository.searchChatUsers('');
+				self.lobbyView.selectUser(self.chatRepository.getContact());
+				self.initializeMessaging();
+				self.trigger('complete:dialogs');
+				analytics.send('dialog', 'dialog_success');
+			}).catch(function(error) {
+				self.trigger('fail:dialogs');
+				analytics.send('dialog', 'dialog_fail', VkTools.formatError(error));
+				console.log(error);
+			});
 			analytics.send('app_start', 'app_success');
 		}).catch(function(error) {
 			analytics.send('app_start', 'app_fail');
@@ -749,7 +755,6 @@ window.onload = function() {
 		this.chatClient.on('message:send', function(event) {
 			var rawMessage = event.response.send;
 			processInputMessage(rawMessage, true);
-			
 		});
 		this.chatClient.on('message:notify', function(event) {
 			var notify = event.response.notify;

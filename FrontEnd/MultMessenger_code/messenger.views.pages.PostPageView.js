@@ -127,7 +127,10 @@
 			base.apply(this, arguments);
 			var self = this;
 			
-			this.elem = template.create('lobby-template', { id: 'lobby' });
+			this.elem = aux.template({
+				templateId: 'lobby-template',
+				id: 'lobby'
+			});
 			this.queryElem = this.elem.getElementsByClassName('query')[0];
 			this.contactsHolderElem = this.elem.getElementsByClassName('contacts-holder')[0];
 			this.contactsElem = this.elem.getElementsByClassName('contacts')[0];

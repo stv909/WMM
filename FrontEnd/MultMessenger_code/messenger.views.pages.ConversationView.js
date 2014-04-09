@@ -5,11 +5,13 @@
 		
 		function ConversationView() {
 			base.apply(this, arguments);
-			
-			this.elem = document.createElement('div');
-			this.elem.classList.add('conversation');
+
+			this.elem = aux.template({
+				templateId: 'conversation-template',
+				className: 'conversation'
+			});
 			this.elem.classList.add('hidden');
-			
+
 			this.cachedTapeViews = {};
 			this.currentTapeView = null;
 		}
@@ -44,7 +46,7 @@
 			var tapeView = this._getOrCreateMessageTape(contactId);
 			tapeView.addTapeItem(chatMessage, senderContact);
 		}; 
-		
+
 		return ConversationView;
 	})(messenger.views.PageView);
 	

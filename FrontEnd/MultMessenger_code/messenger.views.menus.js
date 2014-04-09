@@ -63,24 +63,24 @@
 			this.conversationItemView.setClass('conversation-item');
 			
 			this.postcardItemView.on('select', function(event) {
-				self.trigger('click:postcard');
 				self.selectItemView(self.postcardItemView);
 				self.enableShadow(false);
+				self.trigger('click:postcard');
 			});
 			this.dialogItemView.on('select', function(event) {
-				self.trigger('click:dialog');
 				self.selectItemView(self.dialogItemView);
 				self.enableShadow(true);
+				self.trigger('click:dialog');
 			});
 			this.conversationItemView.on('select', function(event) {
-				self.trigger('click:conversation');
 				self.selectItemView(self.conversationItemView);
 				self.enableShadow(true);
+				self.trigger('click:conversation');
 			});
 			this.answerItemView.on('select', function(event) {
-				self.trigger('click:answer');
 				self.selectItemView(self.answerItemView);
 				self.enableShadow(true);
+				self.trigger('click:answer');
 			});
 			
 			this.itemViews.push(this.postcardItemView);
@@ -113,6 +113,8 @@
 				if (this.selectedItemView) {
 					this.selectedItemView.deselect();
 					this.previousSelectedItemView = this.selectedItemView;
+				} else {
+					this.previousSelectedItemView = itemView;
 				}
 				this.selectedItemView = itemView;
 			}
@@ -127,7 +129,10 @@
 		MainMenuView.prototype.restore = function() {
 			if (this.previousSelectedItemView) {
 				this.previousSelectedItemView.select();
-			}	
+			}
+		};
+		MainMenuView.prototype.enableChats = function() {
+			this.chatsElem.classList.remove('disabled');
 		};
 		
 		return MainMenuView;
