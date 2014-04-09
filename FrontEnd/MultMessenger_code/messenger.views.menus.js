@@ -12,6 +12,10 @@
 			this.groupElem = this.elem.getElementsByClassName('group')[0];
 			this.itemsElem = this.elem.getElementsByClassName('items')[0];
 			this.chatsElem = this.elem.getElementsByClassName('chats')[0];
+			this.waitElem = aux.template({
+				templateId: 'dialog-wait-template',
+				id: 'circularGD'
+			});
 			
 			this.itemViews = [];
 			this.previousSelectedItemView = null;
@@ -57,6 +61,7 @@
 			this.postcardItemView.attachTo(this.itemsElem);
 			this.dialogItemView.attachTo(this.chatsElem);
 			this.conversationItemView.attachTo(this.chatsElem);
+			this.elem.appendChild(this.waitElem);
 			
 			this.postcardItemView.setClass('postcard-item');
 			this.dialogItemView.setClass('lobby-item');
@@ -133,6 +138,9 @@
 		};
 		MainMenuView.prototype.enableChats = function() {
 			this.chatsElem.classList.remove('disabled');
+		};
+		MainMenuView.prototype.disableLoader = function() {
+			this.waitElem.classList.add('hidden');
 		};
 		
 		return MainMenuView;

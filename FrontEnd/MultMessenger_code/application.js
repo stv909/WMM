@@ -95,6 +95,39 @@ window.onload = function() {
 			
 			return deferred.promise;
 		};
+
+		this.currentDialogsWaitAsync = function() {
+			var deferred = Q.defer();
+
+			self.once('complete:dialogs', function() {
+				deferred.resolve();
+				self.currentDialogsWaitAsync = self.successDialogsWaitAsync;
+			});
+			self.once('fail:dialogs', function() {
+				deferred.reject();
+				self.currentDialogsWaitAsync = self.failDialogsWaitAsync;
+			});
+
+			return deferred.promise;
+		};
+		this.successDialogsWaitAsync = function() {
+			var deferred = Q.defer();
+
+			setTimeout(function() {
+				deferred.resolve();
+			}, 0);
+
+			return deferred.promise;
+		};
+		this.failDialogsWaitAsync = function() {
+			var deferred = Q.defer();
+
+			setTimeout(function() {
+				deferred.reject('dialogs failed');
+			}, 0);
+
+			return deferred.promise;
+		};
 		
 		this.preloadDialogView.show();
 		this.initializeStorage();
@@ -514,8 +547,10 @@ window.onload = function() {
 			var messageTarget = Helpers.getMessageTarget(account, companion);
 			var action = ['post', messageTarget].join('_');
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
-			
-			self.chatClientWrapper.nowAsync().then(function(timestamp) {
+
+			self.currentDialogsWaitAsync().then(function() {
+				return self.chatClientWrapper.nowAsync();
+			}).then(function(timestamp) {
 				VkTools.checkPostAccess(companion);
 				self.postDialogView.setText('Этап 2 из 5: Сохранение сообщения...');
 				message.timestamp = timestamp;
@@ -657,6 +692,14 @@ window.onload = function() {
 			self.currentClickConversationHandler = self.standardClickConversationHandler;
 			self.currentClickDialogHandler = self.standardClickDialogHandler;
 			self.mainMenuView.enableChats();
+		});
+		this.once('complete:dialogs', function() {
+			self.currentDialogsWaitAsync = self.successDialogsWaitAsync;
+			self.mainMenuView.disableLoader();
+		});
+		this.once('fail:dialogs', function() {
+			self.currentDialogsWaitAsync = self.failDialogsWaitAsync;
+			self.mainMenuView.disableLoader();
 		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
