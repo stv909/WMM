@@ -128,6 +128,12 @@ body {
 .main-menu .chats.disabled {
   opacity: 0.25;
 }
+.main-menu .chats.disabled .main-menu-item {
+  cursor: default !important;
+}
+.main-menu .chats.disabled .main-menu-item:hover {
+  color: #333 !important;
+}
 .main-menu .chats .main-menu-item {
   position: relative;
   vertical-align: top;

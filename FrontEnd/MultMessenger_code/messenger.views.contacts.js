@@ -110,7 +110,7 @@ var messenger = messenger || {};
 			if (this.isChatUser) {
 				var updateUnreadElem = function(unread) {
 					if (unread > 0) {
-						self.unreadElem.textContent = unread;
+						self.unreadElem.textContent = ['+', unread].join('');
 						self.unreadElem.classList.remove('hidden');
 					} else {
 						self.unreadElem.classList.add('hidden');

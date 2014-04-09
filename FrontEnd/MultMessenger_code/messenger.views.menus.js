@@ -61,7 +61,6 @@
 			this.postcardItemView.attachTo(this.itemsElem);
 			this.dialogItemView.attachTo(this.chatsElem);
 			this.conversationItemView.attachTo(this.chatsElem);
-			this.elem.appendChild(this.waitElem);
 			
 			this.postcardItemView.setClass('postcard-item');
 			this.dialogItemView.setClass('lobby-item');
@@ -98,16 +97,17 @@
 			this.unreadElem.classList.add('hidden');
 			this.unreadElem.classList.add('unread');
 			this.dialogItemView.elem.appendChild(this.unreadElem);
+			this.dialogItemView.elem.appendChild(this.waitElem);
 		};
 		MainMenuView.prototype.increaseUnreadCount = function() {
 			this.unreadCount += 1;
-			this.unreadElem.textContent = this.unreadCount;
+			this.unreadElem.textContent = ['+', this.unreadCount].join('');
 			this.unreadElem.classList.remove('hidden');
 		};
 		MainMenuView.prototype.decreaseUnreadCount = function() {
 			this.unreadCount -= 1;
 			if (this.unreadCount > 0) {
-				this.unreadElem.textContent = this.unreadCount;
+				this.unreadElem.textContent = ['+', this.unreadCount].join('');
 				this.unreadElem.classList.remove('hidden');
 			} else {
 				this.unreadElem.classList.add('hidden');
