@@ -189,10 +189,10 @@
 		
 		return TapeItemView;
 	})(abyss.View);
-	
-	var MessageControlsView = (function(base) {
-		eve.extend(MessageControlsView, base);
-		
+
+	var TimeModel = (function(base) {
+		eve.extend(TimeModel, base);
+
 		function normalizeNumber(number) {
 			if (number >= 10) {
 				return number.toString();
@@ -200,20 +200,43 @@
 				return ['0', number].join('');
 			}
 		}
-		function formatDate(timestamp) {
+
+		function TimeModel(timestamp) {
+			base.apply(this, arguments);
+
 			var date = new Date(timestamp);
-		
+			var now = new Date();
+
 			var day = normalizeNumber(date.getUTCDate());
 			var month = normalizeNumber(date.getMonth() + 1);
 			var year = normalizeNumber(date.getFullYear() - 2000);
-		
+
 			var hours = normalizeNumber(date.getHours());
 			var minutes = normalizeNumber(date.getMinutes());
-		
-			var dateChunks = [ hours, ':', minutes, ' ', day, '.', month, '.', year];
-			return dateChunks.join('');
+			var seconds = normalizeNumber(date.getSeconds());
+
+			var nowDay = normalizeNumber(now.getUTCDate());
+			var nowMonth = normalizeNumber(now.getMonth() + 1);
+			var nowYear = normalizeNumber(now.getFullYear() - 2000);
+
+			var isToday = (day === nowDay &&
+				month === nowMonth &&
+				year === nowYear);
+
+			var dateValue = [day, month, year].join('.');
+			var timeValue = isToday ? [hours, minutes, seconds].join(':') : [hours, minutes].join(':');
+
+			this.set('isToday', isToday);
+			this.set('date', dateValue);
+			this.set('time', timeValue);
 		}
-		
+
+		return TimeModel;
+	})(abyss.Model);
+
+	var MessageControlsView = (function(base) {
+		eve.extend(MessageControlsView, base);
+
 		function MessageControlsView(message) {
 			base.apply(this, arguments);
 			var self = this;
@@ -221,7 +244,9 @@
 			this.message = message;
 			
 			this.elem = template.create('message-controls-template', { className: 'message-controls' });
-			this.timeElem = this.elem.getElementsByClassName('time')[0];
+			this.dateHolderElem = this.elem.getElementsByClassName('date-holder')[0];
+			this.timeElem = this.dateHolderElem.getElementsByClassName('time')[0];
+			this.dateElem = this.dateHolderElem.getElementsByClassName('date')[0];
 			this.wallElem = this.elem.getElementsByClassName('wall')[0];
 			this.urlElem = this.elem.getElementsByClassName('url')[0];
 			
@@ -253,15 +278,33 @@
 			this.urlElem.classList.add('hidden');
 		};
 		MessageControlsView.prototype.updateTimeElem = function() {
-			var timestamp = this.message.get('timestamp');
 			var self = this;
+			function setTime(timeModel) {
+				if (timeModel.get('isToday')) {
+					self.timeElem.textContent = timeModel.get('time');
+					self.timeElem.classList.remove('hidden');
+				} else {
+					self.dateElem.textContent = timeModel.get('date');
+					self.timeElem.textContent = timeModel.get('time');
+					self.dateElem.classList.remove('hidden');
+					self.dateHolderElem.addEventListener('mouseover', function() {
+						self.timeElem.classList.remove('hidden');
+					});
+					self.dateHolderElem.addEventListener('mouseout', function() {
+						self.timeElem.classList.add('hidden');
+					});
+				}
+			}
+			var timestamp = this.message.get('timestamp');
 			if (timestamp) {
-				this.timeElem.textContent = formatDate(timestamp);
+				var timeModel = new TimeModel(timestamp);
+				setTime(timeModel);
 			} else {
 				this.timeElem.textContent = 'Отправка...';
 				this.message.once('change:timestamp', function(event) {
 					var timestamp = event.value;
-					self.timeElem.textContent = formatDate(timestamp);
+					var timeModel = new TimeModel(timestamp);
+					setTime(timeModel);
 				});
 			}
 			

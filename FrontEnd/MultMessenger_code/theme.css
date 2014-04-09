@@ -643,7 +643,7 @@ body {
 .tape-page .tape-item .controls-holder .wall {
   margin-top: 6px;
 }
-.tape-page .tape-item .controls-holder .time {
+.tape-page .tape-item .controls-holder .date-holder {
   font-size: 12px;
   padding-top: 8px;
   padding-bottom: 8px;
