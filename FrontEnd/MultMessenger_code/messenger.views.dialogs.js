@@ -295,7 +295,7 @@ var messenger = messenger || {};
 	PostDialogView.prototype.setMode = function(mode, error) {
 		switch (mode) {
 			case 'wait':
-				this.statusElem.textContent = 'Этап 1 из 5: Создание сообщения...';
+				this.statusElem.textContent = 'Этап 1 из 6: Подготовка диалогов...';
 				this.readyElem.classList.add('hidden');
 				this.dialogWindowElem.classList.remove('error');
 				this.complete = false;

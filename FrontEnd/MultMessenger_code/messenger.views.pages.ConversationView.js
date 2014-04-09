@@ -27,6 +27,7 @@
 				if (this.currentTapeView) {
 					this.currentTapeView.detach();
 					this.currentTapeView = null;
+					this.currentTapeView = null;
 				}
 				this.currentTapeView = cachedTapeView;
 				this.currentTapeView.attachTo(this.elem);
@@ -209,7 +210,7 @@
 			var hours = normalizeNumber(date.getHours());
 			var minutes = normalizeNumber(date.getMinutes());
 		
-			var dateChunks = [day, '.', month, '.', year, ' ', hours, ':', minutes];
+			var dateChunks = [ hours, ':', minutes, ' ', day, '.', month, '.', year];
 			return dateChunks.join('');
 		}
 		

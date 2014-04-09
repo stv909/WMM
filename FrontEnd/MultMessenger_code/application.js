@@ -549,19 +549,20 @@ window.onload = function() {
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 
 			self.currentDialogsWaitAsync().then(function() {
+				self.postDialogView.setText('Этап 2 из 6: Создание сообщения...');
 				return self.chatClientWrapper.nowAsync();
 			}).then(function(timestamp) {
 				VkTools.checkPostAccess(companion);
-				self.postDialogView.setText('Этап 2 из 5: Сохранение сообщения...');
+				self.postDialogView.setText('Этап 2 из 6: Сохранение сообщения...');
 				message.timestamp = timestamp;
 				return self.chatClientWrapper.sendMessageAsync(message);
 			}).then(function() {
-				self.postDialogView.setText('Этап 3 из 5: Создание превью...');
+				self.postDialogView.setText('Этап 3 из 6: Создание превью...');
 				return VkTools.getWallPhotoUploadUrlAsync();
 			}).then(function(uploadUrl) {
 				return VkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
 			}).then(function(response) {
-				self.postDialogView.setText('Этап 4 из 5: Сохранение превью в альбоме...');
+				self.postDialogView.setText('Этап 4 из 6: Сохранение превью в альбоме...');
 				var uploadResult = response.uploadResult;
 				var image = response.image;
 				message.preview = image;
@@ -573,7 +574,7 @@ window.onload = function() {
 				uploadResult.v = 5.12;
 				return VK.apiAsync('photos.saveWallPhoto', uploadResult);
 			}).then(function(response) {
-				self.postDialogView.setText('Этап 5 из 5: Публикация сообщения на стене...');
+				self.postDialogView.setText('Этап 6 из 6: Публикация сообщения на стене...');
 				var imageId = VkTools.getUploadedFileId(response);
 				var ownerId = companion.get('id');
 				var senderId = account.get('id');
