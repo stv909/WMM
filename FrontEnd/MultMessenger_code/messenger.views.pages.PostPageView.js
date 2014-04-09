@@ -129,13 +129,17 @@
 			
 			this.elem = aux.template({
 				templateId: 'lobby-template',
-				id: 'lobby'
+				id: 'lobby',
+				className: 'shifted'
 			});
+			this.containerElem = this.elem.getElementsByClassName('container')[0];
 			this.queryElem = this.elem.getElementsByClassName('query')[0];
 			this.contactsHolderElem = this.elem.getElementsByClassName('contacts-holder')[0];
 			this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
 			this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
 			this.loadElem = this.loadHolderElem.getElementsByClassName('load')[0];
+			this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
+			this.crossElem = this.teaserElem.getElementsByClassName('cross')[0];
 			
 			this.cachedUserViews = {};
 			this.userViews = {};
@@ -154,6 +158,11 @@
 			this.cachedUserViews = {};
 			this.userViews = {};
 			this.selectedUserView = null;
+
+			var hideTeaser = function() {
+				self.containerElem.classList.remove('shifted');
+				self.teaserElem.classList.add('hidden');
+			};
 			
 			this.userViewSelectListener = function(event) {
 				var target = event.target;
@@ -172,6 +181,7 @@
 			};
 			this.userViewForceSelectListener = function(event) {
 				var target = event.target;
+				hideTeaser();
 				self.trigger({
 					type: 'select-force:user',
 					user: target.model
@@ -203,13 +213,15 @@
 			this.contactsHolderElem.addEventListener('DOMMouseScroll', wheelListener, false);
 			this.contactsHolderElem.addEventListener('mousewheel', wheelListener, false);
 			this.loadElem.addEventListener('click', loadElemClickListener);
+			this.crossElem.addEventListener('click', hideTeaser);
 			
 			this.once('dispose', function() {
 				self.queryElemObserver.off();
 				self.queryElem.removeEventListener('input', queryElemInputListener);
-				self.contactsHolderElem.addEventListener('DOMMouseScroll', wheelListener);
-				self.contactsHolderElem.addEventListener('mousewheel', wheelListener);
-				self.loadElem.addEventListener('click', loadElemClickListener);
+				self.contactsHolderElem.removeEventListener('DOMMouseScroll', wheelListener);
+				self.contactsHolderElem.removeEventListener('mousewheel', wheelListener);
+				self.loadElem.removeEventListener('click', loadElemClickListener);
+				self.crossElem.removeEventListener('click', hideTeaser);
 			});
 		}
 		
