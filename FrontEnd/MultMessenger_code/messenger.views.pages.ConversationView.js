@@ -63,6 +63,16 @@
 			
 			this.tapeItemViews = {};
 			this.newTapeItems = [];
+
+			this.selectedMessagePatternView = null;
+			this.selectMessageSelectListener = function(event) {
+				if (event.target !== self.selectedMessagePatternView) {
+					if (self.selectedMessagePatternView) {
+						self.selectedMessagePatternView.deselect();
+					}
+					self.selectedMessagePatternView = event.target;
+				}
+			};
 			
 			this.addTapeItemHandler = this.addHiddenTapeItem;
 			
@@ -91,6 +101,8 @@
 			var messageId = chatMessage.get('id');
 			var tapeItemView = new TapeItemView(chatMessage, contact);
 			tapeItemView.attachFirstTo(this.elem);
+			tapeItemView.on('select:message', this.selectMessageSelectListener);
+
 			this.tapeItemViews[messageId] = tapeItemView;
 		};
 		TapePageView.prototype.addHiddenTapeItem = function(chatMessage, contact) {
@@ -163,6 +175,7 @@
 		}
 		
 		TapeItemView.prototype.initializeViews = function() {
+			var self = this;
 			this.controlsView = new MessageControlsView(this.chatMessage);
 			this.controlsView.attachTo(this.controlsHolderElem);
 			
@@ -174,6 +187,12 @@
 				
 				//this.answerElem.classList.remove('hidden');
 				this.messageView = new messenger.views.MessagePatternView(this.chatMessage);
+				this.messageView.on('select', function(event) {
+					self.trigger({
+						type: 'select:message',
+						target: event.target
+					});
+				});
 				this.messageView.attachTo(this.messageHolderElem);
 			} else {
 				this.contactView = new TextUserView(this.contact);
