@@ -4,6 +4,7 @@
     display: inline-block;
     position:relative;
     width:22px;
+    vertical-align: top;
     height:22px}
 
 .circularGD{

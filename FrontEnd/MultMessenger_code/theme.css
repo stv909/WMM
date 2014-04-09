@@ -488,6 +488,17 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+#lobby .container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#lobby .container.shifted {
+  margin-top: 36px;
+}
 #lobby .teaser {
   cursor: default !important;
 }
@@ -538,7 +549,6 @@ body {
 }
 .tape-page {
   font-size: 0;
-  overflow-y: auto;
   position: absolute;
   top: 45px;
   bottom: 0;
@@ -549,7 +559,18 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.tape-page::-webkit-scrollbar-track:vertical {
+.tape-page .container {
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.tape-page .container.shifted {
+  margin-top: 36px;
+}
+.tape-page .container::-webkit-scrollbar-track:vertical {
   border-left: 1px solid #ddd;
 }
 .tape-page .tape-item {
@@ -724,21 +745,9 @@ body {
   margin-bottom: 24px;
   -webkit-animation: pulse 0.75s infinite ease-in-out;
 }
-#select-page .container,
-#lobby .container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-#select-page .container.shifted,
-#lobby .container.shifted {
-  margin-top: 36px;
-}
 #select-page .teaser,
-#lobby .teaser {
+#lobby .teaser,
+.tape-page .teaser {
   font-size: 14px;
   text-align: center;
   font-weight: bold;
@@ -759,7 +768,8 @@ body {
   cursor: pointer;
 }
 #select-page .teaser .cross,
-#lobby .teaser .cross {
+#lobby .teaser .cross,
+.tape-page .teaser .cross {
   float: right;
   position: inline-block;
   cursor: default;

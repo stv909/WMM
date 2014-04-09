@@ -482,6 +482,17 @@ window.onload = function() {
 		this.conversationMenuView.on('click:text', function() {
 			self.createMessageDialogView.show();
 		});
+		this.conversationView.on('click:hint', function() {
+			self.conversationView.hide();
+			self.postcardView.show();
+			self.postcardMenuView.selectItemView.select();
+			self.postcardMenuView.showCancel();
+			self.mainMenuView.enableShadow(false);
+			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
+			self.postcardMenuView.postItemView.setText('3. Отправь в диалог!');
+			self.currentPostClickHandler = self.chatPostClickHandler;
+			self.currentPostcardClickHandler = self.chatPostcardClickHandler;
+		});
 
 		this.lobbyView.on('search:users', function(event) {
 			self.contactRepository.searchChatUsers(event.text);

@@ -5,12 +5,17 @@
 		
 		function ConversationView() {
 			base.apply(this, arguments);
+			var self = this;
 
 			this.elem = aux.template({
 				templateId: 'conversation-template',
 				className: 'conversation'
 			});
 			this.elem.classList.add('hidden');
+
+			this.tapePageClickHintListener = function() {
+				self.trigger('click:hint');
+			};
 
 			this.cachedTapeViews = {};
 			this.currentTapeView = null;
@@ -38,6 +43,7 @@
 			var tapeView = this.cachedTapeViews[contactId];
 			if (!tapeView) {
 				tapeView = new TapePageView(contactId);
+				tapeView.on('click:hint', this.tapePageClickHintListener);
 				this.cachedTapeViews[contactId] = tapeView;
 			}
 			return tapeView;
@@ -59,6 +65,9 @@
 			var self = this;
 			
 			this.elem = template.create('tape-page-template', { className: 'tape-page' });
+			this.containerElem = this.elem.getElementsByClassName('container')[0];
+			this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
+			this.crossElem = this.teaserElem.getElementsByClassName('cross')[0];
 			this.contactId = contactId;
 			
 			this.tapeItemViews = {};
@@ -73,25 +82,35 @@
 					self.selectedMessagePatternView = event.target;
 				}
 			};
+
+			this.hideTeaser = function() {
+				self.teaserElem.classList.add('hidden');
+				self.containerElem.classList.remove('shifted');
+			};
 			
 			this.addTapeItemHandler = this.addHiddenTapeItem;
 			
 			var wheelListener = function(event) {
-	            var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
-	            var isIE = Math.abs(delta) >= 120;
-	            var scrollPending = isIE ? delta / 2 : 0;
-	            if (delta < 0 && (self.elem.scrollTop + scrollPending) <= 0) {
-					self.elem.scrollTop = 0;
+				var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
+				var isIE = Math.abs(delta) >= 120;
+				var scrollPending = isIE ? delta / 2 : 0;
+				if (delta < 0 && (self.containerElem.scrollTop + scrollPending) <= 0) {
+					self.containerElem.scrollTop = 0;
 					event.preventDefault();
-	            }
-	            else if (delta > 0 && (self.elem.scrollTop + scrollPending >= (self.elem.scrollHeight - self.elem.offsetHeight))) {
-					self.elem.scrollTop = self.elem.scrollHeight - self.elem.offsetHeight;
+				}
+				else if (delta > 0 && (self.containerElem.scrollTop + scrollPending >= (self.containerElem.scrollHeight - self.containerElem.offsetHeight))) {
+					self.containerElem.scrollTop = self.containerElem.scrollHeight - self.containerElem.offsetHeight;
 					event.preventDefault();
-	            }
+				}
 			};
 			
 			this.elem.addEventListener('DOMMouseScroll', wheelListener, false);
 			this.elem.addEventListener('mousewheel', wheelListener, false);
+			this.crossElem.addEventListener('click', this.hideTeaser);
+			this.teaserElem.addEventListener('click', function() {
+				self.trigger('click:hint');
+				self.hideTeaser();
+			});
 		}
 		
 		TapePageView.prototype.addTapeItem = function(chatMessage, contact) {
@@ -100,10 +119,11 @@
 		TapePageView.prototype.addNormalTapeItem = function(chatMessage, contact) {
 			var messageId = chatMessage.get('id');
 			var tapeItemView = new TapeItemView(chatMessage, contact);
-			tapeItemView.attachFirstTo(this.elem);
+			tapeItemView.attachFirstTo(this.containerElem);
 			tapeItemView.on('select:message', this.selectMessageSelectListener);
 
 			this.tapeItemViews[messageId] = tapeItemView;
+			this.hideTeaser();
 		};
 		TapePageView.prototype.addHiddenTapeItem = function(chatMessage, contact) {
 			this.newTapeItems.push({
