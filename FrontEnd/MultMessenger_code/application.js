@@ -544,7 +544,7 @@ window.onload = function() {
 		});
 		
 		this.postPageView.on('click:send', function(event) {
-			self.postDialogView.show();
+
 			
 			var account = self.contactRepository.owner;
 			var companion = self.contactRepository.selected;
@@ -559,11 +559,16 @@ window.onload = function() {
 			var action = ['post', messageTarget].join('_');
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 
+			if (VkTools.checkPostAccess(companion)) {
+				VK.callMethod('showInviteBox');
+				return;
+			}
+
+			self.postDialogView.show();
 			self.currentDialogsWaitAsync().then(function() {
 				self.postDialogView.setText('Этап 2 из 6: Создание сообщения...');
 				return self.chatClientWrapper.nowAsync();
 			}).then(function(timestamp) {
-				VkTools.checkPostAccess(companion);
 				self.postDialogView.setText('Этап 2 из 6: Сохранение сообщения...');
 				message.timestamp = timestamp;
 				return self.chatClientWrapper.sendMessageAsync(message);

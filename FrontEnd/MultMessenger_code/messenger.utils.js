@@ -128,11 +128,7 @@ var messenger = messenger || {};
 			};
 		},
 		checkPostAccess: function(contact) {
-			if (!contact.get('canPost') && contact.get('id') >= 0) {
-				throw {
-					errorCode: ErrorCodes.RESTRICTED
-				};
-			}
+			return contact.get('canPost') && contact.get('id') > 0;
 		},
 		formatError: function(error) {
 			var result = [];

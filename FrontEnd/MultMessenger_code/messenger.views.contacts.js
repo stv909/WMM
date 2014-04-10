@@ -117,11 +117,7 @@ var messenger = messenger || {};
 					}
 				};
 				var updateOnlineStatus = function(online) {
-					if (online) {
-						self.elem.classList.remove('closed');
-					} else {
-						self.elem.classList.add('closed');
-					}
+
 				};
 				this.model.on('change:unread', function(event) {
 					var unread = event.value;
@@ -133,12 +129,12 @@ var messenger = messenger || {};
 				});
 				updateUnreadElem(this.model.get('unread'));
 				updateOnlineStatus(this.model.get('online'));
+			}
+
+			if (this.model.get('canPost')) {
+				this.elem.classList.remove('closed');
 			} else {
-				if (this.model.get('canPost')) {
-					this.elem.classList.remove('closed');
-				} else {
-					this.elem.classList.add('closed');
-				}
+				this.elem.classList.add('closed');
 			}
 			
 			this.photoElem.src = this.model.get('photo');

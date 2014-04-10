@@ -13,6 +13,29 @@ var messenger = messenger || {};
 			return [this.get('firstName'), this.get('lastName')].join(' ');	
 		};
 
+		UserModel.prototype.isAppUserAsync = function() {
+			var self = this;
+			return VK.apiAsync('users.isAppUser', {
+				user_id: this.get('id'),
+				v: 5.12
+			}).then(function(response) {
+				self.set('isAppUser', response);
+				return response;
+			});
+		};
+
+		UserModel.prototype.isWallClosedAsync = function() {
+			var self = this;
+			return VK.apiAsync({
+				user_ids: this.get('id'),
+				fields: 'can_post'
+			}).then(function(response) {
+				var rawUser = response[0];
+				self.set('canPost', rawUser.can_post);
+				return rawUser.can_post;
+			});
+		};
+
 		UserModel.fromRaw = function(rawUser) {
 			var user = new UserModel();
 
