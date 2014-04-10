@@ -121,10 +121,10 @@ var messenger = messenger || {};
 			event.preventDefault();
 		};
 		var teaserElemClickListener = function(event) {
-			html.scrollToBottom(self.containerElem);
-			self.containerElem.classList.remove('shifted');
-			self.teaserElem.classList.add('hidden');
-			analytics.send('tape', 'hint_load_click');
+//			html.scrollToBottom(self.containerElem);
+//			self.containerElem.classList.remove('shifted');
+//			self.teaserElem.classList.add('hidden');
+//			analytics.send('tape', 'hint_load_click');
 		};
 		
 		this.loadElem.addEventListener('click', loadElemClickListener);
