@@ -252,19 +252,21 @@ html, body
 		padding-right 16px
 		font-size 12px
 		color #333
-		.name, .next
-			vertical-align middle
 		.name
-			display inline
+			display inline-block
+			vertical-align middle
 		.next
+			vertical-align top
 			display none
-			padding 4px 8px 4px 8px
+			padding 4px 8px 5px 8px
 			border-radius 2px
 			color white
 			box-shadow 0 0 1px sub-menu-color
 			background-color sub-menu-color
 			margin-right 12px
 			margin-left 2px
+			margin-top 2px
+			box-sizing(border-box)
 		&.flicker
 			-webkit-animation flicker 0.75s infinite ease-in-out
 			&:before
