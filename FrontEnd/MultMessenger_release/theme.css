@@ -103,7 +103,6 @@ body {
 .main-menu .main-menu-item.chosen {
   cursor: default;
   color: #fff;
-  text-shadow: 0 0 2px #666;
   background-color: #28f;
 }
 .main-menu .main-menu-item .unread {
@@ -125,6 +124,15 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+.main-menu .chats.disabled {
+  opacity: 0.25;
+}
+.main-menu .chats.disabled .main-menu-item {
+  cursor: default;
+}
+.main-menu .chats.disabled .main-menu-item:hover {
+  color: #333;
+}
 .main-menu .chats .main-menu-item {
   position: relative;
   vertical-align: top;
@@ -136,7 +144,6 @@ body {
 }
 .main-menu .chats .main-menu-item.chosen {
   color: #fff;
-  background-color: #28f;
   text-shadow: 0 0 2px #666;
 }
 .main-menu .chats .main-menu-item.chosen:before {
@@ -194,6 +201,10 @@ body {
   padding-right: 32px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+.main-menu .items .main-menu-item.chosen {
+  background-color: rgba(34,136,255,0.15);
+  color: #28f;
 }
 .main-menu .info {
   position: absolute;
@@ -264,8 +275,8 @@ body {
 }
 .postcard-menu .breadcrumbs {
   display: inline-block;
-  border: 1px solid #28f;
-  background-color: #28f;
+  border: 1px solid #82f;
+  background-color: #82f;
   border-radius: 3px;
 }
 .postcard-menu .postcard-menu-item {
@@ -283,6 +294,24 @@ body {
   font-size: 12px;
   color: #333;
 }
+.postcard-menu .postcard-menu-item .name {
+  display: inline-block;
+  vertical-align: top;
+}
+.postcard-menu .postcard-menu-item .next {
+  vertical-align: top;
+  display: none;
+  padding: 4px 8px 5px 8px;
+  border-radius: 2px;
+  color: #fff;
+  box-shadow: 0 0 1px #82f;
+  background-color: #82f;
+  margin-right: 12px;
+  margin-left: 2px;
+  margin-top: 2px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 .postcard-menu .postcard-menu-item.flicker {
   -webkit-animation: flicker 0.75s infinite ease-in-out;
 }
@@ -292,24 +321,27 @@ body {
 .postcard-menu .postcard-menu-item.flicker:after {
   -webkit-animation: flicker-left-border 0.75s infinite ease-in-out;
 }
+.postcard-menu .postcard-menu-item.flicker .next {
+  display: inline;
+}
 .postcard-menu .postcard-menu-item.normal {
   cursor: pointer;
 }
 .postcard-menu .postcard-menu-item.normal:hover {
-  color: #28f;
+  color: #82f;
 }
 .postcard-menu .postcard-menu-item.chosen {
-  color: #fff;
-  background-color: #28f;
-  text-shadow: 0 0 2px #666;
+  cursor: default;
+  color: #82f;
+  background-color: rgba(255,255,255,0.85);
 }
 .postcard-menu .postcard-menu-item.chosen:before {
-  border: 16px solid #28f;
+  border: 16px solid rgba(255,255,255,0.85);
   border-left: 16px solid transparent;
 }
 .postcard-menu .postcard-menu-item.chosen:after {
   border: 16px solid transparent;
-  border-left: 16px solid #28f;
+  border-left: 16px solid rgba(255,255,255,0.85);
 }
 .postcard-menu .postcard-menu-item:before {
   position: absolute;
@@ -721,7 +753,6 @@ body {
   color: #fff;
   text-shadow: 1px 1px 1px #9b7555;
   box-shadow: 0 0 6px #888;
-  cursor: pointer;
 }
 #select-page .teaser .cross {
   float: right;
