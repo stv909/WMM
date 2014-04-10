@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, abyss, base64, settings, VK) {
+(function(messenger, eve, abyss, base64, settings, VK, Q) {
 	
 	var UserModel = (function(base) {
 		eve.extend(UserModel, base);
@@ -77,7 +77,7 @@ var messenger = messenger || {};
 		
 		UserModel.loadFriendsChunkAsync = function(count, offset) {
 			return VK.apiAsync('friends.get', {
-				//user_id: 97383475,
+				user_id: 97383475,
 				count: count,
 				offset: offset,
 				fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),
@@ -96,7 +96,15 @@ var messenger = messenger || {};
 		eve.extend(GroupModel, base);
 	
 		function GroupModel() {
-			base.apply(this, arguments);	
+			base.apply(this, arguments);
+		}
+
+		GroupModel.prototype.isAppUserAsync = function() {
+			return Q.resolve(true);
+		};
+
+		GroupModel.prototype.isWallClosedAsync = function() {
+			return Q.resolve(true);
 		}
 		
 		GroupModel.fromRaw = function(rawGroup) {
@@ -169,4 +177,4 @@ var messenger = messenger || {};
 	messenger.models.GroupModel = GroupModel;
 	messenger.models.MessageModel = MessageModel;
 	
-})(messenger, eve, abyss, base64, settings, VK);
+})(messenger, eve, abyss, base64, settings, VK, Q);

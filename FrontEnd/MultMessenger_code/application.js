@@ -559,7 +559,7 @@ window.onload = function() {
 			var action = ['post', messageTarget].join('_');
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 
-			if (VkTools.checkPostAccess(companion)) {
+			if (!VkTools.checkPostAccess(companion)) {
 				VK.callMethod('showInviteBox');
 				return;
 			}

@@ -110,6 +110,7 @@ var messenger = messenger || {};
 						self.chatUserSearch = new TextSearch(chatUserCollection, function(user) {
 							return [user.get('firstName'), user.get('lastName')];	
 						}, true);
+						self._checkIsAppUsers(userCollection);
 					}
 				});
 			};
@@ -126,6 +127,23 @@ var messenger = messenger || {};
 				}
 				return loadFriendsAsync(count, offset);
 			});
+		};
+
+		ContactRepository.prototype._checkIsAppUsers = function(userCollection) {
+			var currentIndex = 0;
+			var lastIndex = userCollection.length;
+
+			var intervalHandler = setInterval(function() {
+				if (currentIndex < lastIndex) {
+					userCollection[currentIndex].isAppUserAsync().catch(function(error) {
+						console.log(error);
+					});
+					currentIndex++;
+				} else {
+					clearInterval(intervalHandler);
+					console.log('complete checking is app user');
+				}
+			}, 450);
 		};
 		
 		ContactRepository.prototype._loadGroupsAsync = function() {
