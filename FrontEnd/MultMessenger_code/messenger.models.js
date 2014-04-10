@@ -103,7 +103,7 @@ var messenger = messenger || {};
 			return Q.resolve(true);
 		};
 
-		GroupModel.prototype.isWallClosedAsync = function() {
+		GroupModel.prototype.isCanPostAsync = function() {
 			return Q.resolve(true);
 		}
 		
