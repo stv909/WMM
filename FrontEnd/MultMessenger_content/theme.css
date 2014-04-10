@@ -296,7 +296,7 @@ body {
 }
 .postcard-menu .postcard-menu-item .name {
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: top;
 }
 .postcard-menu .postcard-menu-item .next {
   vertical-align: top;
