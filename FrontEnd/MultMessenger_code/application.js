@@ -545,6 +545,7 @@ window.onload = function() {
 		});
 		
 		this.postPageView.on('click:send', function(event) {
+			self.postDialogView.show();
 
 			var account = self.contactRepository.owner;
 			var companion = self.contactRepository.selected;
@@ -560,10 +561,7 @@ window.onload = function() {
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 
 			companion.isCanPostAsync().then(function(canPost) {
-				console.log(canPost);
-				if (canPost) {
-					self.postDialogView.show();
-				} else {
+				if (!canPost) {
 					self.trySendInvite(companion);
 					throw { errorCode: errors.ErrorCodes.RESTRICTED };
 				}
@@ -852,12 +850,16 @@ window.onload = function() {
 	};
 	MessengerApplication.prototype.trySendInvite = function(user) {
 		var self = this;
+		self.postDialogView.hideDialog();
 		user.isAppUserAsync().then(function(isAppUser) {
 			if (!isAppUser) {
 				self.trigger({
 					type: 'invite:user',
 					user: user
 				});
+			} else {
+				self.postDialogView.show();
+				self.postDialogView.setMode('fail', { errorCode: errors.ErrorCodes.RESTRICTED });
 			}
 		});
 	};

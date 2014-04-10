@@ -13,9 +13,10 @@ var messenger = messenger || {};
 			this.photoElem = this.elem.getElementsByClassName('photo')[0];
 			this.nameElem = this.elem.getElementsByClassName('name')[0];
 			this.unreadElem = this.elem.getElementsByClassName('unread')[0];
-			
+			this.statusElem = this.elem.getElementsByClassName('status')[0];
+
 			this.selected = false;
-			
+
 			var elemClick = function(event) {
 				self.trigger('select-force');
 				if (!self.selected) {
@@ -117,7 +118,18 @@ var messenger = messenger || {};
 					}
 				};
 				var updateOnlineStatus = function(online) {
-
+					if (online) {
+						self.statusElem.classList.remove('offline');
+					} else {
+						self.statusElem.classList.add('offline');
+					}
+				};
+				var updateIsAppUser = function(isAppUser) {
+					if (isAppUser) {
+						self.elem.classList.add('app');
+					} else {
+						self.elem.classList.remove('app');
+					}
 				};
 				this.model.on('change:unread', function(event) {
 					var unread = event.value;
@@ -127,8 +139,13 @@ var messenger = messenger || {};
 					var online = event.value;
 					updateOnlineStatus(online);
 				});
+				this.model.on('change:isAppUser', function(event) {
+					var isAppUser = event.value;
+					updateIsAppUser(isAppUser);
+				});
 				updateUnreadElem(this.model.get('unread'));
 				updateOnlineStatus(this.model.get('online'));
+				updateIsAppUser(this.model.get('isAppUser'));
 			}
 
 			if (this.model.get('canPost')) {

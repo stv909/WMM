@@ -143,7 +143,7 @@ var messenger = messenger || {};
 					clearInterval(intervalHandler);
 					console.log('complete checking is app user');
 				}
-			}, 450);
+			}, 1000);
 		};
 		
 		ContactRepository.prototype._loadGroupsAsync = function() {

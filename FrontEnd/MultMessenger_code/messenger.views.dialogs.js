@@ -322,6 +322,9 @@ var messenger = messenger || {};
 		this.elem.classList.remove('hidden');
 		this.setMode('wait');
 	};
+	PostDialogView.prototype.hideDialog = function() {
+		this.dialogWindowElem.classList.add('hidden');
+	};
 	PostDialogView.prototype.hide = function() {
 		this.dialogWindowElem.classList.add('hidden');
 		this.elem.classList.add('hidden');
