@@ -1,4 +1,4 @@
-(function(messenger, eve, abyss, template, settings, analytics) {
+(function(messenger, eve, abyss, settings, analytics) {
 	
 	var ConversationView = (function(base) {
 		eve.extend(ConversationView, base);
@@ -63,11 +63,16 @@
 		function TapePageView(contactId) {
 			base.apply(this, arguments);
 			var self = this;
-			
-			this.elem = template.create('tape-page-template', { className: 'tape-page' });
+
+			this.elem = aux.template({
+				templateId: 'tape-page-template',
+				className: 'tape-page'
+			});
 			this.containerElem = this.elem.getElementsByClassName('container')[0];
 			this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
 			this.crossElem = this.teaserElem.getElementsByClassName('cross')[0];
+			this.firstMessageElem = this.elem.getElementsByClassName('first-message')[0];
+			this.sendElem = this.firstMessageElem.getElementsByClassName('send')[0];
 			this.contactId = contactId;
 			
 			this.tapeItemViews = {};
@@ -86,6 +91,9 @@
 			this.hideTeaser = function() {
 				self.teaserElem.classList.add('hidden');
 				self.containerElem.classList.remove('shifted');
+			};
+			this.hideFirstMessage = function() {
+				self.firstMessageElem.classList.add('hidden');
 			};
 			
 			this.addTapeItemHandler = this.addHiddenTapeItem;
@@ -106,10 +114,16 @@
 			
 			this.elem.addEventListener('DOMMouseScroll', wheelListener, false);
 			this.elem.addEventListener('mousewheel', wheelListener, false);
-			this.crossElem.addEventListener('click', this.hideTeaser);
+			this.crossElem.addEventListener('click', function() {
+				self.hideTeaser();
+				event.stopPropagation();
+				event.preventDefault();
+			});
 			this.teaserElem.addEventListener('click', function() {
 				self.trigger('click:hint');
-				self.hideTeaser();
+			});
+			this.sendElem.addEventListener('click', function() {
+				self.trigger('click:hint');
 			});
 		}
 		
@@ -124,6 +138,7 @@
 
 			this.tapeItemViews[messageId] = tapeItemView;
 			this.hideTeaser();
+			this.hideFirstMessage();
 		};
 		TapePageView.prototype.addHiddenTapeItem = function(chatMessage, contact) {
 			this.newTapeItems.push({
@@ -160,8 +175,11 @@
 			
 			this.chatMessage = chatMessage;
 			this.contact = contact;
-			
-			this.elem = template.create('tape-item-template', { className: 'tape-item' });
+
+			this.elem = aux.template({
+				templateId: 'tape-item-template',
+				className: 'tape-item'
+			});
 			this.contactHolderElem = this.elem.getElementsByClassName('contact-holder')[0];
 			this.messageHolderElem = this.elem.getElementsByClassName('message-holder')[0];
 			this.controlsHolderElem = this.elem.getElementsByClassName('controls-holder')[0];
@@ -281,8 +299,11 @@
 			var self = this;
 			
 			this.message = message;
-			
-			this.elem = template.create('message-controls-template', { className: 'message-controls' });
+
+			this.elem = aux.template({
+				templateId: 'message-controls-template',
+				className: 'message-controls'
+			});
 			this.dateHolderElem = this.elem.getElementsByClassName('date-holder')[0];
 			this.timeElem = this.dateHolderElem.getElementsByClassName('time')[0];
 			this.dateElem = this.dateHolderElem.getElementsByClassName('date')[0];
@@ -423,8 +444,11 @@
 		
 		function TextMessageView(chatMessage) {
 			base.apply(this, arguments);
-			
-			this.elem = template.create('text-message-template', { className: 'text-message' });
+
+			this.elem = aux.template({
+				templateId: 'text-message-template',
+				className: 'text-message'
+			});
 			this.contentElem = this.elem.getElementsByClassName('content')[0];
 			
 			this.contentElem.innerHTML = chatMessage.get('content');
@@ -441,8 +465,11 @@
 			var self = this;
 			
 			this.model = user;
-			
-			this.elem = template.create('text-user-template', { className: 'text-user' });
+
+			this.elem = aux.template({
+				templateId: 'text-user-template',
+				className: 'text-user'
+			});
 			this.nameElem = this.elem.getElementsByClassName('name')[0];
 			this.nameElem.textContent = this.model.getFullName();
 
@@ -474,4 +501,4 @@
 	messenger.views.ConversationView = ConversationView;
 	messenger.views.CreateMessageDialogView = CreateMessageDialogView;
 	
-})(messenger, eve, abyss, template, settings, analytics);
+})(messenger, eve, abyss, settings, analytics);

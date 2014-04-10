@@ -53,7 +53,7 @@
 		
 		MainMenuView.prototype.initializeItemViews = function() {
 			var self = this;
-			this.postcardItemView = new MainMenuItemView('Открытки');
+			this.postcardItemView = new MainMenuItemView('Мульты');
 			this.dialogItemView = new MainMenuItemView('Диалоги');
 			this.conversationItemView = new MainMenuItemView('Петр Иванов');
 			this.answerItemView = new MainMenuItemView('#answer');
@@ -366,7 +366,7 @@
 			var self = this;
 			
 			this.filmtextItemView = new ConversationMenuItemView('МультТекст');
-			this.postcardItemView = new ConversationMenuItemView('Открытка');
+			this.postcardItemView = new ConversationMenuItemView('Мульт');
 			this.textItemView = new ConversationMenuItemView('Текст');
 			
 			this.filmtextItemView.elem.classList.add('hidden');
