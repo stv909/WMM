@@ -561,7 +561,7 @@ window.onload = function() {
 
 			companion.isCanPostAsync().then(function(canPost) {
 				console.log(canPost);
-				if (!canPost) {
+				if (canPost) {
 					self.postDialogView.show();
 				} else {
 					self.trySendInvite(companion);
@@ -853,7 +853,7 @@ window.onload = function() {
 	MessengerApplication.prototype.trySendInvite = function(user) {
 		var self = this;
 		user.isAppUserAsync().then(function(isAppUser) {
-			if (isAppUser) {
+			if (!isAppUser) {
 				self.trigger({
 					type: 'invite:user',
 					user: user
