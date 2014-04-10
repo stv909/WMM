@@ -107,6 +107,44 @@ var messenger = messenger || {};
 		this.dialogWindowElem.classList.remove('hidden');
 		this.elem.classList.remove('hidden');
 	};
+
+	var InviteUserDialogView = function() {
+		InviteUserDialogView.super.apply(this);
+		var self = this;
+
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('invite-user-dialog');
+		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
+		this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
+
+		var okElemClickListener = function(event) {
+			self.hide();
+			self.trigger('click:ok');
+		};
+		var cancelElemClickListener = function() {
+			self.hide();
+			self.trigger('click:cancel');
+		};
+
+		this.okElem.addEventListener('click', okElemClickListener);
+		this.cancelElem.addEventListener('click', cancelElemClickListener);
+
+		this.once('dispose', function(event) {
+			self.okElem.removeEventListener('click', okElemClickListener);
+			self.cancelElem.removeEventListener('click', cancelElemClickListener);
+		});
+	};
+	InviteUserDialogView.super = View;
+	InviteUserDialogView.prototype = Object.create(View.prototype);
+	InviteUserDialogView.prototype.constructor = InviteUserDialogView;
+	InviteUserDialogView.prototype.hide = function() {
+		this.dialogWindowElem.classList.add('hidden');
+		this.elem.classList.add('hidden');
+	};
+	InviteUserDialogView.prototype.show = function() {
+		this.dialogWindowElem.classList.remove('hidden');
+		this.elem.classList.remove('hidden');
+	};
 	
 	var SkipDialogView = function() {
 		SkipDialogView.super.apply(this);
@@ -461,5 +499,6 @@ var messenger = messenger || {};
 	messenger.views.PostDialogView = PostDialogView;
 	messenger.views.ImageSelectDialogView = ImageSelectDialogView;
 	messenger.views.PrepareChatDialogView = PrepareChatDialogView;
+	messenger.views.InviteUserDialogView = InviteUserDialogView;
 	
 })(messenger, abyss, template, errors, html, analytics);

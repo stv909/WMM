@@ -24,9 +24,9 @@ var messenger = messenger || {};
 			});
 		};
 
-		UserModel.prototype.isWallClosedAsync = function() {
+		UserModel.prototype.isCanPostAsync = function() {
 			var self = this;
-			return VK.apiAsync({
+			return VK.apiAsync('users.get', {
 				user_ids: this.get('id'),
 				fields: 'can_post'
 			}).then(function(response) {

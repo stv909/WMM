@@ -1456,6 +1456,21 @@ body {
   vertical-align: middle;
   display: inline-block;
 }
+#invite-user-dialog {
+  font-size: 12px;
+  width: 360px;
+  height: 220px;
+}
+#invite-user-dialog .content {
+  height: 140px;
+  line-height: 140px;
+}
+#invite-user-dialog .status {
+  line-height: 12px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
+}
 #error-dialog {
   font-size: 12px;
   width: 360px;
