@@ -1,4 +1,5 @@
 aspect-color = #28f
+sub-menu-color = #82f
 active-aspect-color = #26d
 default-font-color = #333
 default-width = 920px
@@ -96,7 +97,7 @@ html, body
 		&.chosen
 			cursor default
 			color white
-			text-shadow 0 0 2px #666
+			//text-shadow 0 0 2px #666
 			background-color aspect-color
 		.unread
 			display inline
@@ -115,6 +116,12 @@ html, body
 		border-radius 3px
 		height 34px
 		box-sizing(border-box)
+		&.disabled
+			opacity 0.25
+			.main-menu-item
+				cursor default
+				&:hover
+					color default-font-color
 		.main-menu-item
 			position relative
 			vertical-align top
@@ -125,7 +132,6 @@ html, body
 			padding-right 16px
 			&.chosen
 				color white
-				background-color aspect-color
 				text-shadow 0 0 2px #666
 				&:before
 					border 16px solid aspect-color
@@ -172,6 +178,9 @@ html, body
 			padding-left 32px
 			padding-right 32px
 			box-sizing(border-box)
+			&.chosen
+				background-color rgba(aspect-color, 0.15)
+				color aspect-color
 	.info
 		position absolute
 		right 0
@@ -227,8 +236,8 @@ html, body
 	box-shadow 0 0 4px #888
 	.breadcrumbs
 		display inline-block
-		border 1px solid aspect-color
-		background-color aspect-color
+		border 1px solid sub-menu-color
+		background-color sub-menu-color
 		border-radius 3px
 	.postcard-menu-item
 		position relative
@@ -243,26 +252,41 @@ html, body
 		padding-right 16px
 		font-size 12px
 		color #333
+		.name, .next
+			vertical-align middle
+		.name
+			display inline
+		.next
+			display none
+			padding 4px 8px 4px 8px
+			border-radius 2px
+			color white
+			box-shadow 0 0 1px sub-menu-color
+			background-color sub-menu-color
+			margin-right 12px
+			margin-left 2px
 		&.flicker
 			-webkit-animation flicker 0.75s infinite ease-in-out
 			&:before
 				-webkit-animation flicker-non-left-border 0.75s infinite ease-in-out
 			&:after
 				-webkit-animation flicker-left-border 0.75s infinite ease-in-out
+			.next
+				display inline
 		&.normal
 			cursor pointer
 			&:hover
-				color aspect-color
+				color sub-menu-color
 		&.chosen
-			color white
-			background-color aspect-color
-			text-shadow 0 0 2px #666
+			cursor default
+			color sub-menu-color
+			background-color rgba(white, 0.85)
 			&:before
-				border 16px solid aspect-color
+				border 16px solid rgba(white, 0.85)
 				border-left 16px solid transparent
 			&:after
 				border 16px solid transparent
-				border-left 16px solid aspect-color
+				border-left 16px solid rgba(white, 0.85)
 		&:before
 			position:absolute;
 			top 0

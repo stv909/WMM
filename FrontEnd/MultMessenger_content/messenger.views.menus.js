@@ -67,16 +67,18 @@
 				self.selectItemView(self.postcardItemView);
 				self.enableShadow(false);
 			});
-			this.dialogItemView.on('select', function(event) {
-				self.trigger('click:dialog');
-				self.selectItemView(self.dialogItemView);
-				self.enableShadow(true);
-			});
-			this.conversationItemView.on('select', function(event) {
-				self.trigger('click:conversation');
-				self.selectItemView(self.conversationItemView);
-				self.enableShadow(true);
-			});
+			this.dialogItemView.selected = true;
+			this.conversationItemView.selected = true;
+//			this.dialogItemView.on('select', function(event) {
+//				self.trigger('click:dialog');
+//				self.selectItemView(self.dialogItemView);
+//				self.enableShadow(true);
+//			});
+//			this.conversationItemView.on('select', function(event) {
+//				self.trigger('click:conversation');
+//				self.selectItemView(self.conversationItemView);
+//				self.enableShadow(true);
+//			});
 			this.answerItemView.on('select', function(event) {
 				self.trigger('click:answer');
 				self.selectItemView(self.answerItemView);
@@ -281,9 +283,12 @@
 		function PostcardMenuItemView(text) {
 			base.apply(this, arguments);
 			var self = this;
-			
-			this.elem = document.createElement('div');
-			this.elem.classList.add('postcard-menu-item');
+
+			this.elem = template.create('postcard-menu-item-template', {
+				className: 'postcard-menu-item'
+			});
+			this.nameElem = this.elem.getElementsByClassName('name')[0];
+			this.nextElem = this.elem.getElementsByClassName('next')[0];
 			this.setText(text);
 			
 			this.selected = false;
@@ -313,7 +318,7 @@
 			this.trigger('deselect');
 		};
 		PostcardMenuItemView.prototype.setText = function(text) {
-			this.elem.textContent = text;
+			this.nameElem.textContent = text;
 		};
 		PostcardMenuItemView.prototype.enableFlicker = function(enable) {
 			if (enable) {
