@@ -350,6 +350,9 @@ window.onload = function() {
 			self.postcardView.show();
 			self.conversationView.hide();
 			self.postcardMenuView.selectItemView.select();
+			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
+			self.postcardMenuView.postItemView.setText('3. Отправь на стену!');
+			self.currentPostClickHandler = self.defaultPostClickHandler;
 		};
 		this.chatPostcardClickHandler = function() {
 			self.answerPageView.hide();
