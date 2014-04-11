@@ -198,6 +198,12 @@ var messenger = messenger || {};
 			this.preloadElem.textContent = ['Загрузить новые мульты (+', count, ')'].join('');
 		}
 	};
+	SelectPageView.prototype.deselect = function() {
+		if (this.selectedMessageView) {
+			this.selectedMessageView.deselect();
+			this.selectedMessageView = null;
+		}
+	};
 	
 	messenger.views = messenger.views || {};
 	

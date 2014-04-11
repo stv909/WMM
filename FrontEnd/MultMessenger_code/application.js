@@ -280,7 +280,7 @@ window.onload = function() {
 		var self = this;
 		
 		var checkOnline = function() {
-			self.chatClientWrapper.nowAsync().then(function() {
+			self.chatClientWrapper.nowAsync(3000).then(function() {
 				self.trigger('online');
 			}).catch(function() {
 				self.trigger('offline');
@@ -499,6 +499,14 @@ window.onload = function() {
 			self.postcardMenuView.postItemView.setText('3. Отправь в диалог!');
 			self.currentPostClickHandler = self.chatPostClickHandler;
 			self.currentPostcardClickHandler = self.chatPostcardClickHandler;
+		});
+		this.conversationView.on('click:answer', function(event) {
+			var message = event.message;
+			self.selectPageView.deselect();
+			self.editPageView.setMessage(message);
+			self.conversationView.hide();
+			self.postcardView.show();
+			self.postcardMenuView.editItemView.select();
 		});
 
 		this.lobbyView.on('search:users', function(event) {

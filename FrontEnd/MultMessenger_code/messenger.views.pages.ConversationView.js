@@ -16,6 +16,12 @@
 			this.tapePageClickHintListener = function() {
 				self.trigger('click:hint');
 			};
+			this.tapePageClickAnswerListener = function(event) {
+				self.trigger({
+					type: 'click:answer',
+					message: event.message
+				});
+			};
 
 			this.cachedTapeViews = {};
 			this.currentTapeView = null;
@@ -44,6 +50,7 @@
 			if (!tapeView) {
 				tapeView = new TapePageView(contactId);
 				tapeView.on('click:hint', this.tapePageClickHintListener);
+				tapeView.on('click:answer', this.tapePageClickAnswerListener);
 				this.cachedTapeViews[contactId] = tapeView;
 			}
 			return tapeView;
@@ -86,6 +93,12 @@
 					}
 					self.selectedMessagePatternView = event.target;
 				}
+			};
+			this.answerMessageListener = function(event) {
+				self.trigger({
+					type: 'click:answer',
+					message: event.message
+				});
 			};
 
 			this.hideTeaser = function() {
@@ -135,6 +148,7 @@
 			var tapeItemView = new TapeItemView(chatMessage, contact);
 			tapeItemView.attachFirstTo(this.containerElem);
 			tapeItemView.on('select:message', this.selectMessageSelectListener);
+			tapeItemView.on('click:answer', this.answerMessageListener);
 
 			this.tapeItemViews[messageId] = tapeItemView;
 			this.hideTeaser();
@@ -223,7 +237,13 @@
 				this.contactView.disableSelecting();
 				this.contactView.attachFirstTo(this.contactHolderElem);
 				
-				//this.answerElem.classList.remove('hidden');
+				this.answerElem.classList.remove('hidden');
+				this.answerElem.addEventListener('click', function() {
+					self.trigger({
+						type: 'click:answer',
+						message: self.chatMessage
+					});
+				});
 				this.messageView = new messenger.views.MessagePatternView(this.chatMessage);
 				this.messageView.on('select', function(event) {
 					self.trigger({
