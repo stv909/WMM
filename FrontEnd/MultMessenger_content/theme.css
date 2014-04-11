@@ -5,9 +5,10 @@
   width: 12px;
   height: 12px;
   margin: 0 auto;
+  background-color: rgba(34,136,255,0.15);
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #666;
+  background-color: #28f;
 }
 html,
 body {
