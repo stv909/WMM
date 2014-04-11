@@ -2,12 +2,14 @@
   outline: 0;
 }
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 18px;
+  height: 18px;
   margin: 0 auto;
+  background-color: rgba(34,136,255,0.15);
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #ddd;
+  background-color: #28f;
+  border-radius: 2px;
 }
 html,
 body {
@@ -311,15 +313,6 @@ body {
   margin-top: 2px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-}
-.postcard-menu .postcard-menu-item.flicker {
-  -webkit-animation: flicker 0.75s infinite ease-in-out;
-}
-.postcard-menu .postcard-menu-item.flicker:before {
-  -webkit-animation: flicker-non-left-border 0.75s infinite ease-in-out;
-}
-.postcard-menu .postcard-menu-item.flicker:after {
-  -webkit-animation: flicker-left-border 0.75s infinite ease-in-out;
 }
 .postcard-menu .postcard-menu-item.flicker .next {
   display: inline;
@@ -753,6 +746,7 @@ body {
   color: #fff;
   text-shadow: 1px 1px 1px #9b7555;
   box-shadow: 0 0 6px #888;
+  cursor: pointer;
 }
 #select-page .teaser .cross {
   float: right;

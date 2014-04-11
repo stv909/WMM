@@ -18,11 +18,13 @@ transform(value)
 *
 	outline 0
 ::-webkit-scrollbar
-	width 8px
-	height 8px
+	width 18px
+	height 18px
 	margin 0 auto
+	background-color rgba(aspect-color, 0.15)
 ::-webkit-scrollbar-thumb
-	background-color #ddd
+	background-color aspect-color
+	border-radius 2px
 html, body
 	font-family 'Open Sans', Verdana
 	text-rendering optimizeLegibility
@@ -268,11 +270,6 @@ html, body
 			margin-top 2px
 			box-sizing(border-box)
 		&.flicker
-			-webkit-animation flicker 0.75s infinite ease-in-out
-			&:before
-				-webkit-animation flicker-non-left-border 0.75s infinite ease-in-out
-			&:after
-				-webkit-animation flicker-left-border 0.75s infinite ease-in-out
 			.next
 				display inline
 		&.normal
@@ -628,7 +625,7 @@ html, body
 		color #fff
 		text-shadow 1px 1px 1px #9b7555
 		box-shadow 0 0 6px #888
-		//cursor pointer
+		cursor pointer
 		.cross
 			float right
 			position inline-block

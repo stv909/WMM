@@ -49,7 +49,7 @@
 		
 		MainMenuView.prototype.initializeItemViews = function() {
 			var self = this;
-			this.postcardItemView = new MainMenuItemView('Открытки');
+			this.postcardItemView = new MainMenuItemView('Мульты');
 			this.dialogItemView = new MainMenuItemView('Диалоги');
 			this.conversationItemView = new MainMenuItemView('Петр Иванов');
 			this.answerItemView = new MainMenuItemView('#answer');
