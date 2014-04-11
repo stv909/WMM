@@ -538,8 +538,59 @@
 		
 		return GroupSearchView;
 	})(SearchView);
+
+	var DialogPostPageView = (function(base) {
+		eve.extend(DialogPostPageView, base);
+
+		function DialogPostPageView() {
+			base.apply(this, arguments);
+			var self = this;
+
+			this.elem = aux.template({
+				templateId: 'dialog-post-page-template',
+				id: 'dialog-post-page'
+			});
+			this.contactHolderElem = this.elem.getElementsByClassName('contact-holder')[0];
+			this.sendElem = this.elem.getElementsByClassName('send')[0];
+			this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
+			this.containerElem = this.elem.getElementsByClassName('container')[0];
+
+			this.userView = new UserView(null, true);
+			this.userView.attachFirstTo(this.contactHolderElem);
+			this.userView.select();
+
+			this.sendElem.addEventListener('click', function(event) {
+				self.teaserElem.classList.add('hidden');
+				self.containerElem.classList.remove('shifted');
+				self.trigger({
+					type: 'click:send',
+					user: self.userView.model
+				});
+			});
+		}
+
+		DialogPostPageView.prototype.setContact = function(contact) {
+			var self = this;
+			this.userView.setModel(contact);
+			contact.isAppUserAsync().then(function(isAppUser) {
+				if (isAppUser) {
+					self.teaserElem.classList.add('hidden');
+					self.containerElem.classList.remove('shifted');
+				} else {
+					self.teaserElem.classList.remove('hidden');
+					self.containerElem.classList.add('shifted');
+				}
+			}).catch(function() {
+				self.teaserElem.classList.add('hidden');
+				self.containerElem.classList.remove('shifted')
+			});
+		};
+
+		return DialogPostPageView;
+	})(PageView);
 	
 	messenger.views.PostPageView = PostPageView;
 	messenger.views.LobbyView = LobbyView;
+	messenger.views.DialogPostPageView = DialogPostPageView;
 	
 })(messenger, eve, abyss, template, analytics);
