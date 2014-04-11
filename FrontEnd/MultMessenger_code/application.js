@@ -509,6 +509,7 @@ window.onload = function() {
 			self.editPageView.setMessage(message);
 			self.conversationView.hide();
 			self.postcardView.show();
+			self.postcardMenuView.showCancel();
 			self.postcardMenuView.editItemView.select();
 			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
 			self.postcardMenuView.postItemView.setText('3. Отправь в диалог!');
