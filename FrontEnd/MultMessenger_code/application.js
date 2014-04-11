@@ -507,6 +507,7 @@ window.onload = function() {
 			self.conversationView.hide();
 			self.postcardView.show();
 			self.postcardMenuView.editItemView.select();
+			self.currentPostClickHandler = self.chatPostClickHandler;
 		});
 
 		this.lobbyView.on('search:users', function(event) {
