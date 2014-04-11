@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, abyss, base64, settings, VK) {
+(function(messenger, eve, abyss, base64, settings, VK, Q) {
 	
 	var UserModel = (function(base) {
 		eve.extend(UserModel, base);
@@ -11,6 +11,29 @@ var messenger = messenger || {};
 		
 		UserModel.prototype.getFullName = function() {
 			return [this.get('firstName'), this.get('lastName')].join(' ');	
+		};
+
+		UserModel.prototype.isAppUserAsync = function() {
+			var self = this;
+			return VK.apiAsync('users.isAppUser', {
+				user_id: this.get('id'),
+				v: 5.12
+			}).then(function(response) {
+				self.set('isAppUser', response);
+				return response;
+			});
+		};
+
+		UserModel.prototype.isCanPostAsync = function() {
+			var self = this;
+			return VK.apiAsync('users.get', {
+				user_ids: this.get('id'),
+				fields: 'can_post'
+			}).then(function(response) {
+				var rawUser = response[0];
+				self.set('canPost', rawUser.can_post);
+				return rawUser.can_post;
+			});
 		};
 
 		UserModel.fromRaw = function(rawUser) {
@@ -73,8 +96,16 @@ var messenger = messenger || {};
 		eve.extend(GroupModel, base);
 	
 		function GroupModel() {
-			base.apply(this, arguments);	
+			base.apply(this, arguments);
 		}
+
+		GroupModel.prototype.isAppUserAsync = function() {
+			return Q.resolve(true);
+		};
+
+		GroupModel.prototype.isCanPostAsync = function() {
+			return Q.resolve(true);
+		};
 		
 		GroupModel.fromRaw = function(rawGroup) {
 			var group = new GroupModel();
@@ -146,4 +177,4 @@ var messenger = messenger || {};
 	messenger.models.GroupModel = GroupModel;
 	messenger.models.MessageModel = MessageModel;
 	
-})(messenger, eve, abyss, base64, settings, VK);
+})(messenger, eve, abyss, base64, settings, VK, Q);

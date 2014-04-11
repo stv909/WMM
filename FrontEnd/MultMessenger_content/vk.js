@@ -6,7 +6,7 @@
 		var deferred = Q.defer();
 		
 		VK.api(method, params, function(data) {
-			if (data.response) {
+			if (data.hasOwnProperty('response')) {
 				deferred.resolve(data.response);
 			} else {
 				deferred.reject({

@@ -1,0 +1,165 @@
+#circularGD{
+    margin-top: 5px;
+    margin-left: 8px;
+    display: inline-block;
+    position:relative;
+    width:22px;
+    vertical-align: top;
+    height:22px}
+
+.circularGD{
+    position:absolute;
+    background-color:#28f;
+    width:5px;
+    height:5px;
+    -moz-border-radius:3px;
+    -moz-animation-name:bounce_circularG;
+    -moz-animation-duration:1.04s;
+    -moz-animation-iteration-count:infinite;
+    -moz-animation-direction:linear;
+    -webkit-border-radius:3px;
+    -webkit-animation-name:bounce_circularG;
+    -webkit-animation-duration:1.04s;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-direction:linear;
+    -ms-border-radius:3px;
+    -ms-animation-name:bounce_circularG;
+    -ms-animation-duration:1.04s;
+    -ms-animation-iteration-count:infinite;
+    -ms-animation-direction:linear;
+    -o-border-radius:3px;
+    -o-animation-name:bounce_circularG;
+    -o-animation-duration:1.04s;
+    -o-animation-iteration-count:infinite;
+    -o-animation-direction:linear;
+    border-radius:3px;
+    animation-name:bounce_circularG;
+    animation-duration:1.04s;
+    animation-iteration-count:infinite;
+    animation-direction:linear;
+}
+
+#circularGD_1{
+    left:0;
+    top:9px;
+    -moz-animation-delay:0.39s;
+    -webkit-animation-delay:0.39s;
+    -ms-animation-delay:0.39s;
+    -o-animation-delay:0.39s;
+    animation-delay:0.39s;
+}
+
+#circularGD_2{
+    left:2px;
+    top:2px;
+    -moz-animation-delay:0.52s;
+    -webkit-animation-delay:0.52s;
+    -ms-animation-delay:0.52s;
+    -o-animation-delay:0.52s;
+    animation-delay:0.52s;
+}
+
+#circularGD_3{
+    top:0;
+    left:9px;
+    -moz-animation-delay:0.65s;
+    -webkit-animation-delay:0.65s;
+    -ms-animation-delay:0.65s;
+    -o-animation-delay:0.65s;
+    animation-delay:0.65s;
+}
+
+#circularGD_4{
+    right:2px;
+    top:2px;
+    -moz-animation-delay:0.78s;
+    -webkit-animation-delay:0.78s;
+    -ms-animation-delay:0.78s;
+    -o-animation-delay:0.78s;
+    animation-delay:0.78s;
+}
+
+#circularGD_5{
+    right:0;
+    top:9px;
+    -moz-animation-delay:0.91s;
+    -webkit-animation-delay:0.91s;
+    -ms-animation-delay:0.91s;
+    -o-animation-delay:0.91s;
+    animation-delay:0.91s;
+}
+
+#circularGD_6{
+    right:2px;
+    bottom:2px;
+    -moz-animation-delay:1.04s;
+    -webkit-animation-delay:1.04s;
+    -ms-animation-delay:1.04s;
+    -o-animation-delay:1.04s;
+    animation-delay:1.04s;
+}
+
+#circularGD_7{
+    left:9px;
+    bottom:0;
+    -moz-animation-delay:1.17s;
+    -webkit-animation-delay:1.17s;
+    -ms-animation-delay:1.17s;
+    -o-animation-delay:1.17s;
+    animation-delay:1.17s;
+}
+
+#circularGD_8{
+    left:2px;
+    bottom:2px;
+    -moz-animation-delay:1.3s;
+    -webkit-animation-delay:1.3s;
+    -ms-animation-delay:1.3s;
+    -o-animation-delay:1.3s;
+    animation-delay:1.3s;
+}
+
+@-moz-keyframes bounce_circularGD{
+    0%{
+        -moz-transform:scale(1)}
+
+    100%{
+        -moz-transform:scale(.3)}
+
+}
+
+@-webkit-keyframes bounce_circularGD{
+    0%{
+        -webkit-transform:scale(1)}
+
+    100%{
+        -webkit-transform:scale(.3)}
+
+}
+
+@-ms-keyframes bounce_circularGD{
+    0%{
+        -ms-transform:scale(1)}
+
+    100%{
+        -ms-transform:scale(.3)}
+
+}
+
+@-o-keyframes bounce_circularGD{
+    0%{
+        -o-transform:scale(1)}
+
+    100%{
+        -o-transform:scale(.3)}
+
+}
+
+@keyframes bounce_circularGD{
+    0%{
+        transform:scale(1)}
+
+    100%{
+        transform:scale(.3)}
+
+}

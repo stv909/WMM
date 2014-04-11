@@ -7,13 +7,14 @@
 	<link rel="stylesheet" href="theme.css">
 	<link rel="stylesheet" href="main-preloader.css">
 	<link rel="stylesheet" href="image-preloader.css">
+	<link rel="stylesheet" href="dialog-preloader.css">
 	<script src="analytics.js"></script>
 	<script src="https://vk.com/js/api/xd_connection.js?2" type="text/javascript"></script>
 	<script src="q.js"></script>
 	<script src="eve.js"></script>
-	<script src="uuid.js"></script>
 	<script src="html.js"></script>
 	<script src="css.js"></script>
+	<script src="aux.js"></script>
 	<script src="template.js"></script>
 	<script src="abyss.js"></script>
 	<script src="errors.js"></script>
@@ -88,8 +89,8 @@
 					<div class="wrap">
 						<div class="controls">
 							<div class="line">
-								<div class="button-special update">Обновить</div>
-								<div class="button-special reset">Отмена</div>
+								<div class="button-special update">Обновить мульт!</div>
+								<div class="button-special reset">Отменить изменения</div>
 							</div>
 						</div>
 					</div>
@@ -133,6 +134,20 @@
 		<div class="container"></div>
 	</div>
 </template>
+<template id="dialog-post-page-template" style="display: none">
+	<div class="teaser hidden">
+		<div>Получатель ещё не установил приложение. Ваше сообщение будет опубликовано ему на стену.</div>
+	</div>
+	<div class="container">
+		<div>
+			<div class="contact-holder">
+				<div class="send-holder">
+					<div class="button-special send">Отправить<br>мульт!</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
 <template id="contact-search-template" style="display: none">
 	<div>
 		<div class="header">
@@ -174,6 +189,9 @@
 </template>
 <template id="contact-template" style="display: none">
 	<div class="unread hidden"></div>
+	<div class="status offline">
+		<div class="arrow"></div>
+	</div>
 	<div class="photo-holder">
 		<img class="photo">
 	</div>
@@ -195,6 +213,16 @@
 		<div class="circularImageG_8 circularImageG"></div>
 	</div>
 	 <img class="image">
+</template>
+<template id="dialog-wait-template" style="display: none">
+	<div id="circularGD_1" class="circularGD"></div>
+	<div id="circularGD_2" class="circularGD"></div>
+	<div id="circularGD_3" class="circularGD"></div>
+	<div id="circularGD_4" class="circularGD"></div>
+	<div id="circularGD_5" class="circularGD"></div>
+	<div id="circularGD_6" class="circularGD"></div>
+	<div id="circularGD_7" class="circularGD"></div>
+	<div id="circularGD_8" class="circularGD"></div>
 </template>
 <template id="mood-item-template" style="display: none">
 	<div class="icon"></div>
@@ -223,7 +251,7 @@
 		<div class="group">
 			<img src="characters/ostap.png" class="bender">
 			<div class="group-text">новости<br>мульт-команды</div>
-		</div>	
+		</div>
 	</div>
 </template>
 <template id="postcard-menu-template" style="display: none">
@@ -235,12 +263,27 @@
 	<div class="next">Далее</div>
 	<div class="name"></div>
 </template>
+<template id="conversation-template" style="display: none">
+</template>
 <template id="conversation-menu-template" style="display: none">
 	<div class="items">
 		<span>Отправить сообщение:</span>
 	</div>
 </template>
 <template id="tape-page-template" style="display: none">
+	<div class="teaser">
+		<div class="cross">X</div>
+		<div>В диалоге нет сообщений.</div>
+	</div>
+	<div class="container shifted">
+		<div class="first-message">
+			<div>
+				<div class="send-holder">
+					<div class="button-special send">Отправить первый мульт!</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 <template id="tape-item-template" style="display: none">
 	<div class="contact-holder">
@@ -250,19 +293,28 @@
 	<div class="controls-holder"></div>
 </template>
 <template id="lobby-template" style="display: none">
-	<div class="search-holder">
-		<input type="text" class="text query" placeholder="Найти друга">
+	<div class="teaser">
+		<div class="cross">X</div>
+		<div>Выбери друга, чтобы начать мульт-диалог!</div>
 	</div>
-	<div class="shadow"></div>
-	<div class="contacts-holder">
-		<div class="contacts"></div>
-		<div class="load-holder hidden">
-			<div class="load button-special">Загрузить еще друзей...</div>
+	<div class="container shifted">
+		<div class="search-holder">
+			<input type="text" class="text query" placeholder="Найти друга">
+		</div>
+		<div class="shadow"></div>
+		<div class="contacts-holder">
+			<div class="contacts"></div>
+			<div class="load-holder hidden">
+				<div class="load button-special">Загрузить еще друзей...</div>
+			</div>
 		</div>
 	</div>
 </template>
 <template id="message-controls-template" style="display: none">
-	<div class="time"></div>
+	<div class="date-holder">
+		<span class="time hidden"></span>
+		<span class="date hidden"></span>
+	</div>
 	<div class="button wall">На стену</div>
 	<div class="button url">Получить ссылку</div>
 </template>
@@ -332,6 +384,21 @@
 			<div class="controls-holder">
 				<div class="ok button">Да</div>
 				<div class="cancel button">Отмена</div>
+			</div>
+		</div>
+		<div class="dialog-window hidden" id="invite-user-dialog">
+			<div class="title-holder">
+				<div class="title">Мульт-Мессенджер 2.0</div>
+			</div>
+			<div class="content">
+				<div class="status">Не удалось отправить сообщение на стену.
+					<br>Пригласите пользователя в приложение,
+					<br>чтобы он увидел Ваше сообщение.
+				</div>
+			</div>
+			<div class="controls-holder">
+				<div class="ok button">Ok</div>
+				<div class="cancel button hidden">Отмена</div>
 			</div>
 		</div>
 		<div class="dialog-window hidden" id="error-dialog">

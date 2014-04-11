@@ -127,12 +127,19 @@
 			base.apply(this, arguments);
 			var self = this;
 			
-			this.elem = template.create('lobby-template', { id: 'lobby' });
+			this.elem = aux.template({
+				templateId: 'lobby-template',
+				id: 'lobby',
+				className: 'shifted'
+			});
+			this.containerElem = this.elem.getElementsByClassName('container')[0];
 			this.queryElem = this.elem.getElementsByClassName('query')[0];
 			this.contactsHolderElem = this.elem.getElementsByClassName('contacts-holder')[0];
 			this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
 			this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
 			this.loadElem = this.loadHolderElem.getElementsByClassName('load')[0];
+			this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
+			this.crossElem = this.teaserElem.getElementsByClassName('cross')[0];
 			
 			this.cachedUserViews = {};
 			this.userViews = {};
@@ -151,6 +158,11 @@
 			this.cachedUserViews = {};
 			this.userViews = {};
 			this.selectedUserView = null;
+
+			var hideTeaser = function() {
+				self.containerElem.classList.remove('shifted');
+				self.teaserElem.classList.add('hidden');
+			};
 			
 			this.userViewSelectListener = function(event) {
 				var target = event.target;
@@ -169,6 +181,7 @@
 			};
 			this.userViewForceSelectListener = function(event) {
 				var target = event.target;
+				hideTeaser();
 				self.trigger({
 					type: 'select-force:user',
 					user: target.model
@@ -200,13 +213,15 @@
 			this.contactsHolderElem.addEventListener('DOMMouseScroll', wheelListener, false);
 			this.contactsHolderElem.addEventListener('mousewheel', wheelListener, false);
 			this.loadElem.addEventListener('click', loadElemClickListener);
+			this.crossElem.addEventListener('click', hideTeaser);
 			
 			this.once('dispose', function() {
 				self.queryElemObserver.off();
 				self.queryElem.removeEventListener('input', queryElemInputListener);
-				self.contactsHolderElem.addEventListener('DOMMouseScroll', wheelListener);
-				self.contactsHolderElem.addEventListener('mousewheel', wheelListener);
-				self.loadElem.addEventListener('click', loadElemClickListener);
+				self.contactsHolderElem.removeEventListener('DOMMouseScroll', wheelListener);
+				self.contactsHolderElem.removeEventListener('mousewheel', wheelListener);
+				self.loadElem.removeEventListener('click', loadElemClickListener);
+				self.crossElem.removeEventListener('click', hideTeaser);
 			});
 		}
 		
@@ -523,8 +538,59 @@
 		
 		return GroupSearchView;
 	})(SearchView);
+
+	var DialogPostPageView = (function(base) {
+		eve.extend(DialogPostPageView, base);
+
+		function DialogPostPageView() {
+			base.apply(this, arguments);
+			var self = this;
+
+			this.elem = aux.template({
+				templateId: 'dialog-post-page-template',
+				id: 'dialog-post-page'
+			});
+			this.contactHolderElem = this.elem.getElementsByClassName('contact-holder')[0];
+			this.sendElem = this.elem.getElementsByClassName('send')[0];
+			this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
+			this.containerElem = this.elem.getElementsByClassName('container')[0];
+
+			this.userView = new UserView(null, true);
+			this.userView.attachFirstTo(this.contactHolderElem);
+			this.userView.select();
+
+			this.sendElem.addEventListener('click', function(event) {
+				self.teaserElem.classList.add('hidden');
+				self.containerElem.classList.remove('shifted');
+				self.trigger({
+					type: 'click:send',
+					user: self.userView.model
+				});
+			});
+		}
+
+		DialogPostPageView.prototype.setContact = function(contact) {
+			var self = this;
+			this.userView.setModel(contact);
+			contact.isAppUserAsync().then(function(isAppUser) {
+				if (isAppUser) {
+					self.teaserElem.classList.add('hidden');
+					self.containerElem.classList.remove('shifted');
+				} else {
+					self.teaserElem.classList.remove('hidden');
+					self.containerElem.classList.add('shifted');
+				}
+			}).catch(function() {
+				self.teaserElem.classList.add('hidden');
+				self.containerElem.classList.remove('shifted')
+			});
+		};
+
+		return DialogPostPageView;
+	})(PageView);
 	
 	messenger.views.PostPageView = PostPageView;
 	messenger.views.LobbyView = LobbyView;
+	messenger.views.DialogPostPageView = DialogPostPageView;
 	
 })(messenger, eve, abyss, template, analytics);

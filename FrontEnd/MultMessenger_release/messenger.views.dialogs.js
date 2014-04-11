@@ -107,6 +107,44 @@ var messenger = messenger || {};
 		this.dialogWindowElem.classList.remove('hidden');
 		this.elem.classList.remove('hidden');
 	};
+
+	var InviteUserDialogView = function() {
+		InviteUserDialogView.super.apply(this);
+		var self = this;
+
+		this.elem = document.getElementById('dialog-background');
+		this.dialogWindowElem = document.getElementById('invite-user-dialog');
+		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
+		this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
+
+		var okElemClickListener = function(event) {
+			self.hide();
+			self.trigger('click:ok');
+		};
+		var cancelElemClickListener = function() {
+			self.hide();
+			self.trigger('click:cancel');
+		};
+
+		this.okElem.addEventListener('click', okElemClickListener);
+		this.cancelElem.addEventListener('click', cancelElemClickListener);
+
+		this.once('dispose', function(event) {
+			self.okElem.removeEventListener('click', okElemClickListener);
+			self.cancelElem.removeEventListener('click', cancelElemClickListener);
+		});
+	};
+	InviteUserDialogView.super = View;
+	InviteUserDialogView.prototype = Object.create(View.prototype);
+	InviteUserDialogView.prototype.constructor = InviteUserDialogView;
+	InviteUserDialogView.prototype.hide = function() {
+		this.dialogWindowElem.classList.add('hidden');
+		this.elem.classList.add('hidden');
+	};
+	InviteUserDialogView.prototype.show = function() {
+		this.dialogWindowElem.classList.remove('hidden');
+		this.elem.classList.remove('hidden');
+	};
 	
 	var SkipDialogView = function() {
 		SkipDialogView.super.apply(this);
@@ -284,6 +322,9 @@ var messenger = messenger || {};
 		this.elem.classList.remove('hidden');
 		this.setMode('wait');
 	};
+	PostDialogView.prototype.hideDialog = function() {
+		this.dialogWindowElem.classList.add('hidden');
+	};
 	PostDialogView.prototype.hide = function() {
 		this.dialogWindowElem.classList.add('hidden');
 		this.elem.classList.add('hidden');
@@ -295,7 +336,7 @@ var messenger = messenger || {};
 	PostDialogView.prototype.setMode = function(mode, error) {
 		switch (mode) {
 			case 'wait':
-				this.statusElem.textContent = 'Этап 1 из 5: Создание сообщения...';
+				this.statusElem.textContent = 'Этап 1 из 6: Подготовка диалогов...';
 				this.readyElem.classList.add('hidden');
 				this.dialogWindowElem.classList.remove('error');
 				this.complete = false;
@@ -316,7 +357,8 @@ var messenger = messenger || {};
 	};
 	PostDialogView.prototype.setError = function(error) {
 		if (error.errorCode === ErrorCodes.RESTRICTED) {
-			this.statusElem.textContent = 'Невозможно отправить сообщение.\nПользователь закрыл доступ к стене.';
+			this.statusElem.textContent = 'Сообщение отправлено, но не опубликовано на стену.\nПользователь закрыл доступ к своей стене.';
+			this.dialogWindowElem.classList.remove('error');
 		} else if (error.errorCode === ErrorCodes.NO_CONNECTION || error.errorCode === ErrorCodes.TIMEOUT) {
 			this.statusElem.textContent = 'Не удалось отправить сообщение!\nПроверьте интернет-подключение и \nпопробуйте позже.';
 		} else {
@@ -329,6 +371,10 @@ var messenger = messenger || {};
 					break;
 				case 214:
 					this.statusElem.textContent = 'Невозможно отправить сообщение.\nДоступ к стене закрыт.';
+					break;
+				case 10007:
+					this.dialogWindowElem.classList.remove('error');
+					this.statusElem.textContent = 'Сообщение отправлено,\n но не опубликовано на стену.';
 					break;
 				default:
 					break;
@@ -461,5 +507,6 @@ var messenger = messenger || {};
 	messenger.views.PostDialogView = PostDialogView;
 	messenger.views.ImageSelectDialogView = ImageSelectDialogView;
 	messenger.views.PrepareChatDialogView = PrepareChatDialogView;
+	messenger.views.InviteUserDialogView = InviteUserDialogView;
 	
 })(messenger, abyss, template, errors, html, analytics);

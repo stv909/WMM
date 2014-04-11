@@ -18,7 +18,7 @@ var analytics = analytics || {};
 	ga('send', 'pageview');
 	
 	var send = function(category, action, label, value) {
-		ga('send', 'event', category, action, label, value);	
+		ga('send', 'event', category, action, label, value);
 	};
 	
 	analytics.send = send;

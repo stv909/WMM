@@ -128,11 +128,7 @@ var messenger = messenger || {};
 			};
 		},
 		checkPostAccess: function(contact) {
-			if (!contact.get('canPost') && contact.get('id') >= 0) {
-				throw {
-					errorCode: ErrorCodes.RESTRICTED
-				};
-			}
+			return contact.get('canPost') && contact.get('id') > 0;
 		},
 		formatError: function(error) {
 			var result = [];
@@ -155,7 +151,7 @@ var messenger = messenger || {};
 		this.chatClient = chatClient;
 		this.operationTimeout = 600000;
 	};
-	ChatClientWrapper.prototype._createRequestTask = function(checkReadyState) {
+	ChatClientWrapper.prototype._createRequestTask = function(checkReadyState, operationTimeout) {
 		var task = Q.defer();
 		if (checkReadyState && this.chatClient.readyState() !== 1) {
 			task.reject({
@@ -166,7 +162,7 @@ var messenger = messenger || {};
 				task.reject({
 					errorCode: ErrorCodes.TIMEOUT
 				});
-			}, this.operationTimeout);
+			}, operationTimeout || this.operationTimeout);
 		}
 		return task;
 	};
@@ -243,8 +239,8 @@ var messenger = messenger || {};
 		this.chatClient.store(null, profileId, data);
 		return Q.resolve(true);
 	};
-	ChatClientWrapper.prototype.nowAsync = function() {
-		var task = this._createRequestTask(true);
+	ChatClientWrapper.prototype.nowAsync = function(timeout) {
+		var task = this._createRequestTask(true, timeout);
 		
 		this.chatClient.once('message:now', function(event) {
 			var timestamp = event.response.now;

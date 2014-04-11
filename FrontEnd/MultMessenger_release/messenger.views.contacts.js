@@ -13,9 +13,10 @@ var messenger = messenger || {};
 			this.photoElem = this.elem.getElementsByClassName('photo')[0];
 			this.nameElem = this.elem.getElementsByClassName('name')[0];
 			this.unreadElem = this.elem.getElementsByClassName('unread')[0];
-			
+			this.statusElem = this.elem.getElementsByClassName('status')[0];
+
 			this.selected = false;
-			
+
 			var elemClick = function(event) {
 				self.trigger('select-force');
 				if (!self.selected) {
@@ -110,7 +111,7 @@ var messenger = messenger || {};
 			if (this.isChatUser) {
 				var updateUnreadElem = function(unread) {
 					if (unread > 0) {
-						self.unreadElem.textContent = unread;
+						self.unreadElem.textContent = ['+', unread].join('');
 						self.unreadElem.classList.remove('hidden');
 					} else {
 						self.unreadElem.classList.add('hidden');
@@ -118,9 +119,16 @@ var messenger = messenger || {};
 				};
 				var updateOnlineStatus = function(online) {
 					if (online) {
-						self.elem.classList.remove('closed');
+						self.statusElem.classList.remove('offline');
 					} else {
-						self.elem.classList.add('closed');
+						self.statusElem.classList.add('offline');
+					}
+				};
+				var updateIsAppUser = function(isAppUser) {
+					if (isAppUser) {
+						self.elem.classList.add('app');
+					} else {
+						self.elem.classList.remove('app');
 					}
 				};
 				this.model.on('change:unread', function(event) {
@@ -131,14 +139,19 @@ var messenger = messenger || {};
 					var online = event.value;
 					updateOnlineStatus(online);
 				});
+				this.model.on('change:isAppUser', function(event) {
+					var isAppUser = event.value;
+					updateIsAppUser(isAppUser);
+				});
 				updateUnreadElem(this.model.get('unread'));
 				updateOnlineStatus(this.model.get('online'));
+				updateIsAppUser(this.model.get('isAppUser'));
+			}
+
+			if (this.model.get('canPost')) {
+				this.elem.classList.remove('closed');
 			} else {
-				if (this.model.get('canPost')) {
-					this.elem.classList.remove('closed');
-				} else {
-					this.elem.classList.add('closed');
-				}
+				this.elem.classList.add('closed');
 			}
 			
 			this.photoElem.src = this.model.get('photo');

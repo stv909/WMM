@@ -2,8 +2,8 @@
   outline: 0;
 }
 ::-webkit-scrollbar {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   margin: 0 auto;
   background-color: rgba(34,136,255,0.15);
 }
@@ -104,8 +104,6 @@ body {
 }
 .main-menu .main-menu-item.chosen {
   cursor: default;
-  color: #fff;
-  background-color: #28f;
 }
 .main-menu .main-menu-item .unread {
   display: inline;
@@ -130,10 +128,10 @@ body {
   opacity: 0.25;
 }
 .main-menu .chats.disabled .main-menu-item {
-  cursor: default;
+  cursor: default !important;
 }
 .main-menu .chats.disabled .main-menu-item:hover {
-  color: #333;
+  color: #333 !important;
 }
 .main-menu .chats .main-menu-item {
   position: relative;
@@ -145,16 +143,16 @@ body {
   padding-right: 16px;
 }
 .main-menu .chats .main-menu-item.chosen {
-  color: #fff;
-  text-shadow: 0 0 2px #666;
+  color: #28f;
+  background-color: rgba(255,255,255,0.85);
 }
 .main-menu .chats .main-menu-item.chosen:before {
-  border: 16px solid #28f;
+  border: 16px solid rgba(255,255,255,0.85);
   border-left: 16px solid transparent;
 }
 .main-menu .chats .main-menu-item.chosen:after {
   border: 16px solid transparent;
-  border-left: 16px solid #28f;
+  border-left: 16px solid rgba(255,255,255,0.85);
 }
 .main-menu .chats .main-menu-item:before {
   position: absolute;
@@ -393,6 +391,13 @@ body {
 .postcard-menu .cancel:active {
   background-color: #d00;
 }
+.wait-holder {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  background-color: rgba(255,255,255,0.5);
+}
 .conversation {
   position: relative;
   width: 100%;
@@ -494,6 +499,22 @@ body {
   font-size: 0;
   width: 100%;
   height: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#lobby .container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#lobby .container.shifted {
+  margin-top: 36px;
+}
+#lobby .teaser {
+  cursor: default !important;
 }
 #lobby .search-holder {
   position: absolute;
@@ -542,7 +563,6 @@ body {
 }
 .tape-page {
   font-size: 0;
-  overflow-y: auto;
   position: absolute;
   top: 45px;
   bottom: 0;
@@ -553,7 +573,50 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.tape-page::-webkit-scrollbar-track:vertical {
+.tape-page .teaser {
+  cursor: default !important;
+}
+.tape-page .container {
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.tape-page .container .first-message {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+.tape-page .container .first-message >div {
+  display: table-cell;
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  text-align: center;
+}
+.tape-page .container .first-message .send-holder {
+  display: inline-block;
+}
+.tape-page .container .first-message .send {
+  width: 122px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-left: 1px;
+  text-align: center;
+  height: 122px;
+  vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  -webkit-animation: min-pulse 0.75s infinite ease-in-out;
+}
+.tape-page .container.shifted {
+  margin-top: 36px;
+}
+.tape-page .container::-webkit-scrollbar-track:vertical {
   border-left: 1px solid #ddd;
 }
 .tape-page .tape-item {
@@ -652,7 +715,7 @@ body {
 .tape-page .tape-item .controls-holder .wall {
   margin-top: 6px;
 }
-.tape-page .tape-item .controls-holder .time {
+.tape-page .tape-item .controls-holder .date-holder {
   font-size: 12px;
   padding-top: 8px;
   padding-bottom: 8px;
@@ -708,11 +771,11 @@ body {
   overflow: auto;
   padding: 8px 0 0 16px;
 }
-#select-page .container.shifted {
-  margin-top: 36px;
-}
 #select-page .container .patterns {
   margin-bottom: 16px;
+}
+#select-page .container.shifted {
+  margin-top: 36px;
 }
 #select-page .message {
   margin: 8px;
@@ -728,7 +791,10 @@ body {
   margin-bottom: 24px;
   -webkit-animation: pulse 0.75s infinite ease-in-out;
 }
-#select-page .teaser {
+#select-page .teaser,
+#lobby .teaser,
+.tape-page .teaser,
+#dialog-post-page .teaser {
   font-size: 14px;
   text-align: center;
   font-weight: bold;
@@ -748,7 +814,10 @@ body {
   box-shadow: 0 0 6px #888;
   cursor: pointer;
 }
-#select-page .teaser .cross {
+#select-page .teaser .cross,
+#lobby .teaser .cross,
+.tape-page .teaser .cross,
+#dialog-post-page .teaser .cross {
   float: right;
   position: inline-block;
   cursor: default;
@@ -800,6 +869,9 @@ body {
   display: table;
   width: 100%;
   height: 100%;
+}
+#edit-page .message-holder .prewrapper .controls .update {
+  -webkit-animation: min-pulse 0.75s infinite ease-in-out;
 }
 #edit-page .message-holder .prewrapper .controls .line {
   display: table-cell;
@@ -1002,6 +1074,54 @@ body {
   border-radius: 2px;
   width: 100%;
   height: 100%;
+}
+#dialog-post-page {
+  font-size: 0;
+  position: absolute;
+  top: 38px;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+#dialog-post-page .teaser {
+  cursor: default !important;
+}
+#dialog-post-page .container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#dialog-post-page .container.shifted {
+  top: 38px;
+}
+#dialog-post-page .container >div {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+#dialog-post-page .contact-holder {
+  display: table-cell;
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  text-align: center;
+}
+#dialog-post-page .send {
+  width: 122px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-left: 1px;
+  margin-top: 8px;
+  text-align: center;
+  height: 122px;
+  vertical-align: middle;
+  display: inline-flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  -webkit-animation: min-pulse 0.75s infinite ease-in-out;
 }
 #post-page {
   font-size: 0;
@@ -1401,6 +1521,21 @@ body {
   line-height: 140px;
 }
 #ask-message-dialog .status {
+  line-height: 12px;
+  white-space: pre;
+  vertical-align: middle;
+  display: inline-block;
+}
+#invite-user-dialog {
+  font-size: 12px;
+  width: 360px;
+  height: 220px;
+}
+#invite-user-dialog .content {
+  height: 140px;
+  line-height: 140px;
+}
+#invite-user-dialog .status {
   line-height: 12px;
   white-space: pre;
   vertical-align: middle;
@@ -1860,6 +1995,9 @@ body {
   box-shadow: 0 0 1px #28f;
   cursor: default;
 }
+.contact.app .status {
+  display: block;
+}
 .contact .photo {
   padding-top: 10px;
   width: 100px;
@@ -1889,6 +2027,37 @@ body {
   background-color: #f00;
   color: #fff;
   box-shadow: 0 0 4px #333;
+  border: 1px solid #fff;
+}
+.contact .arrow {
+  position: absolute;
+  top: 3px;
+  left: 8px;
+  display: inline-block;
+  width: 0;
+  background-color: #fff;
+  border-left: 8px solid #fff;
+  border-top: 5px solid #28f;
+  border-bottom: 5px solid #28f;
+}
+.contact .status {
+  display: none;
+  position: absolute;
+  top: 90px;
+  right: 12px;
+  width: 22px;
+  height: 16px;
+  box-shadow: 0 0 4px #333;
+  border-radius: 2px;
+  background-color: #28f;
+  border: 1px solid #fff;
+}
+.contact .status.offline {
+  background-color: #999;
+}
+.contact .status.offline .arrow {
+  border-top: 5px solid #999;
+  border-bottom: 5px solid #999;
 }
 .message-wrapper {
   display: inline-block;

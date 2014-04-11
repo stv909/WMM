@@ -12,6 +12,10 @@
 			this.groupElem = this.elem.getElementsByClassName('group')[0];
 			this.itemsElem = this.elem.getElementsByClassName('items')[0];
 			this.chatsElem = this.elem.getElementsByClassName('chats')[0];
+			this.waitElem = aux.template({
+				templateId: 'dialog-wait-template',
+				id: 'circularGD'
+			});
 			
 			this.itemViews = [];
 			this.previousSelectedItemView = null;
@@ -63,26 +67,24 @@
 			this.conversationItemView.setClass('conversation-item');
 			
 			this.postcardItemView.on('select', function(event) {
-				self.trigger('click:postcard');
 				self.selectItemView(self.postcardItemView);
 				self.enableShadow(false);
+				self.trigger('click:postcard');
 			});
-			this.dialogItemView.selected = true;
-			this.conversationItemView.selected = true;
-//			this.dialogItemView.on('select', function(event) {
-//				self.trigger('click:dialog');
-//				self.selectItemView(self.dialogItemView);
-//				self.enableShadow(true);
-//			});
-//			this.conversationItemView.on('select', function(event) {
-//				self.trigger('click:conversation');
-//				self.selectItemView(self.conversationItemView);
-//				self.enableShadow(true);
-//			});
+			this.dialogItemView.on('select', function(event) {
+				self.selectItemView(self.dialogItemView);
+				self.enableShadow(true);
+				self.trigger('click:dialog');
+			});
+			this.conversationItemView.on('select', function(event) {
+				self.selectItemView(self.conversationItemView);
+				self.enableShadow(true);
+				self.trigger('click:conversation');
+			});
 			this.answerItemView.on('select', function(event) {
-				self.trigger('click:answer');
 				self.selectItemView(self.answerItemView);
 				self.enableShadow(true);
+				self.trigger('click:answer');
 			});
 			
 			this.itemViews.push(this.postcardItemView);
@@ -95,16 +97,17 @@
 			this.unreadElem.classList.add('hidden');
 			this.unreadElem.classList.add('unread');
 			this.dialogItemView.elem.appendChild(this.unreadElem);
+			this.dialogItemView.elem.appendChild(this.waitElem);
 		};
 		MainMenuView.prototype.increaseUnreadCount = function() {
 			this.unreadCount += 1;
-			this.unreadElem.textContent = this.unreadCount;
+			this.unreadElem.textContent = ['+', this.unreadCount].join('');
 			this.unreadElem.classList.remove('hidden');
 		};
 		MainMenuView.prototype.decreaseUnreadCount = function() {
 			this.unreadCount -= 1;
 			if (this.unreadCount > 0) {
-				this.unreadElem.textContent = this.unreadCount;
+				this.unreadElem.textContent = ['+', this.unreadCount].join('');
 				this.unreadElem.classList.remove('hidden');
 			} else {
 				this.unreadElem.classList.add('hidden');
@@ -115,6 +118,8 @@
 				if (this.selectedItemView) {
 					this.selectedItemView.deselect();
 					this.previousSelectedItemView = this.selectedItemView;
+				} else {
+					this.previousSelectedItemView = itemView;
 				}
 				this.selectedItemView = itemView;
 			}
@@ -129,7 +134,13 @@
 		MainMenuView.prototype.restore = function() {
 			if (this.previousSelectedItemView) {
 				this.previousSelectedItemView.select();
-			}	
+			}
+		};
+		MainMenuView.prototype.enableChats = function() {
+			this.chatsElem.classList.remove('disabled');
+		};
+		MainMenuView.prototype.disableLoader = function() {
+			this.waitElem.classList.add('hidden');
 		};
 		
 		return MainMenuView;
@@ -176,7 +187,7 @@
 			this.elem.classList.add(className);
 		};
 		MainMenuItemView.prototype.setText = function(text) {
-			this.elem.textContent = text;
+			this.elem.textContent = text;	
 		};
 		
 		return MainMenuItemView;
@@ -284,7 +295,8 @@
 			base.apply(this, arguments);
 			var self = this;
 
-			this.elem = template.create('postcard-menu-item-template', {
+			this.elem = aux.template({
+				templateId: 'postcard-menu-item-template',
 				className: 'postcard-menu-item'
 			});
 			this.nameElem = this.elem.getElementsByClassName('name')[0];
@@ -358,7 +370,7 @@
 			var self = this;
 			
 			this.filmtextItemView = new ConversationMenuItemView('МультТекст');
-			this.postcardItemView = new ConversationMenuItemView('Открытка');
+			this.postcardItemView = new ConversationMenuItemView('Мульт');
 			this.textItemView = new ConversationMenuItemView('Текст');
 			
 			this.filmtextItemView.elem.classList.add('hidden');

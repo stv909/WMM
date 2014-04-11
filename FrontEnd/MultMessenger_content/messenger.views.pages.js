@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, settings, uuid, async, Q, html, analytics, filmlang) {
+(function(messenger, abyss, template, settings, async, Q, html, analytics, filmlang) {
 	
 	var View = abyss.View;
 	
@@ -32,7 +32,7 @@ var messenger = messenger || {};
 		
 		this.answerElem.addEventListener('click', answerElemClickListener);
 		this.once('dispose', function() {
-			self.answerElem.remove('click', answerElemClickListener);	
+			self.answerElem.remove('click', answerElemClickListener);
 		});
 	};
 	AnswerPageView.super = View;
@@ -198,10 +198,16 @@ var messenger = messenger || {};
 			this.preloadElem.textContent = ['Загрузить новые мульты (+', count, ')'].join('');
 		}
 	};
+	SelectPageView.prototype.deselect = function() {
+		if (this.selectedMessageView) {
+			this.selectedMessageView.deselect();
+			this.selectedMessageView = null;
+		}
+	};
 	
 	messenger.views = messenger.views || {};
 	
 	messenger.views.AnswerPageView = AnswerPageView;
 	messenger.views.SelectPageView = SelectPageView;
 	
-})(messenger, abyss, template, settings, uuid, async, Q, html, analytics, filmlang);
+})(messenger, abyss, template, settings, async, Q, html, analytics, filmlang);
