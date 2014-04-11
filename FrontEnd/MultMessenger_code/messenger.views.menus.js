@@ -294,9 +294,13 @@
 		function PostcardMenuItemView(text) {
 			base.apply(this, arguments);
 			var self = this;
-			
-			this.elem = document.createElement('div');
-			this.elem.classList.add('postcard-menu-item');
+
+			this.elem = aux.template({
+				templateId: 'postcard-menu-item-template',
+				className: 'postcard-menu-item'
+			});
+			this.nameElem = this.elem.getElementsByClassName('name')[0];
+			this.nextElem = this.elem.getElementsByClassName('next')[0];
 			this.setText(text);
 			
 			this.selected = false;
@@ -326,7 +330,7 @@
 			this.trigger('deselect');
 		};
 		PostcardMenuItemView.prototype.setText = function(text) {
-			this.elem.textContent = text;
+			this.nameElem.textContent = text;
 		};
 		PostcardMenuItemView.prototype.enableFlicker = function(enable) {
 			if (enable) {

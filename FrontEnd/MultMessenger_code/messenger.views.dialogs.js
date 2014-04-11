@@ -357,7 +357,7 @@ var messenger = messenger || {};
 	};
 	PostDialogView.prototype.setError = function(error) {
 		if (error.errorCode === ErrorCodes.RESTRICTED) {
-			this.statusElem.textContent = 'Сообщение отправлено,\nно пользователь закрыл доступ к стене.';
+			this.statusElem.textContent = 'Сообщение отправлено, но не опубликовано на стену.\nПользователь закрыл доступ к своей стене.';
 			this.dialogWindowElem.classList.remove('error');
 		} else if (error.errorCode === ErrorCodes.NO_CONNECTION || error.errorCode === ErrorCodes.TIMEOUT) {
 			this.statusElem.textContent = 'Не удалось отправить сообщение!\nПроверьте интернет-подключение и \nпопробуйте позже.';
@@ -371,6 +371,10 @@ var messenger = messenger || {};
 					break;
 				case 214:
 					this.statusElem.textContent = 'Невозможно отправить сообщение.\nДоступ к стене закрыт.';
+					break;
+				case 10007:
+					this.dialogWindowElem.classList.remove('error');
+					this.statusElem.textContent = 'Сообщение отправлено,\n но не опубликовано на стену.';
 					break;
 				default:
 					break;

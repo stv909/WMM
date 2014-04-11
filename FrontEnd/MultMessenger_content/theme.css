@@ -146,7 +146,6 @@ body {
 }
 .main-menu .chats .main-menu-item.chosen {
   color: #fff;
-  text-shadow: 0 0 2px #666;
 }
 .main-menu .chats .main-menu-item.chosen:before {
   border: 16px solid #28f;

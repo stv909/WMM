@@ -176,7 +176,7 @@
 			this.elem.classList.add(className);
 		};
 		MainMenuItemView.prototype.setText = function(text) {
-			this.elem.textContent = text;	
+			this.elem.textContent = text;
 		};
 		
 		return MainMenuItemView;

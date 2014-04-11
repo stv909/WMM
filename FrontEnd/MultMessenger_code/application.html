@@ -245,6 +245,10 @@
 	</div>
 	<div class="cancel hidden" style="padding-left:46px;padding-right:46px">Отмена</div>
 </template>
+<template id="postcard-menu-item-template" style="display: none">
+	<div class="next">Далее</div>
+	<div class="name"></div>
+</template>
 <template id="conversation-template" style="display: none">
 </template>
 <template id="conversation-menu-template" style="display: none">
@@ -255,7 +259,7 @@
 <template id="tape-page-template" style="display: none">
 	<div class="teaser">
 		<div class="cross">X</div>
-		<div>В диалоге нет сообщений</div>
+		<div>В диалоге нет сообщений.</div>
 	</div>
 	<div class="container shifted">
 		<div class="first-message">
@@ -374,11 +378,13 @@
 			</div>
 			<div class="content">
 				<div class="status">Не удалось отправить сообщение на стену.
-					<br>Пригласить пользователя?</div>
+					<br>Пригласите пользователя в приложение,
+					<br>чтобы он увидел Ваше сообщение.
+				</div>
 			</div>
 			<div class="controls-holder">
 				<div class="ok button">Да</div>
-				<div class="cancel button">Отмена</div>
+				<div class="cancel button hidden">Отмена</div>
 			</div>
 		</div>
 		<div class="dialog-window hidden" id="error-dialog">
