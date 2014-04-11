@@ -105,7 +105,7 @@ var messenger = messenger || {};
 
 		GroupModel.prototype.isCanPostAsync = function() {
 			return Q.resolve(true);
-		}
+		};
 		
 		GroupModel.fromRaw = function(rawGroup) {
 			var group = new GroupModel();

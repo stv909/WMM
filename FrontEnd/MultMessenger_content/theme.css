@@ -312,15 +312,6 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.postcard-menu .postcard-menu-item.flicker {
-  -webkit-animation: flicker 0.75s infinite ease-in-out;
-}
-.postcard-menu .postcard-menu-item.flicker:before {
-  -webkit-animation: flicker-non-left-border 0.75s infinite ease-in-out;
-}
-.postcard-menu .postcard-menu-item.flicker:after {
-  -webkit-animation: flicker-left-border 0.75s infinite ease-in-out;
-}
 .postcard-menu .postcard-menu-item.flicker .next {
   display: inline;
 }
