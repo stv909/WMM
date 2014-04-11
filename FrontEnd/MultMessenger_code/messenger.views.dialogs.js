@@ -357,7 +357,8 @@ var messenger = messenger || {};
 	};
 	PostDialogView.prototype.setError = function(error) {
 		if (error.errorCode === ErrorCodes.RESTRICTED) {
-			this.statusElem.textContent = 'Невозможно отправить сообщение.\nПользователь закрыл доступ к стене.';
+			this.statusElem.textContent = 'Сообщение отправлено,\nно пользователь закрыл доступ к стене.';
+			this.dialogWindowElem.classList.remove('error');
 		} else if (error.errorCode === ErrorCodes.NO_CONNECTION || error.errorCode === ErrorCodes.TIMEOUT) {
 			this.statusElem.textContent = 'Не удалось отправить сообщение!\nПроверьте интернет-подключение и \nпопробуйте позже.';
 		} else {

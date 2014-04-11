@@ -466,6 +466,8 @@ html, body
 	text-align center
 	padding-bottom 6px
 	box-sizing(border-box)
+	.teaser
+		cursor default !important
 	.container
 		overflow-y auto
 		position absolute
@@ -702,6 +704,8 @@ html, body
 				display table
 				width 100%
 				height 100%
+				.update
+					-webkit-animation min-pulse 0.75s infinite ease-in-out
 				.line
 					display table-cell
 					vertical-align middle
@@ -1570,13 +1574,14 @@ html, body
 	.status
 		display none
 		position absolute
-		top 92px
+		top 90px
 		right 12px
 		width 22px
 		height 16px
 		box-shadow 0 0 4px #333
 		border-radius 2px
 		background-color aspect-color
+		border 1px solid white
 		&.offline
 			background-color #999
 			.arrow

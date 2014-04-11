@@ -560,14 +560,7 @@ window.onload = function() {
 			var action = ['post', messageTarget].join('_');
 			var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
 
-			companion.isCanPostAsync().then(function(canPost) {
-				if (!canPost) {
-					self.trySendInvite(companion);
-					throw { errorCode: errors.ErrorCodes.RESTRICTED };
-				}
-			}).then(function() {
-				return self.currentDialogsWaitAsync();
-			}).then(function() {
+			self.currentDialogsWaitAsync().then(function() {
 				self.postDialogView.setText('Этап 2 из 6: Создание сообщения...');
 				return self.chatClientWrapper.nowAsync();
 			}).then(function(timestamp) {
@@ -590,14 +583,21 @@ window.onload = function() {
 					chatMessage.set('preview', [settings.imageStoreBaseUrl, image].join(''));
 				}
 				uploadResult.v = 5.12;
-				return VK.apiAsync('photos.saveWallPhoto', uploadResult);
-			}).then(function(response) {
-				self.postDialogView.setText('Этап 6 из 6: Публикация сообщения на стене...');
-				var imageId = VkTools.getUploadedFileId(response);
-				var ownerId = companion.get('id');
-				var senderId = account.get('id');
-				var postData = VkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
-				return VK.apiAsync('wall.post', postData);
+				var isCanPostPromise = companion.isCanPostAsync();
+				var saveWallPhotoPromise = VK.apiAsync('photos.saveWallPhoto', uploadResult);
+				return Q.all([isCanPostPromise, saveWallPhotoPromise]);
+			}).spread(function(canPost, response) {
+				if (canPost) {
+					self.postDialogView.setText('Этап 6 из 6: Публикация сообщения на стене...');
+					var imageId = VkTools.getUploadedFileId(response);
+					var ownerId = companion.get('id');
+					var senderId = account.get('id');
+					var postData = VkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
+					return VK.apiAsync('wall.post', postData);
+				} else {
+					self.trySendInvite(companion);
+					throw { errorCode: errors.ErrorCodes.RESTRICTED };
+				}
 			}).then(function() {
 				self.postDialogView.setMode('complete');
 				analytics.send('post', action, 'success');

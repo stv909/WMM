@@ -120,7 +120,7 @@
 				event.preventDefault();
 			});
 			this.teaserElem.addEventListener('click', function() {
-				self.trigger('click:hint');
+				//self.trigger('click:hint');
 			});
 			this.sendElem.addEventListener('click', function() {
 				self.trigger('click:hint');
