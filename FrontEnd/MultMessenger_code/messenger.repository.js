@@ -110,7 +110,9 @@ var messenger = messenger || {};
 						self.chatUserSearch = new TextSearch(chatUserCollection, function(user) {
 							return [user.get('firstName'), user.get('lastName')];	
 						}, true);
-						self._checkIsAppUsers(userCollection);
+						setTimeout(function() {
+							self._checkIsAppUsers(userCollection);
+						}, 5000);
 					}
 				});
 			};
