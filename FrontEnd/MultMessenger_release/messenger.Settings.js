@@ -72,4 +72,4 @@ var messenger;
     })();
     messenger.Settings = Settings;
 })(messenger || (messenger = {}));
-//# sourceMappingURL=messenger.Settings.js.map
+//# sourceMappingURL=messenger.settings.js.map
