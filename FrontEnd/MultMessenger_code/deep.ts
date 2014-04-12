@@ -16,7 +16,7 @@ module deep {
 	export class EventEmitter {
 		private listeners: { [ type: string ]: EventListener[] } = {};
 
-		public on(type: string, callback: (e: Event) => void, context?: any): void {
+		public on<E extends Event>(type: string, callback: (e: E) => void, context?: any): void {
 			this.listeners[type] = this.listeners[type] || [];
 			this.listeners[type].push({
 				callback: callback,
@@ -82,14 +82,13 @@ module deep {
 		target?: any;
 	}
 
-	export interface SetValueEvent<T> extends Event {
-		value: T;
+	export interface ModelSetEvent extends Event {
+		target: any;
+		attributes: {};
 	}
-	export interface SetAttributesEvent extends Event {
-		attributes: { [ key: string ]: any };
-	}
-	export interface UnsetEvent extends Event {}
-	export interface UnsetKeyEvent extends Event {
+
+	export interface ModelUnsetEvent extends Event {
+		target: any;
 		key: string;
 	}
 
@@ -169,6 +168,13 @@ module deep {
 			return this.attributes.hasOwnProperty(key);
 		}
 
+		public on(type: 'set', callback: (e: ModelSetEvent) => void, context?: any): void;
+		public on(type: 'unset', callback: (e: ModelUnsetEvent) => void, context?: any): void;
+		public on(type: string, callback: (e: Event) => void, context?: any): void;
+		public on(type: string, callback: (e: Event) => void, context?: any): void {
+			super.on(type, callback, context);
+		}
+
 		public toJSON(): {} {
 			return this.attributes;
 		}
@@ -185,13 +191,16 @@ module deep {
 	export class View extends EventEmitter {
 		private elem: HTMLElement;
 		private parentElem: HTMLElement;
+		private disposed = false;
 
 		public constructor() {
 			super();
 			this.initialize();
 		}
 
-		public initialize(): void { }
+		public initialize(): void {
+			throw Error('must be overridden');
+		}
 
 		public getRootElem(): HTMLElement {
 			return this.elem;
@@ -199,6 +208,36 @@ module deep {
 
 		public getParentElem(): HTMLElement {
 			return this.parentElem;
+		}
+
+		public attachTo(parentElem: HTMLElement): void {
+			if (!this.parentElem) {
+				this.parentElem = parentElem;
+				this.parentElem.appendChild(this.elem);
+			}
+		}
+
+		public attachFirstTo(parentElem: HTMLElement): void {
+			if (!this.parentElem) {
+				this.parentElem = parentElem;
+				this.parentElem.insertBefore(this.elem, this.parentElem.childNodes[0]);
+			}
+		}
+
+		public detach(): void {
+			if (this.parentElem) {
+				this.parentElem.removeChild(this.elem);
+				this.parentElem = null;
+			}
+		}
+
+		public dispose() {
+			if (!this.disposed) {
+				this.disposed = true;
+				this.trigger('dispose');
+				this.detach();
+				this.off();
+			}
 		}
 	}
 

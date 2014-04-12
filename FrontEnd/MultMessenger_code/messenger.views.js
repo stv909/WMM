@@ -10,7 +10,7 @@ var messenger = messenger || {};
 		}
 		
 		PageView.prototype.show = function() {
-			this.elem.classList.remove('hidden');	
+			this.elem.classList.remove('hidden');
 		};
 		
 		PageView.prototype.hide = function() {

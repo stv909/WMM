@@ -9,6 +9,36 @@ var __extends = this.__extends || function (d, b) {
 var messenger;
 (function (messenger) {
     (function (chat) {
+        //		export interface ConnectEvent extends deep.Event {
+        //			socketEvent: Event;
+        //		}
+        //		export interface DisconnectEvent extends deep.Event {
+        //			socketEvent: CloseEvent
+        //		}
+        //		export interface SocketErrorEvent extends deep.Event {
+        //			socketEvent: ErrorEvent
+        //		}
+        //		export interface MessageEvent extends deep.Event{
+        //			response: any
+        //		}
+        //		export interface ErrorMessageEvent extends deep.Event {
+        //			socketEvent: any;
+        //			exception: Error;
+        //		}
+        //
+        //		export interface IChatClient {
+        //			on(type: string, callback: (e: deep.Event) => void, context?: any)
+        //			on(type: 'connect', callback: (e: ConnectEvent) => void, context?: any): void;
+        //			on(type: 'disconnect', callback: (e: DisconnectEvent) => void, context?: any): void;
+        //			on(type: 'error', callback: (e: SocketErrorEvent) => void, context?: any): void;
+        //			on(type: 'error:message', callback: (e: ErrorMessageEvent) => void, context?: any): void;
+        //
+        //			once(type: string, callback: (e: deep.Event) => void, context?: any)
+        //			once(type: 'connect', callback: (e: ConnectEvent) => void, context?: any): void;
+        //			once(type: 'disconnect', callback: (e: DisconnectEvent) => void, context?: any): void;
+        //			once(type: 'error', callback: (e: SocketErrorEvent) => void, context?: any): void;
+        //			once(type: 'error:message', callback: (e: ErrorMessageEvent) => void, context?: any): void;
+        //		}
         var ChatClient = (function (_super) {
             __extends(ChatClient, _super);
             function ChatClient(serverUrl) {
@@ -25,21 +55,6 @@ var messenger;
                     this.socket.send('store');
                     this.socket.send(tagId);
                     this.socket.send(data);
-                };
-                this.broadcast = function (tag, id, toUserId, contactMode) {
-                    var tagIdArray = [tag, id];
-                    var contactModeIdArray = [toUserId];
-
-                    if (contactMode) {
-                        contactModeIdArray.splice(0, 0, contactMode);
-                    }
-
-                    var tagId = tagIdArray.join('.');
-                    var contactModeId = contactModeIdArray.join('.');
-
-                    this.socket.send('broadcast');
-                    this.socket.send(tagId);
-                    this.socket.send(contactModeId);
                 };
                 this.serverUrl = serverUrl;
             }
@@ -230,7 +245,21 @@ var messenger;
                 this.socket.send(tagId);
                 this.socket.send(contactModeId);
             };
+            ChatClient.prototype.broadcast = function (tag, id, toUserId, contactMode) {
+                var tagIdArray = [tag, id];
+                var contactModeIdArray = [toUserId];
 
+                if (contactMode) {
+                    contactModeIdArray.splice(0, 0, contactMode);
+                }
+
+                var tagId = tagIdArray.join('.');
+                var contactModeId = contactModeIdArray.join('.');
+
+                this.socket.send('broadcast');
+                this.socket.send(tagId);
+                this.socket.send(contactModeId);
+            };
             ChatClient.prototype.send = function (tag, id, toUserId, contactMode) {
                 var tagIdArray = [tag, id];
                 var contactModeIdArray = [toUserId];

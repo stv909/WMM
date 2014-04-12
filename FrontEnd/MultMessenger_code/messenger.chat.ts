@@ -5,38 +5,38 @@ module messenger {
 
 	export module chat {
 
-		export interface ConnectEvent extends deep.Event {
-			socketEvent: Event;
-		}
-		export interface DisconnectEvent extends deep.Event {
-			socketEvent: CloseEvent
-		}
-		export interface SocketErrorEvent extends deep.Event {
-			socketEvent: ErrorEvent
-		}
-		export interface MessageEvent extends deep.Event{
-			response: any
-		}
-		export interface ErrorMessageEvent extends deep.Event {
-			socketEvent: any;
-			exception: Error;
-		}
+//		export interface ConnectEvent extends deep.Event {
+//			socketEvent: Event;
+//		}
+//		export interface DisconnectEvent extends deep.Event {
+//			socketEvent: CloseEvent
+//		}
+//		export interface SocketErrorEvent extends deep.Event {
+//			socketEvent: ErrorEvent
+//		}
+//		export interface MessageEvent extends deep.Event{
+//			response: any
+//		}
+//		export interface ErrorMessageEvent extends deep.Event {
+//			socketEvent: any;
+//			exception: Error;
+//		}
+//
+//		export interface IChatClient {
+//			on(type: string, callback: (e: deep.Event) => void, context?: any)
+//			on(type: 'connect', callback: (e: ConnectEvent) => void, context?: any): void;
+//			on(type: 'disconnect', callback: (e: DisconnectEvent) => void, context?: any): void;
+//			on(type: 'error', callback: (e: SocketErrorEvent) => void, context?: any): void;
+//			on(type: 'error:message', callback: (e: ErrorMessageEvent) => void, context?: any): void;
+//
+//			once(type: string, callback: (e: deep.Event) => void, context?: any)
+//			once(type: 'connect', callback: (e: ConnectEvent) => void, context?: any): void;
+//			once(type: 'disconnect', callback: (e: DisconnectEvent) => void, context?: any): void;
+//			once(type: 'error', callback: (e: SocketErrorEvent) => void, context?: any): void;
+//			once(type: 'error:message', callback: (e: ErrorMessageEvent) => void, context?: any): void;
+//		}
 
-		export interface IChatClient {
-			on(type: string, callback: (e: deep.Event) => void, context?: any)
-			on(type: 'connect', callback: (e: ConnectEvent) => void, context?: any): void;
-			on(type: 'disconnect', callback: (e: DisconnectEvent) => void, context?: any): void;
-			on(type: 'error', callback: (e: SocketErrorEvent) => void, context?: any): void;
-			on(type: 'error:message', callback: (e: ErrorMessageEvent) => void, context?: any): void;
-
-			once(type: string, callback: (e: deep.Event) => void, context?: any)
-			once(type: 'connect', callback: (e: ConnectEvent) => void, context?: any): void;
-			once(type: 'disconnect', callback: (e: DisconnectEvent) => void, context?: any): void;
-			once(type: 'error', callback: (e: SocketErrorEvent) => void, context?: any): void;
-			once(type: 'error:message', callback: (e: ErrorMessageEvent) => void, context?: any): void;
-		}
-
-		export class ChatClient extends deep.EventEmitter implements IChatClient {
+		export class ChatClient extends deep.EventEmitter {
 			private socket: WebSocket;
 			private serverUrl: string;
 
@@ -243,7 +243,7 @@ module messenger {
 				this.socket.send(tagId);
 				this.socket.send(contactModeId);
 			}
-			public broadcast = function(tag: string, id: string, toUserId: string, contactMode: string): void {
+			public broadcast(tag: string, id: string, toUserId: string, contactMode: string): void {
 				var tagIdArray = [tag, id];
 				var contactModeIdArray = [toUserId];
 
@@ -332,7 +332,7 @@ module messenger {
 				this.socket.send('messagedump');
 				this.socket.send([startTimestamp, endTimestamp].join('-'));
 			}
-				//complex protocol operations
+			//complex protocol operations
 			public sendMessage(message: Message, contactMode?: string): void {
 				var tag = 'msg';
 				var data = JSON.stringify(message);

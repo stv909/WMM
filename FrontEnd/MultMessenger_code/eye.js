@@ -1,6 +1,6 @@
 /// <reference path="q.d.ts" />
-var aux;
-(function (aux) {
+var eye;
+(function (eye) {
     function initializeTemplates() {
         function checkContentAvailable() {
             return 'content' in document.createElement('template');
@@ -41,7 +41,7 @@ var aux;
 
         return elem;
     }
-    aux.template = template;
+    eye.template = template;
 
     function checkOverflowX(elem) {
         var currentOverflowX = elem.style.overflowX;
@@ -56,7 +56,7 @@ var aux;
 
         return overflowX;
     }
-    aux.checkOverflowX = checkOverflowX;
+    eye.checkOverflowX = checkOverflowX;
 
     function checkOverflowY(elem) {
         var currentOverflowY = elem.style.overflowY;
@@ -71,22 +71,22 @@ var aux;
 
         return overflowY;
     }
-    aux.checkOverflowY = checkOverflowY;
+    eye.checkOverflowY = checkOverflowY;
 
     function checkOverflow(elem) {
         return checkOverflowX(elem) || checkOverflowY(elem);
     }
-    aux.checkOverflow = checkOverflow;
+    eye.checkOverflow = checkOverflow;
 
     function scrollToBottom(elem) {
         elem.scrollTop = elem.scrollHeight;
     }
-    aux.scrollToBottom = scrollToBottom;
+    eye.scrollToBottom = scrollToBottom;
 
     function scrollToTop(elem) {
         elem.scrollTop = 0;
     }
-    aux.scrollToTop = scrollToTop;
+    eye.scrollToTop = scrollToTop;
 
     function getImageSizeAsync(imageUrl) {
         var deferred = Q.defer();
@@ -105,7 +105,7 @@ var aux;
 
         return deferred.promise;
     }
-    aux.getImageSizeAsync = getImageSizeAsync;
+    eye.getImageSizeAsync = getImageSizeAsync;
 
     function parseStyleSize(value) {
         value = value || 0;
@@ -114,7 +114,7 @@ var aux;
         }
         return value;
     }
-    aux.parseStyleSize = parseStyleSize;
+    eye.parseStyleSize = parseStyleSize;
 
     function getScales(transform) {
         var result = {
@@ -127,7 +127,7 @@ var aux;
         result.scaleY = matches[2] ? parseFloat(matches[2]) : result.scaleX;
         return result;
     }
-    aux.getScales = getScales;
+    eye.getScales = getScales;
 
     function getRotate(transform) {
         var result = {
@@ -140,17 +140,17 @@ var aux;
         result.unit = matches[2] ? matches[2] : result.unit;
         return result;
     }
-    aux.getRotate = getRotate;
+    eye.getRotate = getRotate;
 
     function getTransform(elem) {
         return elem.style['-webkit-transform'] || elem.style['-moz-transform'] || elem.style['-ms-transform'] || elem.style['transform'] || '';
     }
-    aux.getTransform = getTransform;
+    eye.getTransform = getTransform;
 
     function setTransform(elem, transform) {
         elem.style['-webkit-transform'] = elem.style['-moz-transform'] = elem.style['-ms-transform'] = elem.style['transform'] = transform;
     }
-    aux.setTransform = setTransform;
+    eye.setTransform = setTransform;
 
     function toTransform(rotate, scales) {
         var textChunks = [];
@@ -168,7 +168,7 @@ var aux;
         textChunks.push(')');
         return textChunks.join('');
     }
-    aux.toTransform = toTransform;
+    eye.toTransform = toTransform;
 
     function requestAsync(options) {
         var url = options.url;
@@ -196,7 +196,7 @@ var aux;
 
         return deferred.promise;
     }
-    aux.requestAsync = requestAsync;
+    eye.requestAsync = requestAsync;
     function requestSync(options) {
         var url = options.url;
         var method = options.method || 'GET';
@@ -212,7 +212,7 @@ var aux;
         request.send(data);
         return request.responseText;
     }
-    aux.requestSync = requestSync;
+    eye.requestSync = requestSync;
 
     function uuid() {
         var date = new Date().getTime();
@@ -222,8 +222,8 @@ var aux;
             return (char === 'x' ? rnd : (rnd & 0x7 | 0x8)).toString(16);
         });
     }
-    aux.uuid = uuid;
+    eye.uuid = uuid;
 
     initializeTemplates();
-})(aux || (aux = {}));
-//# sourceMappingURL=aux.js.map
+})(eye || (eye = {}));
+//# sourceMappingURL=eye.js.map

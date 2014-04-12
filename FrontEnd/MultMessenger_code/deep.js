@@ -143,6 +143,10 @@ var deep;
             return this.attributes.hasOwnProperty(key);
         };
 
+        Model.prototype.on = function (type, callback, context) {
+            _super.prototype.on.call(this, type, callback, context);
+        };
+
         Model.prototype.toJSON = function () {
             return this.attributes;
         };
@@ -162,9 +166,11 @@ var deep;
         __extends(View, _super);
         function View() {
             _super.call(this);
+            this.disposed = false;
             this.initialize();
         }
         View.prototype.initialize = function () {
+            throw Error('must be overridden');
         };
 
         View.prototype.getRootElem = function () {
@@ -173,6 +179,36 @@ var deep;
 
         View.prototype.getParentElem = function () {
             return this.parentElem;
+        };
+
+        View.prototype.attachTo = function (parentElem) {
+            if (!this.parentElem) {
+                this.parentElem = parentElem;
+                this.parentElem.appendChild(this.elem);
+            }
+        };
+
+        View.prototype.attachFirstTo = function (parentElem) {
+            if (!this.parentElem) {
+                this.parentElem = parentElem;
+                this.parentElem.insertBefore(this.elem, this.parentElem.childNodes[0]);
+            }
+        };
+
+        View.prototype.detach = function () {
+            if (this.parentElem) {
+                this.parentElem.removeChild(this.elem);
+                this.parentElem = null;
+            }
+        };
+
+        View.prototype.dispose = function () {
+            if (!this.disposed) {
+                this.disposed = true;
+                this.trigger('dispose');
+                this.detach();
+                this.off();
+            }
         };
         return View;
     })(EventEmitter);

@@ -7,7 +7,7 @@
 			base.apply(this, arguments);
 			var self = this;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'conversation-template',
 				className: 'conversation'
 			});
@@ -71,7 +71,7 @@
 			base.apply(this, arguments);
 			var self = this;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'tape-page-template',
 				className: 'tape-page'
 			});
@@ -190,7 +190,7 @@
 			this.chatMessage = chatMessage;
 			this.contact = contact;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'tape-item-template',
 				className: 'tape-item'
 			});
@@ -320,7 +320,7 @@
 			
 			this.message = message;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'message-controls-template',
 				className: 'message-controls'
 			});
@@ -465,7 +465,7 @@
 		function TextMessageView(chatMessage) {
 			base.apply(this, arguments);
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'text-message-template',
 				className: 'text-message'
 			});
@@ -486,7 +486,7 @@
 			
 			this.model = user;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'text-user-template',
 				className: 'text-user'
 			});

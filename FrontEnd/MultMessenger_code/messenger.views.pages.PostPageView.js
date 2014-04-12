@@ -127,7 +127,7 @@
 			base.apply(this, arguments);
 			var self = this;
 			
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'lobby-template',
 				id: 'lobby',
 				className: 'shifted'
@@ -546,7 +546,7 @@
 			base.apply(this, arguments);
 			var self = this;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'dialog-post-page-template',
 				id: 'dialog-post-page'
 			});
