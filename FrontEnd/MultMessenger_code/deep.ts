@@ -189,17 +189,12 @@ module deep {
 	}
 
 	export class View extends EventEmitter {
-		private elem: HTMLElement;
-		private parentElem: HTMLElement;
+		public elem: HTMLElement;
+		public parentElem: HTMLElement;
 		private disposed = false;
 
 		public constructor() {
 			super();
-			this.initialize();
-		}
-
-		public initialize(): void {
-			throw Error('must be overridden');
 		}
 
 		public getRootElem(): HTMLElement {

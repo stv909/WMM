@@ -167,12 +167,7 @@ var deep;
         function View() {
             _super.call(this);
             this.disposed = false;
-            this.initialize();
         }
-        View.prototype.initialize = function () {
-            throw Error('must be overridden');
-        };
-
         View.prototype.getRootElem = function () {
             return this.elem;
         };

@@ -349,6 +349,8 @@ window.onload = function() {
 			self.answerPageView.hide();
 			self.postcardView.show();
 			self.conversationView.hide();
+
+			self.postcardMenuView.hideCancel();
 			self.postcardMenuView.selectItemView.select();
 			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
 			self.postcardMenuView.postItemView.setText('3. Отправь на стену!');
@@ -641,7 +643,7 @@ window.onload = function() {
 			var fromContact = self.contactRepository.owner;
 			var chatMessage = new messenger.repository.ChatMessageModel();
 			chatMessage.set({
-				id: aux.uuid(),
+				id: eye.uuid(),
 				content: event.text,
 				from: Helpers.buildVkId(fromContact),
 				to: Helpers.buildVkId(toContact)
@@ -666,7 +668,7 @@ window.onload = function() {
 			var fromContact = self.contactRepository.owner;
 			var chatMessage = new messenger.repository.ChatMessageModel();
 			chatMessage.set({
-				id: aux.uuid(),
+				id: eye.uuid(),
 				content: event.text,
 				from: Helpers.buildVkId(fromContact),
 				to: Helpers.buildVkId(toContact)
@@ -855,7 +857,7 @@ window.onload = function() {
 		self.postDialogView.show();
 
 		var message = MessageFactory.create(
-			aux.uuid(),
+			eye.uuid(),
 			Helpers.normalizeMessageContent(content),
 			Helpers.buildVkId(account),
 			Helpers.buildVkId(companion)
