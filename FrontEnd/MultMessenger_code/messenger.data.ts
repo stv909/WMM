@@ -150,6 +150,18 @@ module messenger {
 				});
 				return message;
 			}
+
+			public on(type: 'set:preview', callback: (event: deep.ModelSetValueEvent<string>) => void, context?: any): void;
+			public on<E extends deep.Event>(type: string, callback: (event: E) => void, context?: any): void;
+			public on<E extends deep.Event>(type: string, callback: (event: E) => void, context?: any): void {
+				super.on(type, callback, context);
+			}
+
+			public once(type: 'set:preview', callback: (event: deep.ModelSetValueEvent<string>) => void, context?: any): void;
+			public once<E extends deep.Event>(type: string, callback: (event: E) => void, context?: any): void;
+			public once<E extends deep.Event>(type: string, callback: (event: E) => void, context?: any): void {
+				super.once(type, callback, context);
+			}
 		}
 
 	}

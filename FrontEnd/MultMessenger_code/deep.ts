@@ -87,6 +87,11 @@ module deep {
 		attributes: {};
 	}
 
+	export interface ModelSetValueEvent<T> extends Event {
+		target: any;
+		value: T;
+	}
+
 	export interface ModelUnsetEvent extends Event {
 		target: any;
 		key: string;

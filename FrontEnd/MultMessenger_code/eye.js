@@ -226,4 +226,3 @@ var eye;
 
     initializeTemplates();
 })(eye || (eye = {}));
-//# sourceMappingURL=eye.js.map

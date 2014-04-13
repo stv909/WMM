@@ -171,6 +171,14 @@ var messenger;
                 });
                 return message;
             };
+
+            MessageModel.prototype.on = function (type, callback, context) {
+                _super.prototype.on.call(this, type, callback, context);
+            };
+
+            MessageModel.prototype.once = function (type, callback, context) {
+                _super.prototype.once.call(this, type, callback, context);
+            };
             return MessageModel;
         })(deep.Model);
         data.MessageModel = MessageModel;
