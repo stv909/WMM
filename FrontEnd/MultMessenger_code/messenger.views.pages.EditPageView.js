@@ -1,7 +1,7 @@
 (function(messenger, eve, abyss, template, filmlang, data, settings, analytics, Q, async) {
 	
 	var PageView = messenger.views.PageView;
-	var MessageEditorView = messenger.views.MessageEditorView;
+	var MessageEditorView = messenger.ui.MessageEditorView;
 	var ImageItemView = messenger.views.ImageItemView;
 	
 	var DialogView = messenger.views.DialogView;
@@ -61,7 +61,7 @@
 			this.validateListener = function() {
 				var isInvalid = false;
 				self.filmTexts.forEach(function(filmText) {
-					isInvalid = isInvalid || !filmText.isValid;		
+					isInvalid = isInvalid || !filmText.isValid;
 				});
 				if (isInvalid) {
 					self.wrapElem.classList.remove('hidden');

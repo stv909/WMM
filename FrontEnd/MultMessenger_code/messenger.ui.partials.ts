@@ -161,7 +161,7 @@ module messenger {
 			}
 
 			public setModel(model: data.MessageModel): void {
-				super.setModel(model);
+				super.setModel(model, true);
 				this.trigger({
 					type: 'change:content',
 					elem: this.getCachedFullElem()

@@ -2,8 +2,8 @@ var messenger = messenger || {};
 
 (function(messenger, eve, abyss, VK, Q, text, settings, base64) {
 	
-	var UserModel = messenger.models.UserModel;
-	var GroupModel = messenger.models.GroupModel;
+	var UserModel = messenger.data.UserModel;
+	var GroupModel = messenger.data.GroupModel;
 	var TextSearch = text.TextSearch;
 	
 	var Pagination = (function(base) {

@@ -4,125 +4,125 @@ var messenger = messenger || {};
 	
 	var View = abyss.View;
 	
-	var MessageView = function(model) {
-		MessageView.super.apply(this);
-
-		this.model = model;
-		this.elem = template.create('message-template', { className: 'message' });
-		this.contentElem = this.elem.getElementsByClassName('content')[0];
-
-		this.selected = false;
-	};
-	MessageView.super = View;
-	MessageView.prototype = Object.create(View.prototype);
-	MessageView.prototype.constructor = MessageView;
-	MessageView.prototype.select = function() {
-		this.selected = true;
-		this.elem.classList.add('chosen');
-		this.elem.classList.remove('normal');
-		this.removeCachedElem();
-		this.addCachedElem(this.getCachedFullElem());
-		this.trigger({
-			type: 'select',
-			message: this.model
-		});
-	};
-	MessageView.prototype.deselect = function() {
-		this.selected = false;
-		this.elem.classList.remove('chosen');
-		this.elem.classList.add('normal');
-		this.removeCachedElem();
-		this.addCachedElem(this.cachedPreviewElem);
-	};
-	MessageView.prototype.addCachedElem = function(cachedElem) {
-		this.cachedElem = cachedElem;
-		this.contentElem.appendChild(cachedElem);
-	};
-	MessageView.prototype.removeCachedElem = function() {
-		if (this.cachedElem) {
-			this.contentElem.removeChild(this.cachedElem);
-		}
-	};
-	MessageView.prototype.prepareCachedPreviewElem = function() {
-		this.cachedPreviewElem = document.createElement('div');
-		var imgElem = document.createElement('img');
-		if (this.model.get('preview')) {
-			imgElem.src = this.model.get('preview');
-		} else {
-			imgElem.src = settings.emptyPreviewUrl;
-			this.model.once('change:preview', function(event) {
-				var preview = event.value;
-				imgElem.src = preview;
-			});
-		}
-		this.cachedPreviewElem.appendChild(imgElem);
-	};
-	MessageView.prototype.prepareCachedFullElem = function() {
-		this.cachedFullElem = document.createElement('div');
-		this.cachedFullElem.innerHTML = this.model.get('content');
-	};
-	MessageView.prototype.getCachedFullElem = function() {
-		if (!this.cachedFullElem) {
-			this.prepareCachedFullElem();
-		}
-		return this.cachedFullElem;
-	};
-	MessageView.prototype.setModel = function(model, full) {
-		this.model = model;
-		this.removeCachedElem();
-		this.prepareCachedPreviewElem();
-		if (full) {
-			this.prepareCachedFullElem();
-		}
-		if (this.selected) {
-			this.addCachedElem(this.getCachedFullElem());
-		} else {
-			this.addCachedElem(this.cachedPreviewElem);
-		}
-	};
-	
-	var MessagePatternView = function(model) {
-		MessagePatternView.super.apply(this, arguments);
-		var self = this;
-
-		this.prepareCachedPreviewElem();
-		//this.prepareCachedFullElem();
-		this.deselect();
-
-		var elemClickListener = function(event) {
-			if (!self.selected) {
-				self.select();
-				analytics.send('tape', 'msg_select_new');
-			}
-		};
-
-		this.elem.addEventListener('click', elemClickListener, this);
-
-		this.once('dispose', function() {
-			self.elem.removeEventListener('click', elemClickListener);
-		});
-	};
-	MessagePatternView.super = MessageView;
-	MessagePatternView.prototype = Object.create(MessageView.prototype);
-	MessagePatternView.prototype.constructor = MessagePatternView;
-	
-	var MessageEditorView = function() {
-		MessageEditorView.super.apply(this);
-
-		this.selected = true;
-		this.elem.classList.add('chosen');
-		this.elem.classList.remove('normal');
-	};
-	MessageEditorView.super = MessageView;
-	MessageEditorView.prototype = Object.create(MessageView.prototype);
-	MessageEditorView.prototype.constructor = MessageEditorView;
-	MessageEditorView.prototype.setModel = function(model) {
-		MessageEditorView.super.prototype.setModel.apply(this, [model, true]);
-		this.trigger({
-			type: 'change:content',
-			elem: this.cachedFullElem
-		});
-	};
+//	var MessageView = function(model) {
+//		MessageView.super.apply(this);
+//
+//		this.model = model;
+//		this.elem = template.create('message-template', { className: 'message' });
+//		this.contentElem = this.elem.getElementsByClassName('content')[0];
+//
+//		this.selected = false;
+//	};
+//	MessageView.super = View;
+//	MessageView.prototype = Object.create(View.prototype);
+//	MessageView.prototype.constructor = MessageView;
+//	MessageView.prototype.select = function() {
+//		this.selected = true;
+//		this.elem.classList.add('chosen');
+//		this.elem.classList.remove('normal');
+//		this.removeCachedElem();
+//		this.addCachedElem(this.getCachedFullElem());
+//		this.trigger({
+//			type: 'select',
+//			message: this.model
+//		});
+//	};
+//	MessageView.prototype.deselect = function() {
+//		this.selected = false;
+//		this.elem.classList.remove('chosen');
+//		this.elem.classList.add('normal');
+//		this.removeCachedElem();
+//		this.addCachedElem(this.cachedPreviewElem);
+//	};
+//	MessageView.prototype.addCachedElem = function(cachedElem) {
+//		this.cachedElem = cachedElem;
+//		this.contentElem.appendChild(cachedElem);
+//	};
+//	MessageView.prototype.removeCachedElem = function() {
+//		if (this.cachedElem) {
+//			this.contentElem.removeChild(this.cachedElem);
+//		}
+//	};
+//	MessageView.prototype.prepareCachedPreviewElem = function() {
+//		this.cachedPreviewElem = document.createElement('div');
+//		var imgElem = document.createElement('img');
+//		if (this.model.get('preview')) {
+//			imgElem.src = this.model.get('preview');
+//		} else {
+//			imgElem.src = settings.emptyPreviewUrl;
+//			this.model.once('change:preview', function(event) {
+//				var preview = event.value;
+//				imgElem.src = preview;
+//			});
+//		}
+//		this.cachedPreviewElem.appendChild(imgElem);
+//	};
+//	MessageView.prototype.prepareCachedFullElem = function() {
+//		this.cachedFullElem = document.createElement('div');
+//		this.cachedFullElem.innerHTML = this.model.get('content');
+//	};
+//	MessageView.prototype.getCachedFullElem = function() {
+//		if (!this.cachedFullElem) {
+//			this.prepareCachedFullElem();
+//		}
+//		return this.cachedFullElem;
+//	};
+//	MessageView.prototype.setModel = function(model, full) {
+//		this.model = model;
+//		this.removeCachedElem();
+//		this.prepareCachedPreviewElem();
+//		if (full) {
+//			this.prepareCachedFullElem();
+//		}
+//		if (this.selected) {
+//			this.addCachedElem(this.getCachedFullElem());
+//		} else {
+//			this.addCachedElem(this.cachedPreviewElem);
+//		}
+//	};
+//
+//	var MessagePatternView = function(model) {
+//		MessagePatternView.super.apply(this, arguments);
+//		var self = this;
+//
+//		this.prepareCachedPreviewElem();
+//		//this.prepareCachedFullElem();
+//		this.deselect();
+//
+//		var elemClickListener = function(event) {
+//			if (!self.selected) {
+//				self.select();
+//				analytics.send('tape', 'msg_select_new');
+//			}
+//		};
+//
+//		this.elem.addEventListener('click', elemClickListener, this);
+//
+//		this.once('dispose', function() {
+//			self.elem.removeEventListener('click', elemClickListener);
+//		});
+//	};
+//	MessagePatternView.super = MessageView;
+//	MessagePatternView.prototype = Object.create(MessageView.prototype);
+//	MessagePatternView.prototype.constructor = MessagePatternView;
+//
+//	var MessageEditorView = function() {
+//		MessageEditorView.super.apply(this);
+//
+//		this.selected = true;
+//		this.elem.classList.add('chosen');
+//		this.elem.classList.remove('normal');
+//	};
+//	MessageEditorView.super = MessageView;
+//	MessageEditorView.prototype = Object.create(MessageView.prototype);
+//	MessageEditorView.prototype.constructor = MessageEditorView;
+//	MessageEditorView.prototype.setModel = function(model) {
+//		MessageEditorView.super.prototype.setModel.apply(this, [model, true]);
+//		this.trigger({
+//			type: 'change:content',
+//			elem: this.cachedFullElem
+//		});
+//	};
 	
 	var ImageItemView = function(layerImageElem, imageSelectDialog) {
 		ImageItemView.super.apply(this);
@@ -252,9 +252,9 @@ var messenger = messenger || {};
 	
 	messenger.views = messenger.views || {};
 	
-	messenger.views.MessageView = MessageView;
-	messenger.views.MessagePatternView = MessagePatternView;
-	messenger.views.MessageEditorView = MessageEditorView;
+//	messenger.views.MessageView = MessageView;
+//	messenger.views.MessagePatternView = MessagePatternView;
+//	messenger.views.MessageEditorView = MessageEditorView;
 	messenger.views.ImageItemView = ImageItemView;
 	messenger.views.PhotoItemView = PhotoItemView;
 

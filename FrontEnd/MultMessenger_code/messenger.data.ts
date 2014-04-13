@@ -40,6 +40,7 @@ module messenger {
 				var user = new UserModel();
 
 				user.set({
+					id: rawUser.id,
 					firstName: rawUser.first_name,
 					lastName: rawUser.last_name,
 					photo: rawUser.photo_200 || rawUser.photo_100 || rawUser.photo_50,
@@ -74,7 +75,7 @@ module messenger {
 				});
 			}
 
-			public static loadFriendsChuckAsync(count: number, offset: number): Q.Promise<UserModel[]> {
+			public static loadFriendsChunkAsync(count: number, offset: number): Q.Promise<UserModel[]> {
 				return vk.apiAsync('friends.get', {
 					count: count,
 					offset: offset,

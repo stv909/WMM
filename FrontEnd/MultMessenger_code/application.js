@@ -3,7 +3,7 @@ window.onload = function() {
 
 	var MessageStorage = messenger.storage.MessageStorage;
 	
-	var MessagePatternView = messenger.views.MessagePatternView;
+	var MessagePatternView = messenger.ui.MessagePatternView;
 	var ChatMessageModel = messenger.repository.ChatMessageModel;
 	
 	var VkTools = messenger.utils.VkTools;

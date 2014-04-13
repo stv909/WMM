@@ -148,7 +148,7 @@ var messenger;
                 this.elem.classList.add('normal');
             }
             MessageEditorView.prototype.setModel = function (model) {
-                _super.prototype.setModel.call(this, model);
+                _super.prototype.setModel.call(this, model, true);
                 this.trigger({
                     type: 'change:content',
                     elem: this.getCachedFullElem()

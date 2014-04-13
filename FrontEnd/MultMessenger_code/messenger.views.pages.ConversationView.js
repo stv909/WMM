@@ -244,7 +244,7 @@
 						message: self.chatMessage
 					});
 				});
-				this.messageView = new messenger.views.MessagePatternView(this.chatMessage);
+				this.messageView = new messenger.ui.MessagePatternView(this.chatMessage);
 				this.messageView.on('select', function(event) {
 					self.trigger({
 						type: 'select:message',
