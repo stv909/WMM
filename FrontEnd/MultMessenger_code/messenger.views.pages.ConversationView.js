@@ -393,72 +393,6 @@
 		return MessageControlsView;
 	})(abyss.View);
 	
-	var CreateMessageDialogView = (function(base) {
-		eve.extend(CreateMessageDialogView, base);
-		
-		function CreateMessageDialogView() {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.dialogWindowElem = document.getElementById('create-message-dialog');
-			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
-			this.sendElem = this.dialogWindowElem.getElementsByClassName('send')[0];
-			this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
-			this.messageTextElem = this.dialogWindowElem.getElementsByClassName('message-text')[0];
-			
-			var emptyStringPattern = /^\s*$/;
-			var cancelClickListener = function() {
-				self.hide();
-				self.messageTextElem.value = '';
-				self.sendElem.classList.add('disabled');
-			};
-			var sendClickListener = function() {
-				var value = self.messageTextElem.value;
-				if (!emptyStringPattern.test(value)) {
-					self.trigger({
-						type: 'click:send',
-						text: value.replace(/\r?\n/g, '<br />')
-					});
-					self.hide();
-					self.messageTextElem.value = '';
-					self.sendElem.classList.add('disabled');
-					analytics.send('dialog', 'text_send');
-				}
-			};
-			var messageTextInputListener = function() {
-				if (emptyStringPattern.test(self.messageTextElem.value)) {
-					self.sendElem.classList.add('disabled');
-				} else {
-					self.sendElem.classList.remove('disabled');
-				}
-			};
-			this.keydownListener = function(event) {
-				if (event.keyCode === 13) {
-					sendClickListener();
-				}
-			};
-			
-			this.crossElem.addEventListener('click', cancelClickListener);
-			this.cancelElem.addEventListener('click', cancelClickListener);
-			this.sendElem.addEventListener('click', sendClickListener);
-			this.messageTextElem.addEventListener('input', messageTextInputListener);
-		}
-		
-		CreateMessageDialogView.prototype.show = function() {
-			base.prototype.show.apply(this, arguments);
-			this.messageTextElem.focus();
-			document.addEventListener('keydown', this.keydownListener);	
-			
-		};
-		
-		CreateMessageDialogView.prototype.hide = function() {
-			base.prototype.hide.apply(this, arguments);
-			document.removeEventListener('keydown', this.keydownListener);	
-		};
-		
-		return CreateMessageDialogView;
-	})(messenger.views.DialogView);
-	
 	var TextMessageView = (function(base) {
 		eve.extend(TextMessageView, base);
 		
@@ -519,6 +453,5 @@
 	
 	messenger.views = messenger.views || {};
 	messenger.views.ConversationView = ConversationView;
-	messenger.views.CreateMessageDialogView = CreateMessageDialogView;
 	
 })(messenger, eve, abyss, settings, analytics);

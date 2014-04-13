@@ -39,15 +39,15 @@ window.onload = function() {
 		this.postPageView = new messenger.views.PostPageView();
 		this.dialogPostPageView = new messenger.views.DialogPostPageView();
 		this.answerPageView = new messenger.views.AnswerPageView();
-		
+
+		this.skipDialogView = new messenger.ui.SkipDialogView();
+		this.preloaderView = new messenger.ui.PreloaderView();
+		this.inviteUserDialogView = new messenger.ui.InviteUserDialogView();
+		this.errorDialogView = new messenger.ui.ErrorDialogView();
+		this.cancelMessageUpdateDialogView = new messenger.ui.CancelMessageUpdateDialogView();
+		this.createMessageDialogView = new messenger.ui.CreateTextMessageDialogView();
+
 		this.postDialogView = new messenger.views.PostDialogView();
-		this.skipDialogView = new messenger.views.SkipDialogView();
-		this.preloadDialogView = new messenger.views.PreloadDialogView();
-		this.askMessageDialogView = new messenger.views.AskMessageDialogView();
-		this.errorDialogView = new messenger.views.ErrorDialogView();
-		this.prepareChatDialogView = new messenger.views.PrepareChatDialogView();
-		this.createMessageDialogView = new messenger.views.CreateMessageDialogView();
-		this.inviteUserDialogView = new messenger.views.InviteUserDialogView();
 
 		this.currentSkipAnswerAsync = null;
 		this.emptySkipAnswerAsync = function() {
@@ -82,18 +82,18 @@ window.onload = function() {
 			var deferred = Q.defer();
 			
 			var cancelListener = function() {
-				self.askMessageDialogView.off('click:ok', okListener);
+				self.cancelMessageUpdateDialogView.off('click:ok', okListener);
 				deferred.reject();
 			};
 			var okListener = function() {
-				self.askMessageDialogView.off('click:cancel', cancelListener);
+				self.cancelMessageUpdateDialogView.off('click:cancel', cancelListener);
 				self.currentSkipAnswerAsync = self.emptySkipUpdateAsync;
 				deferred.resolve();
 			};
 			
-			self.askMessageDialogView.once('click:cancel', cancelListener);
-			self.askMessageDialogView.once('click:ok', okListener);
-			self.askMessageDialogView.show();
+			self.cancelMessageUpdateDialogView.once('click:cancel', cancelListener);
+			self.cancelMessageUpdateDialogView.once('click:ok', okListener);
+			self.cancelMessageUpdateDialogView.show();
 			
 			return deferred.promise;
 		};
@@ -131,7 +131,7 @@ window.onload = function() {
 			return deferred.promise;
 		};
 		
-		this.preloadDialogView.show();
+		this.preloaderView.show();
 		this.initializeStorage();
 		this.initializeChatClient();
 		this.initializeViews();
@@ -558,7 +558,8 @@ window.onload = function() {
 			self.messageStorage.loadMessagesAsync().then(function() {
 				analytics.send('tape', 'msg_load_more', 'success');
 			}).catch(function(error) {
-				self.errorDialogView.show(error);
+				self.errorDialogView.show();
+				self.errorDialogView.setError(error);
 				analytics.send('tape', 'msg_load_more', 'fail');
 			}).fin(function() {
 				self.selectPageView.enableMessageLoading();
@@ -632,11 +633,14 @@ window.onload = function() {
 			window.location.hash = '';
 			analytics.send('answer', 'browse_tape');
 		});
-		this.askMessageDialogView.on('click:ok', function() {
+		this.cancelMessageUpdateDialogView.on('click:ok', function() {
 			self.editPageView.reset();
 		});
 		this.inviteUserDialogView.on('click:ok', function() {
 			VK.callMethod('showInviteBox');
+		});
+		this.createMessageDialogView.on('click:send', function() {
+			analytics.send('dialog', 'text_send');
 		});
 		this.createMessageDialogView.on('click:send', function(event) {
 			var toContact = self.chatRepository.contact;
@@ -773,7 +777,7 @@ window.onload = function() {
 		}).then(function() {
 			self.answerPageView.setContact(self.contactRepository.sender);
 			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
-			self.preloadDialogView.hide();
+			self.preloaderView.hide();
 			self.chatRepository.loadTapeMessagesAsync().then(function() {
 				self.contactRepository.searchChatUsers('');
 				self.lobbyView.selectUser(self.chatRepository.getContact());

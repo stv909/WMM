@@ -209,4 +209,3 @@ var deep;
     })(EventEmitter);
     deep.View = View;
 })(deep || (deep = {}));
-//# sourceMappingURL=deep.js.map

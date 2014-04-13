@@ -72,4 +72,3 @@ var messenger;
     })();
     messenger.Settings = Settings;
 })(messenger || (messenger = {}));
-//# sourceMappingURL=messenger.Settings.js.map

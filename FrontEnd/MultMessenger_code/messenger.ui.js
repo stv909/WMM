@@ -7,6 +7,8 @@ var __extends = this.__extends || function (d, b) {
 };
 var messenger;
 (function (messenger) {
+    'use strict';
+
     (function (ui) {
         var ControlView = (function (_super) {
             __extends(ControlView, _super);
@@ -55,4 +57,3 @@ var messenger;
     })(messenger.ui || (messenger.ui = {}));
     var ui = messenger.ui;
 })(messenger || (messenger = {}));
-//# sourceMappingURL=messenger.ui.js.map

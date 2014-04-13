@@ -16,7 +16,7 @@ module deep {
 	export class EventEmitter {
 		private listeners: { [ type: string ]: EventListener[] } = {};
 
-		public on<E extends Event>(type: string, callback: (e: E) => void, context?: any): void {
+		public on(type: string, callback: (e: Event) => void, context?: any): void {
 			this.listeners[type] = this.listeners[type] || [];
 			this.listeners[type].push({
 				callback: callback,

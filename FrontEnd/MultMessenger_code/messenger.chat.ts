@@ -368,6 +368,9 @@ module messenger {
 			}
 		}
 
+		export interface MessageResponse {
+			value?: Message;
+		}
 		export interface Message {
 			id: string;
 			content: string;

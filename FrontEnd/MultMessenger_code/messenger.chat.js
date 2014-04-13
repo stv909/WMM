@@ -405,4 +405,3 @@ var messenger;
     })(messenger.chat || (messenger.chat = {}));
     var chat = messenger.chat;
 })(messenger || (messenger = {}));
-//# sourceMappingURL=messenger.chat.js.map

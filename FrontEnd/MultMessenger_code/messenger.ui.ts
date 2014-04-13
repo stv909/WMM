@@ -2,6 +2,8 @@
 
 module messenger {
 
+	'use strict';
+
 	export module ui {
 
 		export class ControlView extends deep.View {
@@ -15,7 +17,7 @@ module messenger {
 		}
 
 		export class DialogView extends deep.View {
-			private dialogWindowElem: HTMLElement;
+			public dialogWindowElem: HTMLElement;
 
 			public constructor(dialogElementId: string) {
 				super();

@@ -4,189 +4,9 @@ var messenger = messenger || {};
 	
 	var View = abyss.View;
 	var ErrorCodes = errors.ErrorCodes;
-	var CharacterItemView = messenger.views.CharacterItemView;
 	var PhotoItemView = messenger.views.PhotoItemView;
 	
 	var PhotoStorage = messenger.storage.PhotoStorage;
-	
-	var PreloadDialogView = function() {
-		PreloadDialogView.super.apply(this);
-
-		this.elem = document.getElementById('preload-background');
-	};
-	PreloadDialogView.super = View;
-	PreloadDialogView.prototype = Object.create(View.prototype);
-	PreloadDialogView.prototype.constructor = PreloadDialogView;
-	PreloadDialogView.prototype.show = function() {
-		this.elem.classList.remove('hidden');
-	};
-	PreloadDialogView.prototype.hide = function() {
-		this.elem.classList.add('hidden');
-	};
-	
-	var ErrorDialogView = function() {
-		ErrorDialogView.super.apply(this);
-		var self = this;
-		
-		this.elem = document.getElementById('dialog-background');
-		this.dialogWindowElem = document.getElementById('error-dialog');
-		this.statusElem = this.dialogWindowElem.getElementsByClassName('status')[0];
-		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
-
-		var okElemClickListener = function(event) {
-			self.hide();
-			self.trigger('click:close');
-		};
-
-		this.okElem.addEventListener('click', okElemClickListener);
-
-		this.once('dispose', function() {
-			self.readyElem.removeEventListener('click', okElemClickListener);
-		});
-	};
-	ErrorDialogView.super = View;
-	ErrorDialogView.prototype = Object.create(View.prototype);
-	ErrorDialogView.prototype.constructor = ErrorDialogView;
-	ErrorDialogView.prototype.show = function(error) {
-		console.log(error);
-		var message = 'Неизвестная ошибка';
-		switch (error.errorCode) {
-			case ErrorCodes.NO_CONNECTION:
-				message = 'Не удалось выполнить операцию.\nПроверьте интернет-подключение и\nпопробуйте позже.';
-				break;
-			case ErrorCodes.API_ERROR:
-				message = 'Ошибка вызова интернет-сервиса.';
-				break;
-			case ErrorCodes.TIMEOUT:
-				message = 'Не удалось выполнить операцию.\nПроверьте интернет-подключение и\nпопробуйте позже.';
-				break;
-		}
-		this.statusElem.textContent = message;
-		this.dialogWindowElem.classList.remove('hidden');
-		this.elem.classList.remove('hidden');	
-	};
-	ErrorDialogView.prototype.hide = function() {
-		this.dialogWindowElem.classList.add('hidden');
-		this.elem.classList.add('hidden');
-	};
-	
-	var AskMessageDialogView = function() {
-		AskMessageDialogView.super.apply(this);
-		var self = this;
-		
-		this.elem = document.getElementById('dialog-background');
-		this.dialogWindowElem = document.getElementById('ask-message-dialog');
-		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
-		this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
-		
-		var okElemClickListener = function(event) {
-			self.hide();
-			self.trigger('click:ok');
-		};
-		var cancelElemClickListener = function() {
-			self.hide();
-			self.trigger('click:cancel');
-		};
-		
-		this.okElem.addEventListener('click', okElemClickListener);
-		this.cancelElem.addEventListener('click', cancelElemClickListener);
-		
-		this.once('dispose', function(event) {
-			self.okElem.removeEventListener('click', okElemClickListener);
-			self.cancelElem.removeEventListener('click', cancelElemClickListener);
-		});
-	};
-	AskMessageDialogView.super = View;
-	AskMessageDialogView.prototype = Object.create(View.prototype);
-	AskMessageDialogView.prototype.constructor = AskMessageDialogView;
-	AskMessageDialogView.prototype.hide = function() {
-		this.dialogWindowElem.classList.add('hidden');
-		this.elem.classList.add('hidden');	
-	};
-	AskMessageDialogView.prototype.show = function() {
-		this.dialogWindowElem.classList.remove('hidden');
-		this.elem.classList.remove('hidden');
-	};
-
-	var InviteUserDialogView = function() {
-		InviteUserDialogView.super.apply(this);
-		var self = this;
-
-		this.elem = document.getElementById('dialog-background');
-		this.dialogWindowElem = document.getElementById('invite-user-dialog');
-		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
-		this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
-
-		var okElemClickListener = function(event) {
-			self.hide();
-			self.trigger('click:ok');
-		};
-		var cancelElemClickListener = function() {
-			self.hide();
-			self.trigger('click:cancel');
-		};
-
-		this.okElem.addEventListener('click', okElemClickListener);
-		this.cancelElem.addEventListener('click', cancelElemClickListener);
-
-		this.once('dispose', function(event) {
-			self.okElem.removeEventListener('click', okElemClickListener);
-			self.cancelElem.removeEventListener('click', cancelElemClickListener);
-		});
-	};
-	InviteUserDialogView.super = View;
-	InviteUserDialogView.prototype = Object.create(View.prototype);
-	InviteUserDialogView.prototype.constructor = InviteUserDialogView;
-	InviteUserDialogView.prototype.hide = function() {
-		this.dialogWindowElem.classList.add('hidden');
-		this.elem.classList.add('hidden');
-	};
-	InviteUserDialogView.prototype.show = function() {
-		this.dialogWindowElem.classList.remove('hidden');
-		this.elem.classList.remove('hidden');
-	};
-	
-	var SkipDialogView = function() {
-		SkipDialogView.super.apply(this);
-		var self = this;
-
-		this.elem = document.getElementById('dialog-background');
-		this.dialogWindowElem = document.getElementById('skip-answer-dialog');
-		this.okElem = this.dialogWindowElem.getElementsByClassName('ok')[0];
-		this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
-		this.answerTextElem = this.dialogWindowElem.getElementsByClassName('answer-text')[0];
-
-		var okElemClickListener = function(event) {
-			self.hide();
-			self.trigger('click:ok');
-		};
-		var cancelElemClickListener = function(event) {
-			self.hide();
-			self.trigger('click:cancel');
-		};
-
-		this.okElem.addEventListener('click', okElemClickListener);
-		this.cancelElem.addEventListener('click', cancelElemClickListener);
-
-		this.once('dispose', function(event) {
-			self.okElem.removeEventListener('click', okElemClickListener);
-			self.cancelElem.removeEventListener('click', cancelElemClickListener);
-		});
-	};
-	SkipDialogView.super = View;
-	SkipDialogView.prototype = Object.create(View.prototype);
-	SkipDialogView.prototype.constructor = SkipDialogView;
-	SkipDialogView.prototype.show = function() {
-		this.dialogWindowElem.classList.remove('hidden');
-		this.elem.classList.remove('hidden');
-	};
-	SkipDialogView.prototype.hide = function() {
-		this.dialogWindowElem.classList.add('hidden');
-		this.elem.classList.add('hidden');
-	};
-	SkipDialogView.prototype.setText = function(text) {
-		this.answerTextElem.textContent = text;
-	};
 	
 	var UpdateMessageDialogView = function() {
 		UpdateMessageDialogView.super.apply(this);
@@ -239,56 +59,6 @@ var messenger = messenger || {};
 				break;
 		}
 	};
-	
-	var PrepareChatDialogView = (function(base) {
-		eve.extend(PrepareChatDialogView, base);
-		
-		function PrepareChatDialogView() {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.dialogWindowElem = document.getElementById('prepare-chat-dialog');
-			this.statusElem = this.dialogWindowElem.getElementsByClassName('status')[0];
-			this.readyElem = this.dialogWindowElem.getElementsByClassName('ready')[0];
-	
-			var readyElemClickListener = function(event) {
-				self.hide();
-				self.trigger('click:close');
-			};
-	
-			this.readyElem.addEventListener('click', readyElemClickListener);
-	
-			this.once('dispose', function() {
-				self.readyElem.removeEventListener('click', readyElemClickListener);
-			});
-		}
-		
-		PrepareChatDialogView.prototype.show = function() {
-			base.prototype.show.apply(this, arguments);
-			this.setMode('wait');
-		};
-		PrepareChatDialogView.prototype.setMode = function(mode) {
-			switch (mode) {
-				case 'wait':
-					this.dialogWindowElem.classList.remove('error');
-					this.statusElem.textContent = 'Подготовка диалогов...';
-					this.readyElem.classList.add('hidden');
-					break;
-				case 'complete':
-					this.dialogWindowElem.classList.remove('error');
-					this.readyElem.classList.remove('hidden');
-					this.hide();
-					break;
-				case 'fail':
-					this.dialogWindowElem.classList.add('error');
-					this.statusElem.textContent = 'Не удалось подготовить диалоги!\n Проверьте интернет-подключение и \nпопробуйте позже.';
-					this.readyElem.classList.remove('hidden');
-					break;
-			}	
-		};
-		
-		return PrepareChatDialogView;
-	})(messenger.views.DialogView);
 	
 	var PostDialogView = function() {
 		PostDialogView.super.apply(this);
@@ -498,15 +268,9 @@ var messenger = messenger || {};
 	};
 	
 	messenger.views = messenger.views || {};
-	
-	messenger.views.PreloadDialogView = PreloadDialogView;
-	messenger.views.ErrorDialogView = ErrorDialogView;
-	messenger.views.AskMessageDialogView = AskMessageDialogView;
-	messenger.views.SkipDialogView = SkipDialogView;
+
 	messenger.views.UpdateMessageDialogView = UpdateMessageDialogView;
 	messenger.views.PostDialogView = PostDialogView;
 	messenger.views.ImageSelectDialogView = ImageSelectDialogView;
-	messenger.views.PrepareChatDialogView = PrepareChatDialogView;
-	messenger.views.InviteUserDialogView = InviteUserDialogView;
-	
+
 })(messenger, abyss, template, errors, html, analytics);
