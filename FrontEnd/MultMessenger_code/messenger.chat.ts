@@ -5,37 +5,6 @@ module messenger {
 
 	export module chat {
 
-//		export interface ConnectEvent extends deep.Event {
-//			socketEvent: Event;
-//		}
-//		export interface DisconnectEvent extends deep.Event {
-//			socketEvent: CloseEvent
-//		}
-//		export interface SocketErrorEvent extends deep.Event {
-//			socketEvent: ErrorEvent
-//		}
-//		export interface MessageEvent extends deep.Event{
-//			response: any
-//		}
-//		export interface ErrorMessageEvent extends deep.Event {
-//			socketEvent: any;
-//			exception: Error;
-//		}
-//
-//		export interface IChatClient {
-//			on(type: string, callback: (e: deep.Event) => void, context?: any)
-//			on(type: 'connect', callback: (e: ConnectEvent) => void, context?: any): void;
-//			on(type: 'disconnect', callback: (e: DisconnectEvent) => void, context?: any): void;
-//			on(type: 'error', callback: (e: SocketErrorEvent) => void, context?: any): void;
-//			on(type: 'error:message', callback: (e: ErrorMessageEvent) => void, context?: any): void;
-//
-//			once(type: string, callback: (e: deep.Event) => void, context?: any)
-//			once(type: 'connect', callback: (e: ConnectEvent) => void, context?: any): void;
-//			once(type: 'disconnect', callback: (e: DisconnectEvent) => void, context?: any): void;
-//			once(type: 'error', callback: (e: SocketErrorEvent) => void, context?: any): void;
-//			once(type: 'error:message', callback: (e: ErrorMessageEvent) => void, context?: any): void;
-//		}
-
 		export class ChatClient extends deep.EventEmitter {
 			private socket: WebSocket;
 			private serverUrl: string;
@@ -100,7 +69,7 @@ module messenger {
 					});
 				}
 
-				this.socket.addEventListener('connect', openSocketListener);
+				this.socket.addEventListener('open', openSocketListener);
 				this.socket.addEventListener('close', closeSocketListener);
 				this.socket.addEventListener('message', messageSocketListener);
 				this.socket.addEventListener('error', errorSocketListener);

@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, async, chat, Q, settings, text) {
+(function(messenger, eve, Q, settings) {
 	
 	var EventEmitter = eve.EventEmitter;
 	//var ContactModel = messenger.models.ContactModel;
@@ -354,4 +354,4 @@ var messenger = messenger || {};
 		PhotoStorage: PhotoStorage
 	};
 	
-})(messenger, eve, async, chat, Q, settings, text);
+})(messenger, eve, Q, settings);

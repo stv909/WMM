@@ -210,7 +210,7 @@ var messenger;
             ChatClientWrapper.prototype.connectAsync = function () {
                 var task = this.createRequestTask();
 
-                this.chatClient.once('connect', function (e) {
+                this.chatClient.once('connect', function () {
                     task.resolve(null);
                 });
                 this.chatClient.connect();
@@ -221,7 +221,7 @@ var messenger;
             ChatClientWrapper.prototype.loginAsync = function (account) {
                 var task = this.createRequestTask();
 
-                this.chatClient.once('message:login', function (e) {
+                this.chatClient.once('message:login', function () {
                     task.resolve(null);
                 });
                 this.chatClient.login(account);
@@ -230,9 +230,9 @@ var messenger;
             };
 
             ChatClientWrapper.prototype.connectAndLoginAsync = function (account) {
-                var self = this;
+                var _this = this;
                 return this.connectAsync().then(function () {
-                    return self.loginAsync(account);
+                    return _this.loginAsync(account);
                 });
             };
 

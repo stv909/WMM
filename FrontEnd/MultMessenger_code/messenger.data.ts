@@ -12,9 +12,13 @@ module messenger {
 
 	export module data {
 
-		export declare class ContactModel extends deep.Model {
-			public isCanPostAsync(): Q.Promise<boolean>;
-			public isAppUserAsync(): Q.Promise<boolean>;
+		export class ContactModel extends deep.Model {
+			public isCanPostAsync(): Q.Promise<boolean> {
+				return Q.resolve(true);
+			}
+			public isAppUserAsync(): Q.Promise<boolean> {
+				return Q.resolve(true);
+			}
 		}
 
 		export class UserModel extends ContactModel {
@@ -97,13 +101,6 @@ module messenger {
 		}
 
 		export class GroupModel extends ContactModel {
-			public isAppUserAsync(): Q.Promise<boolean> {
-				return Q.resolve(true);
-			}
-
-			public isCanPostAsync(): Q.Promise<boolean> {
-				return Q.resolve(true);
-			}
 
 			public static fromRaw(rawGroup: vk.Group): GroupModel {
 				var group = new GroupModel();

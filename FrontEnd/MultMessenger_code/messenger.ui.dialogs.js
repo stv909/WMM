@@ -205,7 +205,7 @@ var messenger;
                 this.crossElem.addEventListener('click', cancelClickListener);
                 this.cancelElem.addEventListener('click', cancelClickListener);
                 this.sendElem.addEventListener('click', sendClickListener);
-                this.messageTextElem.addEventListener('click', messageTextInputListener);
+                this.messageTextElem.addEventListener('input', messageTextInputListener);
 
                 this.once('dispose', function () {
                     _this.crossElem.addEventListener('click', cancelClickListener);

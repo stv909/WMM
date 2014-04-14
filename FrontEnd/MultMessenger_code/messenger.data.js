@@ -15,6 +15,21 @@ var messenger;
     'use strict';
 
     (function (data) {
+        var ContactModel = (function (_super) {
+            __extends(ContactModel, _super);
+            function ContactModel() {
+                _super.apply(this, arguments);
+            }
+            ContactModel.prototype.isCanPostAsync = function () {
+                return Q.resolve(true);
+            };
+            ContactModel.prototype.isAppUserAsync = function () {
+                return Q.resolve(true);
+            };
+            return ContactModel;
+        })(deep.Model);
+        data.ContactModel = ContactModel;
+
         var UserModel = (function (_super) {
             __extends(UserModel, _super);
             function UserModel() {
@@ -107,14 +122,6 @@ var messenger;
             function GroupModel() {
                 _super.apply(this, arguments);
             }
-            GroupModel.prototype.isAppUserAsync = function () {
-                return Q.resolve(true);
-            };
-
-            GroupModel.prototype.isCanPostAsync = function () {
-                return Q.resolve(true);
-            };
-
             GroupModel.fromRaw = function (rawGroup) {
                 var group = new GroupModel();
 

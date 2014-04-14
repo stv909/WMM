@@ -227,7 +227,7 @@ module messenger {
 			public connectAsync(): Q.Promise<any> {
 				var task = this.createRequestTask();
 
-				this.chatClient.once('connect', (e) => {
+				this.chatClient.once('connect', () => {
 					task.resolve(null);
 				});
 				this.chatClient.connect();
@@ -238,7 +238,7 @@ module messenger {
 			public loginAsync(account: string): Q.Promise<any> {
 				var task = this.createRequestTask();
 
-				this.chatClient.once('message:login', (e: any) => {
+				this.chatClient.once('message:login', () => {
 					task.resolve(null);
 				});
 				this.chatClient.login(account);
@@ -247,9 +247,8 @@ module messenger {
 			}
 
 			public connectAndLoginAsync(account: string): Q.Promise<any> {
-				var self = this;
-				return this.connectAsync().then(function() {
-					return self.loginAsync(account);
+				return this.connectAsync().then(() => {
+					return this.loginAsync(account);
 				});
 			}
 
