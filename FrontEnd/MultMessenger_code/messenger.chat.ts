@@ -159,6 +159,7 @@ module messenger {
 			public store = function(tag: string, id: string, data: string): void {
 				var chunks = [];
 				if (tag) chunks.push(tag);
+				if (id) chunks.push(id);
 				var tagId = chunks.join('.');
 
 				this.socket.send('store');

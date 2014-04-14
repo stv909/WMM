@@ -20,6 +20,8 @@ var messenger;
                     var chunks = [];
                     if (tag)
                         chunks.push(tag);
+                    if (id)
+                        chunks.push(id);
                     var tagId = chunks.join('.');
 
                     this.socket.send('store');

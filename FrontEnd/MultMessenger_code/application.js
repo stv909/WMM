@@ -286,8 +286,8 @@ window.onload = function() {
 			});
 		};
 		var reconnect = function() {
-			var vkId = Helpers.buildVkId(self.contactRepository.owner);
-			VK.initAsync().then(function() {
+			var vkId = messenger.misc.Helper.buildVkId(self.contactRepository.owner);
+			messenger.vk.initAsync().then(function() {
 				return self.chatClientWrapper.connectAndLoginAsync(vkId);
 			}).then(function() {
 				self.trigger('online');
@@ -648,8 +648,8 @@ window.onload = function() {
 			chatMessage.set({
 				id: eye.uuid(),
 				content: event.text,
-				from: Helpers.buildVkId(fromContact),
-				to: Helpers.buildVkId(toContact)
+				from: messenger.misc.Helper.buildVkId(fromContact),
+				to: messenger.misc.Helper.buildVkId(toContact)
 			});
 			self.chatRepository.addMessage(chatMessage);
 			self.chatClientWrapper.nowAsync().then(function(timestamp) {
@@ -673,8 +673,8 @@ window.onload = function() {
 			chatMessage.set({
 				id: eye.uuid(),
 				content: event.text,
-				from: Helpers.buildVkId(fromContact),
-				to: Helpers.buildVkId(toContact)
+				from: messenger.misc.Helper.buildVkId(fromContact),
+				to: messenger.misc.Helper.buildVkId(toContact)
 			});
 			self.chatRepository.addMessage(chatMessage);
 			self.chatClientWrapper.nowAsync().then(function(timestamp) {
@@ -688,8 +688,8 @@ window.onload = function() {
 				});
 				return Q.all([rawMessage, self.chatClientWrapper.sendMessageAsync(rawMessage)]);
 			}).spread(function(rawMessage, response) {
-				var shareMessageUrl = VkTools.calculateMessageShareUrl(rawMessage.id);
-				return Q.all([rawMessage, VkTools.generatePreviewAsync(shareMessageUrl)]);
+				var shareMessageUrl = messenger.misc.Helper.calculateMessageShareUrl(rawMessage.id);
+				return Q.all([rawMessage, messenger.misc.Helper.generatePreviewAsync(shareMessageUrl)]);
 			}).spread(function(rawMessage, response) {
 				chatMessage.set('preview', [settings.imageStoreBaseUrl, response.image].join(''));
 				rawMessage.preview = response.image;

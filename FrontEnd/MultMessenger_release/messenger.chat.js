@@ -20,6 +20,8 @@ var messenger;
                     var chunks = [];
                     if (tag)
                         chunks.push(tag);
+                    if (id)
+                        chunks.push(id);
                     var tagId = chunks.join('.');
 
                     this.socket.send('store');
@@ -376,4 +378,3 @@ var messenger;
     })(messenger.chat || (messenger.chat = {}));
     var chat = messenger.chat;
 })(messenger || (messenger = {}));
-//# sourceMappingURL=messenger.chat.js.map

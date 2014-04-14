@@ -20,26 +20,13 @@ var messenger;
                     var chunks = [];
                     if (tag)
                         chunks.push(tag);
+                    if (id)
+                        chunks.push(id);
                     var tagId = chunks.join('.');
 
                     this.socket.send('store');
                     this.socket.send(tagId);
                     this.socket.send(data);
-                };
-                this.broadcast = function (tag, id, toUserId, contactMode) {
-                    var tagIdArray = [tag, id];
-                    var contactModeIdArray = [toUserId];
-
-                    if (contactMode) {
-                        contactModeIdArray.splice(0, 0, contactMode);
-                    }
-
-                    var tagId = tagIdArray.join('.');
-                    var contactModeId = contactModeIdArray.join('.');
-
-                    this.socket.send('broadcast');
-                    this.socket.send(tagId);
-                    this.socket.send(contactModeId);
                 };
                 this.serverUrl = serverUrl;
             }
@@ -230,7 +217,21 @@ var messenger;
                 this.socket.send(tagId);
                 this.socket.send(contactModeId);
             };
+            ChatClient.prototype.broadcast = function (tag, id, toUserId, contactMode) {
+                var tagIdArray = [tag, id];
+                var contactModeIdArray = [toUserId];
 
+                if (contactMode) {
+                    contactModeIdArray.splice(0, 0, contactMode);
+                }
+
+                var tagId = tagIdArray.join('.');
+                var contactModeId = contactModeIdArray.join('.');
+
+                this.socket.send('broadcast');
+                this.socket.send(tagId);
+                this.socket.send(contactModeId);
+            };
             ChatClient.prototype.send = function (tag, id, toUserId, contactMode) {
                 var tagIdArray = [tag, id];
                 var contactModeIdArray = [toUserId];
@@ -310,7 +311,7 @@ var messenger;
             ChatClient.prototype.sendMessage = function (message, contactMode) {
                 var tag = 'msg';
                 var data = JSON.stringify(message);
-
+                console.log('send');
                 this.store(tag, message.id, data);
                 this.send(tag, message.id, message.group || message.to, contactMode);
             };
@@ -376,4 +377,3 @@ var messenger;
     })(messenger.chat || (messenger.chat = {}));
     var chat = messenger.chat;
 })(messenger || (messenger = {}));
-//# sourceMappingURL=messenger.chat.js.map

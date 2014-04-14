@@ -186,6 +186,7 @@ module messenger {
 			public store = function(tag: string, id: string, data: string): void {
 				var chunks = [];
 				if (tag) chunks.push(tag);
+				if (id) chunks.push(id);
 				var tagId = chunks.join('.');
 
 				this.socket.send('store');
@@ -243,7 +244,7 @@ module messenger {
 				this.socket.send(tagId);
 				this.socket.send(contactModeId);
 			}
-			public broadcast = function(tag: string, id: string, toUserId: string, contactMode: string): void {
+			public broadcast(tag: string, id: string, toUserId: string, contactMode: string): void {
 				var tagIdArray = [tag, id];
 				var contactModeIdArray = [toUserId];
 
@@ -336,7 +337,7 @@ module messenger {
 			public sendMessage(message: Message, contactMode?: string): void {
 				var tag = 'msg';
 				var data = JSON.stringify(message);
-
+				console.log('send');
 				this.store(tag, message.id, data);
 				this.send(tag, message.id, message.group || message.to, contactMode);
 			}
