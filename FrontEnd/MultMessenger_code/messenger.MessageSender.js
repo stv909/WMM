@@ -65,7 +65,11 @@ var messenger;
                     var vkPost = Helper.createVkPost(rawMessage.id, sender.get('id'), receiver.get('id'), imageId);
                     return messenger.vk.apiAsync('wall.post', vkPost);
                 } else {
-                    _this.trigger('send:wall-closed');
+                    _this.trigger({
+                        type: 'send:wall-closed',
+                        messageTarget: messageTarget,
+                        receiver: receiver
+                    });
                 }
             }).then(function () {
                 _this.trigger({
@@ -78,7 +82,8 @@ var messenger;
                 _this.trigger({
                     type: 'send:fail',
                     error: e,
-                    messageTarget: messageTarget
+                    messageTarget: messageTarget,
+                    receiver: receiver
                 });
             }).done();
         };
@@ -88,7 +93,7 @@ var messenger;
             this.trigger('invite:start');
             receiver.isAppUserAsync().then(function (isAppUser) {
                 if (isAppUser) {
-                    _this.trigger('invite:user');
+                    _this.trigger('invite:always');
                 } else {
                     _this.trigger({
                         type: 'invite:user',

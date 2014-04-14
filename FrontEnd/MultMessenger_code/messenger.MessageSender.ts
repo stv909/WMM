@@ -70,7 +70,11 @@ module messenger {
 					);
 					return vk.apiAsync('wall.post', vkPost);
 				} else {
-					this.trigger('send:wall-closed');
+					this.trigger({
+						type: 'send:wall-closed',
+						messageTarget: messageTarget,
+						receiver: receiver
+					});
 				}
 			}).then(() => {
 				this.trigger({
@@ -83,7 +87,8 @@ module messenger {
 				this.trigger({
 					type: 'send:fail',
 					error: e,
-					messageTarget: messageTarget
+					messageTarget: messageTarget,
+					receiver: receiver
 				});
 			}).done();
 		}
@@ -92,7 +97,7 @@ module messenger {
 			this.trigger('invite:start');
 			receiver.isAppUserAsync().then(isAppUser => {
 				if (isAppUser) {
-					this.trigger('invite:user');
+					this.trigger('invite:always');
 				} else {
 					this.trigger({
 						type: 'invite:user',

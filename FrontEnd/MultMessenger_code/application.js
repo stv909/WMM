@@ -587,7 +587,7 @@ window.onload = function() {
 						text: content
 					})
 				} else {
-					return self.sendMultMessageAsync(account, companion, content, true);
+					return self.messageSender.send(account, companion, content);
 				}
 			}).then(function() {
 				self.postcardView.hide();
@@ -721,9 +721,6 @@ window.onload = function() {
 			self.currentDialogsWaitAsync = self.failDialogsWaitAsync;
 			self.mainMenuView.disableLoader();
 		});
-		this.on('invite:user', function(event) {
-			self.inviteUserDialogView.show();
-		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
 		var parseHash = function(hash) {
@@ -853,7 +850,7 @@ window.onload = function() {
 			self.postDialogView.show();
 		});
 		this.messageSender.on('send:await-fail', function() {
-
+			self.postDialogView.setMode('fail', {});
 		});
 		this.messageSender.on('send:create-message', function() {
 			self.postDialogView.setText('Этап 2 из 6: Создание сообщения...');
@@ -874,8 +871,17 @@ window.onload = function() {
 				);
 			}
 		});
-		this.messageSender.on('send:wall-closed', function() {
-
+		this.messageSender.on('send:create-post', function() {
+			self.postDialogView.setText('Этап 6 из 6: Публикация сообщения на стене...');
+		});
+		this.messageSender.on('send:wall-closed', function(e) {
+			var receiver = e.receiver;
+			self.messageSender.invite(receiver);
+			self.lobbyView.selectUser(receiver);
+			self.lobbyView.trigger({
+				type: 'select-force:user',
+				user: receiver
+			});
 		});
 		this.messageSender.on('send:complete', function(e) {
 			var messageTarget = e.messageTarget;
@@ -891,18 +897,34 @@ window.onload = function() {
 				self.postDialogView.setMode('complete');
 			}
 		});
-		this.messageSender.on('send:fail', function() {
-
+		this.messageSender.on('send:fail', function(e) {
+			var messageTarget = e.messageTarget;
+			var error = e.error;
+			var receiver = e.receiver;
+			self.postDialogView.setMode('fail', error);
+			if (error.errorCode === messenger.misc.ErrorCodes.RESTRICTED &&
+				messageTarget === messenger.misc.MessageTargets.Friend) {
+				self.lobbyView.selectUser(receiver);
+				self.lobbyView.trigger({
+					type: 'select-force:user',
+					user: receiver
+				});
+			}
 		});
 
 		this.messageSender.on('invite:start', function() {
-
+			self.postDialogView.hideDialog();
 		});
 		this.messageSender.on('invite:user', function() {
-
+			self.inviteUserDialogView.show();
+		});
+		this.messageSender.on('invite:always', function() {
+			self.postDialogView.setMode('fail', { errorCode: messenger.misc.ErrorCodes.RESTRICTED });
+			self.postDialogView.show();
 		});
 		this.messageSender.on('invite:fail', function() {
-
+			self.postDialogView.setMode('fail', { errorCode: messenger.misc.ErrorCodes.RESTRICTED });
+			self.postDialogView.show();
 		});
 	};
 	//MessengerApplication.prototype.trySendInvite = function(user) {
