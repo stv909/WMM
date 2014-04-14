@@ -24,12 +24,15 @@ module messenger {
 			this.awaitToken = awaitToken;
 		}
 
-		public send(sender: ContactModel, receiver: ContactModel, content: string): void {
+		public send(sender: ContactModel, receiver: ContactModel, content: string, saveOnWall: boolean): void {
 			var rawMessage = MessageSender.createRawMessage(sender, receiver, content);
 			var messageTarget = Helper.getMessageTarget(sender, receiver);
 			var shareMessageUrl = Helper.calculateMessageShareUrl(rawMessage.id);
 
-			this.trigger('send:start');
+			this.trigger({
+				type: 'send:start',
+				modal: saveOnWall
+			});
 
 			this.awaitToken().then(() => {
 				this.trigger('send:create-message');
@@ -60,7 +63,11 @@ module messenger {
 				return Q.all([ isCanPostPromise, saveWallPhotoPromise ]);
 			}).spread((canPost: boolean, response: vk.SaveWallPhotoItem[]) => {
 				if (canPost) {
-					this.trigger('send:create-post');
+					this.trigger({
+						type: 'send:create-post',
+						messageTarget: messageTarget,
+						receiver: receiver
+					});
 					var imageId = vk.getUploadedFileId(response);
 					var vkPost = Helper.createVkPost(
 						rawMessage.id,
@@ -68,7 +75,11 @@ module messenger {
 						receiver.get('id'),
 						imageId
 					);
-					return vk.apiAsync('wall.post', vkPost);
+					if (saveOnWall) {
+						return vk.apiAsync('wall.post', vkPost);
+					} else {
+						return Q.resolve(true);
+					}
 				} else {
 					this.trigger({
 						type: 'send:wall-closed',

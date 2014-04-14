@@ -587,7 +587,7 @@ window.onload = function() {
 						text: content
 					})
 				} else {
-					return self.messageSender.send(account, companion, content);
+					return self.messageSender.send(account, companion, content, false);
 				}
 			}).then(function() {
 				self.postcardView.hide();
@@ -600,7 +600,7 @@ window.onload = function() {
 			var companion = self.contactRepository.selected;
 			var content = self.editPageView.getMessageContent();
 
-			self.messageSender.send(account, companion, content);
+			self.messageSender.send(account, companion, content, true);
 		});
 		this.postPageView.friendSearchView.on('search:users', function(event) {
 			self.contactRepository.searchUsers(event.text);
@@ -846,8 +846,10 @@ window.onload = function() {
 	MessengerApplication.prototype.initializeMessageSender = function() {
 		var self = this;
 
-		this.messageSender.on('send:start', function() {
-			self.postDialogView.show();
+		this.messageSender.on('send:start', function(e) {
+			if (e.modal) {
+				self.postDialogView.show();
+			}
 		});
 		this.messageSender.on('send:await-fail', function() {
 			self.postDialogView.setMode('fail', {});
@@ -871,8 +873,20 @@ window.onload = function() {
 				);
 			}
 		});
-		this.messageSender.on('send:create-post', function() {
+		this.messageSender.on('send:create-post', function(e) {
+			var messageTarget = e.messageTarget;
+			var receiver = e.receiver;
+
 			self.postDialogView.setText('Этап 6 из 6: Публикация сообщения на стене...');
+
+			if (messageTarget === MessageTargets.Friend) {
+				self.postDialogView.hide();
+				self.lobbyView.selectUser(receiver);
+				self.lobbyView.trigger({
+					type: 'select-force:user',
+					user: receiver
+				});
+			}
 		});
 		this.messageSender.on('send:wall-closed', function(e) {
 			var receiver = e.receiver;
@@ -886,14 +900,7 @@ window.onload = function() {
 		this.messageSender.on('send:complete', function(e) {
 			var messageTarget = e.messageTarget;
 			var receiver = e.receiver;
-			if (messageTarget === MessageTargets.Friend) {
-				self.postDialogView.hide();
-				self.lobbyView.selectUser(receiver);
-				self.lobbyView.trigger({
-					type: 'select-force:user',
-					user: receiver
-				});
-			} else {
+			if (messageTarget !== MessageTargets.Friend) {
 				self.postDialogView.setMode('complete');
 			}
 		});
@@ -927,85 +934,6 @@ window.onload = function() {
 			self.postDialogView.show();
 		});
 	};
-	//MessengerApplication.prototype.trySendInvite = function(user) {
-////		var self = this;
-////		self.postDialogView.hideDialog();
-////		user.isAppUserAsync().then(function(isAppUser) {
-////			if (!isAppUser) {
-////				self.trigger({
-////					type: 'invite:user',
-////					user: user
-////				});
-////			} else {
-////				self.postDialogView.show();
-////				self.postDialogView.setMode('fail', { errorCode: errors.ErrorCodes.RESTRICTED });
-////			}
-////		});
-	//};
-	//MessengerApplication.prototype.sendMultMessageAsync = function(account, companion, content, hidePostDialog) {
-//		var self = this;
-//		self.postDialogView.show();
-//
-//		var message = MessageFactory.create(
-//			eye.uuid(),
-//			Helpers.normalizeMessageContent(content),
-//			Helpers.buildVkId(account),
-//			Helpers.buildVkId(companion)
-//		);
-//		var messageTarget = Helpers.getMessageTarget(account, companion);
-//		var action = ['post', messageTarget].join('_');
-//		var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
-//
-//		return self.currentDialogsWaitAsync().then(function() {
-//			self.postDialogView.setText('Этап 2 из 6: Создание сообщения...');
-//			return self.chatClientWrapper.nowAsync();
-//		}).then(function(timestamp) {
-//			self.postDialogView.setText('Этап 3 из 6: Сохранение сообщения...');
-//			message.timestamp = timestamp;
-//			return self.chatClientWrapper.sendMessageAsync(message);
-//		}).then(function() {
-//			self.postDialogView.setText('Этап 4 из 6: Создание превью...');
-//			return VkTools.getWallPhotoUploadUrlAsync();
-//		}).then(function(uploadUrl) {
-//			return VkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
-//		}).then(function(response) {
-//			self.postDialogView.setText('Этап 5 из 6: Сохранение превью в альбоме...');
-//			var uploadResult = response.uploadResult;
-//			var image = response.image;
-//			message.preview = image;
-//			self.chatClient.notifyMessage(message);
-//			var chatMessage = self.chatRepository.getMessage(message.id);
-//			if (chatMessage) {
-//				chatMessage.set('preview', [settings.imageStoreBaseUrl, image].join(''));
-//			}
-//			uploadResult.v = 5.12;
-//			var isCanPostPromise = companion.isCanPostAsync();
-//			var saveWallPhotoPromise = VK.apiAsync('photos.saveWallPhoto', uploadResult);
-//			return Q.all([isCanPostPromise, saveWallPhotoPromise]);
-//		}).spread(function(canPost, response) {
-//			if (canPost) {
-//				self.postDialogView.setText('Этап 6 из 6: Публикация сообщения на стене...');
-//				var imageId = VkTools.getUploadedFileId(response);
-//				var ownerId = companion.get('id');
-//				var senderId = account.get('id');
-//				var postData = VkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
-//				return VK.apiAsync('wall.post', postData);
-//			} else {
-//				self.trySendInvite(companion);
-//				throw { errorCode: errors.ErrorCodes.RESTRICTED };
-//			}
-//		}).then(function() {
-//			if (hidePostDialog) {
-//				self.postDialogView.hide();
-//			}
-//			self.postDialogView.setMode('complete');
-//			analytics.send('post', action, 'success');
-//		}).catch(function(error) {
-//			self.postDialogView.setMode('fail', error);
-//			console.error(error);
-//			analytics.send('post', action, VkTools.formatError(error));
-//			throw error;
-//		});
-	//};
+
 	var messengerApplication = new MessengerApplication();
 };

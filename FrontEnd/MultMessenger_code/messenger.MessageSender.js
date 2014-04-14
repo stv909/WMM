@@ -23,13 +23,16 @@ var messenger;
             this.chatClientWrapper = chatClientWrapper;
             this.awaitToken = awaitToken;
         }
-        MessageSender.prototype.send = function (sender, receiver, content) {
+        MessageSender.prototype.send = function (sender, receiver, content, saveOnWall) {
             var _this = this;
             var rawMessage = MessageSender.createRawMessage(sender, receiver, content);
             var messageTarget = Helper.getMessageTarget(sender, receiver);
             var shareMessageUrl = Helper.calculateMessageShareUrl(rawMessage.id);
 
-            this.trigger('send:start');
+            this.trigger({
+                type: 'send:start',
+                modal: saveOnWall
+            });
 
             this.awaitToken().then(function () {
                 _this.trigger('send:create-message');
@@ -60,10 +63,18 @@ var messenger;
                 return Q.all([isCanPostPromise, saveWallPhotoPromise]);
             }).spread(function (canPost, response) {
                 if (canPost) {
-                    _this.trigger('send:create-post');
+                    _this.trigger({
+                        type: 'send:create-post',
+                        messageTarget: messageTarget,
+                        receiver: receiver
+                    });
                     var imageId = messenger.vk.getUploadedFileId(response);
                     var vkPost = Helper.createVkPost(rawMessage.id, sender.get('id'), receiver.get('id'), imageId);
-                    return messenger.vk.apiAsync('wall.post', vkPost);
+                    if (saveOnWall) {
+                        return messenger.vk.apiAsync('wall.post', vkPost);
+                    } else {
+                        return Q.resolve(true);
+                    }
                 } else {
                     _this.trigger({
                         type: 'send:wall-closed',
