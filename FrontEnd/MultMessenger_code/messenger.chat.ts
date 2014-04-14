@@ -45,6 +45,10 @@ module messenger {
 				this.serverUrl = serverUrl;
 			}
 
+			public readyState(): number {
+				return this.socket.readyState;
+			}
+
 			public connect(): void {
 				var self = this;
 				this.socket = new WebSocket(this.serverUrl);

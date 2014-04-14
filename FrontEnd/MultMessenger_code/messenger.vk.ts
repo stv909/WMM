@@ -36,6 +36,20 @@ module messenger {
 			items: Group[];
 		}
 
+		export interface WallUploadServerResponse {
+			upload_url: string;
+		}
+
+		export interface SaveWallPhotoParams {
+			image: string;
+			v?: number;
+		}
+
+		export interface SaveWallPhotoItem {
+			owner_id: number;
+			id: string;
+		}
+
 		export function apiAsync(method: string, params?: {}): Q.Promise<any> {
 			var deferred = Q.defer();
 
@@ -65,6 +79,27 @@ module messenger {
 			}, 5.12);
 
 			return deferred.promise;
+		}
+
+		export function callMethod(method: string): void {
+			VK.callMethod(method);
+		}
+
+		export function getWallUploadServerAsync(): Q.Promise<string> {
+			return apiAsync('photo.getWallUploadServer', {
+				v: 5.12
+			}).then((response: WallUploadServerResponse) => {
+				return response.upload_url;
+			});
+		}
+
+		export function saveWallPhotoAsync(params: SaveWallPhotoParams): Q.Promise<SaveWallPhotoItem[]> {
+			params.v = params.v || 5.12;
+			return apiAsync('photos.saveWallPhoto', params);
+		}
+
+		export function getUploadedFileId(response: SaveWallPhotoItem[]): string {
+			return ['photo', response[0].owner_id, '_', response[0].id].join('');
 		}
 
 	}

@@ -58,6 +58,10 @@ var messenger;
                 };
                 this.serverUrl = serverUrl;
             }
+            ChatClient.prototype.readyState = function () {
+                return this.socket.readyState;
+            };
+
             ChatClient.prototype.connect = function () {
                 var self = this;
                 this.socket = new WebSocket(this.serverUrl);

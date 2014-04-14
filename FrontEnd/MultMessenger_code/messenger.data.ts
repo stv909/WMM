@@ -12,8 +12,9 @@ module messenger {
 
 	export module data {
 
-		export class ContactModel extends deep.Model {
-
+		export declare class ContactModel extends deep.Model {
+			public isCanPostAsync(): Q.Promise<boolean>;
+			public isAppUserAsync(): Q.Promise<boolean>;
 		}
 
 		export class UserModel extends ContactModel {

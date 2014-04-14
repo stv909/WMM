@@ -35,6 +35,31 @@ var messenger;
             return deferred.promise;
         }
         vk.initAsync = initAsync;
+
+        function callMethod(method) {
+            VK.callMethod(method);
+        }
+        vk.callMethod = callMethod;
+
+        function getWallUploadServerAsync() {
+            return apiAsync('photo.getWallUploadServer', {
+                v: 5.12
+            }).then(function (response) {
+                return response.upload_url;
+            });
+        }
+        vk.getWallUploadServerAsync = getWallUploadServerAsync;
+
+        function saveWallPhotoAsync(params) {
+            params.v = params.v || 5.12;
+            return apiAsync('photos.saveWallPhoto', params);
+        }
+        vk.saveWallPhotoAsync = saveWallPhotoAsync;
+
+        function getUploadedFileId(response) {
+            return ['photo', response[0].owner_id, '_', response[0].id].join('');
+        }
+        vk.getUploadedFileId = getUploadedFileId;
     })(messenger.vk || (messenger.vk = {}));
     var vk = messenger.vk;
 })(messenger || (messenger = {}));
