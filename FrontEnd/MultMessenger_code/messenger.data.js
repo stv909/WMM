@@ -192,6 +192,48 @@ var messenger;
             return MessageModel;
         })(deep.Model);
         data.MessageModel = MessageModel;
+
+        var ChatMessageModel = (function (_super) {
+            __extends(ChatMessageModel, _super);
+            function ChatMessageModel() {
+                var _this = this;
+                _super.call(this);
+                this.on('set:preview', function (e) {
+                    var preview = e.value;
+                    if (preview) {
+                        _this.set('type', 'mult');
+                    } else {
+                        _this.set('type', 'text');
+                    }
+                });
+                this.on('unset:preview', function () {
+                    _this.set('type', 'text');
+                });
+            }
+            ChatMessageModel.prototype.isMult = function () {
+                return this.get('content').indexOf('class="tool_layerBackground"') !== -1;
+            };
+
+            ChatMessageModel.prototype.isValid = function () {
+                return !!this.get('content');
+            };
+
+            ChatMessageModel.fromRaw = function (messageResponse) {
+                var value = messageResponse.value || {};
+                var message = new ChatMessageModel();
+                message.set({
+                    id: value.id || -1,
+                    timestamp: value.timestamp,
+                    content: value.content ? base64.decode(value.content) : '',
+                    preview: value.preview ? [messenger.Settings.imageStoreBaseUrl, value.preview].join('') : null,
+                    from: value.from,
+                    to: value.to
+                });
+                return message;
+            };
+            return ChatMessageModel;
+        })(deep.Model);
+        data.ChatMessageModel = ChatMessageModel;
     })(messenger.data || (messenger.data = {}));
     var data = messenger.data;
 })(messenger || (messenger = {}));

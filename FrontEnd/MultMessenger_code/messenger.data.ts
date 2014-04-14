@@ -169,6 +169,45 @@ module messenger {
 			}
 		}
 
+		export class ChatMessageModel extends deep.Model {
+			public constructor() {
+				super();
+				this.on('set:preview', (e: deep.ModelSetValueEvent<string>) => {
+					var preview = e.value;
+					if (preview) {
+						this.set('type', 'mult');
+					} else {
+						this.set('type', 'text');
+					}
+				});
+				this.on('unset:preview', () => {
+					this.set('type', 'text');
+				});
+			}
+
+			public isMult(): boolean {
+				return this.get('content').indexOf('class="tool_layerBackground"') !== -1;
+			}
+
+			public isValid(): boolean {
+				return !!this.get('content');
+			}
+
+			public static fromRaw(messageResponse: chat.MessageResponse): MessageModel {
+				var value = messageResponse.value || <chat.Message>{};
+				var message = new ChatMessageModel();
+				message.set({
+					id: value.id || -1,
+					timestamp: value.timestamp,
+					content: value.content ? base64.decode(value.content) : '',
+					preview: value.preview ? [Settings.imageStoreBaseUrl, value.preview].join('') : null,
+					from: value.from,
+					to: value.to
+				});
+				return message;
+			}
+		}
+
 	}
 
 }

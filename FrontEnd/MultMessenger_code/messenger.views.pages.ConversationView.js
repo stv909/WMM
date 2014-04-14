@@ -230,7 +230,7 @@
 			var self = this;
 			this.controlsView = new MessageControlsView(this.chatMessage);
 			this.controlsView.attachTo(this.controlsHolderElem);
-			
+
 			if (this.chatMessage.isMult()) {
 				this.contactView = new messenger.views.UserView(this.contact, true);
 				this.contactView.disableUnreadCounter();
