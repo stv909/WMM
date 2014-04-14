@@ -22,6 +22,12 @@
 					message: event.message
 				});
 			};
+			this.tapePageClickWallListener = function(event) {
+				self.trigger({
+					type: 'click:wall',
+					message: event.message
+				});
+			};
 
 			this.cachedTapeViews = {};
 			this.currentTapeView = null;
@@ -51,6 +57,7 @@
 				tapeView = new TapePageView(contactId);
 				tapeView.on('click:hint', this.tapePageClickHintListener);
 				tapeView.on('click:answer', this.tapePageClickAnswerListener);
+				tapeView.on('click:wall', this.tapePageClickWallListener);
 				this.cachedTapeViews[contactId] = tapeView;
 			}
 			return tapeView;
@@ -97,6 +104,12 @@
 			this.answerMessageListener = function(event) {
 				self.trigger({
 					type: 'click:answer',
+					message: event.message
+				});
+			};
+			this.wallMessageListener = function(event) {
+				self.trigger({
+					type: 'click:wall',
 					message: event.message
 				});
 			};
@@ -149,6 +162,7 @@
 			tapeItemView.attachFirstTo(this.containerElem);
 			tapeItemView.on('select:message', this.selectMessageSelectListener);
 			tapeItemView.on('click:answer', this.answerMessageListener);
+			tapeItemView.on('click:wall', this.wallMessageListener);
 
 			this.tapeItemViews[messageId] = tapeItemView;
 			this.hideTeaser();
@@ -236,7 +250,13 @@
 				this.contactView.disableUnreadCounter();
 				this.contactView.disableSelecting();
 				this.contactView.attachFirstTo(this.contactHolderElem);
-				
+
+				this.controlsView.on('click:wall', function() {
+					self.trigger({
+						type: 'click:wall',
+						message: self.chatMessage
+					});
+				});
 				this.answerElem.classList.remove('hidden');
 				this.answerElem.addEventListener('click', function() {
 					self.trigger({
@@ -346,8 +366,7 @@
 				self.wallElem.removeEventListener('click', wallElemClickListener);
 				self.urlElem.removeEventListener('click', urlElemClickListener);
 			});
-			
-			this.hideWallButton();
+
 			this.hideUrlButton();
 		}
 		

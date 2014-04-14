@@ -522,6 +522,22 @@ window.onload = function() {
 			self.postcardMenuView.postItemView.setText('3. Отправь в диалог!');
 			self.currentPostClickHandler = self.chatPostClickHandler;
 		});
+		this.conversationView.on('click:wall', function(event) {
+			var message = event.message;
+			var contact = self.chatRepository.contact;
+			self.selectPageView.deselect();
+			self.editPageView.setMessage(message);
+			self.mainMenuView.postcardItemView.select();
+			self.postPageView.setMode('friend');
+			self.postPageView.friendSearchView.selectFriend(contact);
+			self.postPageView.friendSearchView.trigger({
+				type: 'select:user',
+				user: contact
+			});
+			Q.resolve(true).then(function() {
+				self.postcardMenuView.postItemView.select();
+			});
+		});
 
 		this.lobbyView.on('search:users', function(event) {
 			self.contactRepository.searchChatUsers(event.text);
@@ -838,7 +854,6 @@ window.onload = function() {
 			online.forEach(function(vkid) {
 				var user = self.contactRepository.getChatUserByVkid(vkid);
 				user.set('online', true);
-				
 			});
 		});
 		this.chatClient.online();

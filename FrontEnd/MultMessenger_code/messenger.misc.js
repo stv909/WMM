@@ -172,7 +172,7 @@ var messenger;
                 }
 
                 return {
-                    owner_id: senderId,
+                    owner_id: receiverId,
                     message: [content, answerUrl].join(''),
                     attachments: [imageId, fullAnswerUrl].join(','),
                     v: 5.12
