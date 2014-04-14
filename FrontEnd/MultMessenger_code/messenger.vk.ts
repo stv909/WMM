@@ -40,11 +40,6 @@ module messenger {
 			upload_url: string;
 		}
 
-		export interface SaveWallPhotoParams {
-			image: string;
-			v?: number;
-		}
-
 		export interface SaveWallPhotoItem {
 			owner_id: number;
 			id: string;
@@ -86,14 +81,14 @@ module messenger {
 		}
 
 		export function getWallUploadServerAsync(): Q.Promise<string> {
-			return apiAsync('photo.getWallUploadServer', {
+			return apiAsync('photos.getWallUploadServer', {
 				v: 5.12
 			}).then((response: WallUploadServerResponse) => {
 				return response.upload_url;
 			});
 		}
 
-		export function saveWallPhotoAsync(params: SaveWallPhotoParams): Q.Promise<SaveWallPhotoItem[]> {
+		export function saveWallPhotoAsync(params: any): Q.Promise<SaveWallPhotoItem[]> {
 			params.v = params.v || 5.12;
 			return apiAsync('photos.saveWallPhoto', params);
 		}

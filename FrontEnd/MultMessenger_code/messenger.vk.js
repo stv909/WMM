@@ -42,7 +42,7 @@ var messenger;
         vk.callMethod = callMethod;
 
         function getWallUploadServerAsync() {
-            return apiAsync('photo.getWallUploadServer', {
+            return apiAsync('photos.getWallUploadServer', {
                 v: 5.12
             }).then(function (response) {
                 return response.upload_url;

@@ -48,8 +48,9 @@ module messenger {
 			}).then(uploadUrl => {
 				return Helper.generatePreviewAsync(shareMessageUrl, uploadUrl);
 			}).then(response => {
+				console.log(response);
 				var uploadResult = response.uploadResult;
-				rawMessage.preview = uploadResult.image;
+				rawMessage.preview = response.image;
 				this.trigger({
 					type: 'send:save-preview',
 					rawMessage: rawMessage
@@ -74,10 +75,12 @@ module messenger {
 				}
 			}).then(() => {
 				this.trigger({
-					type: 'send-complete',
-					messageTarget: messageTarget
+					type: 'send:complete',
+					messageTarget: messageTarget,
+					receiver: receiver
 				});
 			}).catch((e) => {
+				console.log(e);
 				this.trigger({
 					type: 'send:fail',
 					error: e,
@@ -100,6 +103,11 @@ module messenger {
 			}).catch(() => {
 				this.trigger('invite:fail');
 			});
+		}
+
+		public on<E extends deep.Event>(type: string, callback: (e: E) => void, context?: any): void;
+		public on<E extends deep.Event>(type: string, callback: (e: E) => void, context?: any): void {
+			super.on(type, callback, context);
 		}
 
 		private static createRawMessage(sender: ContactModel, receiver: ContactModel, content: string): Message {

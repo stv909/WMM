@@ -48,8 +48,9 @@ var messenger;
             }).then(function (uploadUrl) {
                 return Helper.generatePreviewAsync(shareMessageUrl, uploadUrl);
             }).then(function (response) {
+                console.log(response);
                 var uploadResult = response.uploadResult;
-                rawMessage.preview = uploadResult.image;
+                rawMessage.preview = response.image;
                 _this.trigger({
                     type: 'send:save-preview',
                     rawMessage: rawMessage
@@ -69,10 +70,12 @@ var messenger;
                 }
             }).then(function () {
                 _this.trigger({
-                    type: 'send-complete',
-                    messageTarget: messageTarget
+                    type: 'send:complete',
+                    messageTarget: messageTarget,
+                    receiver: receiver
                 });
             }).catch(function (e) {
+                console.log(e);
                 _this.trigger({
                     type: 'send:fail',
                     error: e,
@@ -96,6 +99,10 @@ var messenger;
             }).catch(function () {
                 _this.trigger('invite:fail');
             });
+        };
+
+        MessageSender.prototype.on = function (type, callback, context) {
+            _super.prototype.on.call(this, type, callback, context);
         };
 
         MessageSender.createRawMessage = function (sender, receiver, content) {

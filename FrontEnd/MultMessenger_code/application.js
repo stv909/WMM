@@ -10,6 +10,7 @@ window.onload = function() {
 	var Helpers = messenger.utils.Helpers;
 
 	var MessageFactory = messenger.chat.MessageFactory;
+	var MessageTargets = messenger.misc.MessageTargets;
 
 	var MessengerApplication = function() {
 		MessengerApplication.super.apply(this);
@@ -20,6 +21,7 @@ window.onload = function() {
 
 		this.chatClient = new messenger.chat.ChatClient(settings.chatUrl);
 		this.chatClientWrapper = new messenger.misc.ChatClientWrapper(this.chatClient);
+		this.messageSender = new messenger.MessageSender(this.chatClientWrapper, getDialogAwaitToken);
 		
 		this.messageStorage = new MessageStorage(this.chatClientWrapper);
 		
@@ -97,6 +99,9 @@ window.onload = function() {
 			return deferred.promise;
 		};
 
+		function getDialogAwaitToken() {
+			return self.currentDialogsWaitAsync();
+		}
 		this.currentDialogsWaitAsync = function() {
 			var deferred = Q.defer();
 
@@ -135,6 +140,7 @@ window.onload = function() {
 		this.initializeChatClient();
 		this.initializeViews();
 		this.initializeSettings();
+		this.initializeMessageSender();
 		this.initializeStartupData();
 	};
 	MessengerApplication.super = EventEmitter;
@@ -594,7 +600,7 @@ window.onload = function() {
 			var companion = self.contactRepository.selected;
 			var content = self.editPageView.getMessageContent();
 
-			self.sendMultMessageAsync(account, companion, content);
+			self.messageSender.send(account, companion, content);
 		});
 		this.postPageView.friendSearchView.on('search:users', function(event) {
 			self.contactRepository.searchUsers(event.text);
@@ -780,7 +786,7 @@ window.onload = function() {
 			self.chatRepository.loadTapeMessagesAsync().then(function() {
 				self.contactRepository.searchChatUsers('');
 				self.lobbyView.selectUser(self.chatRepository.getContact());
-				self.initializeMessaging();
+				self.initializeDialogs();
 				self.trigger('complete:dialogs');
 				analytics.send('dialog', 'dialog_success');
 			}).catch(function(error) {
@@ -795,7 +801,7 @@ window.onload = function() {
 			alert('Приносим извенение. В настоящий момент в работе приложения наблюдаются проблемы. Возможно вы используете неподдерживаемый браузер. Установите Chrome, Opera, YaBrowser или Safari');
 		});
 	};
-	MessengerApplication.prototype.initializeMessaging = function() {
+	MessengerApplication.prototype.initializeDialogs = function() {
 		var self = this;
 		var processInputMessage = function(rawMessage, soundNotification) {
 			rawMessage.value = rawMessage.body;
@@ -840,22 +846,81 @@ window.onload = function() {
 		});
 		this.chatClient.online();
 	};
-	MessengerApplication.prototype.trySendInvite = function(user) {
-//		var self = this;
-//		self.postDialogView.hideDialog();
-//		user.isAppUserAsync().then(function(isAppUser) {
-//			if (!isAppUser) {
-//				self.trigger({
-//					type: 'invite:user',
-//					user: user
-//				});
-//			} else {
-//				self.postDialogView.show();
-//				self.postDialogView.setMode('fail', { errorCode: errors.ErrorCodes.RESTRICTED });
-//			}
-//		});
+	MessengerApplication.prototype.initializeMessageSender = function() {
+		var self = this;
+
+		this.messageSender.on('send:start', function() {
+			self.postDialogView.show();
+		});
+		this.messageSender.on('send:await-fail', function() {
+
+		});
+		this.messageSender.on('send:create-message', function() {
+			self.postDialogView.setText('Этап 2 из 6: Создание сообщения...');
+		});
+		this.messageSender.on('send:save-message', function() {
+			self.postDialogView.setText('Этап 3 из 6: Сохранение сообщения...');
+		});
+		this.messageSender.on('send:create-preview', function() {
+			self.postDialogView.setText('Этап 4 из 6: Создание превью...');
+		});
+		this.messageSender.on('send:save-preview', function(e) {
+			self.postDialogView.setText('Этап 5 из 6: Сохранение превью в альбоме...');
+			var chatMessage = self.chatRepository.getMessage(e.rawMessage.id);
+			if (chatMessage) {
+				chatMessage.set(
+					'preview',
+					[messenger.Settings.imageStoreBaseUrl, e.rawMessage.preview].join('')
+				);
+			}
+		});
+		this.messageSender.on('send:wall-closed', function() {
+
+		});
+		this.messageSender.on('send:complete', function(e) {
+			var messageTarget = e.messageTarget;
+			var receiver = e.receiver;
+			if (messageTarget === MessageTargets.Friend) {
+				self.postDialogView.hide();
+				self.lobbyView.selectUser(receiver);
+				self.lobbyView.trigger({
+					type: 'select-force:user',
+					user: receiver
+				});
+			} else {
+				self.postDialogView.setMode('complete');
+			}
+		});
+		this.messageSender.on('send:fail', function() {
+
+		});
+
+		this.messageSender.on('invite:start', function() {
+
+		});
+		this.messageSender.on('invite:user', function() {
+
+		});
+		this.messageSender.on('invite:fail', function() {
+
+		});
 	};
-	MessengerApplication.prototype.sendMultMessageAsync = function(account, companion, content, hidePostDialog) {
+	//MessengerApplication.prototype.trySendInvite = function(user) {
+////		var self = this;
+////		self.postDialogView.hideDialog();
+////		user.isAppUserAsync().then(function(isAppUser) {
+////			if (!isAppUser) {
+////				self.trigger({
+////					type: 'invite:user',
+////					user: user
+////				});
+////			} else {
+////				self.postDialogView.show();
+////				self.postDialogView.setMode('fail', { errorCode: errors.ErrorCodes.RESTRICTED });
+////			}
+////		});
+	//};
+	//MessengerApplication.prototype.sendMultMessageAsync = function(account, companion, content, hidePostDialog) {
 //		var self = this;
 //		self.postDialogView.show();
 //
@@ -919,7 +984,6 @@ window.onload = function() {
 //			analytics.send('post', action, VkTools.formatError(error));
 //			throw error;
 //		});
-	};
-
+	//};
 	var messengerApplication = new MessengerApplication();
 };

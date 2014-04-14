@@ -74,9 +74,8 @@ module messenger {
 		}
 
 		export interface PreviewResponse {
-			uploadResult: {
-				image: string;
-			}
+			image: string;
+			uploadResult: {}
 		}
 
 		export class Helper {
