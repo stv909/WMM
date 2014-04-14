@@ -8,9 +8,15 @@
 
 module messenger {
 
+	'use strict';
+
 	export module data {
 
-		export class UserModel extends deep.Model {
+		export class ContactModel extends deep.Model {
+
+		}
+
+		export class UserModel extends ContactModel {
 			public getFullName(): string {
 				return [this.get('firstName'), this.get('lastName')].join(' ');
 			}
@@ -89,7 +95,7 @@ module messenger {
 			}
 		}
 
-		export class GroupModel extends deep.Model {
+		export class GroupModel extends ContactModel {
 			public isAppUserAsync(): Q.Promise<boolean> {
 				return Q.resolve(true);
 			}

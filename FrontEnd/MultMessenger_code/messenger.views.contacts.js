@@ -131,15 +131,15 @@ var messenger = messenger || {};
 						self.elem.classList.remove('app');
 					}
 				};
-				this.model.on('change:unread', function(event) {
+				this.model.on('set:unread', function(event) {
 					var unread = event.value;
 					updateUnreadElem(unread);
 				});
-				this.model.on('change:online', function(event) {
+				this.model.on('set:online', function(event) {
 					var online = event.value;
 					updateOnlineStatus(online);
 				});
-				this.model.on('change:isAppUser', function(event) {
+				this.model.on('set:isAppUser', function(event) {
 					var isAppUser = event.value;
 					updateIsAppUser(isAppUser);
 				});
@@ -187,7 +187,7 @@ var messenger = messenger || {};
 			
 			this.nameElem.addEventListener('click', nameElemClickListener);
 			this.elem.addEventListener('click', elemClickListener);
-						
+
 			this.on('dispose', function() {
 				self.nameElem.removeEventListener('click', nameElemClickListener);
 				self.elem.removeEventListener('click', elemClickListener);

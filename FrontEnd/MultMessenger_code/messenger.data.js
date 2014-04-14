@@ -12,7 +12,18 @@ var __extends = this.__extends || function (d, b) {
 /// <reference path="messenger.Settings.ts" />
 var messenger;
 (function (messenger) {
+    'use strict';
+
     (function (data) {
+        var ContactModel = (function (_super) {
+            __extends(ContactModel, _super);
+            function ContactModel() {
+                _super.apply(this, arguments);
+            }
+            return ContactModel;
+        })(deep.Model);
+        data.ContactModel = ContactModel;
+
         var UserModel = (function (_super) {
             __extends(UserModel, _super);
             function UserModel() {
@@ -97,7 +108,7 @@ var messenger;
                 });
             };
             return UserModel;
-        })(deep.Model);
+        })(ContactModel);
         data.UserModel = UserModel;
 
         var GroupModel = (function (_super) {
@@ -140,7 +151,7 @@ var messenger;
                 });
             };
             return GroupModel;
-        })(deep.Model);
+        })(ContactModel);
         data.GroupModel = GroupModel;
 
         var MessageModel = (function (_super) {

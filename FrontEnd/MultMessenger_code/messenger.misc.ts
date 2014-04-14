@@ -1,6 +1,9 @@
 /// <reference path="deep.ts" />
+/// <reference path="messenger.data.ts" />
 
 module messenger {
+
+	'use strict';
 
 	export module misc {
 
@@ -59,6 +62,65 @@ module messenger {
 			public on<E extends deep.Event>(type: string, callback: (e: E) => void, context?: any): void;
 			public on<E extends deep.Event>(type: string, callback: (e: E) => void, context?: any): void {
 				super.on(type, callback, context);
+			}
+		}
+
+		export class Helper {
+			public static buildVkId(contact: data.ContactModel): string {
+				var contactId = contact.get('id');
+				if (contactId >= 0) {
+					return [ 'vkid', contactId ].join('');
+				} else {
+					var type = contact.get('type');
+					return [ 'vk', type, -contactId ].join('');
+				}
+			}
+
+			public static buildFbId(contact: data.ContactModel): string {
+				var contactId = contact.get('id');
+				return [ 'fbid', contactId ].join('');
+			}
+
+			public static normalizeMessageContent(content: string): string {
+				var wkTransformPattern = /(-webkit-transform:([^;]*);)/g;
+				var mozTransformPattern = /(-moz-transform:([^;]*);)/g;
+				var msTransformPattern = /(-ms-transform:([^;]*);)/g;
+				var transformPattern = /([^-]transform:([^;]*);)/g;
+				var wkTransformRepeatPattern = /(\s*-webkit-transform:([^;]*);\s*)+/g;
+
+				var buildWkTransform = function(transformValue) {
+					return ['-webkit-transform:', transformValue, ';'].join('');
+				};
+				var buildMozTransform = function(transformValue) {
+					return ['-moz-transform:', transformValue, ';'].join('');
+				};
+				var buildMsTransform = function(transformValue) {
+					return ['-ms-transform:', transformValue, ';'].join('');
+				};
+				var buildTransform = function(transformValue) {
+					return ['transform:', transformValue, ';'].join('');
+				};
+				var replaceTransform = function(match, transform, transformValue) {
+					return [
+						buildWkTransform(transformValue),
+						buildMozTransform(transformValue),
+						buildMsTransform(transformValue),
+						buildTransform(transformValue)
+					].join(' ');
+				};
+				var replaceWkTransform = function(match, transform, transformValue) {
+					return buildWkTransform(transformValue);
+				};
+
+				return content
+					.replace(mozTransformPattern, replaceWkTransform)
+					.replace(msTransformPattern, replaceWkTransform)
+					.replace(transformPattern, replaceWkTransform)
+					.replace(wkTransformRepeatPattern, replaceTransform)
+					.replace(mozTransformPattern, replaceWkTransform)
+					.replace(msTransformPattern, replaceWkTransform)
+					.replace(transformPattern, replaceWkTransform)
+					.replace(wkTransformRepeatPattern, replaceTransform);
 			}
 		}
 
