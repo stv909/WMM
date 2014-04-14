@@ -227,6 +227,15 @@ var messenger;
             return CreateTextMessageDialogView;
         })(ui.DialogView);
         ui.CreateTextMessageDialogView = CreateTextMessageDialogView;
+
+        var PrepareChatDialogView = (function (_super) {
+            __extends(PrepareChatDialogView, _super);
+            function PrepareChatDialogView() {
+                _super.call(this, 'prepare-chat-dialog');
+            }
+            return PrepareChatDialogView;
+        })(ui.DialogView);
+        ui.PrepareChatDialogView = PrepareChatDialogView;
     })(messenger.ui || (messenger.ui = {}));
     var ui = messenger.ui;
 })(messenger || (messenger = {}));

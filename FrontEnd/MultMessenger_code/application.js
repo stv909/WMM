@@ -47,6 +47,7 @@ window.onload = function() {
 		this.errorDialogView = new messenger.ui.ErrorDialogView();
 		this.cancelMessageUpdateDialogView = new messenger.ui.CancelMessageUpdateDialogView();
 		this.createMessageDialogView = new messenger.ui.CreateTextMessageDialogView();
+		this.prepareChatDialogView = new messenger.ui.PrepareChatDialogView();
 
 		this.postDialogView = new messenger.views.PostDialogView();
 
@@ -228,7 +229,7 @@ window.onload = function() {
 				self.lobbyView.showLoader();
 				self.lobbyView.off('click:load');
 				self.lobbyView.on('click:load', function() {
-					chatUsers.next();	
+					chatUsers.next();
 				});
 				chatUsers = event.chatUsers;
 				chatUsers.on('paginate:item', function(event) {
@@ -565,9 +566,15 @@ window.onload = function() {
 		});
 		
 		this.answerPageView.on('click:answer', function(event) {
-			self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
-			self.mainMenuView.postcardItemView.select();
-			self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
+			self.prepareChatDialogView.show();
+			self.currentDialogsWaitAsync().then(function() {
+				self.prepareChatDialogView.hide();
+				self.lobbyView.selectUser(self.contactRepository.sender);
+				self.lobbyView.trigger({
+					type: 'select-force:user',
+					user: self.contactRepository.sender
+				});
+			});
 		});
 		
 		this.selectPageView.on('select:message', function(event) {
@@ -770,7 +777,7 @@ window.onload = function() {
 			var settings = parseHash(hash);
 			this.contactRepository.setSenderId(settings.senderId);
 			this.messageStorage.setSenderMessageId(settings.messageId);
-			this.currentSkipAnswerAsync = this.requestedSkipAnswerAsync;
+			this.currentSkipAnswerAsync = this.emptySkipAnswerAsync;
 			this.mainMenuView.answerItemView.select();
 		} else {
 			this.currentSkipAnswerAsync = this.emptySkipAnswerAsync;

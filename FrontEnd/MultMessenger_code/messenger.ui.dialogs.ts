@@ -229,6 +229,12 @@ module messenger {
 			}
 		}
 
+		export class PrepareChatDialogView extends DialogView {
+			public constructor() {
+				super('prepare-chat-dialog');
+			}
+		}
+
 	}
 
 }
