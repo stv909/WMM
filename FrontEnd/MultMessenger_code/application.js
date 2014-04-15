@@ -53,7 +53,7 @@ window.onload = function() {
 
 		this.currentSkipAnswerAsync = null;
 		this.emptySkipAnswerAsync = function() {
-			return Q.resolve(true);	
+			return Q.resolve(true);
 		};
 		this.requestedSkipAnswerAsync = function() {
 			var deferred = Q.defer();
@@ -568,6 +568,7 @@ window.onload = function() {
 		this.answerPageView.on('click:answer', function(event) {
 			self.prepareChatDialogView.show();
 			self.currentDialogsWaitAsync().then(function() {
+				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
 				self.prepareChatDialogView.hide();
 				self.lobbyView.selectUser(self.contactRepository.sender);
 				self.lobbyView.trigger({
@@ -777,7 +778,7 @@ window.onload = function() {
 			var settings = parseHash(hash);
 			this.contactRepository.setSenderId(settings.senderId);
 			this.messageStorage.setSenderMessageId(settings.messageId);
-			this.currentSkipAnswerAsync = this.emptySkipAnswerAsync;
+			this.currentSkipAnswerAsync = this.requestedSkipAnswerAsync;
 			this.mainMenuView.answerItemView.select();
 		} else {
 			this.currentSkipAnswerAsync = this.emptySkipAnswerAsync;
