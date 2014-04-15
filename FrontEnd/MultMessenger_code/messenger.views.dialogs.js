@@ -133,8 +133,7 @@ var messenger = messenger || {};
 			this.statusElem.textContent = 'Не удалось отправить сообщение!\nПроверьте интернет-подключение и \nпопробуйте позже.';
 		} else {
 			var message = error.message || {};
-			var messageCode = message.error_code;
-			console.log(messageCode);
+			var messageCode = message.error_code || 0;
 			switch (messageCode) {
 				case 15:
 					this.statusElem.textContent = 'Невозможно отправить сообщение.\nНет доступа к группе.';
