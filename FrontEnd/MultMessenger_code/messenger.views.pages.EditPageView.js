@@ -84,7 +84,7 @@
 				});
 				var requestPairs = invalidFilmTexts.map(function(filmText) {
 					var request = async.requestAsync({
-						url: settings.animationServiceUrl,
+						url: messenger.Settings.animationServiceUrl,
 						data: filmText.toAnimationRequestData(),
 						method: 'POST',
 						headers: [{
