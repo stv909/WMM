@@ -942,7 +942,7 @@ window.onload = function() {
 					user: receiver
 				});
 			}
-			var destination = messenger.misc.messageTargetToString(messageTarget);
+			var destination = messenger.misc.Helper.messageTargetToString(messageTarget);
 			analytics.send('post', ['post', destination].join('_'), VkTools.formatError(error));
 		});
 
