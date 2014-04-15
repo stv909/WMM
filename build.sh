@@ -15,3 +15,11 @@ cp -r MultMessenger_code/* MultMessenger_release
 cd MultMessenger_release
 perl -pi -e "s/settings.version = 'dev'/settings.version = 'release'/g" settings.js
 cd ..
+
+cd MultMessenger_english/
+rm -rf *
+cd ..
+cp -r MultMessenger_code/* MultMessenger_english
+cd MultMessenger_english
+perl -pi -e "s/settings.version = 'dev'/settings.version = 'english'/g" settings.js
+cd ..
