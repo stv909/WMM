@@ -575,6 +575,15 @@ window.onload = function() {
 					type: 'select-force:user',
 					user: self.contactRepository.sender
 				});
+				Q.resolve(true).then(function() {
+					self.conversationView.hide();
+					self.postcardView.show();
+					self.postcardMenuView.showCancel();
+					self.postcardMenuView.editItemView.select();
+					self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
+					self.postcardMenuView.postItemView.setText('3. Отправь в диалог!');
+					self.currentPostClickHandler = self.chatPostClickHandler;
+				});
 			});
 		});
 		
