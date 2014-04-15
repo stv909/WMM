@@ -19,7 +19,6 @@ window.onload = function() {
 		this.rootElem = document.getElementById('root');
 		this.newMessageSoundElem = document.getElementById('new-message-sound');
 
-		console.log(messenger.Settings.chatUrl);
 		this.chatClient = new messenger.chat.ChatClient(messenger.Settings.chatUrl);
 		this.chatClientWrapper = new messenger.misc.ChatClientWrapper(this.chatClient);
 		this.messageSender = new messenger.MessageSender(this.chatClientWrapper, getDialogAwaitToken);
@@ -731,7 +730,7 @@ window.onload = function() {
 				var shareMessageUrl = messenger.misc.Helper.calculateMessageShareUrl(rawMessage.id);
 				return Q.all([rawMessage, messenger.misc.Helper.generatePreviewAsync(shareMessageUrl)]);
 			}).spread(function(rawMessage, response) {
-				chatMessage.set('preview', [settings.imageStoreBaseUrl, response.image].join(''));
+				chatMessage.set('preview', [messenger.Settings.imageStoreBaseUrl, response.image].join(''));
 				rawMessage.preview = response.image;
 				self.chatClient.notifyMessage(rawMessage);
 				rawMessage.to = rawMessage.from;
@@ -863,7 +862,7 @@ window.onload = function() {
 					if (!preview || !id) break;
 					var message = self.chatRepository.getMessage(id);
 					if (!message) break;
-					message.set('preview', [settings.imageStoreBaseUrl, preview].join(''));
+					message.set('preview', [messenger.Settings.imageStoreBaseUrl, preview].join(''));
 				} while(false);
 			}
 		});
