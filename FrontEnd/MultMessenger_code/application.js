@@ -699,7 +699,7 @@ window.onload = function() {
 		this.on('click:send', function(event) {
 			var toContact = self.chatRepository.contact;
 			var fromContact = self.contactRepository.owner;
-			var chatMessage = new messenger.repository.ChatMessageModel();
+			var chatMessage = new messenger.data.ChatMessageModel();
 			chatMessage.set({
 				id: eye.uuid(),
 				content: event.text,
