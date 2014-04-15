@@ -102,7 +102,7 @@
 						var response = JSON.parse(rawResponse);
 						var actorElem = filmText.actorElem;
 						actorElem.src = "";
-						actorElem.src = settings.layerImageStoreBaseUrl + response.output.images[0];
+						actorElem.src = messenger.Settings.layerImageStoreBaseUrl + response.output.images[0];
 						actorElem.dataset.meta = JSON.stringify(filmText.toMeta());
 						filmText.validate();
 					});
