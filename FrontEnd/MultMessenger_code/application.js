@@ -19,7 +19,7 @@ window.onload = function() {
 		this.rootElem = document.getElementById('root');
 		this.newMessageSoundElem = document.getElementById('new-message-sound');
 
-		this.chatClient = new messenger.chat.ChatClient(settings.chatUrl);
+		this.chatClient = new messenger.chat.ChatClient(messenger.Settings.chatUrl);
 		this.chatClientWrapper = new messenger.misc.ChatClientWrapper(this.chatClient);
 		this.messageSender = new messenger.MessageSender(this.chatClientWrapper, getDialogAwaitToken);
 		

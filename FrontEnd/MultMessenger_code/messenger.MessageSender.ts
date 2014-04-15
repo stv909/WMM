@@ -28,7 +28,7 @@ module messenger {
 			var rawMessage = MessageSender.createRawMessage(sender, receiver, content);
 			var messageTarget = Helper.getMessageTarget(sender, receiver);
 			var shareMessageUrl = Helper.calculateMessageShareUrl(rawMessage.id);
-
+			console.log(shareMessageUrl);
 			this.trigger({
 				type: 'send:start',
 				modal: saveOnWall
@@ -51,6 +51,7 @@ module messenger {
 			}).then(uploadUrl => {
 				return Helper.generatePreviewAsync(shareMessageUrl, uploadUrl);
 			}).then(response => {
+				console.log(response);
 				var uploadResult = response.uploadResult;
 				rawMessage.preview = response.image;
 				this.trigger({
