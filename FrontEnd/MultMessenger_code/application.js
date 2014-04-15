@@ -286,7 +286,7 @@ window.onload = function() {
 		var self = this;
 		
 		var checkOnline = function() {
-			self.chatClientWrapper.nowAsync(3000).then(function() {
+			self.chatClientWrapper.nowAsync(10000).then(function() {
 				self.trigger('online');
 			}).catch(function() {
 				self.trigger('offline');
