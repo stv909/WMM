@@ -400,7 +400,7 @@
 				setTime(timeModel);
 			} else {
 				this.timeElem.textContent = 'Отправка...';
-				this.message.once('change:timestamp', function(event) {
+				this.message.once('set:timestamp', function(event) {
 					var timestamp = event.value;
 					var timeModel = new TimeModel(timestamp);
 					setTime(timeModel);
@@ -459,7 +459,7 @@
 				window.open(vkLink, '_blank');
 			};
 			
-			this.model.on('change:online', function(event) {
+			this.model.on('set:online', function(event) {
 				updateOnlineStatus(event.value);
 			});
 			updateOnlineStatus(this.model.get('online'));
