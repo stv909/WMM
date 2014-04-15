@@ -1,5 +1,5 @@
 /// <reference path="q.d.ts" />
-module aux {
+module eye {
 
 	interface HTMLTemplateElement extends HTMLElement{
 		content: DocumentFragment;

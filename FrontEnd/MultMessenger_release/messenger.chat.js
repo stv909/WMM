@@ -28,23 +28,12 @@ var messenger;
                     this.socket.send(tagId);
                     this.socket.send(data);
                 };
-                this.broadcast = function (tag, id, toUserId, contactMode) {
-                    var tagIdArray = [tag, id];
-                    var contactModeIdArray = [toUserId];
-
-                    if (contactMode) {
-                        contactModeIdArray.splice(0, 0, contactMode);
-                    }
-
-                    var tagId = tagIdArray.join('.');
-                    var contactModeId = contactModeIdArray.join('.');
-
-                    this.socket.send('broadcast');
-                    this.socket.send(tagId);
-                    this.socket.send(contactModeId);
-                };
                 this.serverUrl = serverUrl;
             }
+            ChatClient.prototype.readyState = function () {
+                return this.socket.readyState;
+            };
+
             ChatClient.prototype.connect = function () {
                 var self = this;
                 this.socket = new WebSocket(this.serverUrl);
@@ -96,7 +85,7 @@ var messenger;
                     });
                 }
 
-                this.socket.addEventListener('connect', openSocketListener);
+                this.socket.addEventListener('open', openSocketListener);
                 this.socket.addEventListener('close', closeSocketListener);
                 this.socket.addEventListener('message', messageSocketListener);
                 this.socket.addEventListener('error', errorSocketListener);
@@ -232,7 +221,21 @@ var messenger;
                 this.socket.send(tagId);
                 this.socket.send(contactModeId);
             };
+            ChatClient.prototype.broadcast = function (tag, id, toUserId, contactMode) {
+                var tagIdArray = [tag, id];
+                var contactModeIdArray = [toUserId];
 
+                if (contactMode) {
+                    contactModeIdArray.splice(0, 0, contactMode);
+                }
+
+                var tagId = tagIdArray.join('.');
+                var contactModeId = contactModeIdArray.join('.');
+
+                this.socket.send('broadcast');
+                this.socket.send(tagId);
+                this.socket.send(contactModeId);
+            };
             ChatClient.prototype.send = function (tag, id, toUserId, contactMode) {
                 var tagIdArray = [tag, id];
                 var contactModeIdArray = [toUserId];

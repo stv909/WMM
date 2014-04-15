@@ -3,14 +3,14 @@ window.onload = function() {
 
 	var MessageStorage = messenger.storage.MessageStorage;
 	
-	var MessagePatternView = messenger.views.MessagePatternView;
-	var ChatMessageModel = messenger.repository.ChatMessageModel;
+	var MessagePatternView = messenger.ui.MessagePatternView;
+	var ChatMessageModel = messenger.data.ChatMessageModel;
 	
 	var VkTools = messenger.utils.VkTools;
-	var ChatClientWrapper = messenger.utils.ChatClientWrapper;
 	var Helpers = messenger.utils.Helpers;
 
-	var MessageFactory = chat.MessageFactory;
+	var MessageFactory = messenger.chat.MessageFactory;
+	var MessageTargets = messenger.misc.MessageTargets;
 
 	var MessengerApplication = function() {
 		MessengerApplication.super.apply(this);
@@ -19,8 +19,9 @@ window.onload = function() {
 		this.rootElem = document.getElementById('root');
 		this.newMessageSoundElem = document.getElementById('new-message-sound');
 
-		this.chatClient = new chat.ChatClient(settings.chatUrl);
-		this.chatClientWrapper = new ChatClientWrapper(this.chatClient);
+		this.chatClient = new messenger.chat.ChatClient(messenger.Settings.chatUrl);
+		this.chatClientWrapper = new messenger.misc.ChatClientWrapper(this.chatClient);
+		this.messageSender = new messenger.MessageSender(this.chatClientWrapper, getDialogAwaitToken);
 		
 		this.messageStorage = new MessageStorage(this.chatClientWrapper);
 		
@@ -39,19 +40,20 @@ window.onload = function() {
 		this.postPageView = new messenger.views.PostPageView();
 		this.dialogPostPageView = new messenger.views.DialogPostPageView();
 		this.answerPageView = new messenger.views.AnswerPageView();
-		
+
+		this.skipDialogView = new messenger.ui.SkipDialogView();
+		this.preloaderView = new messenger.ui.PreloaderView();
+		this.inviteUserDialogView = new messenger.ui.InviteUserDialogView();
+		this.errorDialogView = new messenger.ui.ErrorDialogView();
+		this.cancelMessageUpdateDialogView = new messenger.ui.CancelMessageUpdateDialogView();
+		this.createMessageDialogView = new messenger.ui.CreateTextMessageDialogView();
+		this.prepareChatDialogView = new messenger.ui.PrepareChatDialogView();
+
 		this.postDialogView = new messenger.views.PostDialogView();
-		this.skipDialogView = new messenger.views.SkipDialogView();
-		this.preloadDialogView = new messenger.views.PreloadDialogView();
-		this.askMessageDialogView = new messenger.views.AskMessageDialogView();
-		this.errorDialogView = new messenger.views.ErrorDialogView();
-		this.prepareChatDialogView = new messenger.views.PrepareChatDialogView();
-		this.createMessageDialogView = new messenger.views.CreateMessageDialogView();
-		this.inviteUserDialogView = new messenger.views.InviteUserDialogView();
 
 		this.currentSkipAnswerAsync = null;
 		this.emptySkipAnswerAsync = function() {
-			return Q.resolve(true);	
+			return Q.resolve(true);
 		};
 		this.requestedSkipAnswerAsync = function() {
 			var deferred = Q.defer();
@@ -82,22 +84,25 @@ window.onload = function() {
 			var deferred = Q.defer();
 			
 			var cancelListener = function() {
-				self.askMessageDialogView.off('click:ok', okListener);
+				self.cancelMessageUpdateDialogView.off('click:ok', okListener);
 				deferred.reject();
 			};
 			var okListener = function() {
-				self.askMessageDialogView.off('click:cancel', cancelListener);
+				self.cancelMessageUpdateDialogView.off('click:cancel', cancelListener);
 				self.currentSkipAnswerAsync = self.emptySkipUpdateAsync;
 				deferred.resolve();
 			};
 			
-			self.askMessageDialogView.once('click:cancel', cancelListener);
-			self.askMessageDialogView.once('click:ok', okListener);
-			self.askMessageDialogView.show();
+			self.cancelMessageUpdateDialogView.once('click:cancel', cancelListener);
+			self.cancelMessageUpdateDialogView.once('click:ok', okListener);
+			self.cancelMessageUpdateDialogView.show();
 			
 			return deferred.promise;
 		};
 
+		function getDialogAwaitToken() {
+			return self.currentDialogsWaitAsync();
+		}
 		this.currentDialogsWaitAsync = function() {
 			var deferred = Q.defer();
 
@@ -131,11 +136,12 @@ window.onload = function() {
 			return deferred.promise;
 		};
 		
-		this.preloadDialogView.show();
+		this.preloaderView.show();
 		this.initializeStorage();
 		this.initializeChatClient();
 		this.initializeViews();
 		this.initializeSettings();
+		this.initializeMessageSender();
 		this.initializeStartupData();
 	};
 	MessengerApplication.super = EventEmitter;
@@ -188,7 +194,7 @@ window.onload = function() {
 				if (!event.noSearch) {
 					self.lobbyView.updateUserSearch();
 				}
-				message.once('change:shown', function(event) {
+				message.once('set:shown', function(event) {
 					var unread = fromContact.get('unread');
 					var messageId = message.get('id');
 					fromContact.set('unread', unread - 1);
@@ -223,7 +229,7 @@ window.onload = function() {
 				self.lobbyView.showLoader();
 				self.lobbyView.off('click:load');
 				self.lobbyView.on('click:load', function() {
-					chatUsers.next();	
+					chatUsers.next();
 				});
 				chatUsers = event.chatUsers;
 				chatUsers.on('paginate:item', function(event) {
@@ -280,15 +286,15 @@ window.onload = function() {
 		var self = this;
 		
 		var checkOnline = function() {
-			self.chatClientWrapper.nowAsync(3000).then(function() {
+			self.chatClientWrapper.nowAsync(10000).then(function() {
 				self.trigger('online');
 			}).catch(function() {
 				self.trigger('offline');
 			});
 		};
 		var reconnect = function() {
-			var vkId = Helpers.buildVkId(self.contactRepository.owner);
-			VK.initAsync().then(function() {
+			var vkId = messenger.misc.Helper.buildVkId(self.contactRepository.owner);
+			messenger.vk.initAsync().then(function() {
 				return self.chatClientWrapper.connectAndLoginAsync(vkId);
 			}).then(function() {
 				self.trigger('online');
@@ -309,7 +315,7 @@ window.onload = function() {
 		});
 		
 		this.chatClient.once('message:login', function() {
-			checkOnline();	
+			checkOnline();
 		});
 	};
 	MessengerApplication.prototype.initializeViews = function() {
@@ -349,6 +355,8 @@ window.onload = function() {
 			self.answerPageView.hide();
 			self.postcardView.show();
 			self.conversationView.hide();
+
+			self.postcardMenuView.hideCancel();
 			self.postcardMenuView.selectItemView.select();
 			self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
 			self.postcardMenuView.postItemView.setText('3. Отправь на стену!');
@@ -515,6 +523,22 @@ window.onload = function() {
 			self.postcardMenuView.postItemView.setText('3. Отправь в диалог!');
 			self.currentPostClickHandler = self.chatPostClickHandler;
 		});
+		this.conversationView.on('click:wall', function(event) {
+			var message = event.message;
+			var contact = self.chatRepository.contact;
+			self.selectPageView.deselect();
+			self.editPageView.setMessage(message);
+			self.mainMenuView.postcardItemView.select();
+			self.postPageView.setMode('friend');
+			self.postPageView.friendSearchView.selectFriend(contact);
+			self.postPageView.friendSearchView.trigger({
+				type: 'select:user',
+				user: contact
+			});
+			Q.resolve(true).then(function() {
+				self.postcardMenuView.postItemView.select();
+			});
+		});
 
 		this.lobbyView.on('search:users', function(event) {
 			self.contactRepository.searchChatUsers(event.text);
@@ -542,9 +566,25 @@ window.onload = function() {
 		});
 		
 		this.answerPageView.on('click:answer', function(event) {
-			self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
-			self.mainMenuView.postcardItemView.select();
-			self.currentSkipAnswerAsync = self.requestedSkipAnswerAsync;
+			self.prepareChatDialogView.show();
+			self.currentDialogsWaitAsync().then(function() {
+				self.currentSkipAnswerAsync = self.emptySkipAnswerAsync;
+				self.prepareChatDialogView.hide();
+				self.lobbyView.selectUser(self.contactRepository.sender);
+				self.lobbyView.trigger({
+					type: 'select-force:user',
+					user: self.contactRepository.sender
+				});
+				Q.resolve(true).then(function() {
+					self.conversationView.hide();
+					self.postcardView.show();
+					self.postcardMenuView.showCancel();
+					self.postcardMenuView.editItemView.select();
+					self.postcardMenuView.editItemView.setText('2. Переделай по-своему!');
+					self.postcardMenuView.postItemView.setText('3. Отправь в диалог!');
+					self.currentPostClickHandler = self.chatPostClickHandler;
+				});
+			});
 		});
 		
 		this.selectPageView.on('select:message', function(event) {
@@ -556,7 +596,8 @@ window.onload = function() {
 			self.messageStorage.loadMessagesAsync().then(function() {
 				analytics.send('tape', 'msg_load_more', 'success');
 			}).catch(function(error) {
-				self.errorDialogView.show(error);
+				self.errorDialogView.show();
+				self.errorDialogView.setError(error);
 				analytics.send('tape', 'msg_load_more', 'fail');
 			}).fin(function() {
 				self.selectPageView.enableMessageLoading();
@@ -577,9 +618,9 @@ window.onload = function() {
 					self.trigger({
 						type: 'click:send',
 						text: content
-					})
+					});
 				} else {
-					return self.sendMultMessageAsync(account, companion, content, true);
+					return self.messageSender.send(account, companion, content, true);
 				}
 			}).then(function() {
 				self.postcardView.hide();
@@ -592,7 +633,7 @@ window.onload = function() {
 			var companion = self.contactRepository.selected;
 			var content = self.editPageView.getMessageContent();
 
-			self.sendMultMessageAsync(account, companion, content);
+			self.messageSender.send(account, companion, content, true);
 		});
 		this.postPageView.friendSearchView.on('search:users', function(event) {
 			self.contactRepository.searchUsers(event.text);
@@ -630,32 +671,35 @@ window.onload = function() {
 			window.location.hash = '';
 			analytics.send('answer', 'browse_tape');
 		});
-		this.askMessageDialogView.on('click:ok', function() {
+		this.cancelMessageUpdateDialogView.on('click:ok', function() {
 			self.editPageView.reset();
 		});
 		this.inviteUserDialogView.on('click:ok', function() {
 			VK.callMethod('showInviteBox');
 		});
+		this.createMessageDialogView.on('click:send', function() {
+			analytics.send('dialog', 'text_send');
+		});
 		this.createMessageDialogView.on('click:send', function(event) {
 			var toContact = self.chatRepository.contact;
 			var fromContact = self.contactRepository.owner;
-			var chatMessage = new messenger.repository.ChatMessageModel();
+			var chatMessage = new messenger.data.ChatMessageModel();
 			chatMessage.set({
-				id: aux.uuid(),
+				id: eye.uuid(),
 				content: event.text,
-				from: Helpers.buildVkId(fromContact),
-				to: Helpers.buildVkId(toContact)
+				from: messenger.misc.Helper.buildVkId(fromContact),
+				to: messenger.misc.Helper.buildVkId(toContact)
 			});
 			self.chatRepository.addMessage(chatMessage);
 			self.chatClientWrapper.nowAsync().then(function(timestamp) {
 				chatMessage.set('timestamp', timestamp);
-				var rawMessage = MessageFactory.create(
-					chatMessage.get('id'),
-					Helpers.normalizeMessageContent(chatMessage.get('content')),
-					chatMessage.get('from'),
-					chatMessage.get('to'),
-					chatMessage.get('timestamp')
-				);
+				var rawMessage = MessageFactory.encode({
+					id: chatMessage.get('id'),
+					content: Helpers.normalizeMessageContent(chatMessage.get('content')),
+					from: chatMessage.get('from'),
+					to: chatMessage.get('to'),
+					timestamp: chatMessage.get('timestamp')
+				});
 				return self.chatClientWrapper.sendMessageAsync(rawMessage);
 			}).catch(function() {
 				console.log(arguments);
@@ -664,29 +708,29 @@ window.onload = function() {
 		this.on('click:send', function(event) {
 			var toContact = self.chatRepository.contact;
 			var fromContact = self.contactRepository.owner;
-			var chatMessage = new messenger.repository.ChatMessageModel();
+			var chatMessage = new messenger.data.ChatMessageModel();
 			chatMessage.set({
-				id: aux.uuid(),
+				id: eye.uuid(),
 				content: event.text,
-				from: Helpers.buildVkId(fromContact),
-				to: Helpers.buildVkId(toContact)
+				from: messenger.misc.Helper.buildVkId(fromContact),
+				to: messenger.misc.Helper.buildVkId(toContact)
 			});
 			self.chatRepository.addMessage(chatMessage);
 			self.chatClientWrapper.nowAsync().then(function(timestamp) {
 				chatMessage.set('timestamp', timestamp);
-				var rawMessage = MessageFactory.create(
-					chatMessage.get('id'),
-					Helpers.normalizeMessageContent(chatMessage.get('content')),
-					chatMessage.get('from'),
-					chatMessage.get('to'),
-					chatMessage.get('timestamp')
-				);
+				var rawMessage = MessageFactory.encode({
+					id: chatMessage.get('id'),
+					content: Helpers.normalizeMessageContent(chatMessage.get('content')),
+					from: chatMessage.get('from'),
+					to: chatMessage.get('to'),
+					timestamp: chatMessage.get('timestamp')
+				});
 				return Q.all([rawMessage, self.chatClientWrapper.sendMessageAsync(rawMessage)]);
 			}).spread(function(rawMessage, response) {
-				var shareMessageUrl = VkTools.calculateMessageShareUrl(rawMessage.id);
-				return Q.all([rawMessage, VkTools.generatePreviewAsync(shareMessageUrl)]);
+				var shareMessageUrl = messenger.misc.Helper.calculateMessageShareUrl(rawMessage.id);
+				return Q.all([rawMessage, messenger.misc.Helper.generatePreviewAsync(shareMessageUrl)]);
 			}).spread(function(rawMessage, response) {
-				chatMessage.set('preview', [settings.imageStoreBaseUrl, response.image].join(''));
+				chatMessage.set('preview', [messenger.Settings.imageStoreBaseUrl, response.image].join(''));
 				rawMessage.preview = response.image;
 				self.chatClient.notifyMessage(rawMessage);
 				rawMessage.to = rawMessage.from;
@@ -709,9 +753,6 @@ window.onload = function() {
 		this.once('fail:dialogs', function() {
 			self.currentDialogsWaitAsync = self.failDialogsWaitAsync;
 			self.mainMenuView.disableLoader();
-		});
-		this.on('invite:user', function(event) {
-			self.inviteUserDialogView.show();
 		});
 	};
 	MessengerApplication.prototype.initializeSettings = function() {
@@ -756,26 +797,26 @@ window.onload = function() {
 	MessengerApplication.prototype.initializeStartupData = function() {
 		var self = this;
 		
-		VK.initAsync().then(function() {
+		messenger.vk.initAsync().then(function() {
 			return self.contactRepository.initializeAsync();
 		}).then(function() {
 			var owner = self.contactRepository.owner;
-			var vkId = Helpers.buildVkId(owner);
+			var vkId = messenger.misc.Helper.buildVkId(owner);
 			return self.chatClientWrapper.connectAndLoginAsync(vkId);
 		}).then(function() {
 			var owner = self.contactRepository.owner;
-			var vkId = Helpers.buildVkId(owner);
+			var vkId = messenger.misc.Helper.buildVkId(owner);
 			return self.chatRepository.loadSettingsAsync(vkId);
 		}).then(function() {
 			return self.messageStorage.loadMessagesAsync();
 		}).then(function() {
 			self.answerPageView.setContact(self.contactRepository.sender);
 			self.answerPageView.setMessage(self.messageStorage.getSenderMessage());
-			self.preloadDialogView.hide();
+			self.preloaderView.hide();
 			self.chatRepository.loadTapeMessagesAsync().then(function() {
 				self.contactRepository.searchChatUsers('');
 				self.lobbyView.selectUser(self.chatRepository.getContact());
-				self.initializeMessaging();
+				self.initializeDialogs();
 				self.trigger('complete:dialogs');
 				analytics.send('dialog', 'dialog_success');
 			}).catch(function(error) {
@@ -790,7 +831,7 @@ window.onload = function() {
 			alert('Приносим извенение. В настоящий момент в работе приложения наблюдаются проблемы. Возможно вы используете неподдерживаемый браузер. Установите Chrome, Opera, YaBrowser или Safari');
 		});
 	};
-	MessengerApplication.prototype.initializeMessaging = function() {
+	MessengerApplication.prototype.initializeDialogs = function() {
 		var self = this;
 		var processInputMessage = function(rawMessage, soundNotification) {
 			rawMessage.value = rawMessage.body;
@@ -821,7 +862,7 @@ window.onload = function() {
 					if (!preview || !id) break;
 					var message = self.chatRepository.getMessage(id);
 					if (!message) break;
-					message.set('preview', [settings.imageStoreBaseUrl, preview].join(''));
+					message.set('preview', [messenger.Settings.imageStoreBaseUrl, preview].join(''));
 				} while(false);
 			}
 		});
@@ -830,89 +871,103 @@ window.onload = function() {
 			online.forEach(function(vkid) {
 				var user = self.contactRepository.getChatUserByVkid(vkid);
 				user.set('online', true);
-				
 			});
 		});
 		this.chatClient.online();
 	};
-	MessengerApplication.prototype.trySendInvite = function(user) {
+	MessengerApplication.prototype.initializeMessageSender = function() {
 		var self = this;
-		self.postDialogView.hideDialog();
-		user.isAppUserAsync().then(function(isAppUser) {
-			if (!isAppUser) {
-				self.trigger({
-					type: 'invite:user',
-					user: user
-				});
-			} else {
+
+		this.messageSender.on('send:start', function(e) {
+			if (e.modal) {
 				self.postDialogView.show();
-				self.postDialogView.setMode('fail', { errorCode: errors.ErrorCodes.RESTRICTED });
 			}
 		});
-	};
-	MessengerApplication.prototype.sendMultMessageAsync = function(account, companion, content, hidePostDialog) {
-		var self = this;
-		self.postDialogView.show();
-
-		var message = MessageFactory.create(
-			aux.uuid(),
-			Helpers.normalizeMessageContent(content),
-			Helpers.buildVkId(account),
-			Helpers.buildVkId(companion)
-		);
-		var messageTarget = Helpers.getMessageTarget(account, companion);
-		var action = ['post', messageTarget].join('_');
-		var shareMessageUrl = VkTools.calculateMessageShareUrl(message.id);
-
-		return self.currentDialogsWaitAsync().then(function() {
+		this.messageSender.on('send:await-fail', function() {
+			self.postDialogView.setMode('fail', {});
+		});
+		this.messageSender.on('send:create-message', function() {
 			self.postDialogView.setText('Этап 2 из 6: Создание сообщения...');
-			return self.chatClientWrapper.nowAsync();
-		}).then(function(timestamp) {
+		});
+		this.messageSender.on('send:save-message', function() {
 			self.postDialogView.setText('Этап 3 из 6: Сохранение сообщения...');
-			message.timestamp = timestamp;
-			return self.chatClientWrapper.sendMessageAsync(message);
-		}).then(function() {
+		});
+		this.messageSender.on('send:create-preview', function() {
 			self.postDialogView.setText('Этап 4 из 6: Создание превью...');
-			return VkTools.getWallPhotoUploadUrlAsync();
-		}).then(function(uploadUrl) {
-			return VkTools.generatePreviewAsync(shareMessageUrl, uploadUrl);
-		}).then(function(response) {
+		});
+		this.messageSender.on('send:save-preview', function(e) {
 			self.postDialogView.setText('Этап 5 из 6: Сохранение превью в альбоме...');
-			var uploadResult = response.uploadResult;
-			var image = response.image;
-			message.preview = image;
-			self.chatClient.notifyMessage(message);
-			var chatMessage = self.chatRepository.getMessage(message.id);
+			var chatMessage = self.chatRepository.getMessage(e.rawMessage.id);
 			if (chatMessage) {
-				chatMessage.set('preview', [settings.imageStoreBaseUrl, image].join(''));
+				chatMessage.set(
+					'preview',
+					[messenger.Settings.imageStoreBaseUrl, e.rawMessage.preview].join('')
+				);
 			}
-			uploadResult.v = 5.12;
-			var isCanPostPromise = companion.isCanPostAsync();
-			var saveWallPhotoPromise = VK.apiAsync('photos.saveWallPhoto', uploadResult);
-			return Q.all([isCanPostPromise, saveWallPhotoPromise]);
-		}).spread(function(canPost, response) {
-			if (canPost) {
-				self.postDialogView.setText('Этап 6 из 6: Публикация сообщения на стене...');
-				var imageId = VkTools.getUploadedFileId(response);
-				var ownerId = companion.get('id');
-				var senderId = account.get('id');
-				var postData = VkTools.createVkPost(message, ownerId, senderId, imageId, shareMessageUrl);
-				return VK.apiAsync('wall.post', postData);
-			} else {
-				self.trySendInvite(companion);
-				throw { errorCode: errors.ErrorCodes.RESTRICTED };
-			}
-		}).then(function() {
-			if (hidePostDialog) {
+		});
+		this.messageSender.on('send:create-post', function(e) {
+			var messageTarget = e.messageTarget;
+			var receiver = e.receiver;
+
+			self.postDialogView.setText('Этап 6 из 6: Публикация сообщения на стене...');
+
+			if (messageTarget === MessageTargets.Friend) {
 				self.postDialogView.hide();
+				self.lobbyView.selectUser(receiver);
+				self.lobbyView.trigger({
+					type: 'select-force:user',
+					user: receiver
+				});
 			}
-			self.postDialogView.setMode('complete');
-			analytics.send('post', action, 'success');
-		}).catch(function(error) {
+		});
+		this.messageSender.on('send:wall-closed', function(e) {
+			var receiver = e.receiver;
+			self.messageSender.invite(receiver);
+			self.lobbyView.selectUser(receiver);
+			self.lobbyView.trigger({
+				type: 'select-force:user',
+				user: receiver
+			});
+		});
+		this.messageSender.on('send:complete', function(e) {
+			var messageTarget = e.messageTarget;
+			var receiver = e.receiver;
+			if (messageTarget !== MessageTargets.Friend) {
+				self.postDialogView.setMode('complete');
+			}
+			var destination = messenger.misc.Helper.messageTargetToString(messageTarget);
+			analytics.send('post', ['post', destination].join('_'), 'success');
+		});
+		this.messageSender.on('send:fail', function(e) {
+			var messageTarget = e.messageTarget;
+			var error = e.error;
+			var receiver = e.receiver;
 			self.postDialogView.setMode('fail', error);
-			console.error(error);
-			analytics.send('post', action, VkTools.formatError(error));
-			throw error;
+			if (error.errorCode === messenger.misc.ErrorCodes.RESTRICTED &&
+				messageTarget === messenger.misc.MessageTargets.Friend) {
+				self.lobbyView.selectUser(receiver);
+				self.lobbyView.trigger({
+					type: 'select-force:user',
+					user: receiver
+				});
+			}
+			var destination = messenger.misc.Helper.messageTargetToString(messageTarget);
+			analytics.send('post', ['post', destination].join('_'), VkTools.formatError(error));
+		});
+
+		this.messageSender.on('invite:start', function() {
+			self.postDialogView.hideDialog();
+		});
+		this.messageSender.on('invite:user', function() {
+			self.inviteUserDialogView.show();
+		});
+		this.messageSender.on('invite:always', function() {
+			self.postDialogView.show();
+			self.postDialogView.setMode('fail', { errorCode: messenger.misc.ErrorCodes.RESTRICTED });
+		});
+		this.messageSender.on('invite:fail', function() {
+			self.postDialogView.show();
+			self.postDialogView.setMode('fail', { errorCode: messenger.misc.ErrorCodes.RESTRICTED });
 		});
 	};
 

@@ -30,6 +30,10 @@ var messenger;
                 };
                 this.serverUrl = serverUrl;
             }
+            ChatClient.prototype.readyState = function () {
+                return this.socket.readyState;
+            };
+
             ChatClient.prototype.connect = function () {
                 var self = this;
                 this.socket = new WebSocket(this.serverUrl);
@@ -81,7 +85,7 @@ var messenger;
                     });
                 }
 
-                this.socket.addEventListener('connect', openSocketListener);
+                this.socket.addEventListener('open', openSocketListener);
                 this.socket.addEventListener('close', closeSocketListener);
                 this.socket.addEventListener('message', messageSocketListener);
                 this.socket.addEventListener('error', errorSocketListener);
@@ -311,7 +315,7 @@ var messenger;
             ChatClient.prototype.sendMessage = function (message, contactMode) {
                 var tag = 'msg';
                 var data = JSON.stringify(message);
-                console.log('send');
+
                 this.store(tag, message.id, data);
                 this.send(tag, message.id, message.group || message.to, contactMode);
             };

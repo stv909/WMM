@@ -1,11 +1,11 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, async, chat, Q, settings, text) {
+(function(messenger, eve, Q, settings) {
 	
 	var EventEmitter = eve.EventEmitter;
-	var ContactModel = messenger.models.ContactModel;
-	var GroupModel = messenger.models.GroupModel;
-	var MessageModel = messenger.models.MessageModel;
+	//var ContactModel = messenger.models.ContactModel;
+	//var GroupModel = messenger.data.GroupModel;
+	var MessageModel = messenger.data.MessageModel;
 	
 	var PaginationCollection = function(data) {
 		PaginationCollection.super.apply(this);
@@ -351,7 +351,7 @@ var messenger = messenger || {};
 	messenger.storage = {
 		PaginationCollection: PaginationCollection,
 		MessageStorage: MessageStorage1,
-		PhotoStorage: PhotoStorage,
+		PhotoStorage: PhotoStorage
 	};
 	
-})(messenger, eve, async, chat, Q, settings, text);
+})(messenger, eve, Q, settings);

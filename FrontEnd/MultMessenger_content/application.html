@@ -14,7 +14,6 @@
 	<script src="eve.js"></script>
 	<script src="html.js"></script>
 	<script src="css.js"></script>
-	<script src="aux.js"></script>
 	<script src="template.js"></script>
 	<script src="abyss.js"></script>
 	<script src="errors.js"></script>
@@ -22,12 +21,25 @@
 	<script src="vk.js"></script>
 	<script src="base64.js"></script>
 	<script src="text.js"></script>
-	<script src="chat.js"></script>
 	<script src="settings.js"></script>
-	<script src="filmlang.js"></script>
 	<script src="data.js"></script>
+
+	<script src="eye.js"></script>
+	<script src="deep.js"></script>
+
+	<script src="messenger.chat.js"></script>
+	<script src="messenger.Settings.js"></script>
+	<script src="messenger.data.js"></script>
+	<script src="messenger.vk.js"></script>
+	<script src="messenger.misc.js"></script>
+	<script src="messenger.ui.js"></script>
+	<script src="messenger.ui.partials.js"></script>
+	<script src="messenger.ui.dialogs.js"></script>
+	<script src="messenger.MessageSender.js"></script>
+
+	<script src="filmlang.js"></script>
+
 	<script src="messenger.utils.js"></script>
-	<script src="messenger.models.js"></script>
 	<script src="messenger.repository.js"></script>
 	<script src="messenger.storage.js"></script>
 	<script src="messenger.views.js"></script>
@@ -315,7 +327,7 @@
 		<span class="time hidden"></span>
 		<span class="date hidden"></span>
 	</div>
-	<div class="button wall">На стену</div>
+	<div class="button wall">Переслать на стену</div>
 	<div class="button url">Получить ссылку</div>
 </template>
 <template id="text-message-template" style="display: none">
@@ -367,10 +379,10 @@
 				<div class="title">Мульт-Мессенджер 2.0</div>
 			</div>
 			<div class="content">
-				<div class="status"></div>
+				<div class="status">Подготовка диалогов...</div>
 			</div>
 			<div class="controls-holder">
-				<div class="ready button">Готово</div>
+				<div class="ready button hidden">Готово</div>
 			</div>
 		</div>
 		<div class="dialog-window hidden" id="ask-message-dialog">

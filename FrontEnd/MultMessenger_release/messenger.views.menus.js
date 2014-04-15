@@ -12,7 +12,7 @@
 			this.groupElem = this.elem.getElementsByClassName('group')[0];
 			this.itemsElem = this.elem.getElementsByClassName('items')[0];
 			this.chatsElem = this.elem.getElementsByClassName('chats')[0];
-			this.waitElem = aux.template({
+			this.waitElem = eye.template({
 				templateId: 'dialog-wait-template',
 				id: 'circularGD'
 			});
@@ -295,7 +295,7 @@
 			base.apply(this, arguments);
 			var self = this;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'postcard-menu-item-template',
 				className: 'postcard-menu-item'
 			});

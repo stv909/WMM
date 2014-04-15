@@ -1,7 +1,7 @@
 (function(messenger, eve, abyss, template, filmlang, data, settings, analytics, Q, async) {
 	
 	var PageView = messenger.views.PageView;
-	var MessageEditorView = messenger.views.MessageEditorView;
+	var MessageEditorView = messenger.ui.MessageEditorView;
 	var ImageItemView = messenger.views.ImageItemView;
 	
 	var DialogView = messenger.views.DialogView;
@@ -61,7 +61,7 @@
 			this.validateListener = function() {
 				var isInvalid = false;
 				self.filmTexts.forEach(function(filmText) {
-					isInvalid = isInvalid || !filmText.isValid;		
+					isInvalid = isInvalid || !filmText.isValid;
 				});
 				if (isInvalid) {
 					self.wrapElem.classList.remove('hidden');
@@ -84,7 +84,7 @@
 				});
 				var requestPairs = invalidFilmTexts.map(function(filmText) {
 					var request = async.requestAsync({
-						url: settings.animationServiceUrl,
+						url: messenger.Settings.animationServiceUrl,
 						data: filmText.toAnimationRequestData(),
 						method: 'POST',
 						headers: [{
@@ -102,7 +102,7 @@
 						var response = JSON.parse(rawResponse);
 						var actorElem = filmText.actorElem;
 						actorElem.src = "";
-						actorElem.src = settings.layerImageStoreBaseUrl + response.output.images[0];
+						actorElem.src = messenger.Settings.layerImageStoreBaseUrl + response.output.images[0];
 						actorElem.dataset.meta = JSON.stringify(filmText.toMeta());
 						filmText.validate();
 					});

@@ -15,6 +15,7 @@ var analytics = analytics || {};
 	})(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
 	ga('create', 'UA-46127802-2', 'bazelevscontent.net');
+	ga('require', 'displayfeatures');
 	ga('send', 'pageview');
 	
 	var send = function(category, action, label, value) {

@@ -7,7 +7,7 @@
 			base.apply(this, arguments);
 			var self = this;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'conversation-template',
 				className: 'conversation'
 			});
@@ -19,6 +19,12 @@
 			this.tapePageClickAnswerListener = function(event) {
 				self.trigger({
 					type: 'click:answer',
+					message: event.message
+				});
+			};
+			this.tapePageClickWallListener = function(event) {
+				self.trigger({
+					type: 'click:wall',
 					message: event.message
 				});
 			};
@@ -51,6 +57,7 @@
 				tapeView = new TapePageView(contactId);
 				tapeView.on('click:hint', this.tapePageClickHintListener);
 				tapeView.on('click:answer', this.tapePageClickAnswerListener);
+				tapeView.on('click:wall', this.tapePageClickWallListener);
 				this.cachedTapeViews[contactId] = tapeView;
 			}
 			return tapeView;
@@ -71,7 +78,7 @@
 			base.apply(this, arguments);
 			var self = this;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'tape-page-template',
 				className: 'tape-page'
 			});
@@ -97,6 +104,12 @@
 			this.answerMessageListener = function(event) {
 				self.trigger({
 					type: 'click:answer',
+					message: event.message
+				});
+			};
+			this.wallMessageListener = function(event) {
+				self.trigger({
+					type: 'click:wall',
 					message: event.message
 				});
 			};
@@ -149,6 +162,7 @@
 			tapeItemView.attachFirstTo(this.containerElem);
 			tapeItemView.on('select:message', this.selectMessageSelectListener);
 			tapeItemView.on('click:answer', this.answerMessageListener);
+			tapeItemView.on('click:wall', this.wallMessageListener);
 
 			this.tapeItemViews[messageId] = tapeItemView;
 			this.hideTeaser();
@@ -190,7 +204,7 @@
 			this.chatMessage = chatMessage;
 			this.contact = contact;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'tape-item-template',
 				className: 'tape-item'
 			});
@@ -230,13 +244,19 @@
 			var self = this;
 			this.controlsView = new MessageControlsView(this.chatMessage);
 			this.controlsView.attachTo(this.controlsHolderElem);
-			
+
 			if (this.chatMessage.isMult()) {
 				this.contactView = new messenger.views.UserView(this.contact, true);
 				this.contactView.disableUnreadCounter();
 				this.contactView.disableSelecting();
 				this.contactView.attachFirstTo(this.contactHolderElem);
-				
+
+				this.controlsView.on('click:wall', function() {
+					self.trigger({
+						type: 'click:wall',
+						message: self.chatMessage
+					});
+				});
 				this.answerElem.classList.remove('hidden');
 				this.answerElem.addEventListener('click', function() {
 					self.trigger({
@@ -244,7 +264,7 @@
 						message: self.chatMessage
 					});
 				});
-				this.messageView = new messenger.views.MessagePatternView(this.chatMessage);
+				this.messageView = new messenger.ui.MessagePatternView(this.chatMessage);
 				this.messageView.on('select', function(event) {
 					self.trigger({
 						type: 'select:message',
@@ -320,7 +340,7 @@
 			
 			this.message = message;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'message-controls-template',
 				className: 'message-controls'
 			});
@@ -346,8 +366,7 @@
 				self.wallElem.removeEventListener('click', wallElemClickListener);
 				self.urlElem.removeEventListener('click', urlElemClickListener);
 			});
-			
-			this.hideWallButton();
+
 			this.hideUrlButton();
 		}
 		
@@ -381,7 +400,7 @@
 				setTime(timeModel);
 			} else {
 				this.timeElem.textContent = 'Отправка...';
-				this.message.once('change:timestamp', function(event) {
+				this.message.once('set:timestamp', function(event) {
 					var timestamp = event.value;
 					var timeModel = new TimeModel(timestamp);
 					setTime(timeModel);
@@ -393,79 +412,13 @@
 		return MessageControlsView;
 	})(abyss.View);
 	
-	var CreateMessageDialogView = (function(base) {
-		eve.extend(CreateMessageDialogView, base);
-		
-		function CreateMessageDialogView() {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.dialogWindowElem = document.getElementById('create-message-dialog');
-			this.crossElem = this.dialogWindowElem.getElementsByClassName('cross')[0];
-			this.sendElem = this.dialogWindowElem.getElementsByClassName('send')[0];
-			this.cancelElem = this.dialogWindowElem.getElementsByClassName('cancel')[0];
-			this.messageTextElem = this.dialogWindowElem.getElementsByClassName('message-text')[0];
-			
-			var emptyStringPattern = /^\s*$/;
-			var cancelClickListener = function() {
-				self.hide();
-				self.messageTextElem.value = '';
-				self.sendElem.classList.add('disabled');
-			};
-			var sendClickListener = function() {
-				var value = self.messageTextElem.value;
-				if (!emptyStringPattern.test(value)) {
-					self.trigger({
-						type: 'click:send',
-						text: value.replace(/\r?\n/g, '<br />')
-					});
-					self.hide();
-					self.messageTextElem.value = '';
-					self.sendElem.classList.add('disabled');
-					analytics.send('dialog', 'text_send');
-				}
-			};
-			var messageTextInputListener = function() {
-				if (emptyStringPattern.test(self.messageTextElem.value)) {
-					self.sendElem.classList.add('disabled');
-				} else {
-					self.sendElem.classList.remove('disabled');
-				}
-			};
-			this.keydownListener = function(event) {
-				if (event.keyCode === 13) {
-					sendClickListener();
-				}
-			};
-			
-			this.crossElem.addEventListener('click', cancelClickListener);
-			this.cancelElem.addEventListener('click', cancelClickListener);
-			this.sendElem.addEventListener('click', sendClickListener);
-			this.messageTextElem.addEventListener('input', messageTextInputListener);
-		}
-		
-		CreateMessageDialogView.prototype.show = function() {
-			base.prototype.show.apply(this, arguments);
-			this.messageTextElem.focus();
-			document.addEventListener('keydown', this.keydownListener);	
-			
-		};
-		
-		CreateMessageDialogView.prototype.hide = function() {
-			base.prototype.hide.apply(this, arguments);
-			document.removeEventListener('keydown', this.keydownListener);	
-		};
-		
-		return CreateMessageDialogView;
-	})(messenger.views.DialogView);
-	
 	var TextMessageView = (function(base) {
 		eve.extend(TextMessageView, base);
 		
 		function TextMessageView(chatMessage) {
 			base.apply(this, arguments);
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'text-message-template',
 				className: 'text-message'
 			});
@@ -486,7 +439,7 @@
 			
 			this.model = user;
 
-			this.elem = aux.template({
+			this.elem = eye.template({
 				templateId: 'text-user-template',
 				className: 'text-user'
 			});
@@ -506,7 +459,7 @@
 				window.open(vkLink, '_blank');
 			};
 			
-			this.model.on('change:online', function(event) {
+			this.model.on('set:online', function(event) {
 				updateOnlineStatus(event.value);
 			});
 			updateOnlineStatus(this.model.get('online'));
@@ -519,6 +472,5 @@
 	
 	messenger.views = messenger.views || {};
 	messenger.views.ConversationView = ConversationView;
-	messenger.views.CreateMessageDialogView = CreateMessageDialogView;
 	
 })(messenger, eve, abyss, settings, analytics);

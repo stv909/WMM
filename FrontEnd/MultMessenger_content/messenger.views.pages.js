@@ -4,7 +4,7 @@ var messenger = messenger || {};
 	
 	var View = abyss.View;
 	
-	var MessageEditorView = messenger.views.MessageEditorView;
+	var MessageEditorView = messenger.ui.MessageEditorView;
 	var UserView = messenger.views.UserView;
 
 	var AnswerPageView = function() {

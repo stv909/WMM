@@ -2,8 +2,8 @@ var messenger = messenger || {};
 
 (function(messenger, eve, abyss, VK, Q, text, settings, base64) {
 	
-	var UserModel = messenger.models.UserModel;
-	var GroupModel = messenger.models.GroupModel;
+	var UserModel = messenger.data.UserModel;
+	var GroupModel = messenger.data.GroupModel;
 	var TextSearch = text.TextSearch;
 	
 	var Pagination = (function(base) {
@@ -263,9 +263,9 @@ var messenger = messenger || {};
 				var rawMessagesPromise = self.chatClientWrapper.getMessagesAsync(messageIds);
 				return Q.all([idToShown, rawMessagesPromise]);
 			}).spread(function(idToShown, rawMessages) {
-				var chatMessages = rawMessages.map(ChatMessageModel.fromRaw);
+				var chatMessages = rawMessages.map(messenger.data.ChatMessageModel.fromRaw);
 				chatMessages = chatMessages.filter(function(chatMessage) {
-					return chatMessage.isValid();	
+					return chatMessage.isValid();
 				});
 				chatMessages.sort(function(m1, m2) {
 					var timestamp1 = m1.get('timestamp');
@@ -344,58 +344,9 @@ var messenger = messenger || {};
 		return ChatRepository;
 	})(eve.EventEmitter);
 	
-	var ChatMessageModel = (function(base) {
-		eve.extend(ChatMessageModel, base);
-		
-		function ChatMessageModel() {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.on('change:preview', function(event) {
-				var preview = event.value;
-				if (preview) {
-					self.set('type', 'mult');
-				} else {
-					self.set('type', 'text');
-				}
-			});
-			this.on('remove:preview', function() {
-				self.set('type', 'text');
-			});
-		}
-		
-		ChatMessageModel.prototype.isMult = function() {
-			return this.get('content').indexOf('class="tool_layerBackground"') !== -1;
-		};
-		
-		ChatMessageModel.prototype.isValid = function() {
-			return !!this.get('content');	
-		};
-		
-		ChatMessageModel.fromRaw = function(rawMessage) {
-			var message = new ChatMessageModel();
-			
-			var value = rawMessage.value || {};
-			
-			message.set({
-				id: value.id,
-				timestamp: value.timestamp,
-				content: value.content ? base64.decode(value.content) : null,
-				preview: value.preview ? [settings.imageStoreBaseUrl, value.preview].join('') : null,
-				from: value.from,
-				to: value.to
-			});
-			
-			return message;
-		};
-		
-		return ChatMessageModel;
-	})(abyss.Model);
-	
 	messenger.repository = messenger.repository || {};
 	messenger.repository.Pagination = Pagination;
 	messenger.repository.ContactRepository = ContactRepository;
 	messenger.repository.ChatRepository = ChatRepository;
-	messenger.repository.ChatMessageModel = ChatMessageModel;
 	
 })(messenger, eve, abyss, VK, Q, text, settings, base64);
