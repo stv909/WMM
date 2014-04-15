@@ -143,8 +143,6 @@ window.onload = function() {
 		this.initializeSettings();
 		this.initializeMessageSender();
 		this.initializeStartupData();
-
-		analytics.send('test');
 	};
 	MessengerApplication.super = EventEmitter;
 	MessengerApplication.prototype = Object.create(EventEmitter.prototype);
@@ -613,7 +611,7 @@ window.onload = function() {
 						text: content
 					});
 				} else {
-					return self.messageSender.send(account, companion, content, false);
+					return self.messageSender.send(account, companion, content, true);
 				}
 			}).then(function() {
 				self.postcardView.hide();
