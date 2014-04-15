@@ -51,7 +51,6 @@ module messenger {
 			}).then(uploadUrl => {
 				return Helper.generatePreviewAsync(shareMessageUrl, uploadUrl);
 			}).then(response => {
-				console.log(response);
 				var uploadResult = response.uploadResult;
 				rawMessage.preview = response.image;
 				this.trigger({
