@@ -87,6 +87,21 @@ var messenger;
                 return ['fbid', contactId].join('');
             };
 
+            Helper.messageTargetToString = function (messageTarget) {
+                var result;
+                switch (messageTarget) {
+                    case 1 /* Friend */:
+                        result = 'friend';
+                        break;
+                    case 2 /* Group */:
+                        result = 'group';
+                        break;
+                    case 0 /* Self */:
+                        result = 'self';
+                        break;
+                }
+            };
+
             Helper.normalizeMessageContent = function (content) {
                 var wkTransformPattern = /(-webkit-transform:([^;]*);)/g;
                 var mozTransformPattern = /(-moz-transform:([^;]*);)/g;

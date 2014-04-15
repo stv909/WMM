@@ -315,7 +315,7 @@ window.onload = function() {
 		});
 		
 		this.chatClient.once('message:login', function() {
-			checkOnline();	
+			checkOnline();
 		});
 	};
 	MessengerApplication.prototype.initializeViews = function() {
@@ -609,7 +609,7 @@ window.onload = function() {
 					self.trigger({
 						type: 'click:send',
 						text: content
-					})
+					});
 				} else {
 					return self.messageSender.send(account, companion, content, false);
 				}
@@ -926,6 +926,8 @@ window.onload = function() {
 			if (messageTarget !== MessageTargets.Friend) {
 				self.postDialogView.setMode('complete');
 			}
+			var destination = messenger.misc.messageTargetToString(messageTarget);
+			analytics.send('post', ['post', destination].join('_'), 'success');
 		});
 		this.messageSender.on('send:fail', function(e) {
 			var messageTarget = e.messageTarget;
@@ -940,6 +942,8 @@ window.onload = function() {
 					user: receiver
 				});
 			}
+			var destination = messenger.misc.messageTargetToString(messageTarget);
+			analytics.send('post', ['post', destination].join('_'), VkTools.formatError(error));
 		});
 
 		this.messageSender.on('invite:start', function() {
@@ -949,12 +953,12 @@ window.onload = function() {
 			self.inviteUserDialogView.show();
 		});
 		this.messageSender.on('invite:always', function() {
-			self.postDialogView.setMode('fail', { errorCode: messenger.misc.ErrorCodes.RESTRICTED });
 			self.postDialogView.show();
+			self.postDialogView.setMode('fail', { errorCode: messenger.misc.ErrorCodes.RESTRICTED });
 		});
 		this.messageSender.on('invite:fail', function() {
-			self.postDialogView.setMode('fail', { errorCode: messenger.misc.ErrorCodes.RESTRICTED });
 			self.postDialogView.show();
+			self.postDialogView.setMode('fail', { errorCode: messenger.misc.ErrorCodes.RESTRICTED });
 		});
 	};
 

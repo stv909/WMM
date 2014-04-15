@@ -94,6 +94,21 @@ module messenger {
 				return [ 'fbid', contactId ].join('');
 			}
 
+			public static messageTargetToString(messageTarget: MessageTargets) {
+				var result: string;
+				switch (messageTarget) {
+					case MessageTargets.Friend:
+						result = 'friend';
+						break;
+					case MessageTargets.Group:
+						result = 'group';
+						break;
+					case MessageTargets.Self:
+						result = 'self';
+						break;
+				}
+			}
+
 			public static normalizeMessageContent(content: string): string {
 				var wkTransformPattern = /(-webkit-transform:([^;]*);)/g;
 				var mozTransformPattern = /(-moz-transform:([^;]*);)/g;
