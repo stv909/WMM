@@ -194,7 +194,7 @@ window.onload = function() {
 				if (!event.noSearch) {
 					self.lobbyView.updateUserSearch();
 				}
-				message.once('change:shown', function(event) {
+				message.once('set:shown', function(event) {
 					var unread = fromContact.get('unread');
 					var messageId = message.get('id');
 					fromContact.set('unread', unread - 1);
