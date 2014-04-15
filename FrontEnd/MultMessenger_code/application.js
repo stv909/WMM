@@ -926,7 +926,7 @@ window.onload = function() {
 			if (messageTarget !== MessageTargets.Friend) {
 				self.postDialogView.setMode('complete');
 			}
-			var destination = messenger.misc.messageTargetToString(messageTarget);
+			var destination = messenger.misc.Helper.messageTargetToString(messageTarget);
 			analytics.send('post', ['post', destination].join('_'), 'success');
 		});
 		this.messageSender.on('send:fail', function(e) {
