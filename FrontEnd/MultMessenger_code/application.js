@@ -143,6 +143,8 @@ window.onload = function() {
 		this.initializeSettings();
 		this.initializeMessageSender();
 		this.initializeStartupData();
+
+		analytics.send('test');
 	};
 	MessengerApplication.super = EventEmitter;
 	MessengerApplication.prototype = Object.create(EventEmitter.prototype);
