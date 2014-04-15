@@ -145,7 +145,7 @@ var messenger;
 
                 this.selected = true;
                 this.elem.classList.add('chosen');
-                this.elem.classList.add('normal');
+                this.elem.classList.remove('normal');
             }
             MessageEditorView.prototype.setModel = function (model) {
                 _super.prototype.setModel.call(this, model, true);

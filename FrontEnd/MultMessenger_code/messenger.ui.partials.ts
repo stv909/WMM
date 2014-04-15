@@ -157,7 +157,7 @@ module messenger {
 
 				this.selected = true;
 				this.elem.classList.add('chosen');
-				this.elem.classList.add('normal');
+				this.elem.classList.remove('normal');
 			}
 
 			public setModel(model: data.MessageModel): void {
