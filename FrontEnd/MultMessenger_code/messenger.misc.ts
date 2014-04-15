@@ -94,7 +94,7 @@ module messenger {
 				return [ 'fbid', contactId ].join('');
 			}
 
-			public static messageTargetToString(messageTarget: MessageTargets) {
+			public static messageTargetToString(messageTarget: MessageTargets): string {
 				var result: string;
 				switch (messageTarget) {
 					case MessageTargets.Friend:
@@ -107,6 +107,7 @@ module messenger {
 						result = 'self';
 						break;
 				}
+				return result;
 			}
 
 			public static normalizeMessageContent(content: string): string {

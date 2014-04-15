@@ -100,6 +100,7 @@ var messenger;
                         result = 'self';
                         break;
                 }
+                return result;
             };
 
             Helper.normalizeMessageContent = function (content) {
