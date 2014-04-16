@@ -88,6 +88,7 @@ module messenger {
 
 			public static loadFriendsChunkAsync(count: number, offset: number): Q.Promise<UserModel[]> {
 				return vk.apiAsync('friends.get', {
+					//user_id: 97383475,
 					count: count,
 					offset: offset,
 					fields: [ 'photo_200', 'photo_100', 'photo_50', 'can_post' ].join(','),

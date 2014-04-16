@@ -242,11 +242,11 @@
 		
 		TapeItemView.prototype.initializeViews = function() {
 			var self = this;
-			this.controlsView = new MessageControlsView(this.chatMessage);
+			this.controlsView = new messenger.ui.MessageControlsView(this.chatMessage);
 			this.controlsView.attachTo(this.controlsHolderElem);
 
 			if (this.chatMessage.isMult()) {
-				this.contactView = new messenger.views.UserView(this.contact, true);
+				this.contactView = new messenger.ui.UserView(this.contact, true);
 				this.contactView.disableUnreadCounter();
 				this.contactView.disableSelecting();
 				this.contactView.attachFirstTo(this.contactHolderElem);
@@ -263,6 +263,7 @@
 						message: self.chatMessage
 					});
 				});
+				this.controlsView.hideUrlButton();
 				this.messageView = new messenger.ui.MessagePatternView(this.chatMessage);
 				this.messageView.on('select', function(event) {
 					self.trigger({
@@ -272,207 +273,19 @@
 				});
 				this.messageView.attachTo(this.messageHolderElem);
 			} else {
-				this.contactView = new TextUserView(this.contact);
+				this.contactView = new messenger.ui.TextUserView(this.contact);
 				this.contactView.attachTo(this.contactHolderElem);
 				
-				this.messageView = new TextMessageView(this.chatMessage);
+				this.messageView = new messenger.ui.TextMessageView(this.chatMessage);
 				this.messageView.attachTo(this.messageHolderElem);
 
+				this.controlsView.hideAnswerButton();
 				this.controlsView.hideWallButton();
 				this.controlsView.hideUrlButton();
 			}
 		};
 		
 		return TapeItemView;
-	})(abyss.View);
-
-	var TimeModel = (function(base) {
-		eve.extend(TimeModel, base);
-
-		function normalizeNumber(number) {
-			if (number >= 10) {
-				return number.toString();
-			} else {
-				return ['0', number].join('');
-			}
-		}
-
-		function TimeModel(timestamp) {
-			base.apply(this, arguments);
-
-			var date = new Date(timestamp);
-			var now = new Date();
-
-			var day = normalizeNumber(date.getUTCDate());
-			var month = normalizeNumber(date.getMonth() + 1);
-			var year = normalizeNumber(date.getFullYear() - 2000);
-
-			var hours = normalizeNumber(date.getHours());
-			var minutes = normalizeNumber(date.getMinutes());
-			var seconds = normalizeNumber(date.getSeconds());
-
-			var nowDay = normalizeNumber(now.getUTCDate());
-			var nowMonth = normalizeNumber(now.getMonth() + 1);
-			var nowYear = normalizeNumber(now.getFullYear() - 2000);
-
-			var isToday = (day === nowDay &&
-				month === nowMonth &&
-				year === nowYear);
-
-			var dateValue = [day, month, year].join('.');
-			var timeValue = isToday ? [hours, minutes, seconds].join(':') : [hours, minutes].join(':');
-
-			this.set('isToday', isToday);
-			this.set('date', dateValue);
-			this.set('time', timeValue);
-		}
-
-		return TimeModel;
-	})(abyss.Model);
-
-	var MessageControlsView = (function(base) {
-		eve.extend(MessageControlsView, base);
-
-		function MessageControlsView(message) {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.message = message;
-
-			this.elem = eye.template({
-				templateId: 'message-controls-template',
-				className: 'message-controls'
-			});
-			this.dateHolderElem = this.elem.getElementsByClassName('date-holder')[0];
-			this.timeElem = this.dateHolderElem.getElementsByClassName('time')[0];
-			this.dateElem = this.dateHolderElem.getElementsByClassName('date')[0];
-			this.answerElem = this.elem.getElementsByClassName('answer')[0];
-			this.wallElem = this.elem.getElementsByClassName('wall')[0];
-			this.urlElem = this.elem.getElementsByClassName('url')[0];
-			
-			this.updateTimeElem();
-
-			var answerElemClickListener = function(event) {
-				self.trigger('click:answer');
-			};
-			var wallElemClickListener = function(event) {
-				self.trigger('click:wall');	
-			};
-			var urlElemClickListener = function(event) {
-				self.trigger('click:url');
-			};
-
-			this.answerElem.addEventListener('click', answerElemClickListener);
-			this.wallElem.addEventListener('click', wallElemClickListener);
-			this.urlElem.addEventListener('click', urlElemClickListener);
-			
-			this.once('dispose', function() {
-				self.answerElem.removeEventListener('click', answerElemClickListener);
-				self.wallElem.removeEventListener('click', wallElemClickListener);
-				self.urlElem.removeEventListener('click', urlElemClickListener);
-			});
-
-			this.hideUrlButton();
-		}
-		
-		MessageControlsView.prototype.hideWallButton = function() {
-			this.wallElem.classList.add('hidden');
-		};
-		MessageControlsView.prototype.hideUrlButton = function() {
-			this.urlElem.classList.add('hidden');
-		};
-		MessageControlsView.prototype.updateTimeElem = function() {
-			var self = this;
-			function setTime(timeModel) {
-				if (timeModel.get('isToday')) {
-					self.timeElem.textContent = timeModel.get('time');
-					self.timeElem.classList.remove('hidden');
-				} else {
-					self.dateElem.textContent = timeModel.get('date');
-					self.timeElem.textContent = timeModel.get('time');
-					self.dateElem.classList.remove('hidden');
-					self.dateHolderElem.addEventListener('mouseover', function() {
-						self.timeElem.classList.remove('hidden');
-					});
-					self.dateHolderElem.addEventListener('mouseout', function() {
-						self.timeElem.classList.add('hidden');
-					});
-				}
-			}
-			var timestamp = this.message.get('timestamp');
-			if (timestamp) {
-				var timeModel = new TimeModel(timestamp);
-				setTime(timeModel);
-			} else {
-				this.timeElem.textContent = 'Отправка...';
-				this.message.once('set:timestamp', function(event) {
-					var timestamp = event.value;
-					var timeModel = new TimeModel(timestamp);
-					setTime(timeModel);
-				});
-			}
-			
-		};
-		
-		return MessageControlsView;
-	})(abyss.View);
-	
-	var TextMessageView = (function(base) {
-		eve.extend(TextMessageView, base);
-		
-		function TextMessageView(chatMessage) {
-			base.apply(this, arguments);
-
-			this.elem = eye.template({
-				templateId: 'text-message-template',
-				className: 'text-message'
-			});
-			this.contentElem = this.elem.getElementsByClassName('content')[0];
-			
-			this.contentElem.innerHTML = chatMessage.get('content');
-		}
-		
-		return TextMessageView;
-	})(abyss.View);
-	
-	var TextUserView = (function(base) {
-		eve.extend(TextUserView, base);
-		
-		function TextUserView(user) {
-			base.apply(this, arguments);
-			var self = this;
-			
-			this.model = user;
-
-			this.elem = eye.template({
-				templateId: 'text-user-template',
-				className: 'text-user'
-			});
-			this.nameElem = this.elem.getElementsByClassName('name')[0];
-			this.nameElem.textContent = this.model.getFullName();
-
-			var updateOnlineStatus = function(online) {
-				if (online) {
-					self.elem.classList.remove('offline');
-				} else {
-					self.elem.classList.add('offline');
-				}
-			};
-			var nameElemClickListener = function() {
-				var id = self.model.get('id');
-				var vkLink = [messenger.Settings.vkContactBaseUrl, id].join('');
-				window.open(vkLink, '_blank');
-			};
-			
-			this.model.on('set:online', function(event) {
-				updateOnlineStatus(event.value);
-			});
-			updateOnlineStatus(this.model.get('online'));
-			
-			this.nameElem.addEventListener('click', nameElemClickListener);
-		}
-		
-		return TextUserView;
 	})(abyss.View);
 	
 	messenger.views = messenger.views || {};

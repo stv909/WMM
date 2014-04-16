@@ -42,7 +42,6 @@
 	<script src="messenger.storage.js"></script>
 	<script src="messenger.views.js"></script>
 	<script src="messenger.views.partials.js"></script>
-	<script src="messenger.views.contacts.js"></script>
 	<script src="messenger.views.dialogs.js"></script>
 	<script src="messenger.views.pages.js"></script>
 	<script src="messenger.views.menus.js"></script>
@@ -83,12 +82,21 @@
 		<div>Еще больше мультов внизу. Крути и загружай!</div>
 	</div>
 	<div class="container shifted">
-		<div class="load-holder">
+		<div class="load-holder hidden">
 			<div class="button-special preload hidden"></div>
 		</div>
 		<div class="patterns"></div>
 		<div class="load-holder bottom">
-			<div class="button-special load">Загрузить еще мультов...</div>
+			<div class="circularImageHolderG">
+				<div class="circularImageG_1 circularImageG"></div>
+				<div class="circularImageG_2 circularImageG"></div>
+				<div class="circularImageG_3 circularImageG"></div>
+				<div class="circularImageG_4 circularImageG"></div>
+				<div class="circularImageG_5 circularImageG"></div>
+				<div class="circularImageG_6 circularImageG"></div>
+				<div class="circularImageG_7 circularImageG"></div>
+				<div class="circularImageG_8 circularImageG"></div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -180,7 +188,6 @@
 					<div class="wrapper">
 						<div class="search-results"></div>
 						<div class="load-holder">
-							<div class="button-special load"></div>
 						</div>
 					</div>
 				</div>
@@ -315,8 +322,7 @@
 		<div class="shadow"></div>
 		<div class="contacts-holder">
 			<div class="contacts"></div>
-			<div class="load-holder hidden">
-				<div class="load button-special">Загрузить еще друзей...</div>
+			<div class="load-holder">
 			</div>
 		</div>
 	</div>

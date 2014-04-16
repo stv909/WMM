@@ -1,8 +1,8 @@
 (function(messenger, eve, abyss, template, analytics) {
 	
 	var PageView = messenger.views.PageView;
-	var UserView = messenger.views.UserView;
-	var GroupView = messenger.views.GroupView;
+	var UserView = messenger.ui.UserView;
+	var GroupView = messenger.ui.GroupView;
 	
 	var DelayedObserver = (function(base) {
 		eve.extend(DelayedObserver, base);
@@ -136,8 +136,6 @@
 			this.queryElem = this.elem.getElementsByClassName('query')[0];
 			this.contactsHolderElem = this.elem.getElementsByClassName('contacts-holder')[0];
 			this.contactsElem = this.elem.getElementsByClassName('contacts')[0];
-			this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
-			this.loadElem = this.loadHolderElem.getElementsByClassName('load')[0];
 			this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
 			this.crossElem = this.teaserElem.getElementsByClassName('cross')[0];
 			
@@ -204,15 +202,20 @@
 			var queryElemInputListener = function(event) {
 				self.queryElemObserver.set(self.queryElem.value);	
 			};
-			var loadElemClickListener = function(event) {
-				self.trigger('click:load');
-				analytics.send('dialog', 'dialog_friend_load_more');
+//			var loadElemClickListener = function(event) {
+//				self.trigger('click:load');
+//				analytics.send('dialog', 'dialog_friend_load_more');
+//			};
+			var scrollListener = function() {
+				if (self.contactsHolderElem.offsetHeight + self.contactsHolderElem.scrollTop >= self.contactsHolderElem.scrollHeight) {
+					self.trigger('click:load');
+				}
 			};
 			
 			this.queryElem.addEventListener('input', queryElemInputListener);
 			this.contactsHolderElem.addEventListener('DOMMouseScroll', wheelListener, false);
 			this.contactsHolderElem.addEventListener('mousewheel', wheelListener, false);
-			this.loadElem.addEventListener('click', loadElemClickListener);
+			this.contactsHolderElem.addEventListener('scroll', scrollListener);
 			this.crossElem.addEventListener('click', hideTeaser);
 			
 			this.once('dispose', function() {
@@ -220,7 +223,7 @@
 				self.queryElem.removeEventListener('input', queryElemInputListener);
 				self.contactsHolderElem.removeEventListener('DOMMouseScroll', wheelListener);
 				self.contactsHolderElem.removeEventListener('mousewheel', wheelListener);
-				self.loadElem.removeEventListener('click', loadElemClickListener);
+				this.contactsHolderElem.removeEventListener('scroll', scrollListener);
 				self.crossElem.removeEventListener('click', hideTeaser);
 			});
 		}
@@ -258,12 +261,7 @@
 				this.userViews[key].detach();
 			}, this);
 			this.userViews = {};
-		};
-		LobbyView.prototype.hideLoader = function() {
-			this.loadHolderElem.classList.add('hidden');
-		};
-		LobbyView.prototype.showLoader = function() {
-			this.loadHolderElem.classList.remove('hidden');	
+			this.contactsHolderElem.scrollTop = 0;
 		};
 		LobbyView.prototype.updateUserSearch = function() {
 			this.trigger({
@@ -288,13 +286,8 @@
 			this.sectionElem = this.elem.getElementsByClassName('section')[0];
 			this.queryElem = this.elem.getElementsByClassName('query')[0];
 			this.searchResultsElem = this.elem.getElementsByClassName('search-results')[0];
-			this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[0];
-			this.loadElem = this.loadHolderElem.getElementsByClassName('load')[0];
 			this.wrapperElem = this.elem.getElementsByClassName('wrapper')[0];
-			
-			var loadElemClickListener = function(event) {
-				self.trigger('click:load');
-			};
+
 			var wheelListener = function(event) {
 				var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
 				var isIE = Math.abs(delta) >= 120;
@@ -308,29 +301,28 @@
 					event.preventDefault();
 				}
 			};
+			var scrollListener = function() {
+				if (self.wrapperElem.offsetHeight + self.wrapperElem.scrollTop >= self.wrapperElem.scrollHeight) {
+					console.log('test');
+					self.trigger('click:load');
+				}
+			};
 			var sendElemClickListener = function(event) {
 				self.trigger('click:send');
 			};
-			
-			this.loadElem.addEventListener('click', loadElemClickListener);
+
 			this.wrapperElem.addEventListener('DOMMouseScroll', wheelListener, false);
 			this.wrapperElem.addEventListener('mousewheel', wheelListener, false);
+			this.wrapperElem.addEventListener('scroll', scrollListener);
 			this.sendElem.addEventListener('click', sendElemClickListener);
 			
 			this.once('dispose', function() {
-				self.loadElem.removeEventListener('click', loadElemClickListener);	
 				self.wrapperElem.removeEventListener('DOMMouseScroll', wheelListener);
 				self.wrapperElem.removeEventListener('mousewheel', wheelListener);
+				self.wrapperElem.addEventListener('scroll', scrollListener);
 				self.sendElem.removeEventListener('click', sendElemClickListener);
 			});
 		}
-		
-		SearchView.prototype.hideLoader = function() {
-			this.loadHolderElem.classList.add('hidden');
-		};
-		SearchView.prototype.showLoader = function() {
-			this.loadHolderElem.classList.remove('hidden');	
-		};
 		
 		return SearchView;
 	})(PageView);
@@ -344,7 +336,7 @@
 			
 			this.sectionElem.textContent = 'Друг';
 			this.queryElem.placeholder = 'Найти друга';
-			this.loadElem.textContent = 'Загрузить еще друзей...';
+			//this.loadElem.textContent = 'Загрузить еще друзей...';
 			
 			this.userView = new UserView();
 			this.userView.attachTo(this.receiverHolderElem);
@@ -381,17 +373,15 @@
 			var queryElemInputListener = function(event) {
 				self.queryElemObserver.set(self.queryElem.value);	
 			};
-			var loadElemClickListener = function(event) {
-				analytics.send('friends', 'friends_load_more');
-			};
+//			var loadElemClickListener = function(event) {
+//				analytics.send('friends', 'friends_load_more');
+//			};
 			
 			this.queryElem.addEventListener('input', queryElemInputListener);
-			this.loadElem.addEventListener('click', loadElemClickListener);
 			
 			this.once('dispose', function() {
 				self.queryElemObserver.off();
 				self.queryElem.removeEventListener('input', queryElemInputListener);
-				self.loadElem.removeEventListener('click', loadElemClickListener);
 			});
 		}
 		
@@ -400,6 +390,7 @@
 				this.userViews[key].detach();	
 			}, this);
 			this.userViews = {};
+			this.wrapperElem.scrollTop = 0;
 		};
 		FriendSearchView.prototype.addFriend = function(user) {
 			var id = user.get('id');
@@ -446,7 +437,6 @@
 			
 			this.sectionElem.textContent = 'Сообщество';
 			this.queryElem.placeholder = 'Найти сообщество';
-			this.loadElem.textContent = 'Загрузить еще сообществ...';
 			
 			this.groupView = new GroupView();
 			this.groupView.attachTo(this.receiverHolderElem);
@@ -483,25 +473,24 @@
 			var queryElemInputListener = function(event) {
 				self.queryElemObserver.set(self.queryElem.value);	
 			};
-			var loadElemClickListener = function(event) {
-				analytics.send('friends', 'groups_load_more');
-			};
+//			var loadElemClickListener = function(event) {
+//				analytics.send('friends', 'groups_load_more');
+//			};
 			
 			this.queryElem.addEventListener('input', queryElemInputListener);
-			this.loadElem.addEventListener('click', loadElemClickListener);
 			
 			this.once('dispose', function() {
 				self.queryElemObserver.off();
 				self.queryElem.removeEventListener('input', queryElemInputListener);
-				self.loadElem.removeEventListener('click', loadElemClickListener);
 			});
 		}
 		
 		GroupSearchView.prototype.clear = function() {
 			Object.keys(this.groupViews).forEach(function(key) {
-				this.groupViews[key].detach();	
+				this.groupViews[key].detach();
 			}, this);
 			this.groupViews = {};
+			this.wrapperElem.scrollTop = 0;
 		};
 		GroupSearchView.prototype.addGroup = function(group) {
 			var id = group.get('id');

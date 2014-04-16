@@ -59,7 +59,7 @@ var messenger = messenger || {};
 		
 		this.senderMessageId = null;
 		
-		this.messageCount = 16;
+		this.messageCount = 12;
 		this.messageOffset = 0;
 		this.totalMessageCount = 0;
 		
@@ -179,6 +179,8 @@ var messenger = messenger || {};
 			self.messageOffset += ids.length;
 			if (self.messageOffset >= self.totalMessageCount) {
 				self.trigger('end:messages');
+			} else {
+				self.trigger('continue:messages');
 			}
 			ids = self._filterMessageIds(ids);
 			return self._loadRawMessagesAsync(ids);	
