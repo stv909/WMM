@@ -234,6 +234,46 @@ var messenger;
             return ChatMessageModel;
         })(deep.Model);
         data.ChatMessageModel = ChatMessageModel;
+
+        var TimeModel = (function (_super) {
+            __extends(TimeModel, _super);
+            function TimeModel(timestamp) {
+                _super.call(this);
+
+                var date = new Date(timestamp);
+                var now = new Date();
+
+                var day = TimeModel.normalizeNumber(date.getUTCDate());
+                var month = TimeModel.normalizeNumber(date.getMonth() + 1);
+                var year = TimeModel.normalizeNumber(date.getFullYear() - 2000);
+
+                var hours = TimeModel.normalizeNumber(date.getHours());
+                var minutes = TimeModel.normalizeNumber(date.getMinutes());
+                var seconds = TimeModel.normalizeNumber(date.getSeconds());
+
+                var nowDay = TimeModel.normalizeNumber(now.getUTCDate());
+                var nowMonth = TimeModel.normalizeNumber(now.getMonth() + 1);
+                var nowYear = TimeModel.normalizeNumber(now.getFullYear() - 2000);
+
+                var isToday = (day === nowDay && month === nowMonth && year === nowYear);
+
+                var dateValue = [day, month, year].join('.');
+                var timeValue = isToday ? [hours, minutes, seconds].join(':') : [hours, minutes].join(':');
+
+                this.set('isToday', isToday);
+                this.set('date', dateValue);
+                this.set('time', timeValue);
+            }
+            TimeModel.normalizeNumber = function (value) {
+                if (value >= 10) {
+                    return value.toString();
+                } else {
+                    return ['0', value].join('');
+                }
+            };
+            return TimeModel;
+        })(deep.Model);
+        data.TimeModel = TimeModel;
     })(messenger.data || (messenger.data = {}));
     var data = messenger.data;
 })(messenger || (messenger = {}));

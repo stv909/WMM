@@ -708,7 +708,8 @@ body {
   width: 140px;
 }
 .tape-page .tape-item .controls-holder .wall,
-.tape-page .tape-item .controls-holder .url {
+.tape-page .tape-item .controls-holder .url,
+.tape-page .tape-item .controls-holder .answer {
   display: block;
   margin-bottom: 6px;
 }
