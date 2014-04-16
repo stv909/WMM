@@ -778,9 +778,11 @@ body {
 #select-page .load-holder {
   margin-left: 8px;
   text-align: center;
+}
+#select-page .load-holder:last-child {
   padding-bottom: 12px;
 }
-#select-page .load-holder .circularImageHolderG {
+#select-page .load-holder:last-child .circularImageHolderG {
   display: inline-block;
 }
 #select-page .teaser,
