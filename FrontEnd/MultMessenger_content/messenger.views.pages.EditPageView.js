@@ -1,4 +1,4 @@
-(function(messenger, eve, abyss, template, filmlang, data, settings, analytics, Q, async) {
+(function(messenger, eve, abyss, template, filmlang, data, analytics, Q) {
 	
 	var PageView = messenger.views.PageView;
 	var MessageEditorView = messenger.ui.MessageEditorView;
@@ -83,7 +83,7 @@
 					return !filmText.isValid;
 				});
 				var requestPairs = invalidFilmTexts.map(function(filmText) {
-					var request = async.requestAsync({
+					var request = eye.requestAsync({
 						url: messenger.Settings.animationServiceUrl,
 						data: filmText.toAnimationRequestData(),
 						method: 'POST',
@@ -946,4 +946,4 @@
 	
 	messenger.views.EditPageView = EditPageView;
 	
-})(messenger, eve, abyss, template, filmlang, data, settings, analytics, Q, async);
+})(messenger, eve, abyss, template, filmlang, data, analytics, Q);

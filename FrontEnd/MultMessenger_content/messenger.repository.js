@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, abyss, VK, Q, text, settings, base64) {
+(function(messenger, eve, abyss, Q, text) {
 	
 	var UserModel = messenger.data.UserModel;
 	var GroupModel = messenger.data.GroupModel;
@@ -308,7 +308,7 @@ var messenger = messenger || {};
 		};
 		ChatRepository.prototype.setContact = function(contact) {
 			this.contact = contact;
-			this.ownProfile.settings.lastContactId = messenger.utils.Helpers.buildVkId(contact);
+			this.ownProfile.settings.lastContactId = messenger.misc.Helper.buildVkId(contact);
 			this.chatClientWrapper.saveProfileAsync(this.ownProfile.profileId, JSON.stringify(this.ownProfile));
 		};
 		ChatRepository.prototype.getContact = function() {
@@ -349,4 +349,4 @@ var messenger = messenger || {};
 	messenger.repository.ContactRepository = ContactRepository;
 	messenger.repository.ChatRepository = ChatRepository;
 	
-})(messenger, eve, abyss, VK, Q, text, settings, base64);
+})(messenger, eve, abyss, Q, text);

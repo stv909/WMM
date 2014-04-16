@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, abyss, template, settings, analytics) {
+(function(messenger, eve, abyss, template, analytics) {
 	
 	var ContactView = (function(base) {
 		eve.extend(ContactView, base);
@@ -84,7 +84,7 @@ var messenger = messenger || {};
 			
 			var nameElemClickListener = function(event) {
 				var id = self.model.get('id');
-				var vkLink = [settings.vkContactBaseUrl, id].join('');
+				var vkLink = [messenger.Settings.vkContactBaseUrl, id].join('');
 				window.open(vkLink, '_blank');
 			};
 			var elemClickListener = function(event) {
@@ -93,7 +93,7 @@ var messenger = messenger || {};
 			
 			this.nameElem.addEventListener('click', nameElemClickListener);
 			this.elem.addEventListener('click', elemClickListener);
-						
+
 			this.on('dispose', function() {
 				self.nameElem.removeEventListener('click', nameElemClickListener);	
 				self.elem.removeEventListener('click', elemClickListener);
@@ -178,7 +178,7 @@ var messenger = messenger || {};
 			var nameElemClickListener = function(event) {
 				var id = -self.model.get('id');
 				var type = self.model.get('type');
-				var vkLink = [settings.vkGroupBaseUrls[type], id].join('');
+				var vkLink = [messenger.Settings.vkGroupBaseUrls[type], id].join('');
 				window.open(vkLink, '_blank');
 			};
 			var elemClickListener = function(event) {
@@ -212,4 +212,4 @@ var messenger = messenger || {};
 	messenger.views.UserView = UserView;
 	messenger.views.GroupView = GroupView;
 	
-})(messenger, eve, abyss, template, settings, analytics);
+})(messenger, eve, abyss, template, analytics);

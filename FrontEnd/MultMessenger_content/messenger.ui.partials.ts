@@ -18,11 +18,12 @@ module messenger {
 			public selected = false;
 			private model: data.MessageModel;
 			private contentElem: HTMLElement;
+			private dataElem: HTMLElement;
 			private cachedElem: HTMLElement;
 			private cachedPreviewElem: HTMLElement;
 			private cachedFullElem: HTMLElement;
 
-			public constructor(model: data.MessageModel) {
+			public constructor(model: data.MessageModel, min?: boolean) {
 				super();
 
 				this.model = model;
@@ -31,6 +32,10 @@ module messenger {
 					className: 'message'
 				});
 				this.contentElem = <HTMLElement>this.elem.getElementsByClassName('content')[0];
+				this.dataElem = <HTMLElement>this.contentElem.getElementsByClassName('data')[0];
+				if (min) {
+					this.elem.classList.add('min');
+				}
 			}
 
 			public on(type: 'select', callback: (e: MessageViewSelectEvent) => void, context?: any): void;
@@ -81,12 +86,12 @@ module messenger {
 
 			private addCachedElem(cachedElem: HTMLElement): void {
 				this.cachedElem = cachedElem;
-				this.contentElem.appendChild(this.cachedElem);
+				this.dataElem.appendChild(this.cachedElem);
 			}
 
 			private removeCachedElem(): void {
 				if (this.cachedElem) {
-					this.contentElem.removeChild(this.cachedElem);
+					this.dataElem.removeChild(this.cachedElem);
 					this.cachedElem = null;
 				}
 			}
@@ -119,8 +124,8 @@ module messenger {
 		}
 
 		export class MessagePatternView extends MessageView {
-			public constructor(model: data.MessageModel) {
-				super(model);
+			public constructor(model: data.MessageModel, min?: boolean) {
+				super(model, min);
 
 				this.prepareCachedPreviewElem();
 				this.deselect();

@@ -1,6 +1,6 @@
 var messenger = messenger || {};
 
-(function(messenger, abyss, template, analytics, css, html, settings) {
+(function(messenger, abyss, template, analytics, css, html) {
 	
 	var View = abyss.View;
 
@@ -135,4 +135,4 @@ var messenger = messenger || {};
 	messenger.views.ImageItemView = ImageItemView;
 	messenger.views.PhotoItemView = PhotoItemView;
 
-})(messenger, abyss, template, analytics, css, html, settings);
+})(messenger, abyss, template, analytics, css, html);

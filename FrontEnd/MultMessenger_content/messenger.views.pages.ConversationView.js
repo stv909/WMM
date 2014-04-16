@@ -1,4 +1,4 @@
-(function(messenger, eve, abyss, settings, analytics) {
+(function(messenger, eve, abyss) {
 	
 	var ConversationView = (function(base) {
 		eve.extend(ConversationView, base);
@@ -257,8 +257,7 @@
 						message: self.chatMessage
 					});
 				});
-				this.answerElem.classList.remove('hidden');
-				this.answerElem.addEventListener('click', function() {
+				this.controlsView.on('click:answer', function() {
 					self.trigger({
 						type: 'click:answer',
 						message: self.chatMessage
@@ -347,22 +346,28 @@
 			this.dateHolderElem = this.elem.getElementsByClassName('date-holder')[0];
 			this.timeElem = this.dateHolderElem.getElementsByClassName('time')[0];
 			this.dateElem = this.dateHolderElem.getElementsByClassName('date')[0];
+			this.answerElem = this.elem.getElementsByClassName('answer')[0];
 			this.wallElem = this.elem.getElementsByClassName('wall')[0];
 			this.urlElem = this.elem.getElementsByClassName('url')[0];
 			
 			this.updateTimeElem();
-			
+
+			var answerElemClickListener = function(event) {
+				self.trigger('click:answer');
+			};
 			var wallElemClickListener = function(event) {
 				self.trigger('click:wall');	
 			};
 			var urlElemClickListener = function(event) {
 				self.trigger('click:url');
 			};
-			
+
+			this.answerElem.addEventListener('click', answerElemClickListener);
 			this.wallElem.addEventListener('click', wallElemClickListener);
 			this.urlElem.addEventListener('click', urlElemClickListener);
 			
 			this.once('dispose', function() {
+				self.answerElem.removeEventListener('click', answerElemClickListener);
 				self.wallElem.removeEventListener('click', wallElemClickListener);
 				self.urlElem.removeEventListener('click', urlElemClickListener);
 			});
@@ -455,7 +460,7 @@
 			};
 			var nameElemClickListener = function() {
 				var id = self.model.get('id');
-				var vkLink = [settings.vkContactBaseUrl, id].join('');
+				var vkLink = [messenger.Settings.vkContactBaseUrl, id].join('');
 				window.open(vkLink, '_blank');
 			};
 			
@@ -473,4 +478,4 @@
 	messenger.views = messenger.views || {};
 	messenger.views.ConversationView = ConversationView;
 	
-})(messenger, eve, abyss, settings, analytics);
+})(messenger, eve, abyss);

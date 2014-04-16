@@ -15,6 +15,11 @@ transform(value)
 	-moz-transform value
 	-ms-transform value
 	transform value
+transform-origin(value)
+	-webkit-transform-origin value
+	-moz-transform-origin value
+	-ms-transform-origin value
+	transform-origin value
 *
 	outline 0
 ::-webkit-scrollbar
@@ -588,7 +593,7 @@ html, body
 				margin-left 12px
 		.controls-holder
 			width 140px
-			.wall, .url
+			.wall, .url, .answer
 				display block
 				margin-bottom 6px
 			.wall
@@ -639,13 +644,13 @@ html, body
 		//height 100% !important
 		box-sizing(border-box)
 		overflow auto
-		padding 8px 0 0 16px
+		padding 8px 0 0 12px
 		.patterns
 			margin-bottom 16px
 		&.shifted
 			margin-top 36px
 	.message
-		margin 8px
+		margin 4px 8px 4px 0px
 	.load-holder
 		margin-left 8px
 		width 848px
@@ -1025,6 +1030,14 @@ html, body
 	border-radius 2px
 	background-color #fff
 	vertical-align top
+	&.min
+		.content
+			width 198px
+			height 198px
+			margin 7px
+		.data
+			transform-origin(0 0)
+			transform(scale(0.4913))
 	&.normal
 		cursor pointer
 	&.normal:hover
@@ -1067,7 +1080,7 @@ html, body
 			&:after
 				content ""
 				position absolute
-				top 64px
+				top 63px
 				left 16px
 				border-top 20px solid aspect-color
 				border-right 20px solid transparent
@@ -1077,7 +1090,6 @@ html, body
 				left 32px
 				display inline-block
 				width 0
-				background-color white
 				border-left 32px solid #fff
 				border-top 20px solid aspect-color
 				border-bottom 20px solid aspect-color

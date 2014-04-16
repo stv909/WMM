@@ -708,7 +708,8 @@ body {
   width: 140px;
 }
 .tape-page .tape-item .controls-holder .wall,
-.tape-page .tape-item .controls-holder .url {
+.tape-page .tape-item .controls-holder .url,
+.tape-page .tape-item .controls-holder .answer {
   display: block;
   margin-bottom: 6px;
 }
@@ -769,7 +770,7 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: auto;
-  padding: 8px 0 0 16px;
+  padding: 8px 0 0 12px;
 }
 #select-page .container .patterns {
   margin-bottom: 16px;
@@ -778,7 +779,7 @@ body {
   margin-top: 36px;
 }
 #select-page .message {
-  margin: 8px;
+  margin: 4px 8px 4px 0px;
 }
 #select-page .load-holder {
   margin-left: 8px;
@@ -1280,6 +1281,21 @@ body {
   background-color: #fff;
   vertical-align: top;
 }
+.message.min .content {
+  width: 198px;
+  height: 198px;
+  margin: 7px;
+}
+.message.min .data {
+  -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  -ms-transform-origin: 0 0;
+  transform-origin: 0 0;
+  -webkit-transform: scale(0.4913);
+  -moz-transform: scale(0.4913);
+  -ms-transform: scale(0.4913);
+  transform: scale(0.4913);
+}
 .message.normal {
   cursor: pointer;
 }
@@ -1329,7 +1345,7 @@ body {
 .message.normal .icon:after {
   content: "";
   position: absolute;
-  top: 64px;
+  top: 63px;
   left: 16px;
   border-top: 20px solid #28f;
   border-right: 20px solid transparent;
@@ -1340,7 +1356,6 @@ body {
   left: 32px;
   display: inline-block;
   width: 0;
-  background-color: #fff;
   border-left: 32px solid #fff;
   border-top: 20px solid #28f;
   border-bottom: 20px solid #28f;

@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="main-preloader.css">
 	<link rel="stylesheet" href="image-preloader.css">
 	<link rel="stylesheet" href="dialog-preloader.css">
+
 	<script src="analytics.js"></script>
 	<script src="https://vk.com/js/api/xd_connection.js?2" type="text/javascript"></script>
 	<script src="q.js"></script>
@@ -17,12 +18,8 @@
 	<script src="template.js"></script>
 	<script src="abyss.js"></script>
 	<script src="errors.js"></script>
-	<script src="async.js"></script>
-	<script src="vk.js"></script>
 	<script src="base64.js"></script>
 	<script src="text.js"></script>
-	<script src="settings.js"></script>
-	<script src="data.js"></script>
 
 	<script src="eye.js"></script>
 	<script src="deep.js"></script>
@@ -35,11 +32,12 @@
 	<script src="messenger.ui.js"></script>
 	<script src="messenger.ui.partials.js"></script>
 	<script src="messenger.ui.dialogs.js"></script>
+	<script src="messenger.ui.ConversationView.js"></script>
 	<script src="messenger.MessageSender.js"></script>
 
 	<script src="filmlang.js"></script>
+	<script src="data.js"></script>
 
-	<script src="messenger.utils.js"></script>
 	<script src="messenger.repository.js"></script>
 	<script src="messenger.storage.js"></script>
 	<script src="messenger.views.js"></script>
@@ -48,7 +46,6 @@
 	<script src="messenger.views.dialogs.js"></script>
 	<script src="messenger.views.pages.js"></script>
 	<script src="messenger.views.menus.js"></script>
-	<script src="messenger.views.MainMenuView.js"></script>
 	<script src="messenger.views.pages.EditPageView.js"></script>
 	<script src="messenger.views.pages.PostPageView.js"></script>
 	<script src="messenger.views.pages.ConversationView.js"></script>
@@ -58,9 +55,11 @@
 <audio id="new-message-sound" src="newMessageSpace.wav" preload="auto" style="controls:none"></audio>
 <template id="message-template" style="display:none">
 	<div class="content">
-		<div class="play">
-			<div class="icon">
-				<div class="arrow"></div>
+		<div class="data">
+			<div class="play">
+				<div class="icon">
+					<div class="arrow"></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -327,6 +326,7 @@
 		<span class="time hidden"></span>
 		<span class="date hidden"></span>
 	</div>
+	<div class="button answer">Ответить</div>
 	<div class="button wall">Переслать на стену</div>
 	<div class="button url">Получить ссылку</div>
 </template>

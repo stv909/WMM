@@ -45,6 +45,25 @@ module messenger {
 			}
 		}
 
+		export class MainContainerView extends ControlView {
+			public constructor() {
+				super();
+
+				this.elem = document.createElement('div');
+				this.elem.classList.add('main-container');
+			}
+		}
+
+		export class PostcardView extends ControlView {
+			public constructor() {
+				super();
+
+				this.elem = document.createElement('div');
+				this.elem.classList.add('postcard');
+				this.elem.classList.add('hidden');
+			}
+		}
+
 	}
 
 }

@@ -1,10 +1,8 @@
 var messenger = messenger || {};
 
-(function(messenger, eve, Q, settings) {
+(function(messenger, eve, Q) {
 	
 	var EventEmitter = eve.EventEmitter;
-	//var ContactModel = messenger.models.ContactModel;
-	//var GroupModel = messenger.data.GroupModel;
 	var MessageModel = messenger.data.MessageModel;
 	
 	var PaginationCollection = function(data) {
@@ -37,7 +35,7 @@ var messenger = messenger || {};
 		var isEnd = this.offset >= this.data.length;
 		if (isEnd) {
 			this.trigger({
-				type: 'paginate:end'	
+				type: 'paginate:end'
 			});
 		}
 	};
@@ -52,7 +50,7 @@ var messenger = messenger || {};
 		this.chatClientWrapper = chatClientWrapper;
 		this.chatClient = this.chatClientWrapper.chatClient;
 		
-		this.publicId = settings.publicId;
+		this.publicId = messenger.Settings.publicId;
 		//this.publicId = 'public.bc53e8d2-d372-49c2-a91b-2d3b0aaffcb6'; //empty
 		
 		this.preloadedMessages = {};
@@ -61,7 +59,7 @@ var messenger = messenger || {};
 		
 		this.senderMessageId = null;
 		
-		this.messageCount = 8;
+		this.messageCount = 16;
 		this.messageOffset = 0;
 		this.totalMessageCount = 0;
 		
@@ -313,7 +311,7 @@ var messenger = messenger || {};
 	PhotoStorage.prototype.constructor = PhotoStorage;
 	PhotoStorage.prototype.loadPhotosAsync = function() {
 		var self = this;
-		return VK.apiAsync('photos.getAll', { 
+		return messenger.vk.apiAsync('photos.getAll', {
 			offset: this.offset,
 			count: this.count,
 			https: 1,
@@ -354,4 +352,4 @@ var messenger = messenger || {};
 		PhotoStorage: PhotoStorage
 	};
 	
-})(messenger, eve, Q, settings);
+})(messenger, eve, Q);
