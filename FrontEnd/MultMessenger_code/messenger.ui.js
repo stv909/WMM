@@ -54,6 +54,31 @@ var messenger;
             return DialogView;
         })(deep.View);
         ui.DialogView = DialogView;
+
+        var MainContainerView = (function (_super) {
+            __extends(MainContainerView, _super);
+            function MainContainerView() {
+                _super.call(this);
+
+                this.elem = document.createElement('div');
+                this.elem.classList.add('main-container');
+            }
+            return MainContainerView;
+        })(ControlView);
+        ui.MainContainerView = MainContainerView;
+
+        var PostcardView = (function (_super) {
+            __extends(PostcardView, _super);
+            function PostcardView() {
+                _super.call(this);
+
+                this.elem = document.createElement('div');
+                this.elem.classList.add('postcard');
+                this.elem.classList.add('hidden');
+            }
+            return PostcardView;
+        })(ControlView);
+        ui.PostcardView = PostcardView;
     })(messenger.ui || (messenger.ui = {}));
     var ui = messenger.ui;
 })(messenger || (messenger = {}));

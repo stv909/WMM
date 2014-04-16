@@ -1,6 +1,6 @@
 var data = data || {};
 
-(function(data, settings, async) {
+(function(data) {
 	
 	var MoodCollection = {
 		calm: { value: 'calm', icon: ":-|" }, 
@@ -64,11 +64,11 @@ var data = data || {};
 	Object.keys(CharacterCollection).forEach(function(key) {
 		var options = {
 			method: 'GET',
-			url: [settings.abilityBaseUrl, key, '_abilities.v1.json'].join('')
+			url: [messenger.Settings.abilityBaseUrl, key, '_abilities.v1.json'].join('')
 		};
-		var responseText = async.requestSync(options);
+		var responseText = eye.requestSync(options);
 		var abilities = JSON.parse(responseText);
-		var version = settings.version;
+		var version = messenger.Settings.version;
 		var getFilters = function(object) {
 			var validKeys = Object.keys(object).filter(function(key) {
 				var isTrue = object[key] === 'true';
@@ -94,4 +94,4 @@ var data = data || {};
 	data.CharacterCollection = CharacterCollection;
 	data.AbilityCollection = AbilityCollection;
 	
-})(data, settings, async);
+})(data);

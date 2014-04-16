@@ -1,4 +1,4 @@
-(function(messenger, eve, abyss, settings, analytics) {
+(function(messenger, eve, abyss) {
 	
 	var ConversationView = (function(base) {
 		eve.extend(ConversationView, base);
@@ -455,7 +455,7 @@
 			};
 			var nameElemClickListener = function() {
 				var id = self.model.get('id');
-				var vkLink = [settings.vkContactBaseUrl, id].join('');
+				var vkLink = [messenger.Settings.vkContactBaseUrl, id].join('');
 				window.open(vkLink, '_blank');
 			};
 			
@@ -473,4 +473,4 @@
 	messenger.views = messenger.views || {};
 	messenger.views.ConversationView = ConversationView;
 	
-})(messenger, eve, abyss, settings, analytics);
+})(messenger, eve, abyss);

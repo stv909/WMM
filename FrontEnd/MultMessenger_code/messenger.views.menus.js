@@ -1,4 +1,4 @@
-(function(messenger, eve, abyss, template, settings, analytics) {
+(function(messenger, eve, abyss, template, analytics) {
 	
 	var MainMenuView = (function(base) {
 		eve.extend(MainMenuView, base);
@@ -35,7 +35,7 @@
 				self.trigger('click:logo');
 			};
 			this.groupElemClickListener = function(event) {
-				window.open(settings.groupUrl, '_blank');
+				window.open(messenger.Settings.groupUrl, '_blank');
 				analytics.send('app_start', 'app_go_group');
 			};
 			
@@ -445,4 +445,4 @@
 	messenger.views.PostcardMenuView = PostcardMenuView;
 	messenger.views.ConversationMenuView = ConversationMenuView;
 	
-})(messenger, eve, abyss, template, settings, analytics);
+})(messenger, eve, abyss, template, analytics);

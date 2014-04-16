@@ -103,6 +103,18 @@ var messenger;
                 return result;
             };
 
+            Helper.getMessageTarget = function (sender, receiver) {
+                var senderId = sender.get('id');
+                var receiverId = receiver.get('id');
+                if (senderId === receiverId) {
+                    return 0 /* Self */;
+                } else if (receiverId < 0) {
+                    return 2 /* Group */;
+                } else {
+                    return 1 /* Friend */;
+                }
+            };
+
             Helper.normalizeMessageContent = function (content) {
                 var wkTransformPattern = /(-webkit-transform:([^;]*);)/g;
                 var mozTransformPattern = /(-moz-transform:([^;]*);)/g;
@@ -135,18 +147,6 @@ var messenger;
                 };
 
                 return content.replace(mozTransformPattern, replaceWkTransform).replace(msTransformPattern, replaceWkTransform).replace(transformPattern, replaceWkTransform).replace(wkTransformRepeatPattern, replaceTransform).replace(mozTransformPattern, replaceWkTransform).replace(msTransformPattern, replaceWkTransform).replace(transformPattern, replaceWkTransform).replace(wkTransformRepeatPattern, replaceTransform);
-            };
-
-            Helper.getMessageTarget = function (sender, receiver) {
-                var senderId = sender.get('id');
-                var receiverId = receiver.get('id');
-                if (senderId === receiverId) {
-                    return 0 /* Self */;
-                } else if (receiverId < 0) {
-                    return 2 /* Group */;
-                } else {
-                    return 1 /* Friend */;
-                }
             };
 
             Helper.calculateMessageShareUrl = function (messageId) {
@@ -193,6 +193,22 @@ var messenger;
                     attachments: [imageId, fullAnswerUrl].join(','),
                     v: 5.12
                 };
+            };
+
+            Helper.formatError = function (error) {
+                var result = [];
+                var mainResult = error.errorCode === 8 /* RESTRICTED */ ? 'reject' : 'fail';
+                result.push(mainResult);
+                if (mainResult === 'fail') {
+                    var message = error.message || {};
+                    if (message.error_code) {
+                        result.push(message.error_code);
+                    }
+                    if (message.error_msg) {
+                        result.push(message.error_msg);
+                    }
+                }
+                return result.join('_');
             };
             return Helper;
         })();

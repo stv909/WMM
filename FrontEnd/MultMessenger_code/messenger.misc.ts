@@ -110,6 +110,18 @@ module messenger {
 				return result;
 			}
 
+			public static getMessageTarget(sender: data.ContactModel, receiver: data.ContactModel): MessageTargets {
+				var senderId = sender.get('id');
+				var receiverId = receiver.get('id');
+				if (senderId === receiverId) {
+					return MessageTargets.Self;
+				} else if (receiverId < 0) {
+					return MessageTargets.Group;
+				} else {
+					return MessageTargets.Friend;
+				}
+			}
+
 			public static normalizeMessageContent(content: string): string {
 				var wkTransformPattern = /(-webkit-transform:([^;]*);)/g;
 				var mozTransformPattern = /(-moz-transform:([^;]*);)/g;
@@ -150,18 +162,6 @@ module messenger {
 					.replace(msTransformPattern, replaceWkTransform)
 					.replace(transformPattern, replaceWkTransform)
 					.replace(wkTransformRepeatPattern, replaceTransform);
-			}
-
-			public static getMessageTarget(sender: data.ContactModel, receiver: data.ContactModel): MessageTargets {
-				var senderId = sender.get('id');
-				var receiverId = receiver.get('id');
-				if (senderId === receiverId) {
-					return MessageTargets.Self;
-				} else if (receiverId < 0) {
-					return MessageTargets.Group;
-				} else {
-					return MessageTargets.Friend;
-				}
 			}
 
 			public static calculateMessageShareUrl(messageId: string): string {
@@ -208,6 +208,22 @@ module messenger {
 					attachments: [imageId, fullAnswerUrl].join(','),
 					v: 5.12
 				};
+			}
+
+			public static formatError(error): string {
+				var result = [];
+				var mainResult = error.errorCode === ErrorCodes.RESTRICTED ? 'reject' : 'fail';
+				result.push(mainResult);
+				if (mainResult === 'fail') {
+					var message = error.message || {};
+					if (message.error_code) {
+						result.push(message.error_code);
+					}
+					if (message.error_msg) {
+						result.push(message.error_msg);
+					}
+				}
+				return result.join('_');
 			}
 		}
 

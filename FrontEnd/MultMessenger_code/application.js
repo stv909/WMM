@@ -5,9 +5,6 @@ window.onload = function() {
 	
 	var MessagePatternView = messenger.ui.MessagePatternView;
 	var ChatMessageModel = messenger.data.ChatMessageModel;
-	
-	var VkTools = messenger.utils.VkTools;
-	var Helpers = messenger.utils.Helpers;
 
 	var MessageFactory = messenger.chat.MessageFactory;
 	var MessageTargets = messenger.misc.MessageTargets;
@@ -29,8 +26,8 @@ window.onload = function() {
 		this.chatRepository = new messenger.repository.ChatRepository(this.chatClientWrapper);
 
 		this.mainMenuView = new messenger.views.MainMenuView();
-		this.mainContainerView = new messenger.views.MainContainerView();
-		this.postcardView = new messenger.views.PostcardView();
+		this.mainContainerView = new messenger.ui.MainContainerView();
+		this.postcardView = new messenger.ui.PostcardView();
 		this.postcardMenuView = new messenger.views.PostcardMenuView();
 		this.conversationView = new messenger.views.ConversationView();
 		this.conversationMenuView = new messenger.views.ConversationMenuView();
@@ -695,7 +692,7 @@ window.onload = function() {
 				chatMessage.set('timestamp', timestamp);
 				var rawMessage = MessageFactory.encode({
 					id: chatMessage.get('id'),
-					content: Helpers.normalizeMessageContent(chatMessage.get('content')),
+					content: messenger.misc.Helper.normalizeMessageContent(chatMessage.get('content')),
 					from: chatMessage.get('from'),
 					to: chatMessage.get('to'),
 					timestamp: chatMessage.get('timestamp')
@@ -720,7 +717,7 @@ window.onload = function() {
 				chatMessage.set('timestamp', timestamp);
 				var rawMessage = MessageFactory.encode({
 					id: chatMessage.get('id'),
-					content: Helpers.normalizeMessageContent(chatMessage.get('content')),
+					content: messenger.misc.Helper.normalizeMessageContent(chatMessage.get('content')),
 					from: chatMessage.get('from'),
 					to: chatMessage.get('to'),
 					timestamp: chatMessage.get('timestamp')
@@ -821,7 +818,7 @@ window.onload = function() {
 				analytics.send('dialog', 'dialog_success');
 			}).catch(function(error) {
 				self.trigger('fail:dialogs');
-				analytics.send('dialog', 'dialog_fail', VkTools.formatError(error));
+				analytics.send('dialog', 'dialog_fail', messenger.misc.Helper.formatError(error));
 				console.log(error);
 			});
 			analytics.send('app_start', 'app_success');
@@ -952,7 +949,7 @@ window.onload = function() {
 				});
 			}
 			var destination = messenger.misc.Helper.messageTargetToString(messageTarget);
-			analytics.send('post', ['post', destination].join('_'), VkTools.formatError(error));
+			analytics.send('post', ['post', destination].join('_'), messenger.misc.Helper.formatError(error));
 		});
 
 		this.messageSender.on('invite:start', function() {
