@@ -1,7 +1,7 @@
 module messenger {
 
 	export class Settings {
-		public static version = 'dev';
+		public static version = 'content';
 
 		public static publicIds = {
 			'dev': 'public.9205ef2d-4a2c-49dd-8203-f33a3ceac6c9',

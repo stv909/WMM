@@ -3,7 +3,7 @@ var messenger;
     var Settings = (function () {
         function Settings() {
         }
-        Settings.version = 'dev';
+        Settings.version = 'content';
 
         Settings.publicIds = {
             'dev': 'public.9205ef2d-4a2c-49dd-8203-f33a3ceac6c9',

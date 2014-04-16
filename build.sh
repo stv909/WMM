@@ -15,7 +15,7 @@ cd ..
 cp -r MultMessenger_code/* MultMessenger_release
 cd MultMessenger_release
 perl -pi -e "s/Settings.version = 'dev'/Settings.version = 'release'/g" messenger.Settings.js
-perl -pi -e "s/version = 'dev'/version = 'release'/g" messenger.Settings.js
+perl -pi -e "s/version = 'dev'/version = 'release'/g" messenger.Settings.ts
 cd ..
 
 #cd MultMessenger_english/
