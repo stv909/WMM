@@ -59,7 +59,7 @@ var messenger = messenger || {};
 		
 		this.senderMessageId = null;
 		
-		this.messageCount = 8;
+		this.messageCount = 16;
 		this.messageOffset = 0;
 		this.totalMessageCount = 0;
 		

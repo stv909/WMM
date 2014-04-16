@@ -12,7 +12,7 @@ var messenger;
     (function (ui) {
         var MessageView = (function (_super) {
             __extends(MessageView, _super);
-            function MessageView(model) {
+            function MessageView(model, min) {
                 _super.call(this);
                 this.selected = false;
 
@@ -22,6 +22,10 @@ var messenger;
                     className: 'message'
                 });
                 this.contentElem = this.elem.getElementsByClassName('content')[0];
+                this.dataElem = this.contentElem.getElementsByClassName('data')[0];
+                if (min) {
+                    this.elem.classList.add('min');
+                }
             }
             MessageView.prototype.on = function (type, callback, context) {
                 _super.prototype.on.call(this, type, callback, context);
@@ -67,12 +71,12 @@ var messenger;
 
             MessageView.prototype.addCachedElem = function (cachedElem) {
                 this.cachedElem = cachedElem;
-                this.contentElem.appendChild(this.cachedElem);
+                this.dataElem.appendChild(this.cachedElem);
             };
 
             MessageView.prototype.removeCachedElem = function () {
                 if (this.cachedElem) {
-                    this.contentElem.removeChild(this.cachedElem);
+                    this.dataElem.removeChild(this.cachedElem);
                     this.cachedElem = null;
                 }
             };
@@ -108,9 +112,9 @@ var messenger;
 
         var MessagePatternView = (function (_super) {
             __extends(MessagePatternView, _super);
-            function MessagePatternView(model) {
+            function MessagePatternView(model, min) {
                 var _this = this;
-                _super.call(this, model);
+                _super.call(this, model, min);
 
                 this.prepareCachedPreviewElem();
                 this.deselect();

@@ -150,7 +150,7 @@ window.onload = function() {
 		this.messageStorage.on('add:message', function(event) {
 			var message = event.message;
 			var first = event.first;
-			var messagePatternView = new MessagePatternView(message);
+			var messagePatternView = new MessagePatternView(message, true);
 			self.selectPageView.addMessagePatternView(messagePatternView, first);
 		});
 		this.messageStorage.on('select:message', function(event) {
