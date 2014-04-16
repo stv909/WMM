@@ -162,7 +162,10 @@ window.onload = function() {
 			self.selectPageView.setPreloadedMessageCount(count);
 		});
 		this.messageStorage.on('end:messages', function() {
-			self.selectPageView.disableMessageLoading();
+			self.selectPageView.disableMessageLoading(true);
+		});
+		this.messageStorage.on('continue:messages', function() {
+			self.selectPageView.enableMessageLoading();
 		});
 		
 		this.chatRepository.on('empty:last-contact', function() {
@@ -590,8 +593,6 @@ window.onload = function() {
 				self.errorDialogView.show();
 				self.errorDialogView.setError(error);
 				analytics.send('tape', 'msg_load_more', 'fail');
-			}).fin(function() {
-				self.selectPageView.enableMessageLoading();
 			});
 		});
 		this.selectPageView.on('click:preload', function(event) {

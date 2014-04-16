@@ -181,8 +181,12 @@ var messenger = messenger || {};
 		this.loadHolderElem.classList.add('hidden');
 		this.loadElemEnable = true;
 	};
-	SelectPageView.prototype.disableMessageLoading = function() {
-		this.loadHolderElem.classList.remove('hidden');
+	SelectPageView.prototype.disableMessageLoading = function(forever) {
+		if (forever) {
+			this.loadHolderElem.classList.add('hidden');
+		} else {
+			this.loadHolderElem.classList.remove('hidden');
+		}
 		this.loadElemEnable = false;
 	};
 	SelectPageView.prototype.setPreloadedMessageCount = function(count) {
