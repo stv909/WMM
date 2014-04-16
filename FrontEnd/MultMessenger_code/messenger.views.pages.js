@@ -58,7 +58,6 @@ var messenger = messenger || {};
 		this.elem = template.create('select-page-template', { id: 'select-page' });
 		this.patternsElem = this.elem.getElementsByClassName('patterns')[0];
 		this.loadHolderElem = this.elem.getElementsByClassName('load-holder')[1];
-		this.loadElem = this.elem.getElementsByClassName('load')[0];
 		this.preloadElem = this.elem.getElementsByClassName('preload')[0];
 		this.containerElem = this.elem.getElementsByClassName('container')[0];
 		this.teaserElem = this.elem.getElementsByClassName('teaser')[0];
@@ -82,39 +81,41 @@ var messenger = messenger || {};
 				});
 			}
 		};
-		
-		var loadElemClickListener = function(event) {
-			if (self.loadElemEnable) {
-				self.trigger({
-					type: 'click:load'
-				});
-				self.containerElem.classList.remove('shifted');
-				self.teaserElem.classList.add('hidden');
-			}
-		};
+
 		var preloadElemClickListener = function(event) {
 			self.trigger({
 				type: 'click:preload'
 			});
 		};
 		var wheelListener = function(event) {
-            var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
-            var isIE = Math.abs(delta) >= 120;
-            var scrollPending = isIE ? delta / 2 : 0;
-            if (delta < 0 && (self.containerElem.scrollTop + scrollPending) <= 0) {
+			var delta = (event.wheelDelta) ? -event.wheelDelta : event.detail;
+			var isIE = Math.abs(delta) >= 120;
+			var scrollPending = isIE ? delta / 2 : 0;
+			if (delta < 0 && (self.containerElem.scrollTop + scrollPending) <= 0) {
 				self.containerElem.scrollTop = 0;
 				event.preventDefault();
-            }
-            else if (delta > 0 && (self.containerElem.scrollTop + scrollPending >= (self.containerElem.scrollHeight - self.containerElem.offsetHeight))) {
+			}
+			else if (delta > 0 && (self.containerElem.scrollTop + scrollPending >= (self.containerElem.scrollHeight - self.containerElem.offsetHeight))) {
 				self.containerElem.scrollTop = self.containerElem.scrollHeight - self.containerElem.offsetHeight;
 				event.preventDefault();
             }
+		};
+		var scrollListener = function() {
+			if (self.containerElem.offsetHeight + self.containerElem.scrollTop >= self.containerElem.scrollHeight) {
+				if (self.loadElemEnable) {
+					self.trigger({
+						type: 'click:load'
+					});
+					self.containerElem.classList.remove('shifted');
+					self.teaserElem.classList.add('hidden');
+				}
+			}
 		};
 		var crossClickListener = function(event) {
 			event.preventDefault();
 			event.stopPropagation();
 			self.containerElem.classList.remove('shifted');
-			self.teaserElem.classList.add('hidden');	
+			self.teaserElem.classList.add('hidden');
 		};
 		var crossMouseMoveListener = function(event) {
 			event.stopPropagation();
@@ -126,20 +127,20 @@ var messenger = messenger || {};
 			self.teaserElem.classList.add('hidden');
 			analytics.send('tape', 'hint_load_click');
 		};
-		
-		this.loadElem.addEventListener('click', loadElemClickListener);
+
 		this.preloadElem.addEventListener('click', preloadElemClickListener);
 		this.containerElem.addEventListener('DOMMouseScroll', wheelListener, false);
 		this.containerElem.addEventListener('mousewheel', wheelListener, false);
+		this.containerElem.addEventListener('scroll', scrollListener);
 		this.teaserCrossElem.addEventListener('click', crossClickListener);
 		this.teaserCrossElem.addEventListener('mousemove', crossMouseMoveListener);
 		this.teaserElem.addEventListener('click', teaserElemClickListener);
 		
 		this.once('dispose', function(event) {
-			self.loadElem.removeEvent('click', loadElemClickListener);
 			self.preloadElem.removeEventListener('click', preloadElemClickListener);
 			self.containerElem.removeEventListener('DOMMouseScroll', wheelListener);
 			self.containerElem.removeEventListener('mousewheel', wheelListener);
+			self.containerElem.removeEventListener('scroll', scrollListener);
 			self.teaserCrossElem.removeEventListener('click', crossClickListener);
 			self.teaserCrossElem.addEventListener('mousemove', crossMouseMoveListener);
 			self.teaserElem.addEventListener('click', teaserElemClickListener);
@@ -177,18 +178,12 @@ var messenger = messenger || {};
 		}
 	};
 	SelectPageView.prototype.enableMessageLoading = function() {
+		this.loadHolderElem.classList.add('hidden');
 		this.loadElemEnable = true;
-		this.loadElem.textContent = 'Загрузить еще...';
 	};
 	SelectPageView.prototype.disableMessageLoading = function() {
+		this.loadHolderElem.classList.remove('hidden');
 		this.loadElemEnable = false;
-		this.loadElem.textContent = 'Загрузка...';
-	};
-	SelectPageView.prototype.hideMessageLoading = function() {
-		this.loadHolderElem.classList.add('hidden');
-	};
-	SelectPageView.prototype.showMessageLoading = function() {
-		this.loadHolderElem.classList.remove('hidden');	
 	};
 	SelectPageView.prototype.setPreloadedMessageCount = function(count) {
 		if (count === 0) {

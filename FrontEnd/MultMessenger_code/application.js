@@ -162,7 +162,7 @@ window.onload = function() {
 			self.selectPageView.setPreloadedMessageCount(count);
 		});
 		this.messageStorage.on('end:messages', function() {
-			self.selectPageView.hideMessageLoading();	
+			self.selectPageView.disableMessageLoading();
 		});
 		
 		this.chatRepository.on('empty:last-contact', function() {
@@ -223,7 +223,6 @@ window.onload = function() {
 			self.contactRepository.on('search:chat-users', function(event) {
 				if (chatUsers) chatUsers.dispose();
 				self.lobbyView.clear();
-				self.lobbyView.showLoader();
 				self.lobbyView.off('click:load');
 				self.lobbyView.on('click:load', function() {
 					chatUsers.next();
@@ -234,14 +233,12 @@ window.onload = function() {
 					self.lobbyView.addUser(user);
 				});
 				chatUsers.on('paginate:end', function(event) {
-					self.lobbyView.hideLoader();
 				});
 				chatUsers.next();
 			});
 			self.contactRepository.on('search:users', function(event) {
 				if (users) users.dispose();
 				self.postPageView.friendSearchView.clear();
-				self.postPageView.friendSearchView.showLoader();
 				self.postPageView.friendSearchView.off('click:load');
 				self.postPageView.friendSearchView.on('click:load', function() {
 					users.next();
@@ -252,14 +249,12 @@ window.onload = function() {
 					self.postPageView.friendSearchView.addFriend(friend);
 				});
 				users.on('paginate:end', function(event) {
-					self.postPageView.friendSearchView.hideLoader();
 				});
 				users.next();
 			});
 			self.contactRepository.on('search:groups', function(event) {
 				if (groups) groups.dispose();
 				self.postPageView.groupSearchView.clear();
-				self.postPageView.groupSearchView.showLoader();
 				self.postPageView.groupSearchView.off('click:load');
 				self.postPageView.groupSearchView.on('click:load', function() {
 					groups.next();	
@@ -270,7 +265,6 @@ window.onload = function() {
 					self.postPageView.groupSearchView.addGroup(group);
 				});
 				groups.on('paginate:end', function(event) {
-					self.postPageView.groupSearchView.hideLoader();
 				});
 				groups.next();
 			});

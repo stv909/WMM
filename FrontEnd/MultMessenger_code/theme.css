@@ -553,13 +553,7 @@ body {
   margin-left: 16px;
 }
 #lobby .load-holder {
-  margin-top: 18px;
-  margin-bottom: 18px;
-}
-#lobby .load-holder .button-special {
-  width: 100%;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+  height: 48px;
 }
 .tape-page {
   font-size: 0;
@@ -783,14 +777,11 @@ body {
 }
 #select-page .load-holder {
   margin-left: 8px;
-  width: 848px;
+  text-align: center;
+  padding-bottom: 12px;
 }
-#select-page .load-holder .button-special {
-  width: 100%;
-}
-#select-page .load-holder.bottom .button-special {
-  margin-bottom: 24px;
-  -webkit-animation: pulse 0.75s infinite ease-in-out;
+#select-page .load-holder .circularImageHolderG {
+  display: inline-block;
 }
 #select-page .teaser,
 #lobby .teaser,
@@ -1264,13 +1255,7 @@ body {
   background-image: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 100%);
 }
 #post-page >div .container .contact-search .load-holder {
-  margin-left: 2px;
-  margin-top: 18px;
-  margin-bottom: 18px;
-  width: 718px;
-}
-#post-page >div .container .contact-search .load-holder .button-special {
-  width: 100%;
+  height: 48px;
 }
 .message {
   display: inline-block;
