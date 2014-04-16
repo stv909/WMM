@@ -1,8 +1,8 @@
 (function(messenger, eve, abyss, template, analytics) {
 	
 	var PageView = messenger.views.PageView;
-	var UserView = messenger.views.UserView;
-	var GroupView = messenger.views.GroupView;
+	var UserView = messenger.ui.UserView;
+	var GroupView = messenger.ui.GroupView;
 	
 	var DelayedObserver = (function(base) {
 		eve.extend(DelayedObserver, base);

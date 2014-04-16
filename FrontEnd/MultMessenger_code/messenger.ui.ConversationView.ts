@@ -32,7 +32,7 @@ module messenger {
 
 		}
 
-		class MessageControlsView extends ControlView {
+		export class MessageControlsView extends ControlView {
 			private model: data.ChatMessageModel;
 
 			private dateHolderElem: HTMLElement;
@@ -124,7 +124,7 @@ module messenger {
 			}
 		}
 
-		class TextMessageView extends ControlView {
+		export class TextMessageView extends ControlView {
 			private contentElem: HTMLElement;
 			private model: data.ChatMessageModel;
 
@@ -142,7 +142,7 @@ module messenger {
 			}
 		}
 
-		class TextUserView extends ControlView {
+		export class TextUserView extends ControlView {
 			private model: data.UserModel;
 			private nameElem: HTMLElement;
 

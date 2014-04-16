@@ -116,6 +116,7 @@ var messenger;
             };
             return MessageControlsView;
         })(ui.ControlView);
+        ui.MessageControlsView = MessageControlsView;
 
         var TextMessageView = (function (_super) {
             __extends(TextMessageView, _super);
@@ -133,6 +134,7 @@ var messenger;
             }
             return TextMessageView;
         })(ui.ControlView);
+        ui.TextMessageView = TextMessageView;
 
         var TextUserView = (function (_super) {
             __extends(TextUserView, _super);
@@ -176,6 +178,7 @@ var messenger;
             }
             return TextUserView;
         })(ui.ControlView);
+        ui.TextUserView = TextUserView;
     })(messenger.ui || (messenger.ui = {}));
     var ui = messenger.ui;
 })(messenger || (messenger = {}));
