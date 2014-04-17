@@ -66,5 +66,6 @@ module messenger {
 		public static vkContactBaseUrl = 'https://vk.com/id';
 		public static abilityBaseUrl = 'https://bazelevshosting.net/MCM/';
 		public static emptyPreviewUrl = 'images/emptyPreview.png';
+		public static multChatUrl = 'https://vk.com/app4300262';
 	}
 }

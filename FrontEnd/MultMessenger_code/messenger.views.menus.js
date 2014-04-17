@@ -35,8 +35,8 @@
 				self.trigger('click:logo');
 			};
 			this.groupElemClickListener = function(event) {
-				window.open(messenger.Settings.groupUrl, '_blank');
-				analytics.send('app_start', 'app_go_group');
+				window.open(messenger.Settings.multChatUrl, '_blank');
+				analytics.send('app_start', 'app_go_multchat');
 			};
 			
 			this.logoElem.addEventListener('click', this.logoElemClickListener);
