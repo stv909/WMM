@@ -68,6 +68,7 @@ var messenger;
         Settings.vkContactBaseUrl = 'https://vk.com/id';
         Settings.abilityBaseUrl = 'https://bazelevshosting.net/MCM/';
         Settings.emptyPreviewUrl = 'images/emptyPreview.png';
+        Settings.multChatUrl = 'https://vk.com/app4300262';
         return Settings;
     })();
     messenger.Settings = Settings;
